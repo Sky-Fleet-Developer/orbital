@@ -7,7 +7,6 @@ using Plugins.Json;
 using Unity.VisualScripting.Antlr3.Runtime;
 using UnityEngine;
 using Zenject;
-using Component = Orbital.Model.Component;
 
 namespace Orbital.Controllers.Data
 {
@@ -40,7 +39,7 @@ namespace Orbital.Controllers.Data
         }
         
         
-        private class ComponentConverter : JsonConverter<Component>
+        private class ComponentConverter : JsonConverter<Model.Component>
         {
             private DiContainer _container;
 
@@ -49,16 +48,16 @@ namespace Orbital.Controllers.Data
                 _container = container;
             }
             
-            public override void WriteJson(JsonWriter writer, Component? value, JsonSerializer serializer)
+            public override void WriteJson(JsonWriter writer, Model.Component? value, JsonSerializer serializer)
             {
                 serializer.Serialize(writer, value);
                 //writer.WriteValue(value?.Id ?? -1);
             }
 
-            public override Component? ReadJson(JsonReader reader, Type objectType, Component? existingValue, bool hasExistingValue,
+            public override Model.Component? ReadJson(JsonReader reader, Type objectType, Model.Component? existingValue, bool hasExistingValue,
                 JsonSerializer serializer)
             {
-                return _container.ResolveId<Component>(reader.ReadAsInt32());
+                return _container.ResolveId<Model.Component>(reader.ReadAsInt32());
             }
         }
     }

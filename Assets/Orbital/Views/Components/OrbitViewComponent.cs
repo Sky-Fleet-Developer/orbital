@@ -2,22 +2,21 @@ using Orbital.Model;
 using Orbital.Model.Components;
 using Orbital.Model.Handles;
 using UnityEngine;
-using Component = Orbital.Model.Component;
 
 namespace Orbital.Views.Components
 {
-    public class OrbitViewComponent : Component, IUpdateHandler
+    public class OrbitViewComponent : Model.Component, IUpdateHandler
     {
-        private OrbitComponent _orbit;
+        private OrbitSystemComponent _orbitSystem;
         
         public override void Start()
         {
-            _orbit = MyBody.GetComponent<OrbitComponent>();
+            _orbitSystem = MyBody.GetComponent<OrbitSystemComponent>();
         }
 
         public void Update()
         {
-            Vector3 pos = _orbit.LocalToWorldMatrix.GetPosition();
+            Vector3 pos = _orbitSystem.LocalToWorldMatrix.GetPosition();
             Debug.DrawRay(Vector3.zero, pos);
         }
 
