@@ -16,6 +16,12 @@ namespace Orbital.Model.TrajectorySystem
         private double _latitudeShift;
         private double _longitudeShift;
 
+        public RelativeTrajectory(IMass self, IMass parent)
+        {
+            _self = self;
+            _parent = parent;
+        }
+
         /// <param name="pericenterSpeed">speed for counterclockwise in near point</param>
         /// <param name="pericenterRadius">minimal distance to parent</param>
         /// <param name="latitudeShift">offset in degrees by X axis</param>

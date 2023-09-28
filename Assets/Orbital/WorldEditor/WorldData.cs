@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using Orbital.Controllers.Data;
 using Orbital.Model;
+using Orbital.Model.Components;
+using Orbital.Model.TrajectorySystem;
 using Sirenix.OdinInspector;
 using UnityEngine;
 using Zenject;
@@ -13,10 +15,14 @@ namespace Orbital.WorldEditor
     {
         private const int FinalSetupIteration = 2;
 
-        [SerializeField] public BodyData[] bodies;
         private ISerializer _serializer = new JsonPerformance();
         [Inject] private DiContainer _container;
-
+        
+        [SerializeField] public BodyData[] bodies;
+        [SerializeField, TextArea] private string serializedTree;
+        
+        //[ShowInInspector] private IMass result;
+        
         private void OnEnable()
         {
             if (gameObject.activeInHierarchy && Application.isPlaying)
@@ -29,6 +35,28 @@ namespace Orbital.WorldEditor
             editorModeContainer.Inject(this);
             Init();
         }
+
+        /*[Button]
+        public void Check()
+        {
+            IMass root = new SingleCenterBranch(
+                new CelestialBody(settings[0])
+                , new List<IMass>
+                {
+                    new CelestialBody(settings[1]),
+                    new DoubleSystemBranch(
+                        new CelestialBody(settings[2]), 
+                        new SingleCenterBranch(
+                            new CelestialBody(settings[3]),
+                            new List<IMass>
+                            {
+                                new CelestialBody(settings[4])
+                            }))
+                });
+            string json = _serializer.Serialize(root);
+            Debug.Log(json);
+            result = _serializer.Deserialize<SingleCenterBranch>(json);
+        }*/
 
         private void Init()
         {

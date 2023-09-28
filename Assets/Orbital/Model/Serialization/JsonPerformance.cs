@@ -37,6 +37,11 @@ namespace Orbital.Controllers.Data
 
             JsonConvert.PopulateObject(value, target, _settings);
         }
+
+        public T Deserialize<T>(string value)
+        {
+            return JsonConvert.DeserializeObject<T>(value, _settings);
+        }
         
         
         private class ComponentConverter : JsonConverter<Model.Component>

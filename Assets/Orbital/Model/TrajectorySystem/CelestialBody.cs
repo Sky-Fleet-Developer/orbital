@@ -1,24 +1,38 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Ara3D;
+using Newtonsoft.Json;
 using Orbital.Model.Components;
+using UnityEngine;
 
 namespace Orbital.Model.TrajectorySystem
 {
+    [Serializable]
     public class CelestialBody : IMass
     {
-        public double Mass => _settings.mass;
-        public DVector3 Center => _position;
-        private DVector3 _position;
+        public double Mass => settings.mass;
+        public DVector3 Center => position;
+        [SerializeField, JsonProperty] private DVector3 position;
 
+        public IEnumerable<IMass> GetContent()
+        {
+            yield break;
+        }
         public IEnumerable<IMass> GetRecursively()
         {
-            yield return this;
+            foreach (IMass content in GetContent())
+            {
+                foreach (IMass mass in content.GetRecursively())
+                {
+                    yield return mass;
+                }
+            }
         }
 
-        private readonly CelestialSettings _settings;
+        [SerializeField, JsonProperty] private CelestialSettings settings;
         public CelestialBody(CelestialSettings settings)
         {
-            _settings = settings;
+            this.settings = settings;
         }
     }
 }

@@ -1,12 +1,14 @@
 using System.Collections.Generic;
 using Ara3D;
+using Newtonsoft.Json;
 
 namespace Orbital.Model.TrajectorySystem
 {
     public interface IMass
     {
-        double Mass { get; }
-        DVector3 Center { get; }
+        [JsonIgnore] double Mass { get; }
+        [JsonIgnore] DVector3 Center { get; }
+        IEnumerable<IMass> GetContent();
         IEnumerable<IMass> GetRecursively();
     }
 }
