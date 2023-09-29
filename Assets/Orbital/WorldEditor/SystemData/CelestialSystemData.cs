@@ -20,5 +20,15 @@ namespace Orbital.WorldEditor.SystemData
         {
             return settings;
         }
+
+        public override void SetSettings(CelestialSettings value)
+        {
+            settings = value;
+        }
+
+        public override void SetVariables(CelestialVariables value)
+        {
+            variables = value;
+        }
     }
 }

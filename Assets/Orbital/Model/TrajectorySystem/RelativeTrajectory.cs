@@ -15,6 +15,7 @@ namespace Orbital.Model.TrajectorySystem
         private double _period;
         private double _latitudeShift;
         private double _longitudeShift;
+        private double _periodShift;
 
         public RelativeTrajectory(IMass self, IMass parent)
         {
@@ -22,14 +23,16 @@ namespace Orbital.Model.TrajectorySystem
             _parent = parent;
         }
 
-        /// <param name="pericenterSpeed">speed for counterclockwise in near point</param>
-        /// <param name="pericenterRadius">minimal distance to parent</param>
-        /// <param name="latitudeShift">offset in degrees by X axis</param>
-        /// <param name="longitudeShift">offset in degrees by Y axis</param>
-        public void Calculate(double pericenterSpeed, double pericenterRadius, double latitudeShift, double longitudeShift)
+        /// <param name="pericenterSpeed">speed mps for counterclockwise in near point</param>
+        /// <param name="pericenterRadius">minimal distance m to parent</param>
+        /// <param name="latitudeShift">offset in rad by X axis</param>
+        /// <param name="longitudeShift">offset in rad by Y axis</param>
+        /// <param name="periodShift">offset in percents of orbit</param>
+        public void Calculate(double pericenterSpeed, double pericenterRadius, double latitudeShift, double longitudeShift, double periodShift)
         {
             _latitudeShift = latitudeShift;
             _longitudeShift = longitudeShift;
+            _periodShift = periodShift * 0.01f;
             _eccentricity = GetEccentricity(pericenterSpeed, pericenterRadius, _parent.Mass, OrbitCalculationService.G);
             _largeSemiAxis = GetLargeSemiAxis(_eccentricity, pericenterRadius);
             _period = GetPeriod(_largeSemiAxis, OrbitCalculationService.G, _parent.Mass);
@@ -38,7 +41,7 @@ namespace Orbital.Model.TrajectorySystem
         public DVector3 GetFlatPosition(double t)
         {
             // Средняя аномалия в момент времени t
-            double meanAnomaly = 2 * Math.PI * t / _period;
+            double meanAnomaly = 2 * Math.PI * t / _period + _periodShift;
 
             // Решение уравнения Кеплера для нахождения эксцентрической аномалии E
             double eccentricAnomaly = CalculateEccentricAnomaly(meanAnomaly, _eccentricity);

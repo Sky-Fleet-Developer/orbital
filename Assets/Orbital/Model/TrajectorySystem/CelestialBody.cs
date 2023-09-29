@@ -11,28 +11,20 @@ namespace Orbital.Model.TrajectorySystem
     public class CelestialBody : IMass
     {
         public double Mass => settings.mass;
-        public DVector3 Center => position;
-        [SerializeField, JsonProperty] private DVector3 position;
+        [SerializeField, JsonProperty] private CelestialSettings settings;
+        public CelestialSettings Settings
+        {
+            get => settings;
+            set => settings = value;
+        }
+        public CelestialBody()
+        {
+        }
+
 
         public IEnumerable<IMass> GetContent()
         {
             yield break;
-        }
-        public IEnumerable<IMass> GetRecursively()
-        {
-            foreach (IMass content in GetContent())
-            {
-                foreach (IMass mass in content.GetRecursively())
-                {
-                    yield return mass;
-                }
-            }
-        }
-
-        [SerializeField, JsonProperty] private CelestialSettings settings;
-        public CelestialBody(CelestialSettings settings)
-        {
-            this.settings = settings;
         }
     }
 }

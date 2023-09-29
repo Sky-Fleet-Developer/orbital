@@ -29,6 +29,6 @@ namespace Orbital.Model.Components
         public float pericenterRadius;
         public float latitudeShift;
         public float longitudeShift;
-        
+        public float periodShift;
     }
 }

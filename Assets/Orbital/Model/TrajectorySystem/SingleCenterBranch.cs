@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Ara3D;
 using Newtonsoft.Json;
+using Orbital.Model.Components;
 using UnityEngine;
 
 namespace Orbital.Model.TrajectorySystem
@@ -11,9 +12,12 @@ namespace Orbital.Model.TrajectorySystem
     public class SingleCenterBranch : IMass
     {
         public double Mass => Central.Mass + Children.Sum(x => x.Mass);
-        public DVector3 Center => position;
-        [SerializeField, JsonProperty] private DVector3 position;
-
+        [SerializeField, JsonProperty] private CelestialSettings settings;
+        public CelestialSettings Settings
+        {
+            get => settings;
+            set => settings = value;
+        }
         public SingleCenterBranch()
         {
             Central = null;
@@ -34,17 +38,6 @@ namespace Orbital.Model.TrajectorySystem
             }
         }
 
-        public IEnumerable<IMass> GetRecursively()
-        {
-            foreach (IMass content in GetContent())
-            {
-                foreach (IMass mass in content.GetRecursively())
-                {
-                    yield return mass;
-                }
-            }
-        }
-        
         [JsonProperty] public IMass Central;
         [JsonProperty] public List<IMass> Children;
     }

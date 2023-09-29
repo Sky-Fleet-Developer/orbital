@@ -24,5 +24,17 @@ namespace Orbital.WorldEditor.SystemData
         {
             return settings;
         }
+
+        public override void SetSettings(OrbitSettings value)
+        {
+            settings = value;
+        }
+
+        public override void SetVariables(OrbitVariables value)
+        {
+            velocity = value._velocity;
+            transform.position = value._localToWorldMatrix.GetPosition();
+            transform.rotation = value._localToWorldMatrix.rotation;
+        }
     }
 }
