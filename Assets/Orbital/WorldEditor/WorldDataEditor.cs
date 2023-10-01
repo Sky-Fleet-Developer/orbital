@@ -24,9 +24,25 @@ namespace Orbital.WorldEditor
         private TreeContainer _container;
         private GameObject _rootObject;
         private List<Transform> _viewObjects = new();
-        private Dictionary<IMass, Transform> _viewsPerMass = new();
+        private Dictionary<IMass, Transform> _viewsPerMass;
+        private readonly Dictionary<IMass, RelativeTrajectory> _trajectories = new();
         private readonly ISerializer _serializer = new JsonPerformance();
 
+        private IMass _currentEdit;
+        private IMass _currentParent;
+        
+        private Func<float, double> PreviewScaleTransform = v => Mathf.Lerp(44880000000, 448800000000, v);
+        private float PreviewScaleValue
+        {
+            get => _previewScaleValue;
+            set
+            {
+                _previewScaleValue = value;
+                PlayerPrefs.SetFloat(PreviewScaleKey, value);
+            }
+        }
+        private float _previewScaleValue;
+        private const string PreviewScaleKey = "PREVIRE_SCALE_EDITOR";
         State IStateMaster.CurrentState
         {
             get => _currentState;
@@ -41,6 +57,7 @@ namespace Orbital.WorldEditor
             serializedTree.stringValue = _serializer.Serialize(_container);
             _serializedObject.ApplyModifiedProperties();
             ReconstructTreeView();
+            RefreshTrajectories();
             EditorUtility.SetDirty(target);
         }
 
@@ -50,6 +67,7 @@ namespace Orbital.WorldEditor
             serializedTree = _serializedObject.FindProperty(nameof(serializedTree));
             _rootObject = ((MonoBehaviour) target).gameObject;
             _container = _serializer.Deserialize<TreeContainer>(serializedTree.stringValue);
+            PreviewScaleValue = PlayerPrefs.GetFloat(PreviewScaleKey, 0);
             if (_container == null)
             {
                 _container = new TreeContainer();
@@ -60,6 +78,7 @@ namespace Orbital.WorldEditor
                 if (ReconstructTreeView())
                 {
                     _currentState = new ExtendTreeState(this);
+                    RefreshTrajectories();
                 }
                 else
                 {
@@ -68,6 +87,16 @@ namespace Orbital.WorldEditor
             }
 
             _viewObjects = new List<Transform>();
+        }
+        
+        private void RefreshTrajectories()
+        {
+            _container.Root.FillTrajectoriesRecursively(_trajectories);
+            foreach (IMass mass in _container.Root.GetRecursively())
+            {
+                if(mass == null) continue; 
+                _viewsPerMass[mass].transform.localPosition = _trajectories[mass].GetPosition(0d) * PreviewScaleTransform(PreviewScaleValue);
+            }
         }
 
         private bool ReconstructTreeView()
@@ -85,7 +114,8 @@ namespace Orbital.WorldEditor
             _viewsPerMass = _container.Root.GetMap(root);
             foreach (IMass mass in _container.Root.GetRecursively())
             {
-                if (_viewsPerMass[mass].TryGetComponent<CelestialSystemData>(out var value))
+                if(mass == null) continue;
+                if (_viewsPerMass[mass].TryGetComponent<CelestialSystemData>(out CelestialSystemData value))
                 {
                     value.SetSettings(mass.Settings);
                 }
@@ -127,11 +157,32 @@ namespace Orbital.WorldEditor
         private void OnSceneGUI()
         {
             _currentState.OnSceneGui();
+            foreach (IMass mass in _container.Root.GetRecursively())
+            {
+                DrawTrajectoryForMass(mass);
+            }
+        }
+
+        private void DrawTrajectoryForMass(IMass mass)
+        {
+            RelativeTrajectory trajectory = _trajectories[mass];
+            if (trajectory.IsZero) return;
+            Quaternion handleRotationCorrection = Quaternion.Euler(-90, 0, 0);
+            Quaternion trajectoryRotation = Quaternion.Euler(Mathf.Rad2Deg * (float) trajectory.LatitudeShift, Mathf.Rad2Deg * (float) trajectory.LongitudeShift, Mathf.Rad2Deg * (float) trajectory.Inclination);
+            float scale = (float)PreviewScaleTransform(PreviewScaleValue);
+            Matrix4x4 figureMatrix = Matrix4x4.TRS(new Vector3(0, 0, (float)((trajectory.SemiMajorAxis - trajectory.PericenterRadius) / scale)), handleRotationCorrection, new Vector3((float)trajectory.SemiMinorAxis, (float)trajectory.SemiMajorAxis, 0) / scale);
+            Matrix4x4 worldMatrix = Matrix4x4.TRS(Vector3.zero, trajectoryRotation, Vector3.one);
+            Handles.matrix = worldMatrix * figureMatrix;
+            Handles.CircleHandleCap(-1, Vector3.zero, Quaternion.identity, 1f, EventType.Repaint);
+            Handles.matrix = worldMatrix;
+            Handles.SphereHandleCap(-1, Vector3.back * ((float)trajectory.PericenterRadius / scale), Quaternion.identity, 0.1f, EventType.Repaint);
+            Handles.matrix = Matrix4x4.identity;
         }
 
         public override void OnInspectorGUI()
         {
             EditorGUILayout.PropertyField(serializedTree);
+            PreviewScaleValue = EditorGUILayout.Slider("Preview scale", PreviewScaleValue, 0f, 1f);
             _currentState.Update();
         }
 

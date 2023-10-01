@@ -12,6 +12,8 @@ namespace Orbital.WorldEditor
         {
             private Action<IMass> _massAddressHandler;
             private IMass _settingsAddress;
+            private IMass _parentCache;
+            private IMass _editCache;
 
             public ExtendTreeState(WorldDataEditor master) : base(master)
             {
@@ -24,6 +26,8 @@ namespace Orbital.WorldEditor
 
             private void DrawIMass(IMass mass)
             {
+                _parentCache = mass;
+
                 switch (mass)
                 {
                     case SingleCenterBranch singleBranch:
@@ -72,6 +76,9 @@ namespace Orbital.WorldEditor
 
             private bool DrawProperty(string header, PossibleMass mask, IMass value)
             {
+                IMass parent = _parentCache;
+                _editCache = value;
+
                 if (value == null)
                 {
                     if (GUILayout.Button("+ " + header, GUILayout.Width(DefaultButtonSize)))
@@ -92,8 +99,11 @@ namespace Orbital.WorldEditor
                     if (GUILayout.Button("Edit", GUILayout.Width(DefaultButtonSize)))
                     {
                         _settingsAddress = value;
+                        Master._currentEdit = _editCache;
+                        Master._currentParent = _parentCache;
                         Master._currentState = new SetupCelestialSettingsState(value.Settings, this, Master);
                     }
+
                     GUILayout.EndHorizontal();
                     GUILayout.BeginHorizontal();
                     BeginTab();
@@ -102,6 +112,7 @@ namespace Orbital.WorldEditor
                     GUILayout.EndHorizontal();
                 }
 
+                _parentCache = parent;
                 return false;
             }
 

@@ -1,5 +1,6 @@
 using System;
 using Ara3D;
+using Orbital.Model.Components;
 using Orbital.Model.Services;
 using UnityEngine;
 
@@ -7,60 +8,76 @@ namespace Orbital.Model.TrajectorySystem
 {
     public class RelativeTrajectory
     {
+        public const double Deg2Rad = 0.01745329;
+        public const double Rad2Deg = 57.29578;
+        
         private IMass _parent;
         private IMass _self;
         private DVector3[] _path;
-        private double _eccentricity;
-        private double _largeSemiAxis;
-        private double _period;
-        private double _latitudeShift;
-        private double _longitudeShift;
-        private double _periodShift;
+        public double Eccentricity { get; private set; }
+        public double SemiMajorAxis { get; private set; }
+        public double SemiMinorAxis { get; private set; }
+        public double PericenterRadius { get; private set; }
+        public double Period { get; private set; }
+        public double LatitudeShift { get; private set; }
+        public double LongitudeShift { get; private set; }
+        public double Inclination { get; private set; }
+        public double PeriodShift { get; private set; }
+        public bool IsZero { get; private set; }
 
         public RelativeTrajectory(IMass self, IMass parent)
         {
             _self = self;
             _parent = parent;
         }
-
-        /// <param name="pericenterSpeed">speed mps for counterclockwise in near point</param>
-        /// <param name="pericenterRadius">minimal distance m to parent</param>
-        /// <param name="latitudeShift">offset in rad by X axis</param>
-        /// <param name="longitudeShift">offset in rad by Y axis</param>
-        /// <param name="periodShift">offset in percents of orbit</param>
-        public void Calculate(double pericenterSpeed, double pericenterRadius, double latitudeShift, double longitudeShift, double periodShift)
-        {
-            _latitudeShift = latitudeShift;
-            _longitudeShift = longitudeShift;
-            _periodShift = periodShift * 0.01f;
-            _eccentricity = GetEccentricity(pericenterSpeed, pericenterRadius, _parent.Mass, OrbitCalculationService.G);
-            _largeSemiAxis = GetLargeSemiAxis(_eccentricity, pericenterRadius);
-            _period = GetPeriod(_largeSemiAxis, OrbitCalculationService.G, _parent.Mass);
-        }
         
+        public void Calculate()
+        {
+            CelestialSettings settings = _self.Settings;
+            LatitudeShift = settings.latitudeShift * Deg2Rad;
+            LongitudeShift = settings.longitudeShift * Deg2Rad;
+            Inclination = settings.inclination * Deg2Rad;
+            PeriodShift = settings.periodShift * 0.01f;
+            PericenterRadius = settings.pericenterRadius;
+            Eccentricity = GetEccentricity(settings.pericenterSpeed, settings.pericenterRadius, _parent.Mass - _self.Mass, OrbitCalculationService.G);
+            SemiMajorAxis = GetSemiMajorAxis(Eccentricity, settings.pericenterRadius);
+            SemiMinorAxis = GetSemiMinorAxis(Eccentricity, SemiMajorAxis);
+            Period = GetPeriod(SemiMajorAxis, OrbitCalculationService.G, _parent.Mass);
+            IsZero = Period == 0 || double.IsNaN(Period);
+        }
+
+        public DVector3 GetPosition(double t)
+        {
+            return TransformByShift(GetFlatPosition(t));
+        }
+
         public DVector3 GetFlatPosition(double t)
         {
+            if (IsZero)
+            {
+                return new DVector3(0, 0, 0);
+            }
             // Средняя аномалия в момент времени t
-            double meanAnomaly = 2 * Math.PI * t / _period + _periodShift;
+            double meanAnomaly = 2 * Math.PI * t / Period + PeriodShift;
 
             // Решение уравнения Кеплера для нахождения эксцентрической аномалии E
-            double eccentricAnomaly = CalculateEccentricAnomaly(meanAnomaly, _eccentricity);
+            double eccentricAnomaly = CalculateEccentricAnomaly(meanAnomaly, Eccentricity);
 
             // Вычисление координат (x, y)
-            double x = _largeSemiAxis * (Math.Cos(eccentricAnomaly) - _eccentricity);
-            double y = _largeSemiAxis * Math.Sqrt(1 - _eccentricity * _eccentricity) * Math.Sin(eccentricAnomaly);
+            double x = SemiMajorAxis * (Math.Cos(eccentricAnomaly) - Eccentricity);
+            double y = SemiMajorAxis * Math.Sqrt(1 - Eccentricity * Eccentricity) * Math.Sin(eccentricAnomaly);
             return new DVector3((float)x, 0, (float)y);
         }
 
         public DVector3 TransformByShift(DVector3 vector)
         {
-            double x1 = vector.x * Math.Cos(_longitudeShift) - vector.y * Math.Sin(_longitudeShift);
-            double y1 = vector.x * Math.Sin(_longitudeShift) + vector.y * Math.Cos(_longitudeShift);
+            double x1 = vector.x * Math.Cos(LongitudeShift) - vector.y * Math.Sin(LongitudeShift);
+            double y1 = vector.x * Math.Sin(LongitudeShift) + vector.y * Math.Cos(LongitudeShift);
             double z1 = vector.z;
 
-            double x2 = x1 * Math.Cos(_latitudeShift) - z1 * Math.Sin(_latitudeShift);
+            double x2 = x1 * Math.Cos(LatitudeShift) - z1 * Math.Sin(LatitudeShift);
             double y2 = y1;
-            double z2 = x1 * Math.Sin(_latitudeShift) + z1 * Math.Cos(_latitudeShift);
+            double z2 = x1 * Math.Sin(LatitudeShift) + z1 * Math.Cos(LatitudeShift);
 
             return new DVector3(x2, y2, z2);
         }
@@ -78,9 +95,14 @@ namespace Orbital.Model.TrajectorySystem
         /// <param name="e">eccentricity</param>
         /// <param name="r">minimal distance to parent</param>
         /// <returns>large semi-axis for Kepler orbit</returns>
-        public static double GetLargeSemiAxis(double e, double r)
+        public static double GetSemiMajorAxis(double e, double r)
         {
             return r / (1 - e);
+        }
+        
+        public static double GetSemiMinorAxis(double e, double a)
+        {
+            return a * Math.Sqrt(1 - e * e);
         }
 
         /// <param name="a">large semi-axis</param>
