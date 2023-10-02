@@ -23,7 +23,7 @@ namespace Orbital.WorldEditor
             {
             }
 
-            public void NestedStateCallback(IMass value)
+            public void NestedStateCallback(IMass value, bool final)
             {
                 if (value == null)
                 {
@@ -32,8 +32,11 @@ namespace Orbital.WorldEditor
                 }
 
                 Master._container.Root = value;
-                Master.ApplyChanges();
-                Master._currentState = new ExtendTreeState(Master);
+                Master.ApplyChanges(final);
+                if (final)
+                {
+                    Master._currentState = new ExtendTreeState(Master);
+                }
             }
         }
     }

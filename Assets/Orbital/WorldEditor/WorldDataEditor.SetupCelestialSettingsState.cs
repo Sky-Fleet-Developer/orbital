@@ -1,4 +1,5 @@
-﻿using Orbital.Model.Components;
+﻿using System;
+using Orbital.Model.Components;
 using Orbital.Model.Services;
 using Orbital.Model.TrajectorySystem;
 using UnityEditor;
@@ -13,17 +14,14 @@ namespace Orbital.WorldEditor
             private INestedStateUser<CelestialSettings?> _lastState;
             private CelestialSettings _settingsA;
             private CelestialSettings _settingsB;
+            private CelestialSettings _original;
 
             public SetupCelestialSettingsState(CelestialSettings original, INestedStateUser<CelestialSettings?> lastState,
                 WorldDataEditor master) : base(master)
             {
                 _settingsA = original;
                 _settingsB = original;
-                _lastState = lastState;
-            }
-            public SetupCelestialSettingsState(INestedStateUser<CelestialSettings?> lastState,
-                WorldDataEditor master) : base(master)
-            {
+                _original = original;
                 _lastState = lastState;
             }
 
@@ -32,22 +30,38 @@ namespace Orbital.WorldEditor
                 GUILayout.Label("Setup:");
 
                 EditorGUI.BeginChangeCheck();
-                _settingsA.mass = EditorGUILayout.FloatField("Mass", _settingsB.mass);
+                if (Master._currentEdit is CelestialBody)
+                {
+                    _settingsA.mass = EditorGUILayout.FloatField("Mass", _settingsB.mass);
+                }
+                
                 _settingsA.pericenterRadius = EditorGUILayout.FloatField("Pericenter", _settingsB.pericenterRadius);
                 _settingsA.pericenterSpeed = EditorGUILayout.FloatField("Speed", _settingsB.pericenterSpeed);
                 _settingsA.latitudeShift = EditorGUILayout.FloatField("Latitude", _settingsB.latitudeShift);
                 _settingsA.longitudeShift = EditorGUILayout.FloatField("Longitude", _settingsB.longitudeShift);
                 _settingsA.inclination = EditorGUILayout.FloatField("Inclination", _settingsB.inclination);
-                _settingsA.periodShift = EditorGUILayout.FloatField("Period", _settingsB.periodShift);
+                _settingsA.timeShift = EditorGUILayout.FloatField("Time", _settingsB.timeShift);
+                double m = Master._currentParent.Mass;
                 double e = RelativeTrajectory.GetEccentricity(_settingsA.pericenterSpeed, _settingsA.pericenterRadius,
-                    Master._currentParent.Mass - _settingsA.mass, OrbitCalculationService.G);
+                    m, OrbitCalculationService.G);
                 double a = RelativeTrajectory.GetSemiMajorAxis(e, _settingsA.pericenterRadius);
+                double t = RelativeTrajectory.GetPeriod(a, OrbitCalculationService.G, m);
                 GUILayout.Box($"Eccentricity: {e}");
                 GUILayout.Box($"Semi major axis: {a}");
-                
+                if (double.IsNaN(t))
+                {
+                    GUILayout.Box($"Period: NaN");
+                }
+                else
+                {
+                    var ts = TimeSpan.FromSeconds((long) t);
+                    GUILayout.Box($"Period: {ts.Days} d, {ts.Hours} h, {ts.Minutes} m");
+                }
+
                 if (EditorGUI.EndChangeCheck())
                 {
                     _settingsB = _settingsA;
+                    _lastState.NestedStateCallback(_settingsB, false);
                 }
 
                 GUILayout.BeginHorizontal();
@@ -58,7 +72,7 @@ namespace Orbital.WorldEditor
 
                 if (GUILayout.Button("Cancel"))
                 {
-                    _lastState.NestedStateCallback(null);
+                    _lastState.NestedStateCallback(_original);
                 }
 
                 GUILayout.EndHorizontal();

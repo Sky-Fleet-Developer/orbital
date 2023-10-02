@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using Ara3D;
 using Core.Patterns.State;
 using Orbital.Controllers.Data;
 using Orbital.Model.TrajectorySystem;
@@ -31,7 +32,7 @@ namespace Orbital.WorldEditor
         private IMass _currentEdit;
         private IMass _currentParent;
         
-        private Func<float, double> PreviewScaleTransform = v => Mathf.Lerp(44880000000, 448800000000, v);
+        private Func<float, double> PreviewScaleTransform = v => Mathf.Lerp(4488000000, 448800000000, v);
         private float PreviewScaleValue
         {
             get => _previewScaleValue;
@@ -43,6 +44,7 @@ namespace Orbital.WorldEditor
         }
         private float _previewScaleValue;
         private const string PreviewScaleKey = "PREVIRE_SCALE_EDITOR";
+        private float _time = 0;
         State IStateMaster.CurrentState
         {
             get => _currentState;
@@ -51,11 +53,15 @@ namespace Orbital.WorldEditor
 
         private WorldDataState _currentState;
 
-        private void ApplyChanges()
+        private void ApplyChanges(bool serialize = true)
         {
             Undo.RecordObject(target, "Change tree");
-            serializedTree.stringValue = _serializer.Serialize(_container);
-            _serializedObject.ApplyModifiedProperties();
+            if (serialize)
+            {
+                serializedTree.stringValue = _serializer.Serialize(_container);
+                _serializedObject.ApplyModifiedProperties();
+            }
+
             ReconstructTreeView();
             RefreshTrajectories();
             EditorUtility.SetDirty(target);
@@ -92,11 +98,11 @@ namespace Orbital.WorldEditor
         private void RefreshTrajectories()
         {
             _container.Root.FillTrajectoriesRecursively(_trajectories);
-            foreach (IMass mass in _container.Root.GetRecursively())
+            /*foreach (IMass mass in _container.Root.GetRecursively())
             {
                 if(mass == null) continue; 
                 _viewsPerMass[mass].transform.localPosition = _trajectories[mass].GetPosition(0d) * PreviewScaleTransform(PreviewScaleValue);
-            }
+            }*/
         }
 
         private bool ReconstructTreeView()
@@ -157,32 +163,59 @@ namespace Orbital.WorldEditor
         private void OnSceneGUI()
         {
             _currentState.OnSceneGui();
-            foreach (IMass mass in _container.Root.GetRecursively())
+            if (_container.Root != null)
             {
-                DrawTrajectoryForMass(mass);
+                foreach (IMass mass in _container.Root.GetContent())
+                {
+                    if(mass == null) continue;
+                    DrawTrajectoriesRecursively(mass, DVector3.Zero);
+                }
             }
         }
 
-        private void DrawTrajectoryForMass(IMass mass)
+        private void DrawTrajectoriesRecursively(IMass mass, DVector3 origin)
         {
-            RelativeTrajectory trajectory = _trajectories[mass];
-            if (trajectory.IsZero) return;
+            if(mass == null) return;
+            if(!_trajectories.TryGetValue(mass, out RelativeTrajectory trajectory)) return;
+            
+            DrawTrajectory(trajectory, mass is CelestialBody, origin, out DVector3 output);
+            foreach (IMass child in mass.GetContent())
+            {
+                DrawTrajectoriesRecursively(child, output);
+            }
+        }
+
+        private void DrawTrajectory(RelativeTrajectory trajectory, bool drawSphere, DVector3 inputOrigin, out DVector3 outputOrigin)
+        {
+            DVector3 localPosition = trajectory.GetPosition(_time);
+            outputOrigin = localPosition + inputOrigin;
+            float scale = (float)PreviewScaleTransform(PreviewScaleValue);
+            Vector3 sOutput = (Vector3) (outputOrigin) / scale;
+            Vector3 sInput = (Vector3) (inputOrigin) / scale;
+            
             Quaternion handleRotationCorrection = Quaternion.Euler(-90, 0, 0);
             Quaternion trajectoryRotation = Quaternion.Euler(Mathf.Rad2Deg * (float) trajectory.LatitudeShift, Mathf.Rad2Deg * (float) trajectory.LongitudeShift, Mathf.Rad2Deg * (float) trajectory.Inclination);
-            float scale = (float)PreviewScaleTransform(PreviewScaleValue);
-            Matrix4x4 figureMatrix = Matrix4x4.TRS(new Vector3(0, 0, (float)((trajectory.SemiMajorAxis - trajectory.PericenterRadius) / scale)), handleRotationCorrection, new Vector3((float)trajectory.SemiMinorAxis, (float)trajectory.SemiMajorAxis, 0) / scale);
-            Matrix4x4 worldMatrix = Matrix4x4.TRS(Vector3.zero, trajectoryRotation, Vector3.one);
+           
+            Matrix4x4 figureMatrix = Matrix4x4.TRS(new Vector3(0, 0, (float)((trajectory.PericenterRadius - trajectory.SemiMajorAxis) / scale)), handleRotationCorrection, new Vector3((float)trajectory.SemiMinorAxis, (float)trajectory.SemiMajorAxis, 0) / scale);
+            Matrix4x4 worldMatrix = Matrix4x4.TRS(sInput, trajectoryRotation, Vector3.one);
+            
             Handles.matrix = worldMatrix * figureMatrix;
             Handles.CircleHandleCap(-1, Vector3.zero, Quaternion.identity, 1f, EventType.Repaint);
-            Handles.matrix = worldMatrix;
-            Handles.SphereHandleCap(-1, Vector3.back * ((float)trajectory.PericenterRadius / scale), Quaternion.identity, 0.1f, EventType.Repaint);
             Handles.matrix = Matrix4x4.identity;
+            Handles.DrawDottedLine(sOutput, sInput, 10);
+            if(drawSphere) Handles.SphereHandleCap(-1, sOutput, Quaternion.identity, 0.1f * HandleUtility.GetHandleSize(sOutput), EventType.Repaint);
         }
 
         public override void OnInspectorGUI()
         {
             EditorGUILayout.PropertyField(serializedTree);
+            EditorGUI.BeginChangeCheck();
             PreviewScaleValue = EditorGUILayout.Slider("Preview scale", PreviewScaleValue, 0f, 1f);
+            _time = EditorGUILayout.Slider("Time", _time, 0, 365*24*3600);
+            if (EditorGUI.EndChangeCheck())
+            {
+                OnSceneGUI();
+            }
             _currentState.Update();
         }
 
@@ -202,7 +235,7 @@ namespace Orbital.WorldEditor
 
         private interface INestedStateUser<in T>
         {
-            void NestedStateCallback(T value);
+            void NestedStateCallback(T value, bool final = true);
         }
 
         [Flags]

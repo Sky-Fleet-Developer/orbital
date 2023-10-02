@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Orbital.Model.Components;
 using Orbital.Model.TrajectorySystem;
 using Orbital.WorldEditor.SystemData;
@@ -8,9 +9,10 @@ namespace Orbital.WorldEditor
 {
     public partial class WorldDataEditor
     {
-        private class ExtendTreeState : WorldDataState, INestedStateUser<IMass>, INestedStateUser<CelestialSettings?>
+        private class ExtendTreeState : WorldDataState, INestedStateUser<IMass>, INestedStateUser<CelestialSettings?>, INestedStateUser<DoubleSystemSettings?>
         {
             private Action<IMass> _massAddressHandler;
+            private DoubleSystemBranch _doubleSettingsAddress;
             private IMass _settingsAddress;
             private IMass _parentCache;
             private IMass _editCache;
@@ -34,7 +36,7 @@ namespace Orbital.WorldEditor
                         GUILayout.Box("Planet with satellites:");
                         if (DrawProperty("Central", PossibleMass.Celestial | PossibleMass.Dual, singleBranch.Central))
                         {
-                            _massAddressHandler = v => singleBranch.Central = v;
+                            _massAddressHandler = v => Address(ref singleBranch.Central, v);
                         }
 
                         int i = 0;
@@ -43,7 +45,7 @@ namespace Orbital.WorldEditor
                             if (DrawProperty($"Child[{i}]", PossibleMass.All, singleBranch.Children[i]))
                             {
                                 int ii = i;
-                                _massAddressHandler = v => singleBranch.Children[ii] = v;
+                                _massAddressHandler = v => AddressIndex(ref singleBranch.Children, ii, v);
                             }
                         }
 
@@ -51,7 +53,7 @@ namespace Orbital.WorldEditor
                         {
                             singleBranch.Children.Add(null);
                             int ii = i;
-                            _massAddressHandler = v => singleBranch.Children[ii] = v;
+                            _massAddressHandler = v => AddressIndex(ref singleBranch.Children, ii, v);
                         }
 
                         break;
@@ -59,12 +61,12 @@ namespace Orbital.WorldEditor
                         GUILayout.Box("Dual system");
                         if (DrawProperty("A", PossibleMass.All, doubleBranch.ChildA))
                         {
-                            _massAddressHandler = v => doubleBranch.ChildA = v;
+                            _massAddressHandler = v => Address(ref doubleBranch.ChildA, v);
                         }
 
                         if (DrawProperty("B", PossibleMass.All, doubleBranch.ChildB))
                         {
-                            _massAddressHandler = v => doubleBranch.ChildB = v;
+                            _massAddressHandler = v => Address(ref doubleBranch.ChildB, v);
                         }
 
                         break;
@@ -72,6 +74,24 @@ namespace Orbital.WorldEditor
                         //GUILayout.Box("Celestial");
                         break;
                 }
+            }
+
+            private void Address(ref IMass lastMass, IMass newMass)
+            {
+                if (lastMass != null)
+                {
+                    newMass.Settings = lastMass.Settings;
+                }
+                lastMass = newMass;
+            }
+            private void AddressIndex(ref List<IMass> lastMass, int index, IMass newMass)
+            {
+                if (lastMass[index] != null)
+                {
+                    newMass.Settings = lastMass[index].Settings;
+                }
+
+                lastMass[index] = newMass;
             }
 
             private bool DrawProperty(string header, PossibleMass mask, IMass value)
@@ -98,10 +118,18 @@ namespace Orbital.WorldEditor
 
                     if (GUILayout.Button("Edit", GUILayout.Width(DefaultButtonSize)))
                     {
-                        _settingsAddress = value;
                         Master._currentEdit = _editCache;
                         Master._currentParent = _parentCache;
-                        Master._currentState = new SetupCelestialSettingsState(value.Settings, this, Master);
+                        if (Master._currentParent is DoubleSystemBranch doubleSystemBranch)
+                        {
+                            _doubleSettingsAddress = doubleSystemBranch;
+                            Master._currentState = new SetupDoubleSettingsState(doubleSystemBranch.LocalSettings, this, Master);
+                        }
+                        else
+                        {
+                            _settingsAddress = value;
+                            Master._currentState = new SetupCelestialSettingsState(value.Settings, this, Master);
+                        }
                     }
 
                     GUILayout.EndHorizontal();
@@ -120,22 +148,46 @@ namespace Orbital.WorldEditor
             {
             }
 
-            public void NestedStateCallback(IMass value)
+            public void NestedStateCallback(IMass value, bool final)
             {
-                _massAddressHandler.Invoke(value);
-                Master.ApplyChanges();
-                Master._currentState = this;
+                if (value != null)
+                {
+                    _massAddressHandler.Invoke(value);
+                    Master.ApplyChanges(final);
+                }
+
+                if (final)
+                {
+                    Master._currentState = this;
+                }
             }
 
-            public void NestedStateCallback(CelestialSettings? value)
+            public void NestedStateCallback(CelestialSettings? value, bool final)
             {
                 if (value != null)
                 {
                     _settingsAddress.Settings = value.Value;
-                    Master.ApplyChanges();
+                    Master.ApplyChanges(final);
                 }
 
-                Master._currentState = this;
+                if (final)
+                {
+                    Master._currentState = this;
+                }
+            }
+
+            public void NestedStateCallback(DoubleSystemSettings? value, bool final)
+            {
+                if (value != null)
+                {
+                    _doubleSettingsAddress.LocalSettings = value.Value;
+                    Master.ApplyChanges(final);
+                }
+
+                if (final)
+                {
+                    Master._currentState = this;
+                }
             }
         }
     }

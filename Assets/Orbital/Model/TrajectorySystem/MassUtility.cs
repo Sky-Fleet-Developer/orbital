@@ -52,16 +52,31 @@ namespace Orbital.Model.TrajectorySystem
 
         public static void FillTrajectoriesRecursively(this IMass mass, Dictionary<IMass, RelativeTrajectory> container)
         {
-            foreach (IMass child in mass.GetContent())
+            void SetupElement(IMass child, IMass other, SystemType type)
             {
-                if(child == null) continue;
+                if (child == null) return;
+                if (other == null) return;
                 if (!container.TryGetValue(child, out RelativeTrajectory trajectory))
                 {
-                    trajectory = new RelativeTrajectory(child, mass);
+                    trajectory = new RelativeTrajectory(child, other, type);
                     container.Add(child, trajectory);
                 }
+
                 trajectory.Calculate();
                 FillTrajectoriesRecursively(child, container);
+            }
+
+            if (mass is DoubleSystemBranch doubleSystemBranch)
+            {
+                SetupElement(doubleSystemBranch.ChildA, doubleSystemBranch.ChildB, SystemType.DoubleSystem);
+                SetupElement(doubleSystemBranch.ChildB, doubleSystemBranch.ChildA, SystemType.DoubleSystem);
+            }
+            else
+            {
+                foreach (IMass child in mass.GetContent())
+                {
+                    SetupElement(child, mass, SystemType.SingleCenter);
+                }
             }
         }
     }

@@ -30,6 +30,20 @@ namespace Orbital.Model.Components
         public float latitudeShift;
         public float longitudeShift;
         public float inclination;
-        public float periodShift;
+        public float timeShift;
+        public float period;
+    }
+    
+    [Serializable]
+    public struct DoubleSystemSettings
+    {
+        public float aMass;
+        public float bMass;
+        public float period;
+        public float aPericenterRadius;
+        public float latitudeShift;
+        public float longitudeShift;
+        public float inclination;
+        public float timeShift;
     }
 }

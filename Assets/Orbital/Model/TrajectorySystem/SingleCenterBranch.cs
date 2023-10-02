@@ -11,7 +11,7 @@ namespace Orbital.Model.TrajectorySystem
     [Serializable]
     public class SingleCenterBranch : IMass
     {
-        public double Mass => Central.Mass + Children.Sum(x => x.Mass);
+        public double Mass => (Central?.Mass ?? 0);
         [SerializeField, JsonProperty] private CelestialSettings settings;
         public CelestialSettings Settings
         {
