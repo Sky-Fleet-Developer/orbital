@@ -1,14 +1,7 @@
-using System;
-using System.Collections;
-using System.IO;
-using System.Xml.Serialization;
 using Newtonsoft.Json;
-using Plugins.Json;
-using Unity.VisualScripting.Antlr3.Runtime;
-using UnityEngine;
 using Zenject;
 
-namespace Orbital.Controllers.Data
+namespace Orbital.Model.Serialization
 {
     public class JsonPerformance : ISerializer
     {
@@ -44,7 +37,7 @@ namespace Orbital.Controllers.Data
         }
         
         
-        private class ComponentConverter : JsonConverter<Model.Component>
+        /*private class ComponentConverter : JsonConverter<Model.Component>
         {
             private DiContainer _container;
 
@@ -64,6 +57,6 @@ namespace Orbital.Controllers.Data
             {
                 return _container.ResolveId<Model.Component>(reader.ReadAsInt32());
             }
-        }
+        }*/
     }
 }

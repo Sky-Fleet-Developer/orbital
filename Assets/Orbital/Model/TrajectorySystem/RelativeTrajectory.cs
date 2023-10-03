@@ -1,8 +1,8 @@
 using System;
 using Ara3D;
 using Ara3D.Double;
-using Orbital.Model.Components;
 using Orbital.Model.Services;
+using Orbital.Model.SystemComponents;
 using UnityEngine;
 
 namespace Orbital.Model.TrajectorySystem

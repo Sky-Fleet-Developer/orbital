@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using Ara3D;
 using Newtonsoft.Json;
-using Orbital.Model.Components;
+using Orbital.Model.SystemComponents;
 
 namespace Orbital.Model.TrajectorySystem
 {

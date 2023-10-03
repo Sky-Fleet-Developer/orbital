@@ -1,9 +1,8 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 
-namespace Orbital.WorldEditor
+namespace Orbital.Model.SystemComponents
 {
-    public abstract class SystemData<TRuntimeVariables, TSettings> : ComponentData
+    public abstract class SystemComponent<TRuntimeVariables, TSettings> : MonoBehaviour
     {
         public abstract TRuntimeVariables GetVariables();
         public abstract TSettings GetSettings();

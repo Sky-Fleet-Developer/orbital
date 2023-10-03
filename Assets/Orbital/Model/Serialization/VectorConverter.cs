@@ -2,7 +2,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using UnityEngine;
 
-namespace Plugins.Json
+namespace Orbital.Model.Serialization
 {
   public class VectorConverter : JsonConverter
   {

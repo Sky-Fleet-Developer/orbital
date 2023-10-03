@@ -1,6 +1,4 @@
-using System;
-
-namespace Orbital.Controllers.Data
+namespace Orbital.Model.Serialization
 {
     public interface ISerializer
     {

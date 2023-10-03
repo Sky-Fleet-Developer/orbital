@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Ara3D;
 using Newtonsoft.Json;
-using Orbital.Model.Components;
+using Orbital.Model.SystemComponents;
 using UnityEngine;
 
 namespace Orbital.Model.TrajectorySystem

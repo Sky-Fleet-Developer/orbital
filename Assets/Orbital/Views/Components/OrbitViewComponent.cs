@@ -1,15 +1,14 @@
 using Orbital.Model;
-using Orbital.Model.Components;
 using Orbital.Model.Handles;
 using UnityEngine;
-
+/*
 namespace Orbital.Views.Components
 {
-    public class OrbitViewComponent : Model.Component, IUpdateHandler
+    public class OrbitViewComponent : MonoBehaviour, IUpdateHandler
     {
         private OrbitSystemComponent _orbitSystem;
         
-        public override void Start()
+        public void Start()
         {
             _orbitSystem = MyBody.GetComponent<OrbitSystemComponent>();
         }
@@ -25,3 +24,4 @@ namespace Orbital.Views.Components
         }
     }
 }
+*/

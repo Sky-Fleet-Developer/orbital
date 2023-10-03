@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using Orbital.Model.Components;
+using Orbital.Model.SystemComponents;
 using Orbital.Model.TrajectorySystem;
-using Orbital.WorldEditor.SystemData;
 using UnityEngine;
 
 namespace Orbital.WorldEditor

@@ -1,17 +1,32 @@
 using System;
-using Ara3D;
-using Newtonsoft.Json;
-using Orbital.Model;
-using Sirenix.OdinInspector;
 using UnityEngine;
 
-namespace Orbital.Model.Components
+namespace Orbital.Model.SystemComponents
 {
-    public class CelestialSystemComponent : System<CelestialVariables, CelestialSettings>
+    [ExecuteInEditMode]
+    public class CelestialSystemComponent : SystemComponent<CelestialVariables, CelestialSettings>
     {
-        public float Mass => MySettings.mass;
-        public CelestialSystemComponent(CelestialVariables variables, CelestialSettings settings, Body myBody) : base(variables, settings, myBody)
+        private CelestialSettings _settings;
+        [SerializeField] private CelestialVariables variables;
+
+        public override CelestialVariables GetVariables()
         {
+            return variables;
+        }
+
+        public override CelestialSettings GetSettings()
+        {
+            return _settings;
+        }
+
+        public override void SetSettings(CelestialSettings value)
+        {
+            _settings = value;
+        }
+
+        public override void SetVariables(CelestialVariables value)
+        {
+            variables = value;
         }
     }
     

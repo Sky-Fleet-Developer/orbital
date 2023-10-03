@@ -8,7 +8,7 @@ namespace Orbital.Model.Services
     public class ComponentsRegistrationService : MonoBehaviour
     {
         [Inject] private LoopEmitterService _loopEmitterService;
-        private Queue<Component> _componentsToCallStart = new();
+        //private Queue<Component> _componentsToCallStart = new();
 
         private void Start()
         {
@@ -22,17 +22,17 @@ namespace Orbital.Model.Services
 
         private void OnBeforeUpdate()
         {
-            while (_componentsToCallStart.Count > 0)
+            /*while (_componentsToCallStart.Count > 0)
             {
                 Component component = _componentsToCallStart.Dequeue();
                 component.Start();
-            }
+            }*/
         }
 
         public void RegisterComponent<T>(T component) where T : Component
         {
             _loopEmitterService.Add(component);
-            _componentsToCallStart.Enqueue(component);
+            //_componentsToCallStart.Enqueue(component);
         }
 
         public void UnregisterComponent<T>(T component) where T : Component

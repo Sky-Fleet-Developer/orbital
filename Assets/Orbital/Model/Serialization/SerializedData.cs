@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using Zenject;
 
-namespace Orbital.Controllers.Data
+namespace Orbital.Model.Serialization
 {
     public class SerializedData<T> : ScriptableObject
     {
