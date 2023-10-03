@@ -11,12 +11,12 @@ namespace Orbital.WorldEditor
     {
         private class SetupCelestialSettingsState : WorldDataState
         {
-            private INestedStateUser<CelestialSettings?> _lastState;
-            private CelestialSettings _settingsA;
-            private CelestialSettings _settingsB;
-            private CelestialSettings _original;
+            private INestedStateUser<TrajectorySettings?> _lastState;
+            private TrajectorySettings _settingsA;
+            private TrajectorySettings _settingsB;
+            private TrajectorySettings _original;
 
-            public SetupCelestialSettingsState(CelestialSettings original, INestedStateUser<CelestialSettings?> lastState,
+            public SetupCelestialSettingsState(TrajectorySettings original, INestedStateUser<TrajectorySettings?> lastState,
                 WorldDataEditor master) : base(master)
             {
                 _settingsA = original;
@@ -43,9 +43,9 @@ namespace Orbital.WorldEditor
                 _settingsA.timeShift = EditorGUILayout.FloatField("Time", _settingsB.timeShift);
                 double m = Master._currentParent.Mass;
                 double e = RelativeTrajectory.GetEccentricity(_settingsA.pericenterSpeed, _settingsA.pericenterRadius,
-                    m, OrbitCalculationService.G);
+                    m, MassUtility.G);
                 double a = RelativeTrajectory.GetSemiMajorAxis(e, _settingsA.pericenterRadius);
-                double t = RelativeTrajectory.GetPeriod(a, OrbitCalculationService.G, m);
+                double t = RelativeTrajectory.GetPeriod(a, MassUtility.G, m);
                 GUILayout.Box($"Eccentricity: {e}");
                 GUILayout.Box($"Semi major axis: {a}");
                 if (double.IsNaN(t))

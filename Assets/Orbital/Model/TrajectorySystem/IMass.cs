@@ -8,7 +8,7 @@ namespace Orbital.Model.TrajectorySystem
     public interface IMass
     {
         [JsonIgnore] double Mass { get; }
-        [JsonIgnore] CelestialSettings Settings { get; set; }
+        [JsonIgnore] TrajectorySettings Settings { get; set; }
 
         IEnumerable<IMass> GetContent();
     }

@@ -8,7 +8,6 @@ namespace Orbital.Model.Services
     public class OrbitCalculationService
     {
         //public const float GravityThreshold = 0.005f;
-        public const double G = 6.67430e-11;
 
         private List<CelestialBody> _celestialBodies = new List<CelestialBody>();
         

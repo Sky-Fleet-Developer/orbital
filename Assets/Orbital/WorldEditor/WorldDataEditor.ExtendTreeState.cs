@@ -8,7 +8,7 @@ namespace Orbital.WorldEditor
 {
     public partial class WorldDataEditor
     {
-        private class ExtendTreeState : WorldDataState, INestedStateUser<IMass>, INestedStateUser<CelestialSettings?>, INestedStateUser<DoubleSystemSettings?>
+        private class ExtendTreeState : WorldDataState, INestedStateUser<IMass>, INestedStateUser<TrajectorySettings?>, INestedStateUser<DoubleSystemTrajectorySettings?>
         {
             private Action<IMass> _massAddressHandler;
             private DoubleSystemBranch _doubleSettingsAddress;
@@ -122,7 +122,7 @@ namespace Orbital.WorldEditor
                         if (Master._currentParent is DoubleSystemBranch doubleSystemBranch)
                         {
                             _doubleSettingsAddress = doubleSystemBranch;
-                            Master._currentState = new SetupDoubleSettingsState(doubleSystemBranch.LocalSettings, this, Master);
+                            Master._currentState = new SetupDoubleSettingsState(doubleSystemBranch.LocalTrajectorySettings, this, Master);
                         }
                         else
                         {
@@ -161,7 +161,7 @@ namespace Orbital.WorldEditor
                 }
             }
 
-            public void NestedStateCallback(CelestialSettings? value, bool final)
+            public void NestedStateCallback(TrajectorySettings? value, bool final)
             {
                 if (value != null)
                 {
@@ -175,11 +175,11 @@ namespace Orbital.WorldEditor
                 }
             }
 
-            public void NestedStateCallback(DoubleSystemSettings? value, bool final)
+            public void NestedStateCallback(DoubleSystemTrajectorySettings? value, bool final)
             {
                 if (value != null)
                 {
-                    _doubleSettingsAddress.LocalSettings = value.Value;
+                    _doubleSettingsAddress.LocalTrajectorySettings = value.Value;
                     Master.ApplyChanges(final);
                 }
 

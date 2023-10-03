@@ -12,8 +12,8 @@ namespace Orbital.Model.TrajectorySystem
     public class SingleCenterBranch : IMass
     {
         public double Mass => (Central?.Mass ?? 0);
-        [SerializeField, JsonProperty] private CelestialSettings settings;
-        public CelestialSettings Settings
+        [SerializeField, JsonProperty] private TrajectorySettings settings;
+        public TrajectorySettings Settings
         {
             get => settings;
             set => settings = value;

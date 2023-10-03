@@ -5,6 +5,8 @@ namespace Orbital.Model.TrajectorySystem
 {
     public static class MassUtility
     {
+        public const double G = 6.67430e-11;
+        
         public static Dictionary<IMass, Transform> GetMap(this IMass mRoot, Transform tRoot)
         {
             Dictionary<IMass, Transform> result = new();

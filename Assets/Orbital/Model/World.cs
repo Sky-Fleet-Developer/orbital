@@ -10,25 +10,37 @@ using Zenject;
 
 namespace Orbital.Model
 {
-    public class World : MonoBehaviour, IFixedUpdateHandler
+    public class World : MonoBehaviour
     {
+       
         [SerializeField] private TreeContainer tree;
         
         private Dictionary<IMass, Transform> _viewsPerMass;
         private Dictionary<IMass, RelativeTrajectory> _trajectories;
+        private Dictionary<CelestialSystemComponent, IMass> _massPerCelestial;
         [Inject] private LoopEmitterService _loopEmitterService;
-        
+        [Inject] private DiContainer _container;
         public void Load()
         {
             tree.Load();
             _trajectories = new Dictionary<IMass, RelativeTrajectory>();
+            _massPerCelestial = new Dictionary<CelestialSystemComponent, IMass>();
             tree.Root.FillTrajectoriesRecursively(_trajectories);
             ReconstructHierarchy(tree.Root);
+            InjectHierarchy();
+        }
+
+        private void InjectHierarchy()
+        {
+            foreach (Transform value in _viewsPerMass.Values)
+            {
+                _container.InjectGameObject(value.gameObject);
+            }
         }
 
         public void Register()
         {
-            _loopEmitterService.Add(this);
+            //_loopEmitterService.Add(this);
         }
         
         #if UNITY_EDITOR
@@ -56,7 +68,8 @@ namespace Orbital.Model
                 if(mass == null) continue;
                 if (_viewsPerMass[mass].TryGetComponent(out CelestialSystemComponent value))
                 {
-                    value.SetSettings(mass.Settings);
+                    _massPerCelestial.TryAdd(value, mass);
+                    value.Setup(mass, _trajectories[mass]);   
                 }
             }
         }
@@ -83,11 +96,6 @@ namespace Orbital.Model
             Transform newObject = new GameObject(name, isCelestial ? new [] {typeof(CelestialSystemComponent)} : new Type[0]).transform;
             newObject.SetParent(parent);
             return newObject;
-        }
-
-        void IFixedUpdateHandler.FixedUpdate()
-        {
-            
         }
     }
 }

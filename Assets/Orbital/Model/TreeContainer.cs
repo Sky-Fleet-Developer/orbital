@@ -14,9 +14,9 @@ namespace Orbital.Model
 
         public void Load()
         {
-            ISerializer _serializer = new JsonPerformance();
+            ISerializer serializer = new JsonPerformance();
             
-            _serializer.Populate(this, serializedValue);
+            serializer.Populate(this, serializedValue);
         }
     }
 }

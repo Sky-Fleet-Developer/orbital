@@ -1,64 +1,56 @@
 using System;
+using Ara3D;
+using Orbital.Model.Handles;
+using Orbital.Model.Services;
+using Orbital.Model.TrajectorySystem;
+using Sirenix.OdinInspector;
 using UnityEngine;
+using Zenject;
 
 namespace Orbital.Model.SystemComponents
 {
     [ExecuteInEditMode]
-    public class CelestialSystemComponent : SystemComponent<CelestialVariables, CelestialSettings>
+    public class CelestialSystemComponent : SystemComponent<CelestialVariables, CelestialSettings>, IFixedUpdateHandler
     {
         private CelestialSettings _settings;
-        [SerializeField] private CelestialVariables variables;
+        [ShowInInspector] private CelestialVariables _variables;
+        [Inject] private World _world;
+        [Inject] private TimeService _timeService;
+        private IMass _mass;
+        private RelativeTrajectory _trajectory;
 
-        public override CelestialVariables GetVariables()
+        public override CelestialSettings Settings
         {
-            return variables;
+            get => _settings;
+            set => _settings = value;
         }
 
-        public override CelestialSettings GetSettings()
+        public override CelestialVariables Variables
         {
-            return _settings;
+            get => _variables;
+            set => _variables = value;
         }
 
-        public override void SetSettings(CelestialSettings value)
+        public void Setup(IMass mass, RelativeTrajectory trajectory)
         {
-            _settings = value;
+            _mass = mass;
+            _trajectory = trajectory;
         }
 
-        public override void SetVariables(CelestialVariables value)
+        void IFixedUpdateHandler.FixedUpdate()
         {
-            variables = value;
+            _variables.localPosition = _trajectory.GetPosition(_timeService.WorldTime);
         }
     }
-    
+
     [Serializable]
     public struct CelestialVariables
     {
-        public float time;
+        public DVector3 localPosition;
     }
-    
+
     [Serializable]
     public struct CelestialSettings
     {
-        public float mass;
-        public float pericenterSpeed;
-        public float pericenterRadius;
-        public float latitudeShift;
-        public float longitudeShift;
-        public float inclination;
-        public float timeShift;
-        public float period;
-    }
-    
-    [Serializable]
-    public struct DoubleSystemSettings
-    {
-        public float aMass;
-        public float bMass;
-        public float period;
-        public float aPericenterRadius;
-        public float latitudeShift;
-        public float longitudeShift;
-        public float inclination;
-        public float timeShift;
     }
 }

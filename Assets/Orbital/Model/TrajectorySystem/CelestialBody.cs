@@ -11,8 +11,8 @@ namespace Orbital.Model.TrajectorySystem
     public class CelestialBody : IMass
     {
         public double Mass => settings.mass;
-        [SerializeField, JsonProperty] private CelestialSettings settings;
-        public CelestialSettings Settings
+        [SerializeField, JsonProperty] private TrajectorySettings settings;
+        public TrajectorySettings Settings
         {
             get => settings;
             set => settings = value;

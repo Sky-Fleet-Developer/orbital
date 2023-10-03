@@ -11,22 +11,22 @@ namespace Orbital.Model.TrajectorySystem
     public class DoubleSystemBranch : IMass
     {
         public double Mass => (ChildA?.Mass ?? 0) + (ChildB?.Mass ?? 0);
-        [SerializeField, JsonProperty] private CelestialSettings settings;
-        [SerializeField, JsonProperty] private DoubleSystemSettings localSettings;
-        public CelestialSettings Settings
+        [SerializeField, JsonProperty] private TrajectorySettings settings;
+        [SerializeField, JsonProperty] private DoubleSystemTrajectorySettings localTrajectorySettings;
+        public TrajectorySettings Settings
         {
             get => settings;
             set => settings = value;
         }
 
-        public DoubleSystemSettings LocalSettings
+        public DoubleSystemTrajectorySettings LocalTrajectorySettings
         {
-            get => localSettings;
+            get => localTrajectorySettings;
             set
             {
-                localSettings = value;
+                localTrajectorySettings = value;
                 {
-                    CelestialSettings aSettings = ChildA.Settings;
+                    TrajectorySettings aSettings = ChildA.Settings;
                     aSettings.mass = value.aMass;
                     aSettings.period = value.period;
                     aSettings.latitudeShift = value.latitudeShift;
@@ -37,7 +37,7 @@ namespace Orbital.Model.TrajectorySystem
                     ChildA.Settings = aSettings;
                 }
                 {
-                    CelestialSettings bSettings = ChildB.Settings;
+                    TrajectorySettings bSettings = ChildB.Settings;
                     bSettings.mass = value.bMass;
                     bSettings.period = value.period;
                     bSettings.latitudeShift = -value.latitudeShift;

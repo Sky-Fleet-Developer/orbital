@@ -44,7 +44,7 @@ namespace Orbital.Model.TrajectorySystem
         
         public void Calculate()
         {
-            CelestialSettings settings = _self.Settings;
+            TrajectorySettings settings = _self.Settings;
             LatitudeShift = settings.latitudeShift * Deg2Rad;
             LongitudeShift = settings.longitudeShift * Deg2Rad;
             Inclination = settings.inclination * Deg2Rad;
@@ -60,13 +60,13 @@ namespace Orbital.Model.TrajectorySystem
             }
         }
 
-        private void CalculateForSingleCenter(ref CelestialSettings settings)
+        private void CalculateForSingleCenter(ref TrajectorySettings settings)
         {
             PericenterRadius = settings.pericenterRadius;
-            Eccentricity = GetEccentricity(settings.pericenterSpeed, settings.pericenterRadius, _other.Mass, OrbitCalculationService.G);
+            Eccentricity = GetEccentricity(settings.pericenterSpeed, settings.pericenterRadius, _other.Mass, MassUtility.G);
             SemiMajorAxis = GetSemiMajorAxis(Eccentricity, settings.pericenterRadius);
             SemiMinorAxis = GetSemiMinorAxis(Eccentricity, SemiMajorAxis);
-            Period = GetPeriod(SemiMajorAxis, OrbitCalculationService.G, _other.Mass + _self.Mass);
+            Period = GetPeriod(SemiMajorAxis, MassUtility.G, _other.Mass + _self.Mass);
             IsZero = Period is 0 or double.NaN;
             if (!IsZero)
             {
@@ -74,11 +74,11 @@ namespace Orbital.Model.TrajectorySystem
             }
         }
 
-        private void CalculateForDoubleSystem(ref CelestialSettings settings)
+        private void CalculateForDoubleSystem(ref TrajectorySettings settings)
         {
             Period = settings.period;
             PericenterRadius = settings.pericenterRadius;
-            SemiMajorAxis = GetSemiMajorAxis(_other.Mass, Period, OrbitCalculationService.G);
+            SemiMajorAxis = GetSemiMajorAxis(_other.Mass, Period, MassUtility.G);
             Eccentricity = GetEccentricity(PericenterRadius, SemiMajorAxis);
             SemiMinorAxis = GetSemiMinorAxis(Eccentricity, SemiMajorAxis);
             IsZero = Period is 0 or double.NaN;

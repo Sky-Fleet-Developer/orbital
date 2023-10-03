@@ -10,7 +10,7 @@ namespace Orbital.Model.Services
         [Inject] private LoopEmitterService _loopEmitterService;
         //private Queue<Component> _componentsToCallStart = new();
 
-        private void Start()
+        /*private void Start()
         {
             _loopEmitterService.BeforeUpdateHandler += OnBeforeUpdate;
         }
@@ -22,12 +22,12 @@ namespace Orbital.Model.Services
 
         private void OnBeforeUpdate()
         {
-            /*while (_componentsToCallStart.Count > 0)
+            while (_componentsToCallStart.Count > 0)
             {
                 Component component = _componentsToCallStart.Dequeue();
                 component.Start();
-            }*/
-        }
+            }
+        }*/
 
         public void RegisterComponent<T>(T component) where T : Component
         {
