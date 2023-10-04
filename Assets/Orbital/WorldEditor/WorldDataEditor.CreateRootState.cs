@@ -5,7 +5,7 @@ namespace Orbital.WorldEditor
 {
     public partial class WorldDataEditor
     {
-        private class CreateRootState : WorldDataState, INestedStateUser<IMass>
+        private class CreateRootState : WorldDataState, INestedStateUser<IMassSystem>
         {
             public CreateRootState(WorldDataEditor master) : base(master)
             {
@@ -23,7 +23,7 @@ namespace Orbital.WorldEditor
             {
             }
 
-            public void NestedStateCallback(IMass value, bool final)
+            public void NestedStateCallback(IMassSystem value, bool final)
             {
                 if (value == null)
                 {
@@ -31,7 +31,7 @@ namespace Orbital.WorldEditor
                     return;
                 }
 
-                Master._container.Root = value;
+                Master._tree.Root = value;
                 Master.ApplyChanges(final);
                 if (final)
                 {

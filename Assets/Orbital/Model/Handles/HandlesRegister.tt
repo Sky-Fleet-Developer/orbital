@@ -1,0 +1,37 @@
+﻿<#@ template language="C#" #>
+<#@ import namespace="System" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ assembly name="System" #>
+<#@ import namespace="System.Reflection" #>
+<#
+    List<string> registeredTypes = new List<string>
+    {
+        "IUpdateHandler",
+        "IFixedUpdateHandler",
+        "IUpdateByFrequencyHandler",
+        "IObserverTriggerHandler",
+    };
+#>
+using Zenject;
+
+namespace Orbital.Model.Handles
+{
+    public static class HandlesRegister
+    {
+        public static void RegisterHandlers<T>(T target, DiContainer container)
+        {<#foreach (string type in registeredTypes){#> 
+            if(target is <#= type #> <#= type.ToLower() #>)
+            {
+                HandlerCollection.GetOrCreateCollection<<#= type #>>(container).AddItem(<#= type.ToLower() #>);
+            }
+<#}#>        }
+        public static void UnregisterHandlers<T>(T target, DiContainer container)
+        {<#foreach (string type in registeredTypes){#> 
+            if(target is <#= type #> <#= type.ToLower() #>)
+            {
+                HandlerCollection.GetOrCreateCollection<<#= type #>>(container).RemoveItem(<#= type.ToLower() #>);
+            }
+<#}#>        }
+    }
+}

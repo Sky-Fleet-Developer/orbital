@@ -12,14 +12,14 @@ namespace Orbital.Installers
         //[SerializeField] private RigidBodySystemComponent 
         public override void InstallBindings()
         {
-            Container.BindInstance(GetComponentInChildren<LoopEmitterService>()).AsSingle();
-            Container.BindInstance(GetComponentInChildren<ComponentsRegistrationService>()).AsSingle();
-            Container.BindInstance(GetComponentInChildren<TimeService>()).AsSingle();
             World world = Instantiate(worldPrefab);
             Container.Bind<World>().FromInstance(world).AsSingle();
+            Container.BindInstance(GetComponentInChildren<EventLoopEmitterService>()).AsSingle();
+            Container.BindInstance(GetComponentInChildren<ComponentsRegistrationService>()).AsSingle();
+            Container.BindInstance(GetComponentInChildren<TimeService>()).AsSingle();
+            Container.BindInstance(GetComponentInChildren<ObserverService>()).AsSingle();
             Container.InjectGameObject(world.gameObject);
             world.Load();
-            world.Register();
         }
     }
 }

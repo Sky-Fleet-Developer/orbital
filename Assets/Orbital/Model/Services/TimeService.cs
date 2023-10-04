@@ -9,11 +9,12 @@ namespace Orbital.Model.Services
         private double _worldTime;
         
         [Inject]
-        private void Inject(LoopEmitterService loopEmitterService)
+        private void Inject(DiContainer container)
         {
-            loopEmitterService.Add(this);
+            HandlerCollection.GetOrCreateCollection<IFixedUpdateHandler>(container).AddItem(this);
         }
-        
+
+        int IOrderHolder.Order => -1;
         void IFixedUpdateHandler.FixedUpdate()
         {
             _worldTime += Time.deltaTime;

@@ -10,13 +10,13 @@ using Zenject;
 namespace Orbital.Model.SystemComponents
 {
     [ExecuteInEditMode]
-    public class CelestialSystemComponent : SystemComponent<CelestialVariables, CelestialSettings>, IFixedUpdateHandler
+    public class MassSystemComponent : SystemComponent<CelestialVariables, CelestialSettings>, IFixedUpdateHandler
     {
         private CelestialSettings _settings;
         [ShowInInspector] private CelestialVariables _variables;
         [Inject] private World _world;
         [Inject] private TimeService _timeService;
-        private IMass _mass;
+        private IMassSystem _massSystem;
         private RelativeTrajectory _trajectory;
 
         public override CelestialSettings Settings
@@ -31,15 +31,15 @@ namespace Orbital.Model.SystemComponents
             set => _variables = value;
         }
 
-        public void Setup(IMass mass, RelativeTrajectory trajectory)
+        public void Setup(IMassSystem massSystem, RelativeTrajectory trajectory)
         {
-            _mass = mass;
+            _massSystem = massSystem;
             _trajectory = trajectory;
         }
 
         void IFixedUpdateHandler.FixedUpdate()
         {
-            _variables.localPosition = _trajectory.GetPosition(_timeService.WorldTime);
+            _variables.localPosition = _trajectory?.GetPosition(_timeService.WorldTime) ?? DVector3.Zero;
         }
     }
 

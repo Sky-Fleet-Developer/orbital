@@ -7,10 +7,10 @@ namespace Orbital.WorldEditor
     {
         private class SelectNewChildState : WorldDataState
         {
-            private INestedStateUser<IMass> _lastState;
+            private INestedStateUser<IMassSystem> _lastState;
             private PossibleMass _massMask;
 
-            public SelectNewChildState(INestedStateUser<IMass> lastState, PossibleMass mask, WorldDataEditor master) : base(master)
+            public SelectNewChildState(INestedStateUser<IMassSystem> lastState, PossibleMass mask, WorldDataEditor master) : base(master)
             {
                 _lastState = lastState;
                 _massMask = mask;

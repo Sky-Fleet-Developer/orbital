@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Orbital.Model.Handles;
 using UnityEngine;
 using Zenject;
 
@@ -7,7 +8,7 @@ namespace Orbital.Model.Services
 {
     public class ComponentsRegistrationService : MonoBehaviour
     {
-        [Inject] private LoopEmitterService _loopEmitterService;
+        [Inject] private DiContainer _container;
         //private Queue<Component> _componentsToCallStart = new();
 
         /*private void Start()
@@ -31,13 +32,12 @@ namespace Orbital.Model.Services
 
         public void RegisterComponent<T>(T component) where T : Component
         {
-            _loopEmitterService.Add(component);
-            //_componentsToCallStart.Enqueue(component);
+            HandlesRegister.RegisterHandlers(component, _container);
         }
 
         public void UnregisterComponent<T>(T component) where T : Component
         {
-            _loopEmitterService.Remove(component);
+            HandlesRegister.UnregisterHandlers(component, _container);
         }
     }
 }

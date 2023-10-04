@@ -10,7 +10,8 @@ namespace Orbital.Model.TrajectorySystem
     public enum SystemType
     {
         SingleCenter = 0,
-        DoubleSystem = 1
+        DoubleSystem = 1,
+        RigidBody = 2
     }
     
     public class RelativeTrajectory
@@ -19,7 +20,7 @@ namespace Orbital.Model.TrajectorySystem
         public const double Rad2Deg = 57.29578;
         
         private IMass _other;
-        private IMass _self;
+        private ITrajectorySettingsHolder _self;
         private DVector3[] _path;
         public double Eccentricity { get; private set; }
         public double SemiMajorAxis { get; private set; }
@@ -35,7 +36,7 @@ namespace Orbital.Model.TrajectorySystem
         private DMatrix4x4 _rotationMatrix;
         private SystemType _systemType;
 
-        public RelativeTrajectory(IMass self, IMass other, SystemType systemType)
+        public RelativeTrajectory(ITrajectorySettingsHolder self, IMass other, SystemType systemType)
         {
             _self = self;
             _other = other;
@@ -51,7 +52,7 @@ namespace Orbital.Model.TrajectorySystem
             TimeShift = settings.timeShift * 0.01f;
             switch (_systemType)
             {
-                case SystemType.SingleCenter:
+                case SystemType.SingleCenter: case SystemType.RigidBody:
                     CalculateForSingleCenter(ref settings);
                     break;
                 case SystemType.DoubleSystem:
@@ -59,6 +60,7 @@ namespace Orbital.Model.TrajectorySystem
                     break;
             }
         }
+        
 
         private void CalculateForSingleCenter(ref TrajectorySettings settings)
         {
@@ -66,7 +68,7 @@ namespace Orbital.Model.TrajectorySystem
             Eccentricity = GetEccentricity(settings.pericenterSpeed, settings.pericenterRadius, _other.Mass, MassUtility.G);
             SemiMajorAxis = GetSemiMajorAxis(Eccentricity, settings.pericenterRadius);
             SemiMinorAxis = GetSemiMinorAxis(Eccentricity, SemiMajorAxis);
-            Period = GetPeriod(SemiMajorAxis, MassUtility.G, _other.Mass + _self.Mass);
+            Period = GetPeriod(SemiMajorAxis, MassUtility.G, _other.Mass);
             IsZero = Period is 0 or double.NaN;
             if (!IsZero)
             {

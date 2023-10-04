@@ -8,7 +8,7 @@ using UnityEngine;
 namespace Orbital.Model.TrajectorySystem
 {
     [Serializable]
-    public class DoubleSystemBranch : IMass
+    public class DoubleSystemBranch : IMassSystem
     {
         public double Mass => (ChildA?.Mass ?? 0) + (ChildB?.Mass ?? 0);
         [SerializeField, JsonProperty] private TrajectorySettings settings;
@@ -54,19 +54,19 @@ namespace Orbital.Model.TrajectorySystem
             ChildA = null;
             ChildB = null;
         }
-        public DoubleSystemBranch(IMass childA, IMass childB)
+        public DoubleSystemBranch(IMassSystem childA, IMassSystem childB)
         {
             ChildA = childA;
             ChildB = childB;
         }
 
-        public IEnumerable<IMass> GetContent()
+        public IEnumerable<IMassSystem> GetContent()
         {
             yield return ChildA;
             yield return ChildB;
         }
 
-        [JsonProperty] public IMass ChildA;
-        [JsonProperty] public IMass ChildB;
+        [JsonProperty] public IMassSystem ChildA;
+        [JsonProperty] public IMassSystem ChildB;
     }
 }

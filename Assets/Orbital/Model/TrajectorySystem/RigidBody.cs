@@ -3,7 +3,7 @@ using Orbital.Model.SystemComponents;
 
 namespace Orbital.Model.TrajectorySystem
 {
-    public class RigidBody : IMass
+    /*public class RigidBody
     {
         public double Mass => _settings.mass;
         public TrajectorySettings Settings
@@ -17,5 +17,5 @@ namespace Orbital.Model.TrajectorySystem
         {
             yield break;
         }
-    }
+    }*/
 }

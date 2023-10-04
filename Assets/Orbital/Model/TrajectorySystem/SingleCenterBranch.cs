@@ -9,7 +9,7 @@ using UnityEngine;
 namespace Orbital.Model.TrajectorySystem
 {
     [Serializable]
-    public class SingleCenterBranch : IMass
+    public class SingleCenterBranch : IMassSystem
     {
         public double Mass => (Central?.Mass ?? 0);
         [SerializeField, JsonProperty] private TrajectorySettings settings;
@@ -21,24 +21,24 @@ namespace Orbital.Model.TrajectorySystem
         public SingleCenterBranch()
         {
             Central = null;
-            Children = new List<IMass>();
+            Children = new List<IMassSystem>();
         }
-        public SingleCenterBranch(IMass central, List<IMass> children)
+        public SingleCenterBranch(IMassSystem central, List<IMassSystem> children)
         {
             Central = central;
             Children = children;
         }
 
-        public IEnumerable<IMass> GetContent()
+        public IEnumerable<IMassSystem> GetContent()
         {
             yield return Central;
-            foreach (IMass child in Children)
+            foreach (IMassSystem child in Children)
             {
                 yield return child;
             }
         }
 
-        [JsonProperty] public IMass Central;
-        [JsonProperty] public List<IMass> Children;
+        [JsonProperty] public IMassSystem Central;
+        [JsonProperty] public List<IMassSystem> Children;
     }
 }

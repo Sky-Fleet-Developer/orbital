@@ -8,7 +8,7 @@ using UnityEngine;
 namespace Orbital.Model.TrajectorySystem
 {
     [Serializable]
-    public class CelestialBody : IMass
+    public class CelestialBody : IMassSystem
     {
         public double Mass => settings.mass;
         [SerializeField, JsonProperty] private TrajectorySettings settings;
@@ -22,7 +22,7 @@ namespace Orbital.Model.TrajectorySystem
         }
 
 
-        public IEnumerable<IMass> GetContent()
+        public IEnumerable<IMassSystem> GetContent()
         {
             yield break;
         }

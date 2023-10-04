@@ -6,6 +6,7 @@ using Ara3D;
 using Core.Patterns.State;
 using Orbital.Model;
 using Orbital.Model.Serialization;
+using Orbital.Model.Services;
 using Orbital.Model.SystemComponents;
 using Orbital.Model.TrajectorySystem;
 using UnityEditor;
@@ -19,18 +20,19 @@ namespace Orbital.WorldEditor
     {
         private const int TabulationOffset = 70;
         private const int DefaultButtonSize = 120;
-        private SerializedObject _serializedObject;
 
         // ReSharper disable once InconsistentNaming
         private SerializedProperty serializedTree;
-        private TreeContainer _container;
-        private readonly Dictionary<IMass, RelativeTrajectory> _trajectories = new();
+        private TreeContainer _tree;
+        private Transform _tRoot;
+        private readonly Dictionary<IMassSystem, RelativeTrajectory> _trajectories = new();
         private readonly ISerializer _serializer = new JsonPerformance();
 
-        private IMass _currentEdit;
-        private IMass _currentParent;
-        
-        private Func<float, double> PreviewScaleTransform = v => 1 / Mathf.Lerp(4488000000, 448800000000, v);
+        private IMassSystem _currentEdit;
+        private IMassSystem _currentParent;
+        private TimeService _timeService;
+
+        private Func<float, double> PreviewScaleTransform = v => 1 / Mathf.Lerp(448800000, 448800000000, v);
         private float PreviewScaleValue
         {
             get => _previewScaleValue;
@@ -56,8 +58,8 @@ namespace Orbital.WorldEditor
             Undo.RecordObject(target, "Change tree");
             if (serialize)
             {
-                serializedTree.stringValue = _serializer.Serialize(_container);
-                _serializedObject.ApplyModifiedProperties();
+                serializedTree.stringValue = _serializer.Serialize(_tree);
+                serializedObject.ApplyModifiedProperties();
             }
             RefreshTrajectories();
             EditorUtility.SetDirty(target);
@@ -65,18 +67,20 @@ namespace Orbital.WorldEditor
 
         private void OnEnable()
         {
-            _serializedObject = new SerializedObject(target);
-            serializedTree = _serializedObject.FindProperty("tree").FindPropertyRelative("serializedValue");
-            _container = _serializer.Deserialize<TreeContainer>(serializedTree.stringValue);
+            serializedTree = serializedObject.FindProperty("tree").FindPropertyRelative("serializedValue");
+            _tRoot = ((MonoBehaviour) target).transform;
+            _tree = _serializer.Deserialize<TreeContainer>(serializedTree.stringValue);
+            _tree.CalculateForRoot(_tRoot);
+            _timeService = FindObjectOfType<TimeService>();
             PreviewScaleValue = PlayerPrefs.GetFloat(PreviewScaleKey, 0);
-            if (_container == null)
+            if (_tree == null)
             {
-                _container = new TreeContainer();
+                _tree = new TreeContainer();
                 _currentState = new CreateRootState(this);
             }
             else
             {
-                if (_container.Root == null)
+                if (_tree.Root == null)
                 {
                     _currentState = new CreateRootState(this);
                 }
@@ -90,53 +94,14 @@ namespace Orbital.WorldEditor
         
         private void RefreshTrajectories()
         {
-            _container.Root.FillTrajectoriesRecursively(_trajectories);
+            _tree.Root.FillTrajectoriesRecursively(_trajectories);
         }
 
         private void OnSceneGUI()
         {
             _currentState.OnSceneGui();
-            if (_container.Root != null)
-            {
-                foreach (IMass mass in _container.Root.GetContent())
-                {
-                    if(mass == null) continue;
-                    DrawTrajectoriesRecursively(mass, DVector3.Zero);
-                }
-            }
-        }
-
-        private void DrawTrajectoriesRecursively(IMass mass, DVector3 origin)
-        {
-            if(mass == null) return;
-            if(!_trajectories.TryGetValue(mass, out RelativeTrajectory trajectory)) return;
-            
-            DrawTrajectory(trajectory, mass is CelestialBody, origin, out DVector3 output);
-            foreach (IMass child in mass.GetContent())
-            {
-                DrawTrajectoriesRecursively(child, output);
-            }
-        }
-
-        private void DrawTrajectory(RelativeTrajectory trajectory, bool drawSphere, DVector3 inputOrigin, out DVector3 outputOrigin)
-        {
-            DVector3 localPosition = trajectory.GetPosition(_time);
-            outputOrigin = localPosition + inputOrigin;
-            float scale = (float)PreviewScaleTransform(PreviewScaleValue);
-            Vector3 sOutput = (Vector3) (outputOrigin) * scale;
-            Vector3 sInput = (Vector3) (inputOrigin) * scale;
-            
-            Quaternion handleRotationCorrection = Quaternion.Euler(-90, 0, 0);
-            Quaternion trajectoryRotation = Quaternion.Euler(Mathf.Rad2Deg * (float) trajectory.LatitudeShift, Mathf.Rad2Deg * (float) trajectory.LongitudeShift, Mathf.Rad2Deg * (float) trajectory.Inclination);
-           
-            Matrix4x4 figureMatrix = Matrix4x4.TRS(new Vector3(0, 0, (float)((trajectory.PericenterRadius - trajectory.SemiMajorAxis) * scale)), handleRotationCorrection, new Vector3((float)trajectory.SemiMinorAxis, (float)trajectory.SemiMajorAxis, 0) * scale);
-            Matrix4x4 worldMatrix = Matrix4x4.TRS(sInput, trajectoryRotation, Vector3.one);
-            
-            Handles.matrix = worldMatrix * figureMatrix;
-            Handles.CircleHandleCap(-1, Vector3.zero, Quaternion.identity, 1f, EventType.Repaint);
-            Handles.matrix = Matrix4x4.identity;
-            Handles.DrawDottedLine(sOutput, sInput, 10);
-            if(drawSphere) Handles.SphereHandleCap(-1, sOutput, Quaternion.identity, 0.1f * HandleUtility.GetHandleSize(sOutput), EventType.Repaint);
+            double time = _timeService != null ? _timeService.WorldTime : 0;
+            _tree.DrawTrajectories(time, (float)PreviewScaleTransform(PreviewScaleValue));
         }
 
         public override void OnInspectorGUI()
@@ -146,7 +111,7 @@ namespace Orbital.WorldEditor
             if (EditorGUI.EndChangeCheck())
             {
                 Undo.RecordObject(target, "Change tree");
-                _serializedObject.ApplyModifiedProperties();
+                serializedObject.ApplyModifiedProperties();
                 RefreshTrajectories();
                 EditorUtility.SetDirty(target);
             }
@@ -161,7 +126,7 @@ namespace Orbital.WorldEditor
 
         private void RefreshHierarchy()
         {
-            (target as World)!.RefreshHierarchy();
+            _tree.CalculateForRoot(_tRoot);
         }
 
         private static void BeginTab()

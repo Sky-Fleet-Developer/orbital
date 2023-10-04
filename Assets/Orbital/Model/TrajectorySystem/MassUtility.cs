@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Orbital.Model.Utilities;
 using UnityEngine;
 
 namespace Orbital.Model.TrajectorySystem
@@ -7,23 +8,22 @@ namespace Orbital.Model.TrajectorySystem
     {
         public const double G = 6.67430e-11;
         
-        public static Dictionary<IMass, Transform> GetMap(this IMass mRoot, Transform tRoot)
+        public static Dictionary<IMassSystem, Transform> GetMap(this IMassSystem mRoot, Transform tRoot)
         {
-            Dictionary<IMass, Transform> result = new();
+            Dictionary<IMassSystem, Transform> result = new();
             result.Add(mRoot, tRoot);
             AddMapRecursively(result, mRoot, tRoot);
             return result;
         }
 
-        private static void AddMapRecursively(Dictionary<IMass, Transform> dictionary, IMass mRoot, Transform tRoot)
+        private static void AddMapRecursively(Dictionary<IMassSystem, Transform> dictionary, IMassSystem mRoot, Transform tRoot)
         {
             int i = -1;
-            foreach (IMass mass in mRoot.GetContent())
+            foreach (IMassSystem mass in mRoot.GetContent())
             {
                 i++;
                 if (mass == null) continue;
-                string wantedName = $"Child[{i}]";
-                Transform tChild = tRoot.Find(wantedName);
+                Transform tChild = tRoot.FindRegex($".*\\[{i}\\]$");
                 if (tChild != null)
                 {
                     dictionary.Add(mass, tChild);
@@ -32,13 +32,13 @@ namespace Orbital.Model.TrajectorySystem
             }
         }
 
-        public static IEnumerable<IMass> GetRecursively(this IMass value)
+        public static IEnumerable<IMassSystem> GetRecursively(this IMassSystem value)
         {
-            foreach (IMass content in value.GetContent())
+            foreach (IMassSystem content in value.GetContent())
             {
                 yield return content;
                 if (content == null) continue;
-                foreach (IMass mass in content.GetRecursively())
+                foreach (IMassSystem mass in content.GetRecursively())
                 {
                     yield return mass;
                 }
@@ -52,9 +52,9 @@ namespace Orbital.Model.TrajectorySystem
             return result;
         }*/
 
-        public static void FillTrajectoriesRecursively(this IMass mass, Dictionary<IMass, RelativeTrajectory> container)
+        public static void FillTrajectoriesRecursively(this IMassSystem massSystem, Dictionary<IMassSystem, RelativeTrajectory> container)
         {
-            void SetupElement(IMass child, IMass other, SystemType type)
+            void SetupElement(IMassSystem child, IMassSystem other, SystemType type)
             {
                 if (child == null) return;
                 if (other == null) return;
@@ -68,16 +68,16 @@ namespace Orbital.Model.TrajectorySystem
                 FillTrajectoriesRecursively(child, container);
             }
 
-            if (mass is DoubleSystemBranch doubleSystemBranch)
+            if (massSystem is DoubleSystemBranch doubleSystemBranch)
             {
                 SetupElement(doubleSystemBranch.ChildA, doubleSystemBranch.ChildB, SystemType.DoubleSystem);
                 SetupElement(doubleSystemBranch.ChildB, doubleSystemBranch.ChildA, SystemType.DoubleSystem);
             }
             else
             {
-                foreach (IMass child in mass.GetContent())
+                foreach (IMassSystem child in massSystem.GetContent())
                 {
-                    SetupElement(child, mass, SystemType.SingleCenter);
+                    SetupElement(child, massSystem, SystemType.SingleCenter);
                 }
             }
         }

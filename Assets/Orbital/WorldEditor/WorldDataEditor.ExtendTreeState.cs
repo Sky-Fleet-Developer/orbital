@@ -8,13 +8,13 @@ namespace Orbital.WorldEditor
 {
     public partial class WorldDataEditor
     {
-        private class ExtendTreeState : WorldDataState, INestedStateUser<IMass>, INestedStateUser<TrajectorySettings?>, INestedStateUser<DoubleSystemTrajectorySettings?>
+        private class ExtendTreeState : WorldDataState, INestedStateUser<IMassSystem>, INestedStateUser<TrajectorySettings?>, INestedStateUser<DoubleSystemTrajectorySettings?>
         {
-            private Action<IMass> _massAddressHandler;
+            private Action<IMassSystem> _massAddressHandler;
             private DoubleSystemBranch _doubleSettingsAddress;
-            private IMass _settingsAddress;
-            private IMass _parentCache;
-            private IMass _editCache;
+            private IMassSystem _settingsAddress;
+            private IMassSystem _parentCache;
+            private IMassSystem _editCache;
 
             public ExtendTreeState(WorldDataEditor master) : base(master)
             {
@@ -22,14 +22,14 @@ namespace Orbital.WorldEditor
 
             public override void Update()
             {
-                DrawIMass(Master._container.Root);
+                DrawIMass(Master._tree.Root);
             }
 
-            private void DrawIMass(IMass mass)
+            private void DrawIMass(IMassSystem massSystem)
             {
-                _parentCache = mass;
+                _parentCache = massSystem;
 
-                switch (mass)
+                switch (massSystem)
                 {
                     case SingleCenterBranch singleBranch:
                         GUILayout.Box("Planet with satellites:");
@@ -75,27 +75,27 @@ namespace Orbital.WorldEditor
                 }
             }
 
-            private void Address(ref IMass lastMass, IMass newMass)
+            private void Address(ref IMassSystem lastMassSystem, IMassSystem newMassSystem)
             {
-                if (lastMass != null)
+                if (lastMassSystem != null)
                 {
-                    newMass.Settings = lastMass.Settings;
+                    newMassSystem.Settings = lastMassSystem.Settings;
                 }
-                lastMass = newMass;
+                lastMassSystem = newMassSystem;
             }
-            private void AddressIndex(ref List<IMass> lastMass, int index, IMass newMass)
+            private void AddressIndex(ref List<IMassSystem> lastMass, int index, IMassSystem newMassSystem)
             {
                 if (lastMass[index] != null)
                 {
-                    newMass.Settings = lastMass[index].Settings;
+                    newMassSystem.Settings = lastMass[index].Settings;
                 }
 
-                lastMass[index] = newMass;
+                lastMass[index] = newMassSystem;
             }
 
-            private bool DrawProperty(string header, PossibleMass mask, IMass value)
+            private bool DrawProperty(string header, PossibleMass mask, IMassSystem value)
             {
-                IMass parent = _parentCache;
+                IMassSystem parent = _parentCache;
                 _editCache = value;
 
                 if (value == null)
@@ -147,7 +147,7 @@ namespace Orbital.WorldEditor
             {
             }
 
-            public void NestedStateCallback(IMass value, bool final)
+            public void NestedStateCallback(IMassSystem value, bool final)
             {
                 if (value != null)
                 {
