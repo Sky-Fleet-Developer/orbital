@@ -6,7 +6,6 @@ using Ara3D;
 using Core.Patterns.State;
 using Orbital.Model;
 using Orbital.Model.Serialization;
-using Orbital.Model.Services;
 using Orbital.Model.SystemComponents;
 using Orbital.Model.TrajectorySystem;
 using UnityEditor;
@@ -30,7 +29,6 @@ namespace Orbital.WorldEditor
 
         private IMassSystem _currentEdit;
         private IMassSystem _currentParent;
-        private TimeService _timeService;
 
         private Func<float, double> PreviewScaleTransform = v => 1 / Mathf.Lerp(448800000, 448800000000, v);
         private float PreviewScaleValue
@@ -71,7 +69,6 @@ namespace Orbital.WorldEditor
             _tRoot = ((MonoBehaviour) target).transform;
             _tree = _serializer.Deserialize<TreeContainer>(serializedTree.stringValue);
             _tree.CalculateForRoot(_tRoot);
-            _timeService = FindObjectOfType<TimeService>();
             PreviewScaleValue = PlayerPrefs.GetFloat(PreviewScaleKey, 0);
             if (_tree == null)
             {
@@ -100,8 +97,7 @@ namespace Orbital.WorldEditor
         private void OnSceneGUI()
         {
             _currentState.OnSceneGui();
-            double time = _timeService != null ? _timeService.WorldTime : 0;
-            _tree.DrawTrajectories(time, (float)PreviewScaleTransform(PreviewScaleValue));
+            _tree.DrawTrajectories(TimeService.WorldTime, (float)PreviewScaleTransform(PreviewScaleValue));
         }
 
         public override void OnInspectorGUI()

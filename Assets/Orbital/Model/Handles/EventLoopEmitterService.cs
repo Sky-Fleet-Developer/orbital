@@ -1,10 +1,9 @@
 using System;
 using System.Collections.Generic;
-using Orbital.Model.Handles;
 using UnityEngine;
 using Zenject;
 
-namespace Orbital.Model.Services
+namespace Orbital.Model.Handles
 {
     public class EventLoopEmitterService : MonoBehaviour
     {

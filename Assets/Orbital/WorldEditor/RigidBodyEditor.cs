@@ -2,7 +2,6 @@ using System;
 using Ara3D;
 using Orbital.Model;
 using Orbital.Model.Serialization;
-using Orbital.Model.Services;
 using Orbital.Model.SystemComponents;
 using Orbital.Model.TrajectorySystem;
 using UnityEditor;
@@ -18,6 +17,7 @@ namespace Orbital.WorldEditor
 
         // ReSharper disable once InconsistentNaming
         private SerializedProperty variables;
+        private SerializedProperty settings;
         private GameObject _targetGameObject;
         private RigidBodySystemComponent _rigidBody;
         private MassSystemComponent _parent;
@@ -25,7 +25,6 @@ namespace Orbital.WorldEditor
         private TreeContainer _tree;
         private Func<float, double> PreviewScaleTransform = v => 1 / Mathf.Lerp(448800000, 448800000000, v);
         private readonly ISerializer _serializer = new JsonPerformance();
-        private TimeService _timeService;
         private float PreviewScaleValue
         {
             get => _previewScaleValue;
@@ -42,11 +41,11 @@ namespace Orbital.WorldEditor
         private void OnEnable()
         {
             variables = serializedObject.FindProperty(nameof(variables));
+            settings = serializedObject.FindProperty(nameof(settings));
             _targetGameObject = ((MonoBehaviour) target).gameObject;
             _rigidBody = (RigidBodySystemComponent) target;
             World world = _targetGameObject.GetComponentInParent<World>();
             if(!world) return;
-            _timeService = FindObjectOfType<TimeService>();
             string treeString = new SerializedObject(world).FindProperty("tree").FindPropertyRelative("serializedValue").stringValue;
             _tree = _serializer.Deserialize<TreeContainer>(treeString);
             _tree.CalculateForRoot(world.transform);
@@ -59,6 +58,7 @@ namespace Orbital.WorldEditor
         {
             EditorGUI.BeginChangeCheck();
             EditorGUILayout.PropertyField(variables);
+            EditorGUILayout.PropertyField(settings);
             GUILayout.Box($"Eccentricity: {_trajectory.Eccentricity}");
             GUILayout.Box($"Semi major axis: {_trajectory.SemiMajorAxis}");
             if (EditorGUI.EndChangeCheck())
@@ -70,7 +70,7 @@ namespace Orbital.WorldEditor
 
         private void OnSceneGUI()
         {
-            double time = _timeService != null ? _timeService.WorldTime : 0;
+            double time = TimeService.WorldTime;
             float scale = (float) PreviewScaleTransform(PreviewScaleValue);
             _tree.DrawTrajectories(time, scale);
             DVector3 parentPosition = _tree.GetGlobalPosition(_parent, time);

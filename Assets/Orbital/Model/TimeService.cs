@@ -2,11 +2,11 @@ using Orbital.Model.Handles;
 using UnityEngine;
 using Zenject;
 
-namespace Orbital.Model.Services
+namespace Orbital.Model
 {
     public class TimeService : MonoBehaviour, IFixedUpdateHandler
     {
-        private double _worldTime;
+        private static double _worldTime;
         
         [Inject]
         private void Inject(DiContainer container)
@@ -20,6 +20,6 @@ namespace Orbital.Model.Services
             _worldTime += Time.deltaTime;
         }
 
-        public double WorldTime => _worldTime;
+        public static double WorldTime => _worldTime;
     }
 }

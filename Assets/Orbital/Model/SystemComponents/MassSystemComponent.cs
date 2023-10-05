@@ -1,7 +1,6 @@
 using System;
 using Ara3D;
 using Orbital.Model.Handles;
-using Orbital.Model.Services;
 using Orbital.Model.TrajectorySystem;
 using Sirenix.OdinInspector;
 using UnityEngine;
@@ -15,7 +14,6 @@ namespace Orbital.Model.SystemComponents
         private CelestialSettings _settings;
         [ShowInInspector] private CelestialVariables _variables;
         [Inject] private World _world;
-        [Inject] private TimeService _timeService;
         private IMassSystem _massSystem;
         private RelativeTrajectory _trajectory;
 
@@ -39,7 +37,7 @@ namespace Orbital.Model.SystemComponents
 
         void IFixedUpdateHandler.FixedUpdate()
         {
-            _variables.localPosition = _trajectory?.GetPosition(_timeService.WorldTime) ?? DVector3.Zero;
+            _variables.localPosition = _trajectory?.GetPosition(TimeService.WorldTime) ?? DVector3.Zero;
         }
     }
 

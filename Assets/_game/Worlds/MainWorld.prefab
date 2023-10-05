@@ -1,5 +1,62 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &581912492085895927
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6476459339315186796}
+  - component: {fileID: 24630719230929061}
+  m_Layer: 0
+  m_Name: RigidBody (1)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6476459339315186796
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 581912492085895927}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 3974628227302911881}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &24630719230929061
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 581912492085895927}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a99128bf0c41c7548870678e449e7d38, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  variables:
+    trajectorySettings:
+      mass: 500
+      pericenterSpeed: 7630
+      pericenterRadius: 6878000
+      latitudeShift: 0
+      longitudeShift: 0
+      inclination: 0
+      timeShift: -0.001
+      period: 0
+  settings:
+    dynamicPresentation: {fileID: 1638438405622567774, guid: 28883b6e7d549e5418a1e5aa2099706b,
+      type: 3}
 --- !u!1 &820020628864560557
 GameObject:
   m_ObjectHideFlags: 0
@@ -44,11 +101,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6383b9e5f1869a74b9a91387785d2a61, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  variables:
-    relativePosition:
-      x: 0
-      y: 0
-      z: 0
 --- !u!1 &2030127677849770058
 GameObject:
   m_ObjectHideFlags: 0
@@ -223,6 +275,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 2390475931180044394}
+  - {fileID: 6476459339315186796}
   m_Father: {fileID: 9165454443059645331}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -385,13 +438,9 @@ MonoBehaviour:
       inclination: 0
       timeShift: 0
       period: 0
-    simulationVariables:
-      velocity: {x: 0, y: 0, z: 0}
-      position: {x: 0, y: 0, z: 0}
-    localPosition:
-      x: 0
-      y: 0
-      z: 0
+  settings:
+    dynamicPresentation: {fileID: 1638438405622567774, guid: 28883b6e7d549e5418a1e5aa2099706b,
+      type: 3}
 --- !u!1 &8441030398855462866
 GameObject:
   m_ObjectHideFlags: 0

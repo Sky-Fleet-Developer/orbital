@@ -1,7 +1,6 @@
 using System;
 using Ara3D;
 using Ara3D.Double;
-using Orbital.Model.Services;
 using Orbital.Model.SystemComponents;
 using UnityEngine;
 
@@ -21,7 +20,6 @@ namespace Orbital.Model.TrajectorySystem
         
         private IMass _other;
         private ITrajectorySettingsHolder _self;
-        private DVector3[] _path;
         public double Eccentricity { get; private set; }
         public double SemiMajorAxis { get; private set; }
         public double SemiMinorAxis { get; private set; }
@@ -41,6 +39,7 @@ namespace Orbital.Model.TrajectorySystem
             _self = self;
             _other = other;
             _systemType = systemType;
+            _rotationMatrix = DMatrix4x4.Identity;
         }
         
         public void Calculate()
@@ -93,7 +92,6 @@ namespace Orbital.Model.TrajectorySystem
 
         public DVector3 GetPosition(double t)
         {
-            if(IsZero) return DVector3.Zero;
             return TransformByShift(GetFlatPosition(t));
         }
 
@@ -113,6 +111,36 @@ namespace Orbital.Model.TrajectorySystem
             double z = SemiMajorAxis * (Math.Cos(eccentricAnomaly) - Eccentricity);
             double x = SemiMinorAxis * Math.Sin(eccentricAnomaly);
             return new DVector3((float)x, 0, (float)z);
+        }
+        
+        public DVector3 GetVelocity(double t)
+        {
+            return TransformByShift(GetFlatVelocity(t));
+        }
+        
+        public DVector3 GetFlatVelocity(double t)
+        {
+            if (IsZero)
+            {
+                return new DVector3(0, 0, 0);
+            }
+            double meanAnomaly = 2 * Math.PI * (t / Period + TimeShift);
+            double eccentricAnomaly = CalculateEccentricAnomaly(meanAnomaly, Eccentricity);
+
+            // Рассчитываем расстояние от спутника до центрального тела
+            double r = SemiMajorAxis * (1 - Eccentricity * Math.Cos(eccentricAnomaly));
+
+            // Рассчитываем скорость
+            double velocity = Math.Sqrt(MassUtility.G * _other.Mass / r);
+
+            // Рассчитываем угловую скорость
+            double angularVelocity = velocity / r;
+
+            // Рассчитываем компоненты скорости
+            double vx = -SemiMajorAxis * angularVelocity * Math.Sin(eccentricAnomaly);
+            double vz = SemiMinorAxis * angularVelocity * Math.Cos(eccentricAnomaly);
+
+            return new DVector3((float)vx, 0, (float)vz);
         }
 
         public DVector3 TransformByShift(DVector3 vector)
@@ -183,6 +211,11 @@ namespace Orbital.Model.TrajectorySystem
             }
 
             return value;
+        }
+
+        public RelativeTrajectory Clone()
+        {
+            return this.MemberwiseClone() as RelativeTrajectory;
         }
     }
 }

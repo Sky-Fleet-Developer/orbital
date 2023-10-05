@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using Ara3D;
-using Orbital.Model.Services;
 using Orbital.Model.SystemComponents;
 using Orbital.Model.TrajectorySystem;
 using UnityEngine;
@@ -12,7 +11,6 @@ namespace Orbital.Model
     {
         [SerializeField] private TreeContainer tree;
         [Inject] private DiContainer _container;
-        [Inject] private TimeService _timeService;
         
         public void Load()
         {
@@ -39,12 +37,12 @@ namespace Orbital.Model
         
         public DVector3 GetGlobalPosition(MassSystemComponent massSystemComponent)
         {
-            return tree.GetGlobalPosition(massSystemComponent, _timeService != null ? _timeService.WorldTime : 0);
+            return tree.GetGlobalPosition(massSystemComponent, TimeService.WorldTime);
         }
 
         public DVector3 GetGlobalPosition(IMassSystem massSystem)
         {
-            return tree.GetGlobalPosition(massSystem, _timeService != null ? _timeService.WorldTime : 0);
+            return tree.GetGlobalPosition(massSystem, TimeService.WorldTime);
         }
 
         private void InjectHierarchy()

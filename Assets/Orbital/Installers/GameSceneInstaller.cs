@@ -1,5 +1,6 @@
 using Orbital.Model;
-using Orbital.Model.Services;
+using Orbital.Model.Handles;
+using Orbital.Model.Simulation;
 using Orbital.Model.SystemComponents;
 using UnityEngine;
 using Zenject;
@@ -18,6 +19,7 @@ namespace Orbital.Installers
             Container.BindInstance(GetComponentInChildren<ComponentsRegistrationService>()).AsSingle();
             Container.BindInstance(GetComponentInChildren<TimeService>()).AsSingle();
             Container.BindInstance(GetComponentInChildren<ObserverService>()).AsSingle();
+            Container.BindInstance(GetComponentInChildren<SimulationService>()).AsSingle();
             Container.InjectGameObject(world.gameObject);
             world.Load();
         }
