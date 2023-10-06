@@ -11,27 +11,28 @@ namespace Orbital.Model.Simulation
     public class SimulationService : MonoBehaviour, IObserverTriggerHandler
     {
         [Inject] private ObserverService _observerService;
-        private Dictionary<RigidBodySystemComponent, Rigidbody> _presentations = new ();
+        //private Dictionary<RigidBodySystemComponent, Rigidbody> _presentations = new ();
 
         [Inject] private void Inject(DiContainer container)
         {
             HandlesRegister.RegisterHandlers(this, container);
         }
         
-        private void AssemblePresentation(RigidBodySystemComponent target, Transform root)
+        /*private void AssemblePresentation(RigidBodySystemComponent target, Transform root)
         {
             Rigidbody instance = Instantiate(target.Settings.dynamicPresentation, root);
-            _presentations.Add(target, instance);
+            //_presentations.Add(target, instance);
             FromTrajectoryToSimulation(target, instance);
         }
 
         private void DisassemblePresentation(RigidBodySystemComponent target)
         {
-            Destroy(_presentations[target]);
-            _presentations.Remove(target);
+            FromSimulationToTrajectory(target, _presentations[target]);
+            //Destroy(_presentations[target]);
+            //_presentations.Remove(target);
         }
 
-        private void FromTrajectoryToSimulation(RigidBodySystemComponent component, Rigidbody presentation)
+        private void FromTrajectoryToSimulation(RigidBodySystemComponent component)
         {
             component.Present();
             Observer observer = _observerService.GetObserverFor(component);
@@ -40,15 +41,21 @@ namespace Orbital.Model.Simulation
             presentation.transform.localPosition = component.LocalPosition - origin;
             presentation.velocity = component.LocalVelocity - originVelocity;
         }
+
+        private void FromSimulationToTrajectory(RigidBodySystemComponent component)
+        {
+            component.RemovePresent();
+
+        }*/
         
         public void OnRigidbodyEnter(RigidBodySystemComponent component, Observer observer)
         {
-            AssemblePresentation(component, observer.Root);
+            component.Present(observer);
         }
 
         public void OnRigidbodyExit(RigidBodySystemComponent component, Observer observer)
         {
-            DisassemblePresentation(component);
+            component.RemovePresent();
         }
     }
 }

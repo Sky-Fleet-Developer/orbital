@@ -19,7 +19,7 @@ namespace Orbital.Model.TrajectorySystem
             set => settings = value;
         }
 
-        public DoubleSystemTrajectorySettings LocalTrajectorySettings
+        [JsonIgnore] public DoubleSystemTrajectorySettings LocalTrajectorySettings
         {
             get => localTrajectorySettings;
             set

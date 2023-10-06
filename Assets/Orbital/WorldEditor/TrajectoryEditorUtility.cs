@@ -19,7 +19,11 @@ namespace Orbital.WorldEditor
             Handles.matrix = trajectory.GetMatrixForTPreview(scale, sInput, 0);
             Handles.CircleHandleCap(-1, Vector3.zero, Quaternion.identity, 1f, EventType.Repaint);
             Handles.matrix = Matrix4x4.identity;
+            Vector3 velocity = trajectory.GetVelocity(time) * scale;
             Handles.DrawDottedLine(sOutput, sInput, 10);
+            Handles.color = Color.green;
+            Handles.DrawLine(sOutput, sOutput + velocity * 200);
+            Handles.color = Color.white;
             if(drawSphere) Handles.SphereHandleCap(-1, sOutput, Quaternion.identity, 0.1f * HandleUtility.GetHandleSize(sOutput), EventType.Repaint);
         }
 

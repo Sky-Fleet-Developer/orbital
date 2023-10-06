@@ -17,6 +17,8 @@ namespace Orbital.Model.SystemComponents
         private IMassSystem _massSystem;
         private RelativeTrajectory _trajectory;
 
+        public double Mass => _massSystem.Mass;
+        
         public override CelestialSettings Settings
         {
             get => _settings;

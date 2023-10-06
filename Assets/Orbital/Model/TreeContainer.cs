@@ -30,6 +30,7 @@ namespace Orbital.Model
         public void CalculateForRoot(Transform tRoot)
         {
             CreateCache();
+            if(Root == null) return;
             Root.FillTrajectoriesRecursively(_trajectories);
             ReconstructHierarchy(Root, tRoot);
             foreach (IMassSystem massSystem in _transforms.Keys)
@@ -109,6 +110,11 @@ namespace Orbital.Model
             Transform newObject = new GameObject(name, new [] {typeof(MassSystemComponent)}).transform;
             newObject.SetParent(parent);
             return newObject;
+        }
+
+        public void FillTrajectories()
+        {
+            Root.FillTrajectoriesRecursively(_trajectories);
         }
     }
 }

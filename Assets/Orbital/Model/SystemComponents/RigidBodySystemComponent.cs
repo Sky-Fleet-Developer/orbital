@@ -9,12 +9,14 @@ using Zenject;
 
 namespace Orbital.Model.SystemComponents
 {
-    public class RigidBodySystemComponent : SystemComponent<RigidBodyVariables, RigidBodySettings>, ITrajectorySettingsHolder
+    public sealed class RigidBodySystemComponent : SystemComponent<RigidBodyVariables, RigidBodySettings>, ITrajectorySettingsHolder
     {
         [SerializeField] private RigidBodyVariables variables;
         [SerializeField] private RigidBodySettings settings;
         private MassSystemComponent _parent;
         private RelativeTrajectory _trajectory;
+        private Rigidbody _presentation;
+        private Observer _observer;
         [Inject] private World _world;
         [Inject] private ObserverService _observerService;
         private bool _isSleep;
@@ -68,11 +70,20 @@ namespace Orbital.Model.SystemComponents
             ModeChangedHandler?.Invoke(_mode);
         }
 
-        public void Present()
+        public void Present(Observer observer)
         {
             if (_mode != RigidBodyMode.Trajectory) throw new Exception("Already presents!");
             _isSleep = true;
             _mode = RigidBodyMode.Sleep;
+
+            _observer = observer;
+            DVector3 origin = observer.LocalPosition;
+            DVector3 originVelocity = observer.LocalVelocity;
+            Vector3 localPosition = LocalPosition - origin;
+            
+            _presentation = Instantiate(Settings.dynamicPresentation, localPosition, Quaternion.identity, observer.Root);
+            _presentation.velocity = LocalVelocity - originVelocity;
+
             ModeChangedHandler?.Invoke(_mode);
         }
 
@@ -81,7 +92,20 @@ namespace Orbital.Model.SystemComponents
             if (_mode == RigidBodyMode.Trajectory) throw new Exception("Present is not exists!");
             _isSleep = false;
             _mode = RigidBodyMode.Trajectory;
+
+            SetupTrajectoryFromPresentation();
+            Trajectory.Calculate();
+            
+            Destroy(_presentation.gameObject);
+            
             ModeChangedHandler?.Invoke(_mode);
+        }
+
+        private void SetupTrajectoryFromPresentation()
+        {
+            DVector3 position = (DVector3)(_presentation.transform.localPosition) + _observer.LocalPosition;
+            DVector3 velocity = (DVector3) (_presentation.velocity) + _observer.LocalVelocity;
+            variables.trajectorySettings.SetupFromSimulation(position, velocity, _parent.Mass);
         }
     }
 

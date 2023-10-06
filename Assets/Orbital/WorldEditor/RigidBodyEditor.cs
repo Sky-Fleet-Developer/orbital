@@ -61,11 +61,22 @@ namespace Orbital.WorldEditor
             EditorGUILayout.PropertyField(settings);
             GUILayout.Box($"Eccentricity: {_trajectory.Eccentricity}");
             GUILayout.Box($"Semi major axis: {_trajectory.SemiMajorAxis}");
+            GUILayout.Box($"Start velocity: {_trajectory.GetVelocity(0)}");
+            if (GUILayout.Button("Test"))
+            {
+                Test();
+            }
             if (EditorGUI.EndChangeCheck())
             {
                 serializedObject.ApplyModifiedProperties();
                 _trajectory.Calculate();
             }
+        }
+
+        private void Test()
+        {
+            var settings = _rigidBody.Variables.trajectorySettings;
+            settings.SetupFromSimulation(_trajectory.GetPosition(0), _trajectory.GetVelocity(0), _parent.Mass);
         }
 
         private void OnSceneGUI()

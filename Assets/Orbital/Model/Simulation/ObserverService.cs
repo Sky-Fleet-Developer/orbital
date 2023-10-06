@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Ara3D;
 using Orbital.Model.Handles;
@@ -76,7 +77,15 @@ namespace Orbital.Model.Simulation
         
         public void UnregisterObserver(Observer observer)
         {
-            throw new NotImplementedException();
+            RigidBodySystemComponent[] array = _observingObjects[observer].ToArray();
+            foreach (RigidBodySystemComponent rigidBodySystemComponent in array)
+            {
+                RigidbodyLeavesObserver(rigidBodySystemComponent, observer);
+            }
+
+            SceneManager.UnloadSceneAsync(_scenes[observer]);
+            _scenes.Remove(observer);
+            _roots.Remove(observer);
         }
 
         public Observer GetObserverFor(RigidBodySystemComponent target)
@@ -108,7 +117,7 @@ namespace Orbital.Model.Simulation
                                 RigidbodyEntersObserver(component, observer);
                                 break;
                             case false:
-                                RigidbodyExitsObserver(component, observer);
+                                RigidbodyLeavesObserver(component, observer);
                                 break;
                         }
                     }
@@ -132,7 +141,7 @@ namespace Orbital.Model.Simulation
                 subscriber.OnRigidbodyEnter(component, observer);
             }
         }
-        private void RigidbodyExitsObserver(RigidBodySystemComponent component, Observer observer)
+        private void RigidbodyLeavesObserver(RigidBodySystemComponent component, Observer observer)
         {
             _observingObjectPerObserver[component] = null;
             _observingObjects[observer].Remove(component);

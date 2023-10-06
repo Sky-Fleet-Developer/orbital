@@ -131,14 +131,14 @@ namespace Orbital.Model.TrajectorySystem
             double r = SemiMajorAxis * (1 - Eccentricity * Math.Cos(eccentricAnomaly));
 
             // Рассчитываем скорость
-            double velocity = Math.Sqrt(MassUtility.G * _other.Mass / r);
+            double velocity = Math.Sqrt(MassUtility.G * _other.Mass * (2 / r - 1 / SemiMajorAxis));
 
             // Рассчитываем угловую скорость
-            double angularVelocity = velocity / r;
+            //double angularVelocity = velocity / r;
 
             // Рассчитываем компоненты скорости
-            double vx = -SemiMajorAxis * angularVelocity * Math.Sin(eccentricAnomaly);
-            double vz = SemiMinorAxis * angularVelocity * Math.Cos(eccentricAnomaly);
+            double vz = -velocity * Math.Sin(eccentricAnomaly);
+            double vx = velocity * Math.Cos(eccentricAnomaly);
 
             return new DVector3((float)vx, 0, (float)vz);
         }
@@ -175,7 +175,7 @@ namespace Orbital.Model.TrajectorySystem
         /// <param name="g">gravitational constant</param>
         public static double GetSemiMajorAxis(double m, double t, double g)
         {
-            return Math.Pow((g * m * Math.Pow(t, 2)) / (4 * Math.Pow(Math.PI, 2)), 1.0 / 3);
+            return Math.Pow((g * m * t*t) / (4 * Math.PI*Math.PI), 1.0 / 3);
         }
         
         public static double GetSemiMinorAxis(double e, double a)
@@ -211,6 +211,12 @@ namespace Orbital.Model.TrajectorySystem
             }
 
             return value;
+        }
+        
+        static double CalculateTrueAnomaly(double eccentricity, double eccentricAnomaly)
+        {
+            double trueAnomaly = 2 * Math.Atan2(Math.Sqrt(1 + eccentricity) * Math.Sin(eccentricAnomaly / 2), Math.Sqrt(1 - eccentricity) * Math.Cos(eccentricAnomaly / 2));
+            return trueAnomaly;
         }
 
         public RelativeTrajectory Clone()

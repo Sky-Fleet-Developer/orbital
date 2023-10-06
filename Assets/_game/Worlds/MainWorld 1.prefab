@@ -202,7 +202,7 @@ GameObject:
   - component: {fileID: 4465114332393762918}
   - component: {fileID: 4465114332393762913}
   m_Layer: 0
-  m_Name: MainWorld
+  m_Name: MainWorld 1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

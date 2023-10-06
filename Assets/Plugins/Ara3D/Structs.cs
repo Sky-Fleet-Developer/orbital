@@ -300,6 +300,9 @@ namespace Ara3D
 		}
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)] public static double Dot(DVector3 value1, DVector3 value2) => value1.x * value2.x + value1.y * value2.y + value1.z * value2.z;
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static DVector3 Cross(DVector3 a, DVector3 b) => new DVector3(a.y * b.z - a.z * b.y, a.z * b.x - a.x * b.z, a.x * b.y - a.y * b.x);
 		[MethodImpl(MethodImplOptions.AggressiveInlining)] public double Dot(DVector3 value) => DVector3.Dot(this, value);
 		[MethodImpl(MethodImplOptions.AggressiveInlining)] public bool AlmostZero(float tolerance = Constants.Tolerance) => x.Abs() < tolerance && y.Abs() < tolerance && z.Abs() < tolerance;
 		[MethodImpl(MethodImplOptions.AggressiveInlining)] public bool AlmostEquals(DVector3 value, float tolerance = Constants.Tolerance) => (this - value).AlmostZero(tolerance);

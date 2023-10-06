@@ -24,7 +24,6 @@ namespace Orbital.WorldEditor
         private SerializedProperty serializedTree;
         private TreeContainer _tree;
         private Transform _tRoot;
-        private readonly Dictionary<IMassSystem, RelativeTrajectory> _trajectories = new();
         private readonly ISerializer _serializer = new JsonPerformance();
 
         private IMassSystem _currentEdit;
@@ -68,6 +67,10 @@ namespace Orbital.WorldEditor
             serializedTree = serializedObject.FindProperty("tree").FindPropertyRelative("serializedValue");
             _tRoot = ((MonoBehaviour) target).transform;
             _tree = _serializer.Deserialize<TreeContainer>(serializedTree.stringValue);
+            if (_tree == null)
+            {
+                _tree = new TreeContainer();
+            }
             _tree.CalculateForRoot(_tRoot);
             PreviewScaleValue = PlayerPrefs.GetFloat(PreviewScaleKey, 0);
             if (_tree == null)
@@ -91,7 +94,7 @@ namespace Orbital.WorldEditor
         
         private void RefreshTrajectories()
         {
-            _tree.Root.FillTrajectoriesRecursively(_trajectories);
+            _tree.FillTrajectories();
         }
 
         private void OnSceneGUI()
@@ -116,7 +119,6 @@ namespace Orbital.WorldEditor
                 RefreshHierarchy();
             }
             PreviewScaleValue = EditorGUILayout.Slider("Preview scale", PreviewScaleValue, 0f, 1f);
-            _time = EditorGUILayout.Slider("Time", _time, 0, 365*24*3600);
             _currentState.Update();
         }
 
