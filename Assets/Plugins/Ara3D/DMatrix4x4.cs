@@ -36,6 +36,62 @@ namespace Ara3D.Double
             set => _array[a, b] = value;
         }
 
+        public void Inverse()
+        {
+            double[][] augmentedMatrix = new double[4][];
+            for (int index = 0; index < 4; index++)
+            {
+                augmentedMatrix[index] = new double[8];
+            }
+
+            // Creating an extended matrix by combining the original matrix with the unit matrix
+            for (int i = 0; i < 4; i++)
+            {
+                for (int j = 0; j < 4; j++)
+                {
+                    augmentedMatrix[i][j] = _array[i, j];
+                    augmentedMatrix[i][j + 4] = (i == j) ? 1.0 : 0.0;
+                }
+            }
+
+            // Straight Gaussian stroke
+            for (int i = 0; i < 4; i++)
+            {
+                double pivot = augmentedMatrix[i][i];
+
+                if (pivot == 0)
+                {
+                    throw new InvalidOperationException("The matrix is irreversible.");
+                }
+
+                for (int j = 0; j < 2 * 4; j++)
+                {
+                    augmentedMatrix[i][j] /= pivot;
+                }
+
+                for (int k = 0; k < 4; k++)
+                {
+                    if (k != i)
+                    {
+                        double factor = augmentedMatrix[k][i];
+                        for (int j = 0; j < 8; j++)
+                        {
+                            augmentedMatrix[k][j] -= factor * augmentedMatrix[i][j];
+                        }
+                    }
+                }
+            }
+
+            // Extracting the inverted matrix from the expanded matrix
+            for (int i = 0; i < 4; i++)
+            {
+                for (int j = 0; j < 4; j++)
+                {
+                    _array[i, j] = augmentedMatrix[i][j + 4];
+                }
+            }
+        }
+
         public static DMatrix4x4 Identity
         {
             get
@@ -97,6 +153,25 @@ namespace Ara3D.Double
             };
         }
 
+        public static DMatrix4x4 LookRotation(DVector3 forward, DVector3 up)
+        {
+            forward = forward.Normalize();
+            up = up.Normalize();
+            DVector3 right = DVector3.Cross(forward, up);
+            up = DVector3.Cross(forward, right);
+
+            return new ()
+            {
+                _array = new double[4,4]
+                {
+                    {right.x, right.y, right.z, 0},
+                    {up.x, up.y, up.z, 0},
+                    {forward.x, forward.y, forward.z, 0},
+                    {0, 0, 0, 1}
+                }
+            };
+        }
+
         public static DVector3 operator *(DMatrix4x4 m, DVector3 v)
         {
             return new()
@@ -123,5 +198,20 @@ namespace Ara3D.Double
             }
             return result;
         }
+
+
+        public static implicit operator Matrix4x4(DMatrix4x4 value)
+        {
+            Matrix4x4 result = new Matrix4x4();
+            for (int i = 0; i < 4; i++)
+            {
+                for (int j = 0; j < 4; j++)
+                {
+                    result[i, j] = (float)value._array[i, j];
+                }
+            }
+
+            return result;
+        } 
     }
 }

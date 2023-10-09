@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Ara3D;
 using Orbital.Model;
@@ -53,11 +54,10 @@ namespace Orbital.WorldEditor
         public static Matrix4x4 GetMatrixForTPreview(this RelativeTrajectory trajectory, float scale, Vector3 position, double time)
         {
             Quaternion handleRotationCorrection = Quaternion.Euler(-90, 0, 0);
-            Quaternion trajectoryRotation = Quaternion.Euler(Mathf.Rad2Deg * (float) trajectory.LatitudeShift, Mathf.Rad2Deg * (float) trajectory.LongitudeShift, Mathf.Rad2Deg * (float) trajectory.Inclination);
-           
+            Matrix4x4 rotationMatrix = trajectory.RotationMatrix;
             Matrix4x4 figureMatrix = Matrix4x4.TRS(new Vector3(0, 0, (float)((trajectory.PericenterRadius - trajectory.SemiMajorAxis) * scale)), handleRotationCorrection, new Vector3((float)trajectory.SemiMinorAxis, (float)trajectory.SemiMajorAxis, 0) * scale);
-            Matrix4x4 worldMatrix = Matrix4x4.TRS(position, trajectoryRotation, Vector3.one);
-            return worldMatrix * figureMatrix;
+            Matrix4x4 worldMatrix = Matrix4x4.TRS(position, Quaternion.identity, Vector3.one);
+            return worldMatrix * rotationMatrix * figureMatrix;
         }
     }
     #endif

@@ -47,12 +47,12 @@ MonoBehaviour:
   variables:
     trajectorySettings:
       mass: 500
-      pericenterSpeed: 7620
+      pericenterSpeed: 7630
       pericenterRadius: 6878000
       latitudeShift: 0
       longitudeShift: 0
       inclination: 0
-      timeShift: 0
+      timeShift: -0.001
       period: 0
   settings:
     dynamicPresentation: {fileID: 1638438405622567774, guid: 28883b6e7d549e5418a1e5aa2099706b,
@@ -239,7 +239,7 @@ MonoBehaviour:
   tree:
     serializedValue: '{"Root":{"$type":"Orbital.Model.TrajectorySystem.SingleCenterBranch,
       Orbital","settings":{"mass":0.0,"pericenterSpeed":0.0,"pericenterRadius":0.0,"latitudeShift":0.0,"longitudeShift":0.0,"inclination":0.0,"timeShift":0.0,"period":0.0},"Central":{"$type":"Orbital.Model.TrajectorySystem.CelestialBody,
-      Orbital","settings":{"mass":1.9891E+30,"pericenterSpeed":0.0,"pericenterRadius":0.0,"latitudeShift":0.0,"longitudeShift":0.0,"inclination":0.0,"timeShift":1.0,"period":0.0}},"Children":[{"$type":"Orbital.Model.TrajectorySystem.DoubleSystemBranch,
+      Orbital","settings":{"mass":1.9891E+30,"pericenterSpeed":0.0,"pericenterRadius":0.0,"latitudeShift":0.0,"longitudeShift":0.0,"inclination":0.0,"timeShift":0.0,"period":0.0}},"Children":[{"$type":"Orbital.Model.TrajectorySystem.DoubleSystemBranch,
       Orbital","settings":{"mass":0.0,"pericenterSpeed":29765.0,"pericenterRadius":1.5E+11,"latitudeShift":0.0,"longitudeShift":0.0,"inclination":0.0,"timeShift":0.0,"period":0.0},"localTrajectorySettings":{"aMass":5.9722E+24,"bMass":7.35E+22,"period":2360591.5,"aPericenterRadius":8.38E+07,"latitudeShift":10.0,"longitudeShift":0.0,"inclination":0.0,"timeShift":0.0},"ChildA":{"$type":"Orbital.Model.TrajectorySystem.CelestialBody,
       Orbital","settings":{"mass":5.9722E+24,"pericenterSpeed":0.0,"pericenterRadius":8.38E+07,"latitudeShift":10.0,"longitudeShift":0.0,"inclination":0.0,"timeShift":0.0,"period":2360591.5}},"ChildB":{"$type":"Orbital.Model.TrajectorySystem.SingleCenterBranch,
       Orbital","settings":{"mass":7.35E+22,"pericenterSpeed":0.0,"pericenterRadius":3.629608E+08,"latitudeShift":-10.0,"longitudeShift":180.0,"inclination":0.0,"timeShift":0.0,"period":2360591.5},"Central":{"$type":"Orbital.Model.TrajectorySystem.CelestialBody,

@@ -4,6 +4,7 @@ using Ara3D;
 using Orbital.Model.Handles;
 using Orbital.Model.Simulation;
 using Orbital.Model.TrajectorySystem;
+using Sirenix.OdinInspector;
 using UnityEngine;
 using Zenject;
 
@@ -81,7 +82,9 @@ namespace Orbital.Model.SystemComponents
             DVector3 originVelocity = observer.LocalVelocity;
             Vector3 localPosition = LocalPosition - origin;
             
-            _presentation = Instantiate(Settings.dynamicPresentation, localPosition, Quaternion.identity, observer.Root);
+            _presentation = Instantiate(Settings.dynamicPresentation, observer.Root);
+            _presentation.transform.localPosition = localPosition;
+            _presentation.transform.localRotation = Quaternion.identity;
             _presentation.velocity = LocalVelocity - originVelocity;
 
             ModeChangedHandler?.Invoke(_mode);
@@ -100,12 +103,15 @@ namespace Orbital.Model.SystemComponents
             
             ModeChangedHandler?.Invoke(_mode);
         }
-
-        private void SetupTrajectoryFromPresentation()
+        [Button]
+        private async void SetupTrajectoryFromPresentation()
         {
             DVector3 position = (DVector3)(_presentation.transform.localPosition) + _observer.LocalPosition;
             DVector3 velocity = (DVector3) (_presentation.velocity) + _observer.LocalVelocity;
-            variables.trajectorySettings.SetupFromSimulation(position, velocity, _parent.Mass);
+            await _trajectory.SetupFromSimulation(position, velocity);
+            TrajectorySettings settingsToUpdate = variables.trajectorySettings;
+            _trajectory.UpdateSettings(ref settingsToUpdate);
+            variables.trajectorySettings = settingsToUpdate;
         }
     }
 

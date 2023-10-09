@@ -62,10 +62,16 @@ namespace Orbital.WorldEditor
             GUILayout.Box($"Eccentricity: {_trajectory.Eccentricity}");
             GUILayout.Box($"Semi major axis: {_trajectory.SemiMajorAxis}");
             GUILayout.Box($"Start velocity: {_trajectory.GetVelocity(0)}");
-            if (GUILayout.Button("Test"))
+
+            DVector3 p1 = _trajectory.GetPosition(0);
+            DVector3 p2 = _trajectory.GetPosition(0.5);
+            GUILayout.Box($"P': {(p2 - p1) / 0.5}");
+
+            
+            /*if (GUILayout.Button("Test"))
             {
                 Test();
-            }
+            }*/
             if (EditorGUI.EndChangeCheck())
             {
                 serializedObject.ApplyModifiedProperties();
@@ -73,11 +79,11 @@ namespace Orbital.WorldEditor
             }
         }
 
-        private void Test()
+        /*private void Test()
         {
             var settings = _rigidBody.Variables.trajectorySettings;
             settings.SetupFromSimulation(_trajectory.GetPosition(0), _trajectory.GetVelocity(0), _parent.Mass);
-        }
+        }*/
 
         private void OnSceneGUI()
         {

@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 using Ara3D;
 using Ara3D.Double;
 using Orbital.Model.SystemComponents;
@@ -25,14 +26,13 @@ namespace Orbital.Model.TrajectorySystem
         public double SemiMinorAxis { get; private set; }
         public double PericenterRadius { get; private set; }
         public double Period { get; private set; }
-        public double LatitudeShift { get; private set; }
-        public double LongitudeShift { get; private set; }
-        public double Inclination { get; private set; }
         public double TimeShift { get; private set; }
         public bool IsZero { get; private set; }
 
         private DMatrix4x4 _rotationMatrix;
         private SystemType _systemType;
+
+        public DMatrix4x4 RotationMatrix => _rotationMatrix;
 
         public RelativeTrajectory(ITrajectorySettingsHolder self, IMass other, SystemType systemType)
         {
@@ -45,9 +45,6 @@ namespace Orbital.Model.TrajectorySystem
         public void Calculate()
         {
             TrajectorySettings settings = _self.Settings;
-            LatitudeShift = settings.latitudeShift * Deg2Rad;
-            LongitudeShift = settings.longitudeShift * Deg2Rad;
-            Inclination = settings.inclination * Deg2Rad;
             TimeShift = settings.timeShift * 0.01f;
             switch (_systemType)
             {
@@ -71,7 +68,7 @@ namespace Orbital.Model.TrajectorySystem
             IsZero = Period is 0 or double.NaN;
             if (!IsZero)
             {
-                _rotationMatrix = DMatrix4x4.CreateRotation(LatitudeShift, LongitudeShift, 0) * DMatrix4x4.CreateRotation(0, 0, Inclination);
+                CreateRotation(ref settings);
             }
         }
 
@@ -85,9 +82,53 @@ namespace Orbital.Model.TrajectorySystem
             IsZero = Period is 0 or double.NaN;
             if (!IsZero)
             {
-                _rotationMatrix = DMatrix4x4.CreateRotation(LatitudeShift, LongitudeShift, 0) *
-                                  DMatrix4x4.CreateRotation(0, 0, Inclination);
+                CreateRotation(ref settings);
             }
+        }
+        
+        private static AsyncThreadScheduler _calculationScheduler = new AsyncThreadScheduler(3);
+        
+        public async Task SetupFromSimulation(DVector3 position, DVector3 velocity)
+        {
+            double r = position.Length();
+            DVector3 hh = DVector3.Cross(position, velocity);
+            double h = hh.Length();
+            //double i = Math.Acos(hh.y / h);
+            double vSqr = velocity.LengthSquared();
+            // semiMajorAxis
+            SemiMajorAxis = 1 / (2 / r - vSqr / (MassUtility.G * _other.Mass));
+            Eccentricity = Math.Sqrt(1 - (h * h / (MassUtility.G * _other.Mass * SemiMajorAxis)));
+            SemiMinorAxis = GetSemiMinorAxis(Eccentricity, SemiMajorAxis);
+            Period = GetPeriod(SemiMajorAxis, MassUtility.G, _other.Mass);
+
+            DVector3? pericenter = await _calculationScheduler.Schedule(() => IterativeSimulation.FindPericenter(velocity, position, SemiMajorAxis, _other.Mass, 1));
+
+            _rotationMatrix = DMatrix4x4.LookRotation(pericenter.Value, hh);
+            _rotationMatrix.Inverse();
+
+            /*Debug.Log($"Расстояние (r): {r} m");
+            Debug.Log($"Большая полуось (a): {SemiMajorAxis} m");
+            Debug.Log($"Эксцентриситет (e): {Eccentricity}");
+            Debug.Log($"Перицентр : {pericenter}");*/
+        }
+
+        public void UpdateSettings(ref TrajectorySettings settings)
+        {
+            settings.period = (float)Period;
+            DVector3 fwd = _rotationMatrix * new DVector3(0, 0, 1);
+            DVector3 up = _rotationMatrix * new DVector3(0, 0, 1);
+            DVector3 right = DVector3.Cross(fwd, up);
+            settings.longitudeShift = (float)(Math.Atan2(fwd.x, fwd.z) * Rad2Deg);
+            Debug.Log(settings.longitudeShift);
+            settings.latitudeShift = (float)(Math.Asin(fwd.y) * Rad2Deg);
+            Debug.Log(settings.latitudeShift);
+            settings.inclination = (float)(Math.Asin(right.x) * Rad2Deg);
+            Debug.Log(settings.inclination);
+        }
+
+        private void CreateRotation(ref TrajectorySettings settings)
+        {
+            _rotationMatrix = DMatrix4x4.CreateRotation(settings.latitudeShift * Deg2Rad, settings.longitudeShift * Deg2Rad, 0) * DMatrix4x4.CreateRotation(0, 0, settings.inclination * Deg2Rad);
         }
 
         public DVector3 GetPosition(double t)
@@ -124,23 +165,22 @@ namespace Orbital.Model.TrajectorySystem
             {
                 return new DVector3(0, 0, 0);
             }
-            double meanAnomaly = 2 * Math.PI * (t / Period + TimeShift);
-            double eccentricAnomaly = CalculateEccentricAnomaly(meanAnomaly, Eccentricity);
-
+            /*double M = 2 * Math.PI * (t / Period + TimeShift);
+            double eccentricAnomaly = CalculateEccentricAnomaly(M, Eccentricity);
+            double v = 2 * Math.Atan(Math.Sqrt((1 + Eccentricity) / (1 - Eccentricity)) * Math.Tan(eccentricAnomaly / 2));
+            
             // Рассчитываем расстояние от спутника до центрального тела
             double r = SemiMajorAxis * (1 - Eccentricity * Math.Cos(eccentricAnomaly));
 
-            // Рассчитываем скорость
-            double velocity = Math.Sqrt(MassUtility.G * _other.Mass * (2 / r - 1 / SemiMajorAxis));
+            // Производные радиус-вектора и эксцентрической аномалии по времени
+            double vr = Math.Sqrt(MassUtility.G * _other.Mass / SemiMinorAxis) * Eccentricity * Math.Sin(v);
+            double vn = Math.Sqrt(MassUtility.G * _other.Mass / SemiMinorAxis) * (1 + Eccentricity * Math.Cos(v));
 
-            // Рассчитываем угловую скорость
-            //double angularVelocity = velocity / r;
+            return new DVector3(vr * Math.Sin(v) + vn * Math.Cos(v), 0, vr * Math.Cos(v) - vn * Math.Sin(v));*/
 
-            // Рассчитываем компоненты скорости
-            double vz = -velocity * Math.Sin(eccentricAnomaly);
-            double vx = velocity * Math.Cos(eccentricAnomaly);
-
-            return new DVector3((float)vx, 0, (float)vz);
+            DVector3 a = GetFlatPosition(t - 1);
+            DVector3 b = GetFlatPosition(t + 1);
+            return (b - a) * 0.5;
         }
 
         public DVector3 TransformByShift(DVector3 vector)

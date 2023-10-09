@@ -95,7 +95,7 @@ namespace Orbital.Model.Simulation
         
         public bool IsInSimulation(RigidBodySystemComponent target)
         {
-            return _observingObjectPerObserver.ContainsKey(target);
+            return target.Mode != RigidBodyMode.Trajectory;
         }
 
         UpdateFrequency IUpdateByFrequencyHandler.Frequency => UpdateFrequency.Every100Frame;
