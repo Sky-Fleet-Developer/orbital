@@ -23,7 +23,7 @@ namespace Orbital.WorldEditor
         private MassSystemComponent _parent;
         private RelativeTrajectory _trajectory;
         private TreeContainer _tree;
-        private Func<float, double> PreviewScaleTransform = v => 1 / Mathf.Lerp(448800000, 448800000000, v);
+        private Func<float, double> PreviewScaleTransform = v => 1 / Mathf.Lerp(224400000, 448800000000, v);
         private readonly ISerializer _serializer = new JsonPerformance();
         private float PreviewScaleValue
         {
@@ -63,11 +63,26 @@ namespace Orbital.WorldEditor
             GUILayout.Box($"Semi major axis: {_trajectory.SemiMajorAxis}");
             GUILayout.Box($"Start velocity: {_trajectory.GetVelocity(0)}");
 
-            DVector3 p1 = _trajectory.GetPosition(0);
-            DVector3 p2 = _trajectory.GetPosition(0.5);
-            GUILayout.Box($"P': {(p2 - p1) / 0.5}");
-
+            DVector3 position = _trajectory.GetFlatPosition(0);
             
+            //true anomaly
+            /*double u = Math.Atan2(position.x, position.z);
+
+            // eccentric anomaly
+            double E = RelativeTrajectory.CalculateEccentricAnomalyByTrue(u, _trajectory.Eccentricity);
+
+            //mean anomaly
+            double M = E - _trajectory.Eccentricity * Math.Sin(E);
+            
+
+            // Вычисляем время с момента пересечения перицентра.
+            //double TimeOfPeriapsisCrossing = ;
+            GUILayout.Box($"EccentricAnomaly: {E * Mathf.Rad2Deg}");
+            GUILayout.Box($"MeanAnomaly: {M * Mathf.Rad2Deg}");
+            GUILayout.Box($"True anomaly: {u * Mathf.Rad2Deg}");
+            GUILayout.Box($"T: {M / (2 * Math.PI)}");*/
+            //GUILayout.Box($"%: {MeanAnomaly / (2 * Math.PI)}");
+
             /*if (GUILayout.Button("Test"))
             {
                 Test();
@@ -93,6 +108,13 @@ namespace Orbital.WorldEditor
             DVector3 parentPosition = _tree.GetGlobalPosition(_parent, time);
             TrajectoryEditorUtility.DrawTrajectory(_trajectory, time, scale, true
                 , parentPosition, out DVector3 output);
+
+            if (Event.current.type == EventType.KeyDown && Event.current.keyCode == KeyCode.F)
+            {
+                SceneView sceneView = SceneView.lastActiveSceneView;
+                sceneView.LookAt(output * scale, sceneView.rotation, sceneView.size);
+                Event.current.Use();
+            }
         }
     }
 #endif

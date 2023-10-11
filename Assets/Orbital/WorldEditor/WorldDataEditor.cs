@@ -29,7 +29,7 @@ namespace Orbital.WorldEditor
         private IMassSystem _currentEdit;
         private IMassSystem _currentParent;
 
-        private Func<float, double> PreviewScaleTransform = v => 1 / Mathf.Lerp(448800000, 448800000000, v);
+        private Func<float, double> PreviewScaleTransform = v => 1 / Mathf.Lerp(224400000, 448800000000, v);
         private float PreviewScaleValue
         {
             get => _previewScaleValue;

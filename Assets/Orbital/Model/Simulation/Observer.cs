@@ -22,6 +22,8 @@ namespace Orbital.Model.Simulation
             set => variables = value;
         }
 
+        public RelativeTrajectory Trajectory => _trajectory;
+
         public RigidBodySystemComponent Anchor
         {
             get => _anchor;

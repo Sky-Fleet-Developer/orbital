@@ -55,7 +55,7 @@ MonoBehaviour:
       timeShift: -0.001
       period: 0
   settings:
-    dynamicPresentation: {fileID: 1638438405622567774, guid: 28883b6e7d549e5418a1e5aa2099706b,
+    presentation: {fileID: 6605901092997738416, guid: 28883b6e7d549e5418a1e5aa2099706b,
       type: 3}
 --- !u!1 &820020628864560557
 GameObject:
@@ -439,7 +439,7 @@ MonoBehaviour:
       timeShift: 0
       period: 0
   settings:
-    dynamicPresentation: {fileID: 1638438405622567774, guid: 28883b6e7d549e5418a1e5aa2099706b,
+    presentation: {fileID: 6605901092997738416, guid: 28883b6e7d549e5418a1e5aa2099706b,
       type: 3}
 --- !u!1 &8441030398855462866
 GameObject:

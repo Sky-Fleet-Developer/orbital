@@ -90,12 +90,12 @@ namespace Orbital.Model
             int i = -1;
             foreach (IMassSystem mass in mRoot.GetContent())
             {
+                if(mass == null) continue;
                 if (!_parents.TryAdd(mass, mRoot))
                 {
                     _parents[mass] = mRoot;
                 }
                 i++;
-                if(mass == null) continue;
                 Transform tChild = tRoot.FindRegex($".*\\[{i}\\]$");
                 if (!tChild)
                 {

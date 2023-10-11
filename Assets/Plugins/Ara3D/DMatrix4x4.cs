@@ -36,6 +36,13 @@ namespace Ara3D.Double
             set => _array[a, b] = value;
         }
 
+        public DMatrix4x4 GetInverse()
+        {
+            var value = new DMatrix4x4() {_array = this._array.Clone() as double[,]};
+            value.Inverse();
+            return value;
+        }
+
         public void Inverse()
         {
             double[][] augmentedMatrix = new double[4][];

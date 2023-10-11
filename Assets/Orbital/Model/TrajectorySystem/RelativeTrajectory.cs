@@ -100,11 +100,22 @@ namespace Orbital.Model.TrajectorySystem
             Eccentricity = Math.Sqrt(1 - (h * h / (MassUtility.G * _other.Mass * SemiMajorAxis)));
             SemiMinorAxis = GetSemiMinorAxis(Eccentricity, SemiMajorAxis);
             Period = GetPeriod(SemiMajorAxis, MassUtility.G, _other.Mass);
-
-            DVector3? pericenter = await _calculationScheduler.Schedule(() => IterativeSimulation.FindPericenter(velocity, position, SemiMajorAxis, _other.Mass, 1));
+            DVector3? pericenter = await _calculationScheduler.Schedule(() => IterativeSimulation.FindPericenter(velocity, position, SemiMajorAxis, _other.Mass, 1, out _, out _));
 
             _rotationMatrix = DMatrix4x4.LookRotation(pericenter.Value, hh);
-            _rotationMatrix.Inverse();
+            PericenterRadius = pericenter.Value.Length();
+            DVector3 flatPos = _rotationMatrix.GetInverse() * position;
+
+            //true anomaly
+            double u = Math.Atan2(flatPos.x, flatPos.z);
+
+            // eccentric anomaly
+            double E = CalculateEccentricAnomalyByTrue(u, Eccentricity);
+
+            //mean anomaly
+            double M = E - Eccentricity * Math.Sin(E);
+
+            TimeShift = -M / (2 * Math.PI);
 
             /*Debug.Log($"Расстояние (r): {r} m");
             Debug.Log($"Большая полуось (a): {SemiMajorAxis} m");
@@ -114,16 +125,19 @@ namespace Orbital.Model.TrajectorySystem
 
         public void UpdateSettings(ref TrajectorySettings settings)
         {
+            settings.pericenterRadius = (float)PericenterRadius;
             settings.period = (float)Period;
             DVector3 fwd = _rotationMatrix * new DVector3(0, 0, 1);
             DVector3 up = _rotationMatrix * new DVector3(0, 0, 1);
             DVector3 right = DVector3.Cross(fwd, up);
             settings.longitudeShift = (float)(Math.Atan2(fwd.x, fwd.z) * Rad2Deg);
-            Debug.Log(settings.longitudeShift);
+            Debug.Log("longitudeShift:" + settings.longitudeShift);
             settings.latitudeShift = (float)(Math.Asin(fwd.y) * Rad2Deg);
-            Debug.Log(settings.latitudeShift);
+            Debug.Log("latitudeShift:" + settings.latitudeShift);
             settings.inclination = (float)(Math.Asin(right.x) * Rad2Deg);
-            Debug.Log(settings.inclination);
+            Debug.Log("inclination:" + settings.inclination);
+            settings.timeShift = (float)(TimeShift * 100);
+            Debug.Log("timeShift:" + settings.timeShift);
         }
 
         private void CreateRotation(ref TrajectorySettings settings)
@@ -146,7 +160,7 @@ namespace Orbital.Model.TrajectorySystem
             double meanAnomaly = 2 * Math.PI * (t / Period + TimeShift);
 
             // Решение уравнения Кеплера для нахождения эксцентрической аномалии E
-            double eccentricAnomaly = CalculateEccentricAnomaly(meanAnomaly, Eccentricity);
+            double eccentricAnomaly = CalculateEccentricAnomalyByMean(meanAnomaly, Eccentricity);
 
             // Вычисление координат (x, y)
             double z = SemiMajorAxis * (Math.Cos(eccentricAnomaly) - Eccentricity);
@@ -232,7 +246,7 @@ namespace Orbital.Model.TrajectorySystem
         }
 
         // Метод для расчета эксцентрической аномалии методом Ньютона
-        public static double CalculateEccentricAnomaly(double meanAnomaly, double e)
+        public static double CalculateEccentricAnomalyByMean(double meanAnomaly, double e)
         {
             double value = meanAnomaly; // Начальное приближение
 
@@ -251,6 +265,25 @@ namespace Orbital.Model.TrajectorySystem
             }
 
             return value;
+        }
+        
+        public static double CalculateEccentricAnomalyByTrue(double trueAnomaly, double eccentricity, double tolerance = 1e-6, int maxIterations = 100)
+        {
+            double E = trueAnomaly; // Начальное приближение
+
+            for (int i = 0; i < maxIterations; i++)
+            {
+                double deltaE = (E + eccentricity * Math.Sin(E) - trueAnomaly) / (1 + eccentricity * Math.Cos(E));
+                E -= deltaE;
+
+                if (Math.Abs(deltaE) < tolerance)
+                {
+                    return E;
+                }
+            }
+
+            // Если не удалось достичь точности за заданное количество итераций, можно выбрасывать исключение или возвращать NaN
+            throw new Exception("Не удалось найти эксцентрическую аномалию с заданной точностью.");
         }
         
         static double CalculateTrueAnomaly(double eccentricity, double eccentricAnomaly)

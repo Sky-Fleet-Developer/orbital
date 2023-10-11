@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Ara3D;
 using Orbital.Model.Handles;
 using Orbital.Model.Simulation;
@@ -16,7 +17,7 @@ namespace Orbital.Model.SystemComponents
         [SerializeField] private RigidBodySettings settings;
         private MassSystemComponent _parent;
         private RelativeTrajectory _trajectory;
-        private Rigidbody _presentation;
+        private RigidbodyPresentation _presentation;
         private Observer _observer;
         [Inject] private World _world;
         [Inject] private ObserverService _observerService;
@@ -29,6 +30,9 @@ namespace Orbital.Model.SystemComponents
         public RelativeTrajectory Trajectory => _trajectory;
         public DVector3 LocalPosition => Trajectory.GetPosition(TimeService.WorldTime);
         public DVector3 LocalVelocity => Trajectory.GetVelocity(TimeService.WorldTime);
+
+        private float _awakeTime = 0;
+        private const float AwakeDelay = 1;
 
         public override RigidBodyVariables Variables
         {
@@ -60,14 +64,38 @@ namespace Orbital.Model.SystemComponents
             if (_mode == RigidBodyMode.Trajectory) throw new Exception("Can't accelerate in Trajectory mode!");
             _isSleep = false;
             _mode = RigidBodyMode.Simulation;
+            if (IsSleepTimerInCondition())
+            {
+                StartSleepTimer();
+            }
+            else
+            {
+                _awakeTime = Time.realtimeSinceStartup;
+            }
             ModeChangedHandler?.Invoke(_mode);
         }
 
-        public void Sleep()
+        private async void StartSleepTimer()
+        {
+            _awakeTime = Time.realtimeSinceStartup;
+
+            do
+            {
+                await Task.Delay((int) (_awakeTime + AwakeDelay - Time.realtimeSinceStartup) * 998);
+            } while (!IsSleepTimerInCondition());
+        }
+
+        private bool IsSleepTimerInCondition()
+        {
+            return _awakeTime + AwakeDelay < Time.realtimeSinceStartup;
+        }
+
+        private async void Sleep()
         {
             if (_mode == RigidBodyMode.Trajectory) throw new Exception("Can't sleep in Trajectory mode!");
             _isSleep = true;
             _mode = RigidBodyMode.Sleep;
+            await PrepareForSleep();
             ModeChangedHandler?.Invoke(_mode);
         }
 
@@ -82,43 +110,52 @@ namespace Orbital.Model.SystemComponents
             DVector3 originVelocity = observer.LocalVelocity;
             Vector3 localPosition = LocalPosition - origin;
             
-            _presentation = Instantiate(Settings.dynamicPresentation, observer.Root);
-            _presentation.transform.localPosition = localPosition;
-            _presentation.transform.localRotation = Quaternion.identity;
-            _presentation.velocity = LocalVelocity - originVelocity;
+            _presentation = Instantiate(Settings.presentation, observer.Root);
+            _presentation.Init(this, observer);
+            _presentation.Position = localPosition;
+            _presentation.Rotation = Quaternion.identity;
+            _presentation.Velocity = LocalVelocity - originVelocity;
 
             ModeChangedHandler?.Invoke(_mode);
         }
 
-        public void RemovePresent()
+        public async void RemovePresent()
         {
             if (_mode == RigidBodyMode.Trajectory) throw new Exception("Present is not exists!");
+            if (!_isSleep)
+            {
+                await PrepareForSleep();
+            }
             _isSleep = false;
             _mode = RigidBodyMode.Trajectory;
 
-            SetupTrajectoryFromPresentation();
-            Trajectory.Calculate();
-            
             Destroy(_presentation.gameObject);
             
             ModeChangedHandler?.Invoke(_mode);
         }
-        [Button]
-        private async void SetupTrajectoryFromPresentation()
+
+        private async Task PrepareForSleep()
         {
-            DVector3 position = (DVector3)(_presentation.transform.localPosition) + _observer.LocalPosition;
-            DVector3 velocity = (DVector3) (_presentation.velocity) + _observer.LocalVelocity;
+            await SetupTrajectoryFromPresentation();
+            Trajectory.Calculate();
+        }
+        
+        public async Task SetupTrajectoryFromPresentation()
+        {
+            DVector3 position = (DVector3)(_presentation.Position) + _observer.LocalPosition;
+            DVector3 velocity = (DVector3) (_presentation.Velocity) + _observer.LocalVelocity;
             await _trajectory.SetupFromSimulation(position, velocity);
             TrajectorySettings settingsToUpdate = variables.trajectorySettings;
             _trajectory.UpdateSettings(ref settingsToUpdate);
             variables.trajectorySettings = settingsToUpdate;
+            _trajectory.Calculate();
         }
     }
 
     [Serializable]
     public struct RigidBodySettings
     {
-        public Rigidbody dynamicPresentation;
+        public RigidbodyPresentation presentation;
     }
 
     [Serializable]
