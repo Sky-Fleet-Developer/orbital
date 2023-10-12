@@ -56,7 +56,7 @@ GameObject:
   - component: {fileID: 4465114332393762918}
   - component: {fileID: 4465114332393762913}
   m_Layer: 0
-  m_Name: MainWorld 2
+  m_Name: TestWorld
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -93,7 +93,7 @@ MonoBehaviour:
   tree:
     serializedValue: '{"Root":{"$type":"Orbital.Model.TrajectorySystem.SingleCenterBranch,
       Orbital","settings":{"mass":0.0,"pericenterSpeed":0.0,"pericenterRadius":0.0,"latitudeShift":0.0,"longitudeShift":0.0,"inclination":0.0,"timeShift":0.0,"period":0.0},"Central":{"$type":"Orbital.Model.TrajectorySystem.CelestialBody,
-      Orbital","settings":{"mass":5.9722E+24,"pericenterSpeed":0.0,"pericenterRadius":0.0,"latitudeShift":0.0,"longitudeShift":0.0,"inclination":0.0,"timeShift":0.0,"period":0.0}},"Children":[null]}}'
+      Orbital","settings":{"mass":6E+24,"pericenterSpeed":0.0,"pericenterRadius":0.0,"latitudeShift":0.0,"longitudeShift":0.0,"inclination":0.0,"timeShift":0.0,"period":0.0}},"Children":[null]}}'
 --- !u!1 &4920228525569766976
 GameObject:
   m_ObjectHideFlags: 0
@@ -185,9 +185,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   variables:
-    velocity: {x: 9620, y: 0, z: 0}
+    velocity: {x: 7600, y: 0, z: 0}
     position: {x: 0, y: 0, z: 6878000}
-    parentMass: 5.9722e+24
+    parentMass: 6e+24
+  accuracy: 200
+  nonuniformity: 0.15
 --- !u!114 &1132999231780457644
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -203,7 +205,7 @@ MonoBehaviour:
   variables:
     trajectorySettings:
       mass: 100
-      pericenterSpeed: 9620
+      pericenterSpeed: 7600
       pericenterRadius: 6878000
       latitudeShift: 0
       longitudeShift: 0

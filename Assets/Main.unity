@@ -1320,13 +1320,40 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1132999231780457644, guid: 5529cf4ef6443c944a2d3f72a6a2e1fd,
         type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1132999231780457644, guid: 5529cf4ef6443c944a2d3f72a6a2e1fd,
+        type: 3}
+      propertyPath: variables.trajectorySettings.period
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1132999231780457644, guid: 5529cf4ef6443c944a2d3f72a6a2e1fd,
+        type: 3}
+      propertyPath: variables.trajectorySettings.timeShift
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1132999231780457644, guid: 5529cf4ef6443c944a2d3f72a6a2e1fd,
+        type: 3}
       propertyPath: variables.trajectorySettings.pericenterSpeed
-      value: 10429.5
+      value: 29000
+      objectReference: {fileID: 0}
+    - target: {fileID: 1132999231780457644, guid: 5529cf4ef6443c944a2d3f72a6a2e1fd,
+        type: 3}
+      propertyPath: variables.trajectorySettings.pericenterRadius
+      value: 1.5e+11
       objectReference: {fileID: 0}
     - target: {fileID: 4465114332393762912, guid: 5529cf4ef6443c944a2d3f72a6a2e1fd,
         type: 3}
       propertyPath: m_Name
       value: MainWorld 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 4465114332393762913, guid: 5529cf4ef6443c944a2d3f72a6a2e1fd,
+        type: 3}
+      propertyPath: tree.serializedValue
+      value: '{"Root":{"$type":"Orbital.Model.TrajectorySystem.SingleCenterBranch,
+        Orbital","settings":{"mass":0.0,"pericenterSpeed":0.0,"pericenterRadius":0.0,"latitudeShift":0.0,"longitudeShift":0.0,"inclination":0.0,"timeShift":0.0,"period":0.0},"Central":{"$type":"Orbital.Model.TrajectorySystem.CelestialBody,
+        Orbital","settings":{"mass":1.989E+30,"pericenterSpeed":0.0,"pericenterRadius":0.0,"latitudeShift":0.0,"longitudeShift":0.0,"inclination":0.0,"timeShift":0.0,"period":0.0}},"Children":[null]}}'
       objectReference: {fileID: 0}
     - target: {fileID: 4465114332393762918, guid: 5529cf4ef6443c944a2d3f72a6a2e1fd,
         type: 3}
@@ -1385,8 +1412,23 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5419791050431817659, guid: 5529cf4ef6443c944a2d3f72a6a2e1fd,
         type: 3}
+      propertyPath: variables.parentMass
+      value: 1.989e+30
+      objectReference: {fileID: 0}
+    - target: {fileID: 5419791050431817659, guid: 5529cf4ef6443c944a2d3f72a6a2e1fd,
+        type: 3}
+      propertyPath: variables.position.z
+      value: 1.5e+11
+      objectReference: {fileID: 0}
+    - target: {fileID: 5419791050431817659, guid: 5529cf4ef6443c944a2d3f72a6a2e1fd,
+        type: 3}
       propertyPath: variables.velocity.x
-      value: 10429.5
+      value: 29000
+      objectReference: {fileID: 0}
+    - target: {fileID: 5419791050431817659, guid: 5529cf4ef6443c944a2d3f72a6a2e1fd,
+        type: 3}
+      propertyPath: variables.velocity.z
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5529cf4ef6443c944a2d3f72a6a2e1fd, type: 3}

@@ -8,41 +8,96 @@ namespace Orbital.Model.TrajectorySystem
     {
         private abstract class Simulation
         {
-            protected double _parentMass;
-            protected DVector3 _initVelocity;
-            protected DVector3 _initPosition;
-            protected double _deltaTime;
-            private int _maxIterations;
+            private const double MaxEccentricity = 0.977;
             
-            public Simulation(DVector3 initVelocity, DVector3 initPosition, double parentMass, double deltaTime, int maxIterations = 10000)
+            protected readonly double ParentMass;
+            protected readonly DVector3 InitVelocity;
+            protected readonly DVector3 InitPosition;
+            protected DVector3 CurrentPosition;
+            protected DVector3 CurrentVelocity;
+            protected double Period;
+            protected double SemiMajorAxis;
+            protected double Eccentricity;
+            protected bool IsCycle;
+            private readonly int _maxIterations;
+            private readonly double _nu;
+            private double _energy;
+            private double _semiMajorAxisInv;
+
+            public Simulation(DVector3 initVelocity, DVector3 initPosition, double parentMass,
+                int maxIterations = 10000)
             {
-                _parentMass = parentMass;
-                _initVelocity = initVelocity;
-                _initPosition = initPosition;
-                _deltaTime = deltaTime;
+                ParentMass = parentMass;
+                InitVelocity = initVelocity;
+                InitPosition = initPosition;
+                _nu = MassUtility.G * ParentMass;
+                SemiMajorAxis = 1 / (2 / initPosition.Length() - initVelocity.LengthSquared() / _nu);
                 _maxIterations = maxIterations;
+                double h = DVector3.Cross(initPosition, initVelocity).Length();
+                Eccentricity = Math.Sqrt(1 - (h * h / (MassUtility.G * parentMass * SemiMajorAxis)));
+                IsCycle = Math.Abs(Eccentricity) < MaxEccentricity;
+                if (IsCycle)
+                {
+                    _semiMajorAxisInv = 1 / SemiMajorAxis;
+                    Period = RelativeTrajectory.GetPeriod(SemiMajorAxis, MassUtility.G, parentMass);
+                }
+                else
+                {
+                    Debug.Log("Need to implement cross-system navigation");
+                }
+                //_energy = 
             }
+
+            private double GetKineticEnergy(double speed)
+            {
+                return speed * speed * 0.5;
+            }
+
+            private double GetPotentialEnergy(double radius)
+            {
+                return _nu / radius;
+            }
+
+            private DVector3 GetGravityAcceleration(ref DVector3 position, double radius)
+            {
+                return (-position * _nu / (radius * radius * radius));
+            }
+
+            protected abstract double DeltaTime { get; }
 
             public void Run()
             {
-                DVector3 position = _initPosition;
-                DVector3 velocity = _initVelocity;
+                DVector3 position = InitPosition;
+                DVector3 velocity = InitVelocity;
+                CurrentPosition = position;
+                CurrentVelocity = velocity;
                 for (int i = 0; i < _maxIterations; i++)
                 {
                     double r = position.Length();
+                    DVector3 g = GetGravityAcceleration(ref position, r);
+                    if (IsCycle)
+                    {
+                        CorrectImpulse(r, ref velocity, ref position);
+                    }
+
                     DVector3 lastPos = position;
+                    double dt = DeltaTime;
                     // Полушаг для скорости
-                    velocity += (-position * MassUtility.G * _parentMass / (r * r * r)) * 0.5 * _deltaTime;
-    
+                    velocity += g * 0.5 * dt;
+
                     // Полушаг для позиции
-                    position += velocity * _deltaTime;
-    
+                    position += velocity * dt;
+
                     // Полушаг для скорости (дополнительное обновление)
                     r = position.Length();
-                    velocity += (-position * MassUtility.G * _parentMass / (r * r * r)) * 0.5 * _deltaTime;
-                    
-                    Debug.DrawLine(position / 224400000, lastPos / 224400000, Color.red, 10);
-                    
+                    velocity += (-position * _nu / (r * r * r)) * 0.5 * dt;
+                    CurrentPosition = position;
+                    CurrentVelocity = velocity;
+
+                    Vector3 pS = position / 224400000;
+                    Debug.DrawLine(pS, lastPos / 224400000, Color.red, 10);
+                    Debug.DrawLine(pS, pS + Vector3.up * ((float) SemiMajorAxis * 2e-10f), Color.red, 10);
+
                     if (IsComplete(position, velocity))
                     {
                         Debug.Log($"Result reached in {i} iteration");
@@ -51,10 +106,88 @@ namespace Orbital.Model.TrajectorySystem
                 }
             }
 
+            //v = v0 / currentEnergy * energy
+            private void CorrectImpulse(double radius, ref DVector3 velocity, ref DVector3 position)
+            {
+                double vSqr = velocity.LengthSquared();
+
+                double r = 1 / (vSqr / (2 * _nu) + 1 / (2 * SemiMajorAxis));
+
+                position *= (r / radius);
+
+                double vSqrWanted = _nu * (2 / radius - _semiMajorAxisInv);
+                double mul = Math.Sqrt(vSqrWanted / vSqr);
+                velocity *= mul;
+            }
+
             public abstract bool IsComplete(DVector3 position, DVector3 velocity);
         }
-        
-        private class GetCloseToCenterSimulation : Simulation
+
+        private abstract class UniformDeltaTimeSimulation : Simulation
+        {
+            private double _deltaTime;
+
+            protected UniformDeltaTimeSimulation(DVector3 initVelocity, DVector3 initPosition, double parentMass,
+                double deltaTime, int maxIterations = 10000) : base(initVelocity, initPosition, parentMass,
+                maxIterations)
+            {
+                _deltaTime = deltaTime;
+            }
+
+            protected override double DeltaTime => _deltaTime;
+        }
+
+        private abstract class UniformDeltaPositionSimulation : Simulation
+        {
+            //private double _period;
+            private readonly double _step;
+
+            protected UniformDeltaPositionSimulation(DVector3 initVelocity, DVector3 initPosition, double parentMass,
+                double step, int maxIterations = 10000) : base(initVelocity, initPosition, parentMass, maxIterations)
+            {
+                _step = step;
+            }
+
+            protected override double DeltaTime => _step / CurrentVelocity.Length();
+        }
+
+        private abstract class NonUniformDeltaPositionSimulation : Simulation
+        {
+            private readonly double _step;
+            private readonly double _deltaTimeStep;
+            private readonly double _nonuniformity;
+            private const double MinimalDt = 1;
+
+            protected NonUniformDeltaPositionSimulation(DVector3 initVelocity, DVector3 initPosition, double parentMass,
+                int accuracy, double nonuniformity, int maxIterations = 10000) : base(initVelocity, initPosition,
+                parentMass, maxIterations)
+            {
+                if (IsCycle)
+                {
+                    double b = RelativeTrajectory.GetSemiMinorAxis(Eccentricity, SemiMajorAxis);
+
+                    double lApprox = Math.PI * Math.Sqrt(2 * (SemiMajorAxis * SemiMajorAxis + b * b));
+                    _step = lApprox / accuracy;
+                    _deltaTimeStep = Period / accuracy;
+                    double maxNonuniformity =
+                        (MinimalDt - _deltaTimeStep) / (_step / initVelocity.Length() - _deltaTimeStep);
+                    _nonuniformity = Math.Max(Math.Min(nonuniformity, maxNonuniformity), 1);
+                }
+                else
+                {
+                    _deltaTimeStep = 30;
+                    _step = initVelocity.Length() * _deltaTimeStep;
+                    _nonuniformity = nonuniformity;
+                }
+            }
+
+            protected override double DeltaTime =>
+                Math.Max(_deltaTimeStep + (_step / CurrentVelocity.Length() - _deltaTimeStep) * _nonuniformity,
+                    MinimalDt);
+        }
+
+
+        private class GetCloseToCenterSimulation : UniformDeltaTimeSimulation
         {
             private double _dotCache;
             public DVector3 ResultPosition { get; private set; }
@@ -63,7 +196,10 @@ namespace Orbital.Model.TrajectorySystem
             private DVector3 _lastPosition;
             private DVector3 _lastVelocity;
             public bool HasResult { get; private set; }
-            public GetCloseToCenterSimulation(DVector3 initVelocity, DVector3 initPosition, double parentMass, double deltaTime, int maxIterations = 10000) : base(initVelocity, initPosition, parentMass, deltaTime, maxIterations)
+
+            public GetCloseToCenterSimulation(DVector3 initVelocity, DVector3 initPosition, double parentMass,
+                double deltaTime, int maxIterations = 10000) : base(initVelocity, initPosition, parentMass, deltaTime,
+                maxIterations)
             {
                 _dotCache = initPosition.Dot(initVelocity);
                 _lastPosition = initPosition;
@@ -83,14 +219,14 @@ namespace Orbital.Model.TrajectorySystem
                     return true;
                 }
 
-                ResultTime += _deltaTime;
+                ResultTime += DeltaTime;
                 _lastPosition = position;
                 _lastVelocity = velocity;
                 return false;
             }
         }
-        
-        private class FindCenterSimulation : Simulation
+
+        private class FindCenterSimulation : UniformDeltaTimeSimulation
         {
             private double _dotCache;
             public DVector3 ResultPosition { get; private set; }
@@ -99,7 +235,10 @@ namespace Orbital.Model.TrajectorySystem
             private DVector3 _lastPosition;
             private DVector3 _lastVelocity;
             public bool HasResult { get; private set; }
-            public FindCenterSimulation(DVector3 initVelocity, DVector3 initPosition, double parentMass, double deltaTime, int maxIterations = 10000) : base(initVelocity, initPosition, parentMass, deltaTime, maxIterations)
+
+            public FindCenterSimulation(DVector3 initVelocity, DVector3 initPosition, double parentMass,
+                double deltaTime, int maxIterations = 10000) : base(initVelocity, initPosition, parentMass, deltaTime,
+                maxIterations)
             {
                 _dotCache = initPosition.Dot(initVelocity);
                 _lastPosition = initPosition;
@@ -116,15 +255,15 @@ namespace Orbital.Model.TrajectorySystem
                     double dotCacheClear = _dotCache / (_lastPosition.Length() * _lastVelocity.Length());
                     double dotClear = dot / (position.Length() * velocity.Length());
                     double t = -dotCacheClear / (dotClear - dotCacheClear);
-                    
+
                     ResultPosition = DVector3.Lerp(_lastPosition, position, t);
                     ResultVelocity = DVector3.Lerp(_lastVelocity, velocity, t);
-                    ResultTime += _deltaTime * t;
+                    ResultTime += DeltaTime * t;
                     HasResult = true;
                     return true;
                 }
 
-                ResultTime += _deltaTime;
+                ResultTime += DeltaTime;
                 _lastPosition = position;
                 _lastVelocity = velocity;
 
@@ -132,34 +271,40 @@ namespace Orbital.Model.TrajectorySystem
             }
         }
 
-        private class CircleOrbitSimulation : Simulation
+        private class CircleOrbitSimulation : NonUniformDeltaPositionSimulation
         {
             private bool isPiWasReached = false;
-            public CircleOrbitSimulation(DVector3 initVelocity, DVector3 initPosition, double parentMass, double deltaTime, int maxIterations = 10000) : base(initVelocity, initPosition, parentMass, deltaTime, maxIterations)
+
+            public CircleOrbitSimulation(DVector3 initVelocity, DVector3 initPosition, double parentMass, int accuracy,
+                double nonuniformity, int maxIterations = 10000) : base(initVelocity, initPosition, parentMass,
+                accuracy, nonuniformity, maxIterations)
             {
             }
-            
+
             public override bool IsComplete(DVector3 position, DVector3 velocity)
             {
                 if (!isPiWasReached)
                 {
-                    isPiWasReached = (position - _initPosition).Dot(_initVelocity) < 0;
+                    isPiWasReached = (position - InitPosition).Dot(InitVelocity) < 0;
                     return false;
                 }
                 else
                 {
-                    return (position - _initPosition).Dot(_initVelocity) > 0;
+                    return (position - InitPosition).Dot(InitVelocity) > 0;
                 }
             }
         }
-        
-        public static DVector3? FindPericenter(DVector3 initVelocity, DVector3 initPosition, double semiMajorAxis, double parentMass, double deltaTime, out double lastCenterTime, out bool isWasPericenter)
+
+        public static DVector3? FindPericenter(DVector3 initVelocity, DVector3 initPosition, double semiMajorAxis,
+            double parentMass, double deltaTime, out double lastCenterTime, out bool isWasPericenter)
         {
-            GetCloseToCenterSimulation roughSimulation = new GetCloseToCenterSimulation(-initVelocity, initPosition, parentMass, deltaTime * 30);
+            GetCloseToCenterSimulation roughSimulation =
+                new GetCloseToCenterSimulation(-initVelocity, initPosition, parentMass, deltaTime * 30);
             roughSimulation.Run();
             if (roughSimulation.HasResult)
             {
-                FindCenterSimulation simulation = new FindCenterSimulation(roughSimulation.ResultVelocity, roughSimulation.ResultPosition, parentMass, deltaTime);
+                FindCenterSimulation simulation = new FindCenterSimulation(roughSimulation.ResultVelocity,
+                    roughSimulation.ResultPosition, parentMass, deltaTime);
                 simulation.Run();
                 if (simulation.HasResult)
                 {
@@ -182,9 +327,11 @@ namespace Orbital.Model.TrajectorySystem
             return null;
         }
 
-        public static void DrawTrajectoryCircle(DVector3 initPosition, DVector3 initVelocity, double parentMass, double deltaTime)
+        public static void DrawTrajectoryCircle(DVector3 initPosition, DVector3 initVelocity, double parentMass,
+            int accuracy, double nonuniformity)
         {
-            CircleOrbitSimulation simulation = new CircleOrbitSimulation(initVelocity, initPosition, parentMass, deltaTime);
+            CircleOrbitSimulation simulation =
+                new CircleOrbitSimulation(initVelocity, initPosition, parentMass, accuracy, nonuniformity + 1);
             simulation.Run();
         }
     }

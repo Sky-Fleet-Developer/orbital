@@ -8,13 +8,14 @@ namespace Orbital.Model.SystemComponents
     public class NMRigidbody : SystemComponent<NMRigidbodyVariables, NMRigidbodySettings>
     {
         [SerializeField] private NMRigidbodyVariables variables;
-
+        [SerializeField] private int accuracy;
+        [SerializeField] private float nonuniformity;
         public override NMRigidbodyVariables Variables { get => variables; set => variables = value; }
-
+        
 [Button]
         private void Simulate()
         {
-            IterativeSimulation.DrawTrajectoryCircle(variables.position, variables.velocity, variables.parentMass, 10);     
+            IterativeSimulation.DrawTrajectoryCircle(variables.position, variables.velocity, variables.parentMass, accuracy, nonuniformity);     
         }
     }
 
