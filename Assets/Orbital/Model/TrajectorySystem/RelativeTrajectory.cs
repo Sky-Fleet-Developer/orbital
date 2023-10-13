@@ -14,7 +14,7 @@ namespace Orbital.Model.TrajectorySystem
         RigidBody = 2
     }
     
-    public class RelativeTrajectory
+    public class RelativeTrajectory : ITrajectorySampler
     {
         public const double Deg2Rad = 0.01745329;
         public const double Rad2Deg = 57.29578;
@@ -145,6 +145,11 @@ namespace Orbital.Model.TrajectorySystem
             _rotationMatrix = DMatrix4x4.CreateRotation(settings.latitudeShift * Deg2Rad, settings.longitudeShift * Deg2Rad, 0) * DMatrix4x4.CreateRotation(0, 0, settings.inclination * Deg2Rad);
         }
 
+        public (DVector3, DVector3) GetSample(double time)
+        {
+            return (GetPosition(time), GetVelocity(time));
+        }
+        
         public DVector3 GetPosition(double t)
         {
             return TransformByShift(GetFlatPosition(t));

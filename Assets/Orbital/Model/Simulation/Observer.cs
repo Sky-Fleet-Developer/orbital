@@ -12,8 +12,7 @@ namespace Orbital.Model.Simulation
     public class Observer : SystemComponent<ObserverVariables, ObserverSettings>, IFixedUpdateHandler, IObserverTriggerHandler
     {
         [SerializeField] private ObserverVariables variables;
-        private RigidBodySystemComponent _anchor;
-        private RelativeTrajectory _trajectory;
+        private IRigidBody _anchor;
         [Inject] private ObserverService _observerService;
         public Transform Root => _observerService.GetRootFor(this);
         public override ObserverVariables Variables
@@ -22,9 +21,7 @@ namespace Orbital.Model.Simulation
             set => variables = value;
         }
 
-        public RelativeTrajectory Trajectory => _trajectory;
-
-        public RigidBodySystemComponent Anchor
+        public IRigidBody Anchor
         {
             get => _anchor;
             set
@@ -42,21 +39,13 @@ namespace Orbital.Model.Simulation
         protected override void Start()
         {
             base.Start();
-            Anchor = GetComponentInParent<RigidBodySystemComponent>();
+            Anchor = GetComponentInParent<IRigidBody>();
             _observerService.RegisterObserver(this);
         }
 
         private void OnAnchorModeChanged(RigidBodyMode mode)
         {
-            if (mode != RigidBodyMode.Simulation)
-            {
-                CloneAnchorTrajectory();
-            }
-        }
 
-        private void CloneAnchorTrajectory()
-        {
-            _trajectory = _anchor.Trajectory.Clone();
         }
 
         protected override void OnDestroy()
@@ -78,17 +67,12 @@ namespace Orbital.Model.Simulation
         {
         }
 
-        void IObserverTriggerHandler.OnRigidbodyEnter(RigidBodySystemComponent component, Observer observer)
+        void IObserverTriggerHandler.OnRigidbodyEnter(IRigidBody component, Observer observer)
         {
-            if (observer == this)
-            {
-                
-            }
         }
         
-        void IObserverTriggerHandler.OnRigidbodyExit(RigidBodySystemComponent component, Observer observer)
+        void IObserverTriggerHandler.OnRigidbodyExit(IRigidBody component, Observer observer)
         {
-            
         }
     }
 

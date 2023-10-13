@@ -48,14 +48,14 @@ namespace Orbital.Model.Simulation
 
         }*/
         
-        public void OnRigidbodyEnter(RigidBodySystemComponent component, Observer observer)
+        public void OnRigidbodyEnter(IRigidBody body, Observer observer)
         {
-            component.Present(observer);
+            body.Present(observer);
         }
 
-        public void OnRigidbodyExit(RigidBodySystemComponent component, Observer observer)
+        public void OnRigidbodyExit(IRigidBody body, Observer observer)
         {
-            component.RemovePresent();
+            body.RemovePresent();
         }
     }
 }

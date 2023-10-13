@@ -11,7 +11,7 @@ using Zenject;
 
 namespace Orbital.Model.SystemComponents
 {
-    public sealed class RigidBodySystemComponent : SystemComponent<RigidBodyVariables, RigidBodySettings>, ITrajectorySettingsHolder
+    public sealed class RigidBodySystemComponent : SystemComponent<RigidBodyVariables, RigidBodySettings>, IRigidBody, ITrajectorySettingsHolder
     {
         [SerializeField] private RigidBodyVariables variables;
         [SerializeField] private RigidBodySettings settings;
@@ -172,10 +172,5 @@ namespace Orbital.Model.SystemComponents
         public Vector3 position;
     }
     
-    public enum RigidBodyMode
-    {
-        Trajectory = 0,
-        Sleep = 1,
-        Simulation = 2
-    }
+
 }

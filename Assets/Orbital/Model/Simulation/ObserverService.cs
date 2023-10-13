@@ -22,8 +22,8 @@ namespace Orbital.Model.Simulation
         private readonly Dictionary<Observer, Scene> _scenes = new ();
         private readonly Dictionary<Observer, Transform> _roots = new ();
         private readonly Queue<Scene> _scenesPool = new ();
-        private readonly Dictionary<Observer, HashSet<RigidBodySystemComponent>> _observingObjects = new();
-        private readonly Dictionary<RigidBodySystemComponent, Observer> _observingObjectPerObserver = new();
+        private readonly Dictionary<Observer, HashSet<IRigidBody>> _observingObjects = new();
+        private readonly Dictionary<IRigidBody, Observer> _observingObjectPerObserver = new();
         public float VisibleDistance => visibleDistance;
         
         private void Awake()
@@ -70,15 +70,15 @@ namespace Orbital.Model.Simulation
             Scene scene = _scenesPool.Dequeue();
             _roots.Add(observer, scene.GetRootGameObjects()[0].transform);
             _scenes.Add(observer, scene);
-            _observingObjects.Add(observer, new HashSet<RigidBodySystemComponent>());
+            _observingObjects.Add(observer, new HashSet<IRigidBody>());
             observer.RegisterComplete(scene);
             SceneManager.LoadSceneAsync(simulationSceneName, LoadSceneMode.Additive); //prepare next scene
         }
         
         public void UnregisterObserver(Observer observer)
         {
-            RigidBodySystemComponent[] array = _observingObjects[observer].ToArray();
-            foreach (RigidBodySystemComponent rigidBodySystemComponent in array)
+            IRigidBody[] array = _observingObjects[observer].ToArray();
+            foreach (IRigidBody rigidBodySystemComponent in array)
             {
                 RigidbodyLeavesObserver(rigidBodySystemComponent, observer);
             }
@@ -88,12 +88,12 @@ namespace Orbital.Model.Simulation
             _roots.Remove(observer);
         }
 
-        public Observer GetObserverFor(RigidBodySystemComponent target)
+        public Observer GetObserverFor(IRigidBody target)
         {
             return _observingObjectPerObserver[target];
         }
         
-        public bool IsInSimulation(RigidBodySystemComponent target)
+        public bool IsInSimulation(IRigidBody target)
         {
             return target.Mode != RigidBodyMode.Trajectory;
         }
@@ -103,7 +103,7 @@ namespace Orbital.Model.Simulation
         {
             foreach (Observer observer in _scenes.Keys)
             {
-                foreach (RigidBodySystemComponent component in _world.GetRigidbodyParents(observer.Parent))
+                foreach (IRigidBody component in _world.GetRigidbodyParents(observer.Parent))
                 {
                     double sqrDistanceInSpace = (component.LocalPosition - observer.LocalPosition).LengthSquared();
                     bool isInSimulation = IsInSimulation(component);
@@ -124,7 +124,7 @@ namespace Orbital.Model.Simulation
                 }
             }
         }
-        private void RigidbodyEntersObserver(RigidBodySystemComponent component, Observer observer)
+        private void RigidbodyEntersObserver(IRigidBody component, Observer observer)
         {
             if (_observingObjectPerObserver.ContainsKey(component))
             {
@@ -141,7 +141,7 @@ namespace Orbital.Model.Simulation
                 subscriber.OnRigidbodyEnter(component, observer);
             }
         }
-        private void RigidbodyLeavesObserver(RigidBodySystemComponent component, Observer observer)
+        private void RigidbodyLeavesObserver(IRigidBody component, Observer observer)
         {
             _observingObjectPerObserver[component] = null;
             _observingObjects[observer].Remove(component);

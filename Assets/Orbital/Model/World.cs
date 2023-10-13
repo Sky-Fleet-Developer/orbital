@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Ara3D;
+using Orbital.Model.Simulation;
 using Orbital.Model.SystemComponents;
 using Orbital.Model.TrajectorySystem;
 using UnityEngine;
@@ -19,12 +20,12 @@ namespace Orbital.Model
             InjectHierarchy();
         }
 
-        public IEnumerable<RigidBodySystemComponent> GetRigidbodyParents(MassSystemComponent parent)
+        public IEnumerable<IRigidBody> GetRigidbodyParents(MassSystemComponent parent)
         {
             return tree._rigidbodyParents[tree._componentPerMass[parent]];
         }
         
-        public IEnumerable<RigidBodySystemComponent> GetRigidbodyParents(IMassSystem parent)
+        public IEnumerable<IRigidBody> GetRigidbodyParents(IMassSystem parent)
         {
             return tree._rigidbodyParents[parent];
         }

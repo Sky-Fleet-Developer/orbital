@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Newtonsoft.Json;
 using Orbital.Model.Serialization;
+using Orbital.Model.Simulation;
 using Orbital.Model.SystemComponents;
 using Orbital.Model.TrajectorySystem;
 using Orbital.Model.Utilities;
@@ -16,7 +17,7 @@ namespace Orbital.Model
         [JsonIgnore] public Dictionary<IMassSystem, Transform> _transforms { get; private set; }
         [JsonIgnore] public Dictionary<IMassSystem, RelativeTrajectory> _trajectories { get; private set; }
         [JsonIgnore] public Dictionary<MassSystemComponent, IMassSystem> _componentPerMass { get; private set; }
-        [JsonIgnore] public Dictionary<IMassSystem, List<RigidBodySystemComponent>> _rigidbodyParents { get; private set; }
+        [JsonIgnore] public Dictionary<IMassSystem, List<IRigidBody>> _rigidbodyParents { get; private set; }
         [JsonIgnore] public Dictionary<IMassSystem, IMassSystem> _parents { get; private set; }
         [SerializeField, TextArea(minLines: 6, maxLines: 10)] private string serializedValue;
 
@@ -35,7 +36,7 @@ namespace Orbital.Model
             ReconstructHierarchy(Root, tRoot);
             foreach (IMassSystem massSystem in _transforms.Keys)
             {
-                _rigidbodyParents.Add(massSystem, new List<RigidBodySystemComponent>());
+                _rigidbodyParents.Add(massSystem, new List<IRigidBody>());
             }
         }
         
@@ -43,11 +44,11 @@ namespace Orbital.Model
         {
             _trajectories = new Dictionary<IMassSystem, RelativeTrajectory>();
             _componentPerMass = new Dictionary<MassSystemComponent, IMassSystem>();
-            _rigidbodyParents = new Dictionary<IMassSystem, List<RigidBodySystemComponent>>();
+            _rigidbodyParents = new Dictionary<IMassSystem, List<IRigidBody>>();
             _parents = new Dictionary<IMassSystem, IMassSystem>();
         }
 
-        public void AddRigidbody(RigidBodySystemComponent component, out IMassSystem parentMass)
+        public void AddRigidbody(IRigidBody component, out IMassSystem parentMass)
         {
             parentMass = _componentPerMass[component.Parent];
             _rigidbodyParents[parentMass].Add(component);
