@@ -11,7 +11,6 @@ namespace Orbital.Model.TrajectorySystem
     {
         SingleCenter = 0,
         DoubleSystem = 1,
-        RigidBody = 2
     }
     
     public class RelativeTrajectory : ITrajectorySampler
@@ -48,7 +47,7 @@ namespace Orbital.Model.TrajectorySystem
             TimeShift = settings.timeShift * 0.01f;
             switch (_systemType)
             {
-                case SystemType.SingleCenter: case SystemType.RigidBody:
+                case SystemType.SingleCenter:
                     CalculateForSingleCenter(ref settings);
                     break;
                 case SystemType.DoubleSystem:
@@ -88,7 +87,7 @@ namespace Orbital.Model.TrajectorySystem
         
         private static AsyncThreadScheduler _calculationScheduler = new AsyncThreadScheduler(3);
         
-        public async Task SetupFromSimulation(DVector3 position, DVector3 velocity)
+        /*public async Task SetupFromSimulation(DVector3 position, DVector3 velocity)
         {
             double r = position.Length();
             DVector3 hh = DVector3.Cross(position, velocity);
@@ -116,12 +115,7 @@ namespace Orbital.Model.TrajectorySystem
             double M = E - Eccentricity * Math.Sin(E);
 
             TimeShift = -M / (2 * Math.PI);
-
-            /*Debug.Log($"Расстояние (r): {r} m");
-            Debug.Log($"Большая полуось (a): {SemiMajorAxis} m");
-            Debug.Log($"Эксцентриситет (e): {Eccentricity}");
-            Debug.Log($"Перицентр : {pericenter}");*/
-        }
+        }*/
 
         public void UpdateSettings(ref TrajectorySettings settings)
         {

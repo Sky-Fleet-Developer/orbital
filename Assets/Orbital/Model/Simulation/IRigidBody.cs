@@ -1,6 +1,7 @@
 using System;
 using Ara3D;
 using Orbital.Model.SystemComponents;
+using Orbital.Model.TrajectorySystem;
 
 namespace Orbital.Model.Simulation
 {
@@ -8,8 +9,8 @@ namespace Orbital.Model.Simulation
     {
         public MassSystemComponent Parent { get; }
         public RigidBodyMode Mode { get; }
-        public DVector3 LocalPosition { get; }
-        public DVector3 LocalVelocity { get; }
+        public ITrajectorySampler Trajectory { get; }
+
         public event Action<RigidBodyMode> ModeChangedHandler;
         public void Present(Observer observer);
         public void RemovePresent();

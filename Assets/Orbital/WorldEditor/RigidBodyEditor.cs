@@ -50,7 +50,7 @@ namespace Orbital.WorldEditor
             _tree = _serializer.Deserialize<TreeContainer>(treeString);
             _tree.CalculateForRoot(world.transform);
             _parent = _targetGameObject.GetComponentInParent<MassSystemComponent>();
-            _trajectory = new RelativeTrajectory(_rigidBody, _tree._componentPerMass[_parent], SystemType.RigidBody);
+            _trajectory = new RelativeTrajectory(_rigidBody, _tree._componentPerMass[_parent], SystemType.SingleCenter);
             _trajectory.Calculate();
         }
 

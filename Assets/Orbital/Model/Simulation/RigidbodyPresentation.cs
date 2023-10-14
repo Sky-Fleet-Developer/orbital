@@ -11,9 +11,9 @@ namespace Orbital.Model.Simulation
     public class RigidbodyPresentation : MonoBehaviour
     {
         private Rigidbody _rigidbody;
-        private RigidBodySystemComponent _master;
+        private IRigidBody _master;
         private Observer _observer;
-        private RelativeTrajectory _trajectory;
+        private ITrajectorySampler _trajectory;
         private double _interpolationLastTime = 0;
         private const double TrajectoryUpdateThreshold = 2;
         private Vector3 _positionToInterpolationLast;
@@ -43,7 +43,7 @@ namespace Orbital.Model.Simulation
             _rigidbody = GetComponent<Rigidbody>();
         }
 
-        public void Init(RigidBodySystemComponent component, Observer observer)
+        public void Init(IRigidBody component, Observer observer)
         {
             _master = component;
             _observer = observer;
@@ -78,8 +78,9 @@ namespace Orbital.Model.Simulation
         {
             double nextTime = TimeService.WorldTime + TrajectoryUpdateThreshold;
             (DVector3 observerPos, DVector3 observerVel) = _observer.SampleTrajectory(nextTime);
-            _positionToInterpolationNext = _trajectory.GetPosition(nextTime) - observerPos;
-            _velocityToInterpolationNext = _trajectory.GetVelocity(nextTime) - observerVel;
+            (_positionToInterpolationNext, _velocityToInterpolationNext) = _trajectory.GetSample(nextTime);
+            _positionToInterpolationNext -= (Vector3)observerPos;
+            _velocityToInterpolationNext -= (Vector3)observerVel;
             _positionToInterpolationLast = Position;
             _velocityToInterpolationLast = Velocity;
             _interpolationLastTime = TimeService.WorldTime;
@@ -87,7 +88,7 @@ namespace Orbital.Model.Simulation
 
         private void OnCollisionEnter(Collision other)
         {
-            if (_master.IsSleep)
+            if (_master.Mode == RigidBodyMode.Sleep)
             {
                 Debug.Log("Awake");
                 _master.AwakeFromSleep();

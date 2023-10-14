@@ -48,10 +48,9 @@ namespace Orbital.Model
             _parents = new Dictionary<IMassSystem, IMassSystem>();
         }
 
-        public void AddRigidbody(IRigidBody component, out IMassSystem parentMass)
+        public void AddRigidbody(IRigidBody component)
         {
-            parentMass = _componentPerMass[component.Parent];
-            _rigidbodyParents[parentMass].Add(component);
+            _rigidbodyParents[_componentPerMass[component.Parent]].Add(component);
         }
         
         private void ReconstructHierarchy(IMassSystem mRoot, Transform tRoot)

@@ -1,8 +1,10 @@
 using System;
 using Ara3D;
+using Orbital.Model.TrajectorySystem;
+using Unity.Collections;
 using UnityEngine;
 
-namespace Orbital.Model.TrajectorySystem
+namespace Orbital.Model.Simulation
 {
     public static class IterativeSimulation
     {
@@ -19,6 +21,7 @@ namespace Orbital.Model.TrajectorySystem
             protected double SemiMajorAxis;
             protected double Eccentricity;
             protected bool IsCycle;
+            protected double CurrentTime;
             private readonly int _maxIterations;
             private readonly double _nu;
             private double _semiMajorAxisInv;
@@ -35,6 +38,7 @@ namespace Orbital.Model.TrajectorySystem
                 double h = DVector3.Cross(initPosition, initVelocity).Length();
                 Eccentricity = Math.Sqrt(1 - (h * h / (MassUtility.G * parentMass * SemiMajorAxis)));
                 IsCycle = Math.Abs(Eccentricity) < MaxEccentricity;
+                CurrentTime = 0;
                 if (IsCycle)
                 {
                     _semiMajorAxisInv = 1 / SemiMajorAxis;
@@ -87,6 +91,7 @@ namespace Orbital.Model.TrajectorySystem
                     Debug.DrawLine(pS, lastPos / 224400000, Color.red, 10);
                     Debug.DrawLine(pS, pS + Vector3.up * ((float) SemiMajorAxis * 2e-10f), Color.red, 10);
 
+                    CurrentTime += dt;
                     if (IsComplete(position, velocity))
                     {
                         Debug.Log($"Result reached in {i} iteration");
@@ -284,6 +289,34 @@ namespace Orbital.Model.TrajectorySystem
             }
         }
 
+        private class FillContainerSimulation : CircleOrbitSimulation
+        {
+            private TrajectoryContainer _coniainer;
+            private int _index = 0;
+            private double _startTime;
+            public FillContainerSimulation(TrajectoryContainer container, double startTime, DVector3 initVelocity, DVector3 initPosition, double parentMass, int accuracy, double nonuniformity) : base(initVelocity, initPosition, parentMass, accuracy, nonuniformity, container.Length)
+            {
+                _coniainer = container;
+                _startTime = startTime;
+                _coniainer[0] = new Mark(initPosition, initVelocity, startTime);
+            }
+            public override bool IsComplete(DVector3 position, DVector3 velocity)
+            {
+                bool result = base.IsComplete(position, velocity);
+                _index++;
+                if (!result)
+                {
+                    _coniainer[_index] = new Mark(position, velocity, _startTime + CurrentTime);
+                }
+                else
+                {
+                    double time = (InitPosition - position).Length() - (InitVelocity + velocity).Length() * 0.5;
+                    _coniainer[_index] = new Mark(InitPosition, InitVelocity, _startTime + _coniainer[_index - 1].TimeMark + time);
+                }
+                return result;
+            }
+        }
+
         public static DVector3? FindPericenter(DVector3 initVelocity, DVector3 initPosition, double semiMajorAxis,
             double parentMass, double deltaTime, out double lastCenterTime, out bool isWasPericenter)
         {
@@ -321,6 +354,13 @@ namespace Orbital.Model.TrajectorySystem
         {
             CircleOrbitSimulation simulation =
                 new CircleOrbitSimulation(initVelocity, initPosition, parentMass, accuracy, nonuniformity + 1);
+            simulation.Run();
+        }
+
+        public static void FillTrajectoryContainer(TrajectoryContainer container, double startTime, DVector3 initPosition, DVector3 initVelocity, double parentMass,
+            int accuracy, double nonuniformity)
+        {
+            FillContainerSimulation simulation = new FillContainerSimulation(container, startTime, initVelocity, initPosition, parentMass, accuracy, nonuniformity + 1);
             simulation.Run();
         }
     }

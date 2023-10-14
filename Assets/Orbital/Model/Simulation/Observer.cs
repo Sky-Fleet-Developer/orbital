@@ -1,4 +1,6 @@
 using System;
+using System.ComponentModel;
+using System.Threading.Tasks;
 using Ara3D;
 using Orbital.Model.Handles;
 using Orbital.Model.SystemComponents;
@@ -40,7 +42,6 @@ namespace Orbital.Model.Simulation
                 _anchor = value;
                 _anchor.ModeChangedHandler += OnAnchorModeChanged;
                 RefreshAnchorPosition();
-                Debug.LogError("Has no logic for anchor change");
             }
         }
 
@@ -49,9 +50,16 @@ namespace Orbital.Model.Simulation
         protected override void Start()
         {
             base.Start();
+            _trajectory = new RuntimeTrajectory();
+            _diContainer.Inject(_trajectory);
+            InitDelayed();
+        }
+
+        private async void InitDelayed()
+        {
+            await Task.Yield();
             Anchor = GetComponentInParent<IRigidBody>();
             _observerService.RegisterObserver(this);
-            _trajectory.Inject(_diContainer);
         }
 
         private void OnAnchorModeChanged(RigidBodyMode mode)
@@ -72,7 +80,8 @@ namespace Orbital.Model.Simulation
 
         private void RefreshAnchorPosition()
         {
-            _trajectory.Place(_anchor.LocalPosition, _anchor.LocalVelocity);
+            var sample = _anchor.Trajectory.GetSample(TimeService.WorldTime);
+            _trajectory.Place(sample.position, sample.velocity);
         }
 
         int IOrderHolder.Order => 1;

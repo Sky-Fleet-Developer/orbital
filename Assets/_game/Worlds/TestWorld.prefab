@@ -1,5 +1,58 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &3944929291612492282
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4306337505488059977}
+  - component: {fileID: 9105365122161674278}
+  m_Layer: 0
+  m_Name: RigidBody (1)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4306337505488059977
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3944929291612492282}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2731067452001315346}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &9105365122161674278
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3944929291612492282}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cf3af288f368e784492d43eae7960cfb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  variables:
+    velocity: {x: 7610, y: 0, z: 0}
+    position: {x: -100, y: 0, z: 6878000}
+    parentMass: 6e+24
+  settings:
+    presentation: {fileID: 6605901092997738416, guid: 28883b6e7d549e5418a1e5aa2099706b,
+      type: 3}
+  accuracy: 200
+  nonuniformity: 0.15
 --- !u!1 &4079401439770663085
 GameObject:
   m_ObjectHideFlags: 0
@@ -30,6 +83,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 5599842919499006708}
+  - {fileID: 4306337505488059977}
   m_Father: {fileID: 2744170103976911876}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -149,7 +203,6 @@ GameObject:
   m_Component:
   - component: {fileID: 5599842919499006708}
   - component: {fileID: 5419791050431817659}
-  - component: {fileID: 1132999231780457644}
   m_Layer: 0
   m_Name: RigidBody
   m_TagString: Untagged
@@ -168,7 +221,8 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 1599574125542866895}
   m_Father: {fileID: 2731067452001315346}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -188,29 +242,52 @@ MonoBehaviour:
     velocity: {x: 7600, y: 0, z: 0}
     position: {x: 0, y: 0, z: 6878000}
     parentMass: 6e+24
+  settings:
+    presentation: {fileID: 6605901092997738416, guid: 28883b6e7d549e5418a1e5aa2099706b,
+      type: 3}
   accuracy: 200
   nonuniformity: 0.15
---- !u!114 &1132999231780457644
+--- !u!1 &7303113335462906777
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1599574125542866895}
+  - component: {fileID: 20799662989465710}
+  m_Layer: 0
+  m_Name: Observer
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1599574125542866895
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7303113335462906777}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 5599842919499006708}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &20799662989465710
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4963467543138443323}
+  m_GameObject: {fileID: 7303113335462906777}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a99128bf0c41c7548870678e449e7d38, type: 3}
+  m_Script: {fileID: 11500000, guid: 6383b9e5f1869a74b9a91387785d2a61, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  variables:
-    trajectorySettings:
-      mass: 100
-      pericenterSpeed: 7600
-      pericenterRadius: 6878000
-      latitudeShift: 0
-      longitudeShift: 0
-      inclination: 0
-      timeShift: 0
-      period: 0
-  settings:
-    presentation: {fileID: 0}

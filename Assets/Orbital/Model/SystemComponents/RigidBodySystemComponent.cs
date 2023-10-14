@@ -27,9 +27,7 @@ namespace Orbital.Model.SystemComponents
         public RigidBodyMode Mode => _mode;
         public event Action<RigidBodyMode> ModeChangedHandler;
         public MassSystemComponent Parent => _parent;
-        public RelativeTrajectory Trajectory => _trajectory;
-        public DVector3 LocalPosition => Trajectory.GetPosition(TimeService.WorldTime);
-        public DVector3 LocalVelocity => Trajectory.GetVelocity(TimeService.WorldTime);
+        ITrajectorySampler IRigidBody.Trajectory => _trajectory;
 
         private float _awakeTime = 0;
         private const float AwakeDelay = 1;
@@ -55,7 +53,7 @@ namespace Orbital.Model.SystemComponents
         {
             base.Start();
             _parent = GetComponentInParent<MassSystemComponent>();
-            _world.RegisterRigidBody(this, out _trajectory);
+            //_world.RegisterRigidBody(this, out _trajectory);
             _trajectory.Calculate();
         }
         
@@ -105,7 +103,9 @@ namespace Orbital.Model.SystemComponents
             _isSleep = true;
             _mode = RigidBodyMode.Sleep;
 
-            _observer = observer;
+            
+            /*
+             * _observer = observer;
             DVector3 origin = observer.Position;
             DVector3 originVelocity = observer.Velocity;
             Vector3 localPosition = LocalPosition - origin;
@@ -115,7 +115,7 @@ namespace Orbital.Model.SystemComponents
             _presentation.Position = localPosition;
             _presentation.Rotation = Quaternion.identity;
             _presentation.Velocity = LocalVelocity - originVelocity;
-
+            */
             ModeChangedHandler?.Invoke(_mode);
         }
 
@@ -137,18 +137,18 @@ namespace Orbital.Model.SystemComponents
         private async Task PrepareForSleep()
         {
             await SetupTrajectoryFromPresentation();
-            Trajectory.Calculate();
+            _trajectory.Calculate();
         }
         
         public async Task SetupTrajectoryFromPresentation()
         {
-            DVector3 position = (DVector3)(_presentation.Position) + _observer.Position;
+            /*DVector3 position = (DVector3)(_presentation.Position) + _observer.Position;
             DVector3 velocity = (DVector3) (_presentation.Velocity) + _observer.Velocity;
             await _trajectory.SetupFromSimulation(position, velocity);
             TrajectorySettings settingsToUpdate = variables.trajectorySettings;
             _trajectory.UpdateSettings(ref settingsToUpdate);
             variables.trajectorySettings = settingsToUpdate;
-            _trajectory.Calculate();
+            _trajectory.Calculate();*/
         }
     }
 

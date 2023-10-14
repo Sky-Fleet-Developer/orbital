@@ -30,10 +30,9 @@ namespace Orbital.Model
             return tree._rigidbodyParents[parent];
         }
 
-        public void RegisterRigidBody(RigidBodySystemComponent value, out RelativeTrajectory trajectory)
+        public void RegisterRigidBody(IRigidBody value)
         {
-            tree.AddRigidbody(value, out IMassSystem parent);
-            trajectory = new RelativeTrajectory(value, parent, SystemType.RigidBody);
+            tree.AddRigidbody(value);
         }
         
         public DVector3 GetGlobalPosition(MassSystemComponent massSystemComponent)
