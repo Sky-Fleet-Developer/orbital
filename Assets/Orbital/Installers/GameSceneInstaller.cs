@@ -2,6 +2,7 @@ using Orbital.Model;
 using Orbital.Model.Handles;
 using Orbital.Model.Simulation;
 using Orbital.Model.SystemComponents;
+using Orbital.Model.TrajectorySystem;
 using UnityEngine;
 using Zenject;
 

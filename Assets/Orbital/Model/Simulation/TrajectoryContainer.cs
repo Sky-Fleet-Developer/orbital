@@ -53,7 +53,7 @@ namespace Orbital.Model.Simulation
             _lastMark.CalculateTangents(_nextMark);
         }
 
-        public (DVector3, DVector3) GetSample(double time)
+        public (DVector3 position, DVector3 velocity) GetSample(double time)
         {
             if (time > _nextMark.TimeMark)
             {
@@ -91,7 +91,7 @@ namespace Orbital.Model.Simulation
             _tangentB = next.Position - next.Velocity * dTime * mul;
         }
 
-        public (DVector3, DVector3) Interpolate(Mark next, double t)
+        public (DVector3 position, DVector3 velocity) Interpolate(Mark next, double t)
         {
             DVector3 a = DVector3.Lerp(Position, _tangentA, t);
             DVector3 b = DVector3.Lerp(_tangentB, next.Position, t);

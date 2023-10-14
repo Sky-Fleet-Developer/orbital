@@ -105,7 +105,7 @@ namespace Orbital.Model.Simulation
             {
                 foreach (IRigidBody component in _world.GetRigidbodyParents(observer.Parent))
                 {
-                    double sqrDistanceInSpace = (component.LocalPosition - observer.LocalPosition).LengthSquared();
+                    double sqrDistanceInSpace = (component.LocalPosition - observer.Position).LengthSquared();
                     bool isInSimulation = IsInSimulation(component);
                     bool distanceCompare = sqrDistanceInSpace < _visibleDistanceSqr;
                     

@@ -106,8 +106,8 @@ namespace Orbital.Model.SystemComponents
             _mode = RigidBodyMode.Sleep;
 
             _observer = observer;
-            DVector3 origin = observer.LocalPosition;
-            DVector3 originVelocity = observer.LocalVelocity;
+            DVector3 origin = observer.Position;
+            DVector3 originVelocity = observer.Velocity;
             Vector3 localPosition = LocalPosition - origin;
             
             _presentation = Instantiate(Settings.presentation, observer.Root);
@@ -142,8 +142,8 @@ namespace Orbital.Model.SystemComponents
         
         public async Task SetupTrajectoryFromPresentation()
         {
-            DVector3 position = (DVector3)(_presentation.Position) + _observer.LocalPosition;
-            DVector3 velocity = (DVector3) (_presentation.Velocity) + _observer.LocalVelocity;
+            DVector3 position = (DVector3)(_presentation.Position) + _observer.Position;
+            DVector3 velocity = (DVector3) (_presentation.Velocity) + _observer.Velocity;
             await _trajectory.SetupFromSimulation(position, velocity);
             TrajectorySettings settingsToUpdate = variables.trajectorySettings;
             _trajectory.UpdateSettings(ref settingsToUpdate);

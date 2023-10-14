@@ -145,7 +145,7 @@ namespace Orbital.Model.TrajectorySystem
             _rotationMatrix = DMatrix4x4.CreateRotation(settings.latitudeShift * Deg2Rad, settings.longitudeShift * Deg2Rad, 0) * DMatrix4x4.CreateRotation(0, 0, settings.inclination * Deg2Rad);
         }
 
-        public (DVector3, DVector3) GetSample(double time)
+        public (DVector3 position, DVector3 velocity) GetSample(double time)
         {
             return (GetPosition(time), GetVelocity(time));
         }

@@ -41,7 +41,6 @@ namespace Orbital.WorldEditor
         }
         private float _previewScaleValue;
         private const string PreviewScaleKey = "PREVIRE_SCALE_EDITOR";
-        private float _time = 0;
         State IStateMaster.CurrentState
         {
             get => _currentState;

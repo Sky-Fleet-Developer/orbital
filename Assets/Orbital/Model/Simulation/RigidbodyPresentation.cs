@@ -1,7 +1,9 @@
 using System;
+using Ara3D;
 using Orbital.Model.SystemComponents;
 using Orbital.Model.TrajectorySystem;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 namespace Orbital.Model.Simulation
 {
@@ -75,8 +77,9 @@ namespace Orbital.Model.Simulation
         private void RecordInterpolationData()
         {
             double nextTime = TimeService.WorldTime + TrajectoryUpdateThreshold;
-            _positionToInterpolationNext = _trajectory.GetPosition(nextTime) - _observer.Trajectory.GetPosition(nextTime);
-            _velocityToInterpolationNext = _trajectory.GetVelocity(nextTime) - _observer.Trajectory.GetVelocity(nextTime);
+            (DVector3 observerPos, DVector3 observerVel) = _observer.SampleTrajectory(nextTime);
+            _positionToInterpolationNext = _trajectory.GetPosition(nextTime) - observerPos;
+            _velocityToInterpolationNext = _trajectory.GetVelocity(nextTime) - observerVel;
             _positionToInterpolationLast = Position;
             _velocityToInterpolationLast = Velocity;
             _interpolationLastTime = TimeService.WorldTime;

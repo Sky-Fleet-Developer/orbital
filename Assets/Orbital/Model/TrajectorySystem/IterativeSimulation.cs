@@ -21,7 +21,6 @@ namespace Orbital.Model.TrajectorySystem
             protected bool IsCycle;
             private readonly int _maxIterations;
             private readonly double _nu;
-            private double _energy;
             private double _semiMajorAxisInv;
 
             public Simulation(DVector3 initVelocity, DVector3 initPosition, double parentMass,
@@ -45,22 +44,12 @@ namespace Orbital.Model.TrajectorySystem
                 {
                     Debug.Log("Need to implement cross-system navigation");
                 }
-                //_energy = 
             }
 
-            private double GetKineticEnergy(double speed)
-            {
-                return speed * speed * 0.5;
-            }
-
-            private double GetPotentialEnergy(double radius)
-            {
-                return _nu / radius;
-            }
 
             private DVector3 GetGravityAcceleration(ref DVector3 position, double radius)
             {
-                return (-position * _nu / (radius * radius * radius));
+                return -position * _nu / (radius * radius * radius);
             }
 
             protected abstract double DeltaTime { get; }
