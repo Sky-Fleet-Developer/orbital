@@ -64,14 +64,18 @@ namespace Orbital.Model.Simulation
 
         private void FollowTrajectory()
         {
-            float interpolationValue = (float)((TimeService.WorldTime - _interpolationLastTime) / TrajectoryUpdateThreshold);
+            /*float interpolationValue = (float)((TimeService.WorldTime - _interpolationLastTime) / TrajectoryUpdateThreshold);
             if (interpolationValue > 1)
             {
                 interpolationValue = 0;
                 RecordInterpolationData();
             }
             Position = Vector3.Lerp(_positionToInterpolationLast, _positionToInterpolationNext, interpolationValue);
-            Velocity = Vector3.Lerp(_velocityToInterpolationLast, _velocityToInterpolationNext, interpolationValue);
+            Velocity = Vector3.Lerp(_velocityToInterpolationLast, _velocityToInterpolationNext, interpolationValue);*/
+            (DVector3 pos, DVector3 vel) = _trajectory.GetSample(TimeService.WorldTime);
+            (DVector3 observerPos, DVector3 observerVel) = _observer.SampleTrajectory(TimeService.WorldTime);
+            Position = pos - observerPos;
+            Velocity = vel - observerVel;
         }
 
         private void RecordInterpolationData()
@@ -90,7 +94,6 @@ namespace Orbital.Model.Simulation
         {
             if (_master.Mode == RigidBodyMode.Sleep)
             {
-                Debug.Log("Awake");
                 _master.AwakeFromSleep();
             }
         }

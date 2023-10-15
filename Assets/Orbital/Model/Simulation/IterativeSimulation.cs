@@ -294,7 +294,7 @@ namespace Orbital.Model.Simulation
             private TrajectoryContainer _coniainer;
             private int _index = 0;
             private double _startTime;
-            public FillContainerSimulation(TrajectoryContainer container, double startTime, DVector3 initVelocity, DVector3 initPosition, double parentMass, int accuracy, double nonuniformity) : base(initVelocity, initPosition, parentMass, accuracy, nonuniformity, container.Length)
+            public FillContainerSimulation(TrajectoryContainer container, double startTime, DVector3 initVelocity, DVector3 initPosition, double parentMass, int accuracy, double nonuniformity) : base(initVelocity, initPosition, parentMass, accuracy, nonuniformity, container.Capacity)
             {
                 _coniainer = container;
                 _startTime = startTime;

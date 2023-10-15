@@ -46,7 +46,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   variables:
     velocity: {x: 7610, y: 0, z: 0}
-    position: {x: -100, y: 0, z: 6878000}
+    position: {x: -300, y: 0, z: 6878000}
     parentMass: 6e+24
   settings:
     presentation: {fileID: 6605901092997738416, guid: 28883b6e7d549e5418a1e5aa2099706b,
@@ -291,3 +291,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6383b9e5f1869a74b9a91387785d2a61, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  maxDistanceToAnchor: 300

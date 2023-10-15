@@ -11,18 +11,28 @@ using Zenject;
 
 namespace Orbital.Model.Simulation
 {
-    public class Observer : SystemComponent<ObserverVariables, ObserverSettings>, IFixedUpdateHandler, IObserverTriggerHandler
+    public class Observer : SystemComponent<ObserverVariables, ObserverSettings>, IUpdateByFrequencyHandler, IObserverTriggerHandler
     {
         [SerializeField] private ObserverVariables variables;
+        [SerializeField] private ObserverSettings settings;
+        [SerializeField] private float maxDistanceToAnchor;
         private IRigidBody _anchor;
         [Inject] private ObserverService _observerService;
         [Inject] private DiContainer _diContainer;
         private RuntimeTrajectory _trajectory;
+        private double _maxDistanceToAnchorSqr;
+        
         public Transform Root => _observerService.GetRootFor(this);
         public override ObserverVariables Variables
         {
             get => variables;
             set => variables = value;
+        }
+
+        public override ObserverSettings Settings
+        {
+            get => settings;
+            set => settings = value;
         }
 
         public IRigidBody Anchor
@@ -46,6 +56,11 @@ namespace Orbital.Model.Simulation
         }
 
         public MassSystemComponent Parent => _anchor.Parent;
+
+        private void Awake()
+        {
+            _maxDistanceToAnchorSqr = maxDistanceToAnchor * maxDistanceToAnchor;
+        }
 
         protected override void Start()
         {
@@ -84,11 +99,6 @@ namespace Orbital.Model.Simulation
             _trajectory.Place(sample.position, sample.velocity);
         }
 
-        int IOrderHolder.Order => 1;
-
-        void IFixedUpdateHandler.FixedUpdate()
-        {
-        }
 
         void IObserverTriggerHandler.OnRigidbodyEnter(IRigidBody component, Observer observer)
         {
@@ -105,8 +115,21 @@ namespace Orbital.Model.Simulation
         {
             return _trajectory.GetSample(time);
         }
-    }
+        
+        int IOrderHolder.Order => 1;
+        UpdateFrequency IUpdateByFrequencyHandler.Frequency => UpdateFrequency.Every10Frame;
 
+        void IUpdateByFrequencyHandler.Update()
+        {
+            double distSqr = (_trajectory.Position - _anchor.Trajectory.GetSample(TimeService.WorldTime).position).LengthSquared();
+            if (distSqr > _maxDistanceToAnchorSqr)
+            {
+                RefreshAnchorPosition();
+            }
+        }
+        
+    }
+    [Serializable]
     public struct ObserverSettings
     {
     }

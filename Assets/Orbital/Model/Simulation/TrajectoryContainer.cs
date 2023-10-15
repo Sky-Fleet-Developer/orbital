@@ -9,6 +9,7 @@ namespace Orbital.Model.Simulation
     public class TrajectoryContainer
     {
         private NativeArray<Mark> _path;
+        private int _edge;
 
         public TrajectoryContainer(int arraySize)
         {
@@ -23,14 +24,19 @@ namespace Orbital.Model.Simulation
         public Mark this[int i]
         {
             get => _path[i];
-            set => _path[i] = value;
+            set
+            {
+                _path[i] = value;
+                _edge = i;
+            }
         }
 
-        public int Length => _path.Length;
+        public int Length => _edge;
+        public int Capacity => _path.Length;
 
         public int GetLastIndexForTime(double time)
         {
-            for (int i = 0; i < _path.Length; i++)
+            for (int i = 0; i < _edge - 1; i++)
             {
                 if (_path[i].TimeMark > time) return i - 1;
             }
@@ -51,8 +57,6 @@ namespace Orbital.Model.Simulation
         public Track(TrajectoryContainer container)
         {
             _container = container;
-            _currentIdx = container.GetLastIndexForTime(TimeService.WorldTime);
-            AssignMarks();
         }
 
         private void AssignMarks()
@@ -62,6 +66,12 @@ namespace Orbital.Model.Simulation
             (_tangentA, _tangentB) = _lastMark.CalculateTangents(_nextMark);
         }
 
+        public void ResetProgress()
+        {
+            _currentIdx = _container.GetLastIndexForTime(TimeService.WorldTime);
+            AssignMarks();
+        }
+        
         public (DVector3 position, DVector3 velocity) GetSample(double time)
         {
             if (time > _nextMark.TimeMark)

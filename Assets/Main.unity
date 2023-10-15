@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 262.38354, g: 325.1084, b: 430.30957, a: 1}
+  m_IndirectSpecularColor: {r: 261.8021, g: 324.32925, b: 429.24924, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -748,7 +748,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   simulationSceneName: SimulationScene
-  visibleDistance: 200
+  visibleDistance: 300
 --- !u!1 &1660381991
 GameObject:
   m_ObjectHideFlags: 0
@@ -839,7 +839,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1660381991}
   m_LocalRotation: {x: -0, y: 0.2852767, z: -0, w: 0.9584452}
-  m_LocalPosition: {x: 4.44, y: -0.80310225, z: 346.3}
+  m_LocalPosition: {x: -157.8, y: -0.80310225, z: 346.3}
   m_LocalScale: {x: 1, y: 20, z: 30}
   m_ConstrainProportionsScale: 0
   m_Children: []

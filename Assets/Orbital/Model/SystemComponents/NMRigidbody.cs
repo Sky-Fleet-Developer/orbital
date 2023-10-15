@@ -12,6 +12,8 @@ namespace Orbital.Model.SystemComponents
 {
     public class NMRigidbody : SystemComponent<NMRigidbodyVariables, NMRigidbodySettings>, IRigidBody
     {
+        private static AsyncThreadScheduler _trajectoryRefreshScheduler = new AsyncThreadScheduler(3);
+
         [SerializeField] private NMRigidbodyVariables variables;
         [SerializeField] private NMRigidbodySettings settings;
         [SerializeField] private int accuracy;
@@ -22,18 +24,29 @@ namespace Orbital.Model.SystemComponents
         private MassSystemComponent _parent;
 
         private float _awakeTime = 0;
-        private const float AwakeDelay = 1;
+        private const float AwakeDelay = 4;
         private RigidBodyMode _mode;
-        private bool _isSleep;
         private Observer _observer;
         private RigidbodyPresentation _presentation;
+        private Task _trajectoryCalculation;
 
-        public override NMRigidbodyVariables Variables { get => variables; set => variables = value; }
-        public override NMRigidbodySettings Settings { get => settings; set => settings = value; }
+        public Task WaitForTrajectoryComplete => _trajectoryCalculation;
+        
+        public override NMRigidbodyVariables Variables
+        {
+            get => variables;
+            set => variables = value;
+        }
+
+        public override NMRigidbodySettings Settings
+        {
+            get => settings;
+            set => settings = value;
+        }
 
         public MassSystemComponent Parent => _parent;
 
-        public RigidBodyMode Mode => _mode;
+        [ShowInInspector] public RigidBodyMode Mode => _mode;
 
         public ITrajectorySampler Trajectory => _trajectoryTrack;
 
@@ -45,15 +58,15 @@ namespace Orbital.Model.SystemComponents
             _parent = GetComponentInParent<MassSystemComponent>();
             _world.RegisterRigidBody(this);
             _trajectoryContainer = new TrajectoryContainer(300);
-            FillTrjectory(variables.position, variables.velocity);
             _trajectoryTrack = new Track(_trajectoryContainer);
+            Task t = FillTrajectory(variables.position, variables.velocity);
         }
 
         public void AwakeFromSleep()
         {
             if (_mode == RigidBodyMode.Trajectory) throw new Exception("Can't accelerate in Trajectory mode!");
-            _isSleep = false;
             _mode = RigidBodyMode.Simulation;
+            Debug.Log($"Call awake {name}");
             if (IsSleepTimerInCondition())
             {
                 StartSleepTimer();
@@ -62,17 +75,21 @@ namespace Orbital.Model.SystemComponents
             {
                 _awakeTime = Time.realtimeSinceStartup;
             }
+
             ModeChangedHandler?.Invoke(_mode);
         }
 
         private async void StartSleepTimer()
         {
+            Debug.Log($"Begin timer {name}");
             _awakeTime = Time.realtimeSinceStartup;
 
             do
             {
-                await Task.Delay((int)(_awakeTime + AwakeDelay - Time.realtimeSinceStartup) * 998);
+                await Task.Delay((int) (_awakeTime + AwakeDelay - Time.realtimeSinceStartup) * 998);
+                Debug.Log($"Timer step {name}");
             } while (!IsSleepTimerInCondition());
+
             Sleep();
         }
 
@@ -81,11 +98,11 @@ namespace Orbital.Model.SystemComponents
             return _awakeTime + AwakeDelay < Time.realtimeSinceStartup;
         }
 
-        private void Sleep()
+        private async void Sleep()
         {
+            Debug.Log($"Sleep {name}");
             if (_mode == RigidBodyMode.Trajectory) throw new Exception("Can't sleep in Trajectory mode!");
-            _isSleep = true;
-            RefreshTrajectory();
+            await RefreshTrajectory();
             _mode = RigidBodyMode.Sleep;
             ModeChangedHandler?.Invoke(_mode);
         }
@@ -93,7 +110,6 @@ namespace Orbital.Model.SystemComponents
         public void Present(Observer observer)
         {
             if (_mode != RigidBodyMode.Trajectory) throw new Exception("Already presents!");
-            _isSleep = true;
             _mode = RigidBodyMode.Sleep;
 
 
@@ -112,11 +128,10 @@ namespace Orbital.Model.SystemComponents
             ModeChangedHandler?.Invoke(_mode);
         }
 
-        public void RemovePresent()
+        public async void RemovePresent()
         {
             if (_mode == RigidBodyMode.Trajectory) throw new Exception("Present is not exists!");
-            _isSleep = false;
-            if (!_isSleep) RefreshTrajectory();
+            if (_mode != RigidBodyMode.Sleep) RefreshTrajectory();
             _mode = RigidBodyMode.Trajectory;
 
             Destroy(_presentation.gameObject);
@@ -124,15 +139,25 @@ namespace Orbital.Model.SystemComponents
             ModeChangedHandler?.Invoke(_mode);
         }
 
-        private void RefreshTrajectory()
+        private async Task RefreshTrajectory()
         {
-            FillTrjectory((DVector3)_presentation.Position + _observer.Position, (DVector3)_presentation.Velocity + _observer.Velocity);
+            await FillTrajectory((DVector3) _presentation.Position + _observer.Position,
+                (DVector3) _presentation.Velocity + _observer.Velocity);
             RefreshVariables();
         }
-
-        private void FillTrjectory(DVector3 position, DVector3 velocity)
+        
+        private Task FillTrajectory(DVector3 position, DVector3 velocity)
         {
-            IterativeSimulation.FillTrajectoryContainer(_trajectoryContainer, TimeService.WorldTime, position, velocity, _parent.Mass, accuracy, nonuniformity);
+            _trajectoryCalculation = FillTrajectoryRoutine(position, velocity);
+            return _trajectoryCalculation;
+        }
+
+        private async Task FillTrajectoryRoutine(DVector3 position, DVector3 velocity)
+        {
+            await _trajectoryRefreshScheduler.Schedule(() =>
+                IterativeSimulation.FillTrajectoryContainer(_trajectoryContainer,
+                    TimeService.WorldTime, position, velocity, _parent.Mass, accuracy, nonuniformity));
+            _trajectoryTrack.ResetProgress();
         }
 
         private void RefreshVariables()
@@ -145,7 +170,8 @@ namespace Orbital.Model.SystemComponents
         [Button]
         private void Simulate()
         {
-            IterativeSimulation.DrawTrajectoryCircle(variables.position, variables.velocity, variables.parentMass, accuracy, nonuniformity);
+            IterativeSimulation.DrawTrajectoryCircle(variables.position, variables.velocity, variables.parentMass,
+                accuracy, nonuniformity);
         }
     }
 
@@ -156,6 +182,7 @@ namespace Orbital.Model.SystemComponents
         public Vector3 position;
         public float parentMass;
     }
+
     [Serializable]
     public struct NMRigidbodySettings
     {

@@ -15,6 +15,21 @@ namespace Orbital.Model
             _semaphore = new Semaphore(maxThreads, maxThreads);
         }
 
+        public async Task Schedule(Action work)
+        {
+            TaskCompletionSource<bool> completionSource = new ();
+            void Execute()
+            {
+                work();
+                completionSource.SetResult(true);
+            }
+            _semaphore.WaitOne();
+            Thread newThread = new Thread(Execute);
+            newThread.Start();
+            await completionSource.Task;
+            _semaphore.Release();
+        }
+
         public async Task<T> Schedule<T>(Func<T> work)
         {
             TaskCompletionSource<T> completionSource = new ();
