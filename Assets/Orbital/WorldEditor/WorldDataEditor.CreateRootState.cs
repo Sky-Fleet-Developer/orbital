@@ -1,4 +1,4 @@
-﻿using Orbital.Model.TrajectorySystem;
+﻿using Orbital.Core.TrajectorySystem;
 using UnityEngine;
 
 namespace Orbital.WorldEditor

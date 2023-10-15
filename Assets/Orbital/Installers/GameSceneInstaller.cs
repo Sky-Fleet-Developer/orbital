@@ -1,8 +1,7 @@
-using Orbital.Model;
-using Orbital.Model.Handles;
-using Orbital.Model.Simulation;
-using Orbital.Model.SystemComponents;
-using Orbital.Model.TrajectorySystem;
+using Orbital.Core;
+using Orbital.Core.Handles;
+using Orbital.Core.Simulation;
+using Orbital.Core.SystemComponents;
 using UnityEngine;
 using Zenject;
 

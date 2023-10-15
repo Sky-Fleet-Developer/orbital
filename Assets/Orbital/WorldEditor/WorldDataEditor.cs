@@ -4,10 +4,9 @@ using System.Linq;
 using System.Reflection;
 using Ara3D;
 using Core.Patterns.State;
-using Orbital.Model;
-using Orbital.Model.Serialization;
-using Orbital.Model.SystemComponents;
-using Orbital.Model.TrajectorySystem;
+using Orbital.Core;
+using Orbital.Core.Serialization;
+using Orbital.Core.TrajectorySystem;
 using UnityEditor;
 using UnityEngine;
 
@@ -98,6 +97,7 @@ namespace Orbital.WorldEditor
 
         private void OnSceneGUI()
         {
+            if(_currentState == null) return;
             _currentState.OnSceneGui();
             _tree.DrawTrajectories(TimeService.WorldTime, (float)PreviewScaleTransform(PreviewScaleValue));
         }

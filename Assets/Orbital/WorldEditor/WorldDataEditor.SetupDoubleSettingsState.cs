@@ -1,6 +1,5 @@
 ﻿using System;
-using Orbital.Model.SystemComponents;
-using Orbital.Model.TrajectorySystem;
+using Orbital.Core.TrajectorySystem;
 using UnityEditor;
 using UnityEngine;
 

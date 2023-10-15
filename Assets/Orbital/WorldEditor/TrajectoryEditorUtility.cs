@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
 using Ara3D;
-using Orbital.Model;
-using Orbital.Model.TrajectorySystem;
+using Orbital.Core;
+using Orbital.Core.TrajectorySystem;
 using UnityEditor;
 using UnityEngine;
 

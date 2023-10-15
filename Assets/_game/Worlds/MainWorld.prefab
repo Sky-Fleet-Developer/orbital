@@ -9,7 +9,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6476459339315186796}
-  - component: {fileID: 24630719230929061}
   m_Layer: 0
   m_Name: RigidBody (1)
   m_TagString: Untagged
@@ -32,31 +31,6 @@ Transform:
   m_Father: {fileID: 3974628227302911881}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &24630719230929061
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 581912492085895927}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a99128bf0c41c7548870678e449e7d38, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  variables:
-    trajectorySettings:
-      mass: 500
-      pericenterSpeed: 7630
-      pericenterRadius: 6878000
-      latitudeShift: 0
-      longitudeShift: 0
-      inclination: 0
-      timeShift: -0.001
-      period: 0
-  settings:
-    presentation: {fileID: 6605901092997738416, guid: 28883b6e7d549e5418a1e5aa2099706b,
-      type: 3}
 --- !u!1 &820020628864560557
 GameObject:
   m_ObjectHideFlags: 0
@@ -101,6 +75,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6383b9e5f1869a74b9a91387785d2a61, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  maxDistanceToAnchor: 0
 --- !u!1 &2030127677849770058
 GameObject:
   m_ObjectHideFlags: 0
@@ -237,14 +212,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   tree:
-    serializedValue: '{"Root":{"$type":"Orbital.Model.TrajectorySystem.SingleCenterBranch,
-      Orbital","settings":{"mass":0.0,"pericenterSpeed":0.0,"pericenterRadius":0.0,"latitudeShift":0.0,"longitudeShift":0.0,"inclination":0.0,"timeShift":0.0,"period":0.0},"Central":{"$type":"Orbital.Model.TrajectorySystem.CelestialBody,
-      Orbital","settings":{"mass":1.9891E+30,"pericenterSpeed":0.0,"pericenterRadius":0.0,"latitudeShift":0.0,"longitudeShift":0.0,"inclination":0.0,"timeShift":0.0,"period":0.0}},"Children":[{"$type":"Orbital.Model.TrajectorySystem.DoubleSystemBranch,
-      Orbital","settings":{"mass":0.0,"pericenterSpeed":29765.0,"pericenterRadius":1.5E+11,"latitudeShift":0.0,"longitudeShift":0.0,"inclination":0.0,"timeShift":0.0,"period":0.0},"localTrajectorySettings":{"aMass":5.9722E+24,"bMass":7.35E+22,"period":2360591.5,"aPericenterRadius":8.38E+07,"latitudeShift":10.0,"longitudeShift":0.0,"inclination":0.0,"timeShift":0.0},"ChildA":{"$type":"Orbital.Model.TrajectorySystem.CelestialBody,
-      Orbital","settings":{"mass":5.9722E+24,"pericenterSpeed":0.0,"pericenterRadius":8.38E+07,"latitudeShift":10.0,"longitudeShift":0.0,"inclination":0.0,"timeShift":0.0,"period":2360591.5}},"ChildB":{"$type":"Orbital.Model.TrajectorySystem.SingleCenterBranch,
-      Orbital","settings":{"mass":7.35E+22,"pericenterSpeed":0.0,"pericenterRadius":3.629608E+08,"latitudeShift":-10.0,"longitudeShift":180.0,"inclination":0.0,"timeShift":0.0,"period":2360591.5},"Central":{"$type":"Orbital.Model.TrajectorySystem.CelestialBody,
-      Orbital","settings":{"mass":7.35E+22,"pericenterSpeed":0.0,"pericenterRadius":0.0,"latitudeShift":0.0,"longitudeShift":0.0,"inclination":0.0,"timeShift":0.0,"period":0.0}},"Children":[{"$type":"Orbital.Model.TrajectorySystem.CelestialBody,
-      Orbital","settings":{"mass":5E+20,"pericenterSpeed":321.73,"pericenterRadius":5E+07,"latitudeShift":0.0,"longitudeShift":0.0,"inclination":0.0,"timeShift":0.0,"period":0.0}}]}}]}}'
+    serializedValue: '{"Root":{"$type":"Orbital.Core.TrajectorySystem.SingleCenterBranch,
+      Core","settings":{"mass":0.0,"pericenterSpeed":0.0,"pericenterRadius":0.0,"latitudeShift":0.0,"longitudeShift":0.0,"inclination":0.0,"timeShift":0.0,"period":0.0},"Central":{"$type":"Orbital.Core.TrajectorySystem.CelestialBody,
+      Core","settings":{"mass":1.9891E+30,"pericenterSpeed":0.0,"pericenterRadius":0.0,"latitudeShift":0.0,"longitudeShift":0.0,"inclination":0.0,"timeShift":0.0,"period":0.0}},"Children":[{"$type":"Orbital.Core.TrajectorySystem.DoubleSystemBranch,
+      Core","settings":{"mass":0.0,"pericenterSpeed":29765.0,"pericenterRadius":1.5E+11,"latitudeShift":0.0,"longitudeShift":0.0,"inclination":0.0,"timeShift":0.0,"period":0.0},"localTrajectorySettings":{"aMass":5.9722E+24,"bMass":7.35E+22,"period":2360591.5,"aPericenterRadius":8.38E+07,"latitudeShift":10.0,"longitudeShift":0.0,"inclination":0.0,"timeShift":0.0},"ChildA":{"$type":"Orbital.Core.TrajectorySystem.CelestialBody,
+      Core","settings":{"mass":5.9722E+24,"pericenterSpeed":0.0,"pericenterRadius":8.38E+07,"latitudeShift":10.0,"longitudeShift":0.0,"inclination":0.0,"timeShift":0.0,"period":2360591.5}},"ChildB":{"$type":"Orbital.Core.TrajectorySystem.SingleCenterBranch,
+      Core","settings":{"mass":7.35E+22,"pericenterSpeed":0.0,"pericenterRadius":3.629608E+08,"latitudeShift":-10.0,"longitudeShift":180.0,"inclination":0.0,"timeShift":0.0,"period":2360591.5},"Central":{"$type":"Orbital.Core.TrajectorySystem.CelestialBody,
+      Core","settings":{"mass":7.35E+22,"pericenterSpeed":0.0,"pericenterRadius":0.0,"latitudeShift":0.0,"longitudeShift":0.0,"inclination":0.0,"timeShift":0.0,"period":0.0}},"Children":[{"$type":"Orbital.Core.TrajectorySystem.CelestialBody,
+      Core","settings":{"mass":5E+20,"pericenterSpeed":321.73,"pericenterRadius":5E+07,"latitudeShift":0.0,"longitudeShift":0.0,"inclination":0.0,"timeShift":0.0,"period":0.0}}]}}]}}
+
+'
 --- !u!1 &4675743019859201052
 GameObject:
   m_ObjectHideFlags: 0
@@ -392,7 +369,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2390475931180044394}
-  - component: {fileID: 2591022799111065027}
   m_Layer: 0
   m_Name: RigidBody
   m_TagString: Untagged
@@ -416,31 +392,6 @@ Transform:
   m_Father: {fileID: 3974628227302911881}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &2591022799111065027
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8159405952474458932}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a99128bf0c41c7548870678e449e7d38, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  variables:
-    trajectorySettings:
-      mass: 500
-      pericenterSpeed: 7620
-      pericenterRadius: 6878000
-      latitudeShift: 0
-      longitudeShift: 0
-      inclination: 0
-      timeShift: 0
-      period: 0
-  settings:
-    presentation: {fileID: 6605901092997738416, guid: 28883b6e7d549e5418a1e5aa2099706b,
-      type: 3}
 --- !u!1 &8441030398855462866
 GameObject:
   m_ObjectHideFlags: 0
