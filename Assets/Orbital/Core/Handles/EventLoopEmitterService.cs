@@ -13,6 +13,7 @@ namespace Orbital.Core.Handles
         public event Action PostFixedUpdateHandler;
         private HandlerContainer<IUpdateHandler> _updateContainer;
         private HandlerContainer<IFixedUpdateHandler> _fixedUpdateContainer;
+        private HandlerContainer<ILateUpdateHandler> _lateUpdateContainer;
         private HandlerContainer<IUpdateByFrequencyHandler> _frequencyUpdateContainer;
         private long _frameCounter;
         [Inject] private DiContainer _diContainer;
@@ -60,6 +61,7 @@ namespace Orbital.Core.Handles
         private void Start()
         {
             _updateContainer = new HandlerContainer<IUpdateHandler>(_diContainer);
+            _lateUpdateContainer = new HandlerContainer<ILateUpdateHandler>(_diContainer);
             _fixedUpdateContainer = new HandlerContainer<IFixedUpdateHandler>(_diContainer);
             _frequencyUpdateContainer = new HandlerContainer<IUpdateByFrequencyHandler>(_diContainer);
         }
@@ -67,6 +69,7 @@ namespace Orbital.Core.Handles
         private void OnDestroy()
         {
             _updateContainer.Dispose();
+            _lateUpdateContainer.Dispose();
             _fixedUpdateContainer.Dispose();
             _frequencyUpdateContainer.Dispose();
         }
@@ -103,6 +106,14 @@ namespace Orbital.Core.Handles
             }
 
             PostUpdateHandler?.Invoke();
+        }
+
+        private void LateUpdate()
+        {
+            foreach (ILateUpdateHandler handler in _lateUpdateContainer.All())
+            {
+                handler.LateUpdate();
+            }
         }
 
         private void FixedUpdate()

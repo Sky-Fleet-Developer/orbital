@@ -9,13 +9,14 @@
     {
         "IUpdateHandler",
         "IFixedUpdateHandler",
+        "ILateUpdateHandler",
         "IUpdateByFrequencyHandler",
-        "IObserverTriggerHandler",
+        "ISimulationSpaceTriggerHandler",
     };
 #>
 using Zenject;
 
-namespace Orbital.Model.Handles
+namespace Orbital.Core.Handles
 {
     public static class HandlesRegister
     {

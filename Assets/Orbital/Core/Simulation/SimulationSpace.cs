@@ -2,32 +2,31 @@ using System;
 using System.Threading.Tasks;
 using Ara3D;
 using Orbital.Core.Handles;
-using Orbital.Core.SystemComponents;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Zenject;
 
 namespace Orbital.Core.Simulation
 {
-    public class Observer : SystemComponent<ObserverVariables, ObserverSettings>, IUpdateByFrequencyHandler, IObserverTriggerHandler
+    public class SimulationSpace : SystemComponent<SimulationSpaceVariables, SimulationSpaceSettings>, IUpdateByFrequencyHandler
     {
-        [SerializeField] private ObserverVariables variables;
-        [SerializeField] private ObserverSettings settings;
+        [SerializeField] private SimulationSpaceVariables variables;
+        [SerializeField] private SimulationSpaceSettings settings;
         [SerializeField] private float maxDistanceToAnchor;
         private IRigidBody _anchor;
-        [Inject] private ObserverService _observerService;
+        [Inject] private SimulationService _simulationService;
         [Inject] private DiContainer _diContainer;
         private RuntimeTrajectory _trajectory;
         private double _maxDistanceToAnchorSqr;
         
-        public Transform Root => _observerService.GetRootFor(this);
-        public override ObserverVariables Variables
+        public Transform Root => _simulationService.GetRootFor(this);
+        public override SimulationSpaceVariables Variables
         {
             get => variables;
             set => variables = value;
         }
 
-        public override ObserverSettings Settings
+        public override SimulationSpaceSettings Settings
         {
             get => settings;
             set => settings = value;
@@ -72,7 +71,7 @@ namespace Orbital.Core.Simulation
         {
             await Task.Yield();
             Anchor = GetComponentInParent<IRigidBody>();
-            _observerService.RegisterObserver(this);
+            _simulationService.RegisterSimulation(this);
         }
 
         private void OnAnchorModeChanged(RigidBodyMode mode)
@@ -83,7 +82,7 @@ namespace Orbital.Core.Simulation
         protected override void OnDestroy()
         {
             _anchor.ModeChangedHandler -= OnAnchorModeChanged;
-            _observerService.UnregisterObserver(this);
+            _simulationService.UnregisterSimulation(this);
             base.OnDestroy();
         }
 
@@ -96,16 +95,7 @@ namespace Orbital.Core.Simulation
             var sample = _anchor.Trajectory.GetSample(TimeService.WorldTime);
             _trajectory.Place(sample.position, sample.velocity);
         }
-
-
-        void IObserverTriggerHandler.OnRigidbodyEnter(IRigidBody component, Observer observer)
-        {
-        }
-
-        void IObserverTriggerHandler.OnRigidbodyExit(IRigidBody component, Observer observer)
-        {
-        }
-
+        
         public DVector3 Position => _trajectory.Position;
         public DVector3 Velocity => _trajectory.Velocity;
 
@@ -128,12 +118,12 @@ namespace Orbital.Core.Simulation
         
     }
     [Serializable]
-    public struct ObserverSettings
+    public struct SimulationSpaceSettings
     {
     }
 
     [Serializable]
-    public struct ObserverVariables
+    public struct SimulationSpaceVariables
     {
     }
 }

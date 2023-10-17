@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using Newtonsoft.Json;
 using Orbital.Core.Serialization;
 using Orbital.Core.Simulation;
-using Orbital.Core.SystemComponents;
 using Orbital.Core.TrajectorySystem;
 using Orbital.Core.Utilities;
 using UnityEngine;

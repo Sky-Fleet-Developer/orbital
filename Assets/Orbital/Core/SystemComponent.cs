@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using Zenject;
 
-namespace Orbital.Core.SystemComponents
+namespace Orbital.Core
 {
     public abstract class SystemComponent<TRuntimeVariables, TSettings> : MonoBehaviour
     {

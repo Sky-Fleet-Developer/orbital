@@ -298,8 +298,7 @@ namespace Zenject
 
             _container.ResolveRoots();
 
-            if (PostResolve != null)
-            {
+            if (PostResolve != null) {
                 PostResolve();
             }
 

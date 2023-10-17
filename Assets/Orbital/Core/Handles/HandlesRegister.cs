@@ -16,14 +16,19 @@ namespace Orbital.Core.Handles
                 HandlerCollection.GetOrCreateCollection<IFixedUpdateHandler>(container).AddItem(ifixedupdatehandler);
             }
  
+            if(target is ILateUpdateHandler ilateupdatehandler)
+            {
+                HandlerCollection.GetOrCreateCollection<ILateUpdateHandler>(container).AddItem(ilateupdatehandler);
+            }
+ 
             if(target is IUpdateByFrequencyHandler iupdatebyfrequencyhandler)
             {
                 HandlerCollection.GetOrCreateCollection<IUpdateByFrequencyHandler>(container).AddItem(iupdatebyfrequencyhandler);
             }
  
-            if(target is IObserverTriggerHandler iobservertriggerhandler)
+            if(target is ISimulationSpaceTriggerHandler isimulationspacetriggerhandler)
             {
-                HandlerCollection.GetOrCreateCollection<IObserverTriggerHandler>(container).AddItem(iobservertriggerhandler);
+                HandlerCollection.GetOrCreateCollection<ISimulationSpaceTriggerHandler>(container).AddItem(isimulationspacetriggerhandler);
             }
         }
         public static void UnregisterHandlers<T>(T target, DiContainer container)
@@ -38,14 +43,19 @@ namespace Orbital.Core.Handles
                 HandlerCollection.GetOrCreateCollection<IFixedUpdateHandler>(container).RemoveItem(ifixedupdatehandler);
             }
  
+            if(target is ILateUpdateHandler ilateupdatehandler)
+            {
+                HandlerCollection.GetOrCreateCollection<ILateUpdateHandler>(container).RemoveItem(ilateupdatehandler);
+            }
+ 
             if(target is IUpdateByFrequencyHandler iupdatebyfrequencyhandler)
             {
                 HandlerCollection.GetOrCreateCollection<IUpdateByFrequencyHandler>(container).RemoveItem(iupdatebyfrequencyhandler);
             }
  
-            if(target is IObserverTriggerHandler iobservertriggerhandler)
+            if(target is ISimulationSpaceTriggerHandler isimulationspacetriggerhandler)
             {
-                HandlerCollection.GetOrCreateCollection<IObserverTriggerHandler>(container).RemoveItem(iobservertriggerhandler);
+                HandlerCollection.GetOrCreateCollection<ISimulationSpaceTriggerHandler>(container).RemoveItem(isimulationspacetriggerhandler);
             }
         }
     }

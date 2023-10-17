@@ -6,7 +6,7 @@ using Sirenix.OdinInspector;
 using UnityEngine;
 using Zenject;
 
-namespace Orbital.Core.SystemComponents
+namespace Orbital.Core
 {
     [ExecuteInEditMode]
     public class MassSystemComponent : SystemComponent<CelestialVariables, CelestialSettings>, IFixedUpdateHandler

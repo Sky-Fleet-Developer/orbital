@@ -1,5 +1,4 @@
 using System;
-using Orbital.Core.SystemComponents;
 using Orbital.Core.TrajectorySystem;
 
 namespace Orbital.Core.Simulation
@@ -9,9 +8,8 @@ namespace Orbital.Core.Simulation
         public MassSystemComponent Parent { get; }
         public RigidBodyMode Mode { get; }
         public ITrajectorySampler Trajectory { get; }
-
         public event Action<RigidBodyMode> ModeChangedHandler;
-        public void Present(Observer observer);
+        public void Present(SimulationSpace simulationSpace);
         public void RemovePresent();
         public void AwakeFromSleep();
 

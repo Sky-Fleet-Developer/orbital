@@ -1,13 +1,12 @@
 using System;
 using System.Threading.Tasks;
 using Ara3D;
-using Orbital.Core.Simulation;
 using Orbital.Core.TrajectorySystem;
 using Sirenix.OdinInspector;
 using UnityEngine;
 using Zenject;
 
-namespace Orbital.Core.SystemComponents
+namespace Orbital.Core.Simulation
 {
     public class NMRigidbody : SystemComponent<NMRigidbodyVariables, NMRigidbodySettings>, IRigidBody
     {
@@ -24,13 +23,13 @@ namespace Orbital.Core.SystemComponents
 
         private float _awakeTime = 0;
         private const float AwakeDelay = 4;
-        private RigidBodyMode _mode;
-        private Observer _observer;
+        private RigidBodyMode _mode = RigidBodyMode.Trajectory;
+        private SimulationSpace _simulationSpace;
         private RigidbodyPresentation _presentation;
         private Task _trajectoryCalculation;
 
-        public Task WaitForTrajectoryComplete => _trajectoryCalculation;
-        
+        public Task WaitForTrajectoryCalculated => _trajectoryCalculation;
+
         public override NMRigidbodyVariables Variables
         {
             get => variables;
@@ -48,6 +47,7 @@ namespace Orbital.Core.SystemComponents
         [ShowInInspector] public RigidBodyMode Mode => _mode;
 
         public ITrajectorySampler Trajectory => _trajectoryTrack;
+        public RigidbodyPresentation Presentation => _presentation;
 
         public event Action<RigidBodyMode> ModeChangedHandler;
 
@@ -106,20 +106,20 @@ namespace Orbital.Core.SystemComponents
             ModeChangedHandler?.Invoke(_mode);
         }
 
-        public void Present(Observer observer)
+        public void Present(SimulationSpace simulationSpace)
         {
             if (_mode != RigidBodyMode.Trajectory) throw new Exception("Already presents!");
             _mode = RigidBodyMode.Sleep;
 
 
-            _observer = observer;
-            DVector3 origin = observer.Position;
-            DVector3 originVelocity = observer.Velocity;
+            _simulationSpace = simulationSpace;
+            DVector3 origin = simulationSpace.Position;
+            DVector3 originVelocity = simulationSpace.Velocity;
             var sample = _trajectoryTrack.GetSample(TimeService.WorldTime);
             Vector3 localPosition = sample.position - origin;
 
-            _presentation = Instantiate(Settings.presentation, observer.Root);
-            _presentation.Init(this, observer);
+            _presentation = Instantiate(Settings.presentation, simulationSpace.Root);
+            _presentation.Init(this, simulationSpace);
             _presentation.Position = localPosition;
             _presentation.Rotation = Quaternion.identity;
             _presentation.Velocity = sample.velocity - originVelocity;
@@ -140,11 +140,11 @@ namespace Orbital.Core.SystemComponents
 
         private async Task RefreshTrajectory()
         {
-            await FillTrajectory((DVector3) _presentation.Position + _observer.Position,
-                (DVector3) _presentation.Velocity + _observer.Velocity);
+            await FillTrajectory((DVector3) _presentation.Position + _simulationSpace.Position,
+                (DVector3) _presentation.Velocity + _simulationSpace.Velocity);
             RefreshVariables();
         }
-        
+
         private Task FillTrajectory(DVector3 position, DVector3 velocity)
         {
             _trajectoryCalculation = FillTrajectoryRoutine(position, velocity);

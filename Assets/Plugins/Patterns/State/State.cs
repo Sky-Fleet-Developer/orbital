@@ -1,6 +1,6 @@
 namespace Core.Patterns.State
 {
-    public interface IStateMaster
+    public interface IStateMachine
     {
         State CurrentState { get; set; }
     }
@@ -10,7 +10,7 @@ namespace Core.Patterns.State
         public abstract void Update();
     }
 
-    public abstract class State<T> : State where T : IStateMaster
+    public abstract class State<T> : State where T : IStateMachine
     {
         public T Master;
         public State(T master)

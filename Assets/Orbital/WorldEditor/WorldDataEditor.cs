@@ -14,7 +14,7 @@ namespace Orbital.WorldEditor
 {
 #if UNITY_EDITOR
     [CustomEditor(typeof(World))]
-    public partial class WorldDataEditor : Editor, IStateMaster
+    public partial class WorldDataEditor : Editor, IStateMachine
     {
         private const int TabulationOffset = 70;
         private const int DefaultButtonSize = 120;
@@ -40,7 +40,7 @@ namespace Orbital.WorldEditor
         }
         private float _previewScaleValue;
         private const string PreviewScaleKey = "PREVIRE_SCALE_EDITOR";
-        State IStateMaster.CurrentState
+        State IStateMachine.CurrentState
         {
             get => _currentState;
             set => _currentState = (WorldDataState) value;

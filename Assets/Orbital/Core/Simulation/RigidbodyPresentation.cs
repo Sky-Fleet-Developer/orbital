@@ -9,7 +9,7 @@ namespace Orbital.Core.Simulation
     {
         private Rigidbody _rigidbody;
         private IRigidBody _master;
-        private Observer _observer;
+        private SimulationSpace _simulationSpace;
         private ITrajectorySampler _trajectory;
         private double _interpolationLastTime = 0;
         private const double TrajectoryUpdateThreshold = 2;
@@ -40,10 +40,10 @@ namespace Orbital.Core.Simulation
             _rigidbody = GetComponent<Rigidbody>();
         }
 
-        public void Init(IRigidBody component, Observer observer)
+        public void Init(IRigidBody component, SimulationSpace simulationSpace)
         {
             _master = component;
-            _observer = observer;
+            _simulationSpace = simulationSpace;
             _trajectory = _master.Trajectory;
         }
 
@@ -70,18 +70,18 @@ namespace Orbital.Core.Simulation
             Position = Vector3.Lerp(_positionToInterpolationLast, _positionToInterpolationNext, interpolationValue);
             Velocity = Vector3.Lerp(_velocityToInterpolationLast, _velocityToInterpolationNext, interpolationValue);*/
             (DVector3 pos, DVector3 vel) = _trajectory.GetSample(TimeService.WorldTime);
-            (DVector3 observerPos, DVector3 observerVel) = _observer.SampleTrajectory(TimeService.WorldTime);
-            Position = pos - observerPos;
-            Velocity = vel - observerVel;
+            (DVector3 spacePos, DVector3 spaceVel) = _simulationSpace.SampleTrajectory(TimeService.WorldTime);
+            Position = pos - spacePos;
+            Velocity = vel - spaceVel;
         }
 
         private void RecordInterpolationData()
         {
             double nextTime = TimeService.WorldTime + TrajectoryUpdateThreshold;
-            (DVector3 observerPos, DVector3 observerVel) = _observer.SampleTrajectory(nextTime);
+            (DVector3 spacePos, DVector3 spaceVel) = _simulationSpace.SampleTrajectory(nextTime);
             (_positionToInterpolationNext, _velocityToInterpolationNext) = _trajectory.GetSample(nextTime);
-            _positionToInterpolationNext -= (Vector3)observerPos;
-            _velocityToInterpolationNext -= (Vector3)observerVel;
+            _positionToInterpolationNext -= (Vector3)spacePos;
+            _velocityToInterpolationNext -= (Vector3)spaceVel;
             _positionToInterpolationLast = Position;
             _velocityToInterpolationLast = Velocity;
             _interpolationLastTime = TimeService.WorldTime;
