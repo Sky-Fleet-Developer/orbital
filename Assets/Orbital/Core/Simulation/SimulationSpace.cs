@@ -92,7 +92,7 @@ namespace Orbital.Core.Simulation
 
         private void RefreshAnchorPosition()
         {
-            var sample = _anchor.Trajectory.GetSample(TimeService.WorldTime);
+            var sample = _anchor.TrajectorySampler.GetSample(TimeService.WorldTime);
             _trajectory.Place(sample.position, sample.velocity);
         }
         
@@ -109,7 +109,7 @@ namespace Orbital.Core.Simulation
 
         void IUpdateByFrequencyHandler.Update()
         {
-            double distSqr = (_trajectory.Position - _anchor.Trajectory.GetSample(TimeService.WorldTime).position).LengthSquared();
+            double distSqr = (_trajectory.Position - _anchor.TrajectorySampler.GetSample(TimeService.WorldTime).position).LengthSquared();
             if (distSqr > _maxDistanceToAnchorSqr)
             {
                 RefreshAnchorPosition();

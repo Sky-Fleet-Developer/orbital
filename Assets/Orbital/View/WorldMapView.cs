@@ -4,6 +4,7 @@ using System.Linq;
 using Ara3D;
 using Orbital.Core;
 using Orbital.Core.Handles;
+using Orbital.Core.Simulation;
 using UnityEngine;
 using Zenject;
 
@@ -15,33 +16,44 @@ namespace Orbital.View
         [SerializeField] private int celestialTrajectoryAccuracy = 200;
         [SerializeField] private float scale = 224400000;
         [SerializeField] private Material material;
+        [SerializeField] private int bodyTrajectoryMaxBufferSize = 400;
         [Inject] private DiContainer _diContainer;
         private float _scaleI;
         private World _world;
         private Dictionary<MassSystemComponent, CelestialTrajectoryView> _celestials;
-        private List<MassSystemComponent> _masses;
-        private CircleViewBuffers _buffers;
+        private Dictionary<IRigidBody, BodyTrajectoryView> _bodies;
+        private CircleViewBuffers _circleBuffers;
+        private OffsetsBuffer _offsetsBuffer;
+
         private void Awake()
         {
             _scaleI = 1 / scale;
-            _buffers = new CircleViewBuffers();
-            _buffers.PrepareBuffers(celestialTrajectoryAccuracy);
+            _circleBuffers = new CircleViewBuffers();
+            _circleBuffers.PrepareBuffers(celestialTrajectoryAccuracy);
+            _offsetsBuffer = new OffsetsBuffer();
             _world = GetComponent<World>();
         }
 
         private void Start()
         {
-            _masses = _world.GetComponentsInChildren<MassSystemComponent>().ToList();
+            MassSystemComponent[] masses = _world.GetComponentsInChildren<MassSystemComponent>();
             _celestials = new Dictionary<MassSystemComponent, CelestialTrajectoryView>();
-            for (int i = 0; i < _masses.Count; i++)
+            foreach (MassSystemComponent mass in masses)
             {
-                if (_masses[i].Trajectory != null)
+                if (mass.Trajectory != null)
                 {
-                    _celestials.Add(_masses[i], new CelestialTrajectoryView(_masses[i].Trajectory, _buffers));
+                    _celestials.Add(mass, new CelestialTrajectoryView(mass.Trajectory, _circleBuffers));
                 }
             }
-            _buffers.RefreshMatrices();
-            
+            _circleBuffers.Refresh();
+
+            IRigidBody[] bodies = _world.GetComponentsInChildren<IRigidBody>();
+            _bodies = new Dictionary<IRigidBody, BodyTrajectoryView>();
+            /*foreach (IRigidBody body in bodies)
+            {
+                _bodies.Add(body, new BodyTrajectoryView(body.TrajectoryEnumerable, _offsetsBuffer, bodyTrajectoryMaxBufferSize));
+            }*/
+            _offsetsBuffer.Refresh();
             HandlesRegister.RegisterHandlers(this, _diContainer);
         }
 
@@ -56,7 +68,7 @@ namespace Orbital.View
             {
                 var parent = _world.GetParent(celestialKv.Key);
                 DVector3 globalPosition = parent == null ? DVector3.Zero : _world.GetGlobalPosition(parent);
-                Vector3 positionScaled = (Vector3)(globalPosition) * _scaleI;
+                Vector3 positionScaled = (Vector3) (globalPosition) * _scaleI;
                 celestialKv.Value.UpdateMatrix(positionScaled, _scaleI);
             }
 
@@ -66,17 +78,17 @@ namespace Orbital.View
         private void Render()
         {
             RenderParams rp = new RenderParams(material);
-            rp.worldBounds = new Bounds(Vector3.zero, 10000*Vector3.one); // use tighter bounds
+            rp.worldBounds = new Bounds(Vector3.zero, 1000 * Vector3.one);
             rp.matProps = new MaterialPropertyBlock();
-            rp.matProps.SetBuffer("_Positions", _buffers.Positions);
-            rp.matProps.SetBuffer("_Matrices", _buffers.Matrices);
-            rp.matProps.SetInt("_BaseVertexIndex", 0);
-            Graphics.RenderPrimitivesIndexed(rp, MeshTopology.Lines, _buffers.Indices, _buffers.Indices.count, 0, _buffers.Matrices.count);
+            rp.matProps.SetBuffer("_Positions", _circleBuffers.Positions);
+            rp.matProps.SetBuffer("_Matrices", _circleBuffers.Matrices);
+            Graphics.RenderPrimitivesIndexed(rp, MeshTopology.Lines, _circleBuffers.Indices,
+                _circleBuffers.Indices.count, 0, _circleBuffers.Matrices.count);
         }
 
         private void OnDestroy()
         {
-            _buffers.ReleaseBuffers();
+            _circleBuffers.Dispose();
         }
     }
 }

@@ -38,7 +38,7 @@ namespace Orbital.View
             }
         }
 
-        public void RefreshMatrices()
+        public void Refresh()
         {
             Matrices = new GraphicsBuffer(GraphicsBuffer.Target.Structured, _matricesCount, 16 * sizeof(float));
         }
@@ -48,7 +48,7 @@ namespace Orbital.View
             Matrices.SetData(new [] {value}, 0, matrixId, 1);
         }
 
-        public void ReleaseBuffers()
+        public void Dispose()
         {
             Indices.Dispose();
             Indices = null;

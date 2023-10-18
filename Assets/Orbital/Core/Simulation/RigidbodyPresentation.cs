@@ -44,7 +44,7 @@ namespace Orbital.Core.Simulation
         {
             _master = component;
             _simulationSpace = simulationSpace;
-            _trajectory = _master.Trajectory;
+            _trajectory = _master.TrajectorySampler;
         }
 
         private void Update()

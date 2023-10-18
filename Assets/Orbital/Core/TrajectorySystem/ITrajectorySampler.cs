@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Ara3D;
 
 namespace Orbital.Core.TrajectorySystem

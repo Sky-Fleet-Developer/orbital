@@ -1,3 +1,5 @@
+using System.Collections;
+using System.Collections.Generic;
 using Ara3D;
 using Orbital.Core.TrajectorySystem;
 using Unity.Collections;
@@ -13,6 +15,8 @@ namespace Orbital.Core.Simulation
         {
             _path = new NativeArray<Mark>(arraySize, Allocator.Persistent);
         }
+
+        public NativeArray<Mark> GetPath() => _path;
 
         ~TrajectoryContainer()
         {

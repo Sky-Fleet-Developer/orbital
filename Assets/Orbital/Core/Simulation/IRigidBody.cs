@@ -7,7 +7,8 @@ namespace Orbital.Core.Simulation
     {
         public MassSystemComponent Parent { get; }
         public RigidBodyMode Mode { get; }
-        public ITrajectorySampler Trajectory { get; }
+        public ITrajectorySampler TrajectorySampler { get; }
+        public TrajectoryContainer TrajectoryContainer { get; }
         public event Action<RigidBodyMode> ModeChangedHandler;
         public void Present(SimulationSpace simulationSpace);
         public void RemovePresent();

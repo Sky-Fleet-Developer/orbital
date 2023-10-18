@@ -47,7 +47,7 @@ namespace Orbital.Core.Simulation
 
         [ShowInInspector] public RigidBodyMode Mode => _mode;
 
-        public ITrajectorySampler Trajectory => _trajectoryTrack;
+        ITrajectorySampler IRigidBody.TrajectorySampler => _trajectoryTrack;
         public RigidbodyPresentation Presentation => _presentation;
 
         public event Action<RigidBodyMode> ModeChangedHandler;
