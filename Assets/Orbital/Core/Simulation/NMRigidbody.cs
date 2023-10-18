@@ -29,6 +29,7 @@ namespace Orbital.Core.Simulation
         private Task _trajectoryCalculation;
 
         public Task WaitForTrajectoryCalculated => _trajectoryCalculation;
+        public TrajectoryContainer TrajectoryContainer => _trajectoryContainer;
 
         public override NMRigidbodyVariables Variables
         {

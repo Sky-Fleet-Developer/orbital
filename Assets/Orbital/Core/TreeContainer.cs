@@ -16,7 +16,7 @@ namespace Orbital.Core
         [JsonIgnore] public Dictionary<IMassSystem, Transform> _transforms { get; private set; }
         [JsonIgnore] public Dictionary<IMassSystem, RelativeTrajectory> _trajectories { get; private set; }
         [JsonIgnore] public Dictionary<MassSystemComponent, IMassSystem> _componentPerMass { get; private set; }
-        [JsonIgnore] public Dictionary<IMassSystem, List<IRigidBody>> _rigidbodyParents { get; private set; }
+        [JsonIgnore] public Dictionary<IMassSystem, List<IRigidBody>> _children { get; private set; }
         [JsonIgnore] public Dictionary<IMassSystem, IMassSystem> _parents { get; private set; }
         [SerializeField, TextArea(minLines: 6, maxLines: 10)] private string serializedValue;
 
@@ -35,7 +35,7 @@ namespace Orbital.Core
             ReconstructHierarchy(Root, tRoot);
             foreach (IMassSystem massSystem in _transforms.Keys)
             {
-                _rigidbodyParents.Add(massSystem, new List<IRigidBody>());
+                _children.Add(massSystem, new List<IRigidBody>());
             }
         }
         
@@ -43,13 +43,13 @@ namespace Orbital.Core
         {
             _trajectories = new Dictionary<IMassSystem, RelativeTrajectory>();
             _componentPerMass = new Dictionary<MassSystemComponent, IMassSystem>();
-            _rigidbodyParents = new Dictionary<IMassSystem, List<IRigidBody>>();
+            _children = new Dictionary<IMassSystem, List<IRigidBody>>();
             _parents = new Dictionary<IMassSystem, IMassSystem>();
         }
 
         public void AddRigidbody(IRigidBody component)
         {
-            _rigidbodyParents[_componentPerMass[component.Parent]].Add(component);
+            _children[_componentPerMass[component.Parent]].Add(component);
         }
         
         private void ReconstructHierarchy(IMassSystem mRoot, Transform tRoot)

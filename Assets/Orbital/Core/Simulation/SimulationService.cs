@@ -101,7 +101,7 @@ namespace Orbital.Core.Simulation
         {
             foreach (SimulationSpace observer in _scenes.Keys)
             {
-                foreach (IRigidBody component in _world.GetRigidbodyParents(observer.Parent))
+                foreach (IRigidBody component in _world.GetChildren(observer.Parent))
                 {
                     double sqrDistanceInSpace = (component.Trajectory.GetSample(TimeService.WorldTime).position - observer.Position).LengthSquared();
                     bool isInSimulation = IsInSimulation(component);

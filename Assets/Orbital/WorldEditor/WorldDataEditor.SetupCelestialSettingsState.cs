@@ -1,4 +1,5 @@
-﻿using System;
+﻿#if  UNITY_EDITOR
+using System;
 using Orbital.Core.TrajectorySystem;
 using UnityEditor;
 using UnityEngine;
@@ -82,3 +83,4 @@ namespace Orbital.WorldEditor
         }
     }
 }
+#endif

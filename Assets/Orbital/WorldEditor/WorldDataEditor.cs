@@ -1,3 +1,4 @@
+#if UNITY_EDITOR
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,7 +13,6 @@ using UnityEngine;
 
 namespace Orbital.WorldEditor
 {
-#if UNITY_EDITOR
     [CustomEditor(typeof(World))]
     public partial class WorldDataEditor : Editor, IStateMachine
     {
@@ -155,5 +155,5 @@ namespace Orbital.WorldEditor
             All = 1 | 2 | 4 | 8
         }
     }
-#endif
 }
+#endif

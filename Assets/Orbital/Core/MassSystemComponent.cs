@@ -18,6 +18,7 @@ namespace Orbital.Core
         private RelativeTrajectory _trajectory;
 
         public double Mass => _massSystem.Mass;
+        public RelativeTrajectory Trajectory => _trajectory;
         
         public override CelestialSettings Settings
         {

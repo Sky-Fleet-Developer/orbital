@@ -1,4 +1,5 @@
-﻿using Core.Patterns.State;
+﻿#if  UNITY_EDITOR
+using Core.Patterns.State;
 
 namespace Orbital.WorldEditor
 {
@@ -14,3 +15,4 @@ namespace Orbital.WorldEditor
         }
     }
 }
+#endif

@@ -19,14 +19,24 @@ namespace Orbital.Core
             InjectHierarchy();
         }
 
-        public IEnumerable<IRigidBody> GetRigidbodyParents(MassSystemComponent parent)
+        public IEnumerable<IRigidBody> GetChildren(MassSystemComponent parent)
         {
-            return tree._rigidbodyParents[tree._componentPerMass[parent]];
+            return tree._children[tree._componentPerMass[parent]];
         }
         
-        public IEnumerable<IRigidBody> GetRigidbodyParents(IMassSystem parent)
+        public IEnumerable<IRigidBody> GetChildren(IMassSystem parent)
         {
-            return tree._rigidbodyParents[parent];
+            return tree._children[parent];
+        }
+
+        public IMassSystem GetParent(MassSystemComponent mass)
+        {
+            return tree._parents.TryGetValue(tree._componentPerMass[mass], out IMassSystem value) ? value : null;
+        }
+        
+        public IMassSystem GetParent(IMassSystem mass)
+        {
+            return tree._parents.TryGetValue(mass, out IMassSystem value) ? value : null;
         }
 
         public void RegisterRigidBody(IRigidBody value)
@@ -46,6 +56,7 @@ namespace Orbital.Core
 
         private void InjectHierarchy()
         {
+            _container.InjectGameObject(gameObject);
             foreach (Transform value in tree._transforms.Values)
             {
                 _container.InjectGameObject(value.gameObject);
