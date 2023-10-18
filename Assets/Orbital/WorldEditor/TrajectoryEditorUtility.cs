@@ -11,17 +11,17 @@ namespace Orbital.WorldEditor
     #if UNITY_EDITOR
     public static class TrajectoryEditorUtility
     {
-        public static void DrawTrajectory(RelativeTrajectory trajectory, double time, float scale, bool drawSphere, DVector3 inputOrigin, out DVector3 outputOrigin)
+        public static void DrawTrajectory(IStaticTrajectory trajectory, double time, float scale, bool drawSphere, DVector3 inputOrigin, out DVector3 outputOrigin)
         {
-            DVector3 localPosition = trajectory.GetPosition(time);
-            outputOrigin = localPosition + inputOrigin;
+            var sample = trajectory.GetSample(time);
+            outputOrigin = sample.position + inputOrigin;
             Vector3 sOutput = (Vector3) (outputOrigin) * scale;
-            Vector3 sPericenter = (Vector3) (trajectory.GetPosition(-trajectory.TimeShift * trajectory.Period) + inputOrigin) * scale;
+            Vector3 sPericenter = (Vector3) (trajectory.GetSample(-trajectory.TimeShift * trajectory.Period, true, false).position + inputOrigin) * scale;
             Vector3 sInput = (Vector3) (inputOrigin) * scale;
             Handles.matrix = trajectory.GetMatrixForTPreview(scale, sInput, 0);
             Handles.CircleHandleCap(-1, Vector3.zero, Quaternion.identity, 1f, EventType.Repaint);
             Handles.matrix = Matrix4x4.identity;
-            Vector3 velocity = trajectory.GetVelocity(time) * scale;
+            Vector3 velocity = sample.velocity * scale;
             Handles.DrawDottedLine(sOutput, sInput, 10);
             Handles.color = Color.green;
             Handles.DrawDottedLine(sPericenter, sInput, 6);
@@ -41,10 +41,10 @@ namespace Orbital.WorldEditor
             }
         }
         
-        private static void DrawTrajectoriesRecursively(IMassSystem massSystem, Dictionary<IMassSystem, RelativeTrajectory> trajectories, DVector3 origin, double time, float scale)
+        private static void DrawTrajectoriesRecursively(IMassSystem massSystem, Dictionary<IMassSystem, IStaticTrajectory> trajectories, DVector3 origin, double time, float scale)
         {
             if(massSystem == null) return;
-            if(!trajectories.TryGetValue(massSystem, out RelativeTrajectory trajectory)) return;
+            if(!trajectories.TryGetValue(massSystem, out IStaticTrajectory trajectory)) return;
             
             DrawTrajectory(trajectory, time, scale, massSystem is CelestialBody, origin, out DVector3 output);
             foreach (IMassSystem child in massSystem.GetContent())
@@ -53,7 +53,7 @@ namespace Orbital.WorldEditor
             }
         }
         
-        public static Matrix4x4 GetMatrixForTPreview(this RelativeTrajectory trajectory, float scale, Vector3 position, double time)
+        public static Matrix4x4 GetMatrixForTPreview(this IStaticTrajectory trajectory, float scale, Vector3 position, double time)
         {
             Quaternion handleRotationCorrection = Quaternion.Euler(-90, 0, 0);
             Matrix4x4 rotationMatrix = trajectory.RotationMatrix;

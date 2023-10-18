@@ -7,7 +7,7 @@ namespace Orbital.Core.Simulation
 {
     public class RuntimeTrajectory : IFixedUpdateHandler, ITrajectorySampler
     {
-        private MassSystemComponent _parent;
+        private IStaticBody _parent;
         private double _nu;
         private bool _isReadyToWork = false;
         private DVector3 _position;
@@ -24,10 +24,10 @@ namespace Orbital.Core.Simulation
             _diContainer = container;
         }
 
-        public void Attach(MassSystemComponent parent)
+        public void Attach(IStaticBody parent)
         {
             _parent = parent;
-            _nu = parent.Mass * MassUtility.G;
+            _nu = parent.MassSystem.Mass * MassUtility.G;
             if (_isReadyToWork)
             {
                 HandlesRegister.UnregisterHandlers(this, _diContainer);
@@ -52,13 +52,13 @@ namespace Orbital.Core.Simulation
             _lastUpdateTime = TimeService.WorldTime;
         }
 
-        public (DVector3 position, DVector3 velocity) GetSample(double time)
+        public (DVector3 position, DVector3 velocity) GetSample(double time, bool positionRequired = true, bool velocityRequired = true)
         {
             double deltaTime = time - _lastUpdateTime;
             double r = _position.Length();
-            DVector3 accleration = -_position * _nu / (r * r * r);
-            DVector3 velocity = _velocity + accleration * deltaTime;
-            DVector3 position = _position + _velocity * deltaTime + accleration * (deltaTime * deltaTime * 0.5);
+            DVector3 acceleration = -_position * _nu / (r * r * r);
+            DVector3 velocity = velocityRequired ? (_velocity + acceleration * deltaTime) : DVector3.Zero;
+            DVector3 position = positionRequired ? (_position + _velocity * deltaTime + acceleration * (deltaTime * deltaTime * 0.5)) : DVector3.Zero;
             return (position, velocity);
         }
     }

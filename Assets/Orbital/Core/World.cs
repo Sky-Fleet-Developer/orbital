@@ -19,19 +19,19 @@ namespace Orbital.Core
             InjectHierarchy();
         }
 
-        public IEnumerable<IRigidBody> GetChildren(MassSystemComponent parent)
+        public IEnumerable<IDynamicBody> GetChildren(IStaticBody parent)
         {
-            return tree._children[tree._componentPerMass[parent]];
+            return tree._children[tree._massPerComponent[parent]];
         }
         
-        public IEnumerable<IRigidBody> GetChildren(IMassSystem parent)
+        public IEnumerable<IDynamicBody> GetChildren(IMassSystem parent)
         {
             return tree._children[parent];
         }
 
-        public IMassSystem GetParent(MassSystemComponent mass)
+        public IMassSystem GetParent(StaticBody mass)
         {
-            return tree._parents.TryGetValue(tree._componentPerMass[mass], out IMassSystem value) ? value : null;
+            return tree._parents.TryGetValue(tree._massPerComponent[mass], out IMassSystem value) ? value : null;
         }
         
         public IMassSystem GetParent(IMassSystem mass)
@@ -39,14 +39,14 @@ namespace Orbital.Core
             return tree._parents.TryGetValue(mass, out IMassSystem value) ? value : null;
         }
 
-        public void RegisterRigidBody(IRigidBody value)
+        public void RegisterRigidBody(IDynamicBody value)
         {
             tree.AddRigidbody(value);
         }
         
-        public DVector3 GetGlobalPosition(MassSystemComponent massSystemComponent)
+        public DVector3 GetGlobalPosition(IStaticBody staticBody)
         {
-            return tree.GetGlobalPosition(massSystemComponent, TimeService.WorldTime);
+            return tree.GetGlobalPosition(staticBody, TimeService.WorldTime);
         }
 
         public DVector3 GetGlobalPosition(IMassSystem massSystem)

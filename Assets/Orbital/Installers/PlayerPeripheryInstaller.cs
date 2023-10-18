@@ -17,7 +17,7 @@ namespace Orbital.Installers
             Container.BindInstance(GetComponentInChildren<CameraControllerService>()).AsSingle();
             
 
-            //Container.Inject(playerCamera);
+            //Group.Inject(playerCamera);
         }
 
         public void OnPreResolve()

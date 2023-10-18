@@ -6,10 +6,10 @@ using Unity.Collections;
 
 namespace Orbital.Core.Simulation
 {
-    public class TrajectoryContainer
+    public class TrajectoryContainer : IDynamicTrajectory
     {
         private NativeArray<Mark> _path;
-        private int _edge;
+        private int _length;
 
         public TrajectoryContainer(int arraySize)
         {
@@ -29,16 +29,17 @@ namespace Orbital.Core.Simulation
             set
             {
                 _path[i] = value;
-                _edge = i;
+                _length = i;
             }
         }
 
-        public int Length => _edge;
+        public NativeArray<Mark> Path => _path;
+        public int Length => _length;
         public int Capacity => _path.Length;
 
         public int GetLastIndexForTime(double time)
         {
-            for (int i = 0; i < _edge - 1; i++)
+            for (int i = 0; i < _length - 1; i++)
             {
                 if (_path[i].TimeMark > time) return i - 1;
             }
@@ -74,7 +75,7 @@ namespace Orbital.Core.Simulation
             AssignMarks();
         }
         
-        public (DVector3 position, DVector3 velocity) GetSample(double time)
+        public (DVector3 position, DVector3 velocity) GetSample(double time, bool positionRequired = true, bool velocityRequired = true)
         {
             if (time > _nextMark.TimeMark)
             {
@@ -82,40 +83,7 @@ namespace Orbital.Core.Simulation
                 AssignMarks();
             }
             double t = (time - _lastMark.TimeMark) / (_nextMark.TimeMark - _lastMark.TimeMark);
-            return _lastMark.Interpolate(_nextMark, _tangentA, _tangentB, t);
-        }
-    }
-
-    public struct Mark
-    {
-        public DVector3 Position;
-        public DVector3 Velocity;
-        public double TimeMark;
-
-        public Mark(DVector3 position, DVector3 velocity, double timeMark)
-        {
-            Position = position;
-            Velocity = velocity;
-            TimeMark = timeMark;
-        }
-
-        public (DVector3 tangentA, DVector3 tangentB) CalculateTangents(Mark next)
-        {
-            double dTime = next.TimeMark - TimeMark;
-            //double velocitiesRatio = Velocity.Length() / next.Velocity.Length();
-            const double mul = 1.0 / 3.0;
-            return (Position + Velocity * dTime * mul, next.Position - next.Velocity * dTime * mul);
-        }
-
-        public (DVector3 position, DVector3 velocity) Interpolate(Mark next, DVector3 tangentA, DVector3 tangentB, double t)
-        {
-            DVector3 a = DVector3.Lerp(Position, tangentA, t);
-            DVector3 b = DVector3.Lerp(tangentB, next.Position, t);
-            DVector3 c = DVector3.Lerp(tangentA, tangentB, t);
-            DVector3 d = DVector3.Lerp(a, c, t);
-            DVector3 e = DVector3.Lerp(c, b, t);
-            DVector3 f = DVector3.Lerp(d, e, t);
-            return (f, DVector3.Lerp(Velocity, next.Velocity, t));
+            return _lastMark.Interpolate(_nextMark, _tangentA, _tangentB, t, positionRequired, velocityRequired);
         }
     }
 }

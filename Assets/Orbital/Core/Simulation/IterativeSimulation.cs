@@ -41,7 +41,7 @@ namespace Orbital.Core.Simulation
                 if (IsCycle)
                 {
                     _semiMajorAxisInv = 1 / SemiMajorAxis;
-                    Period = RelativeTrajectory.GetPeriod(SemiMajorAxis, MassUtility.G, parentMass);
+                    Period = StaticTrajectory.GetPeriod(SemiMajorAxis, MassUtility.G, parentMass);
                 }
                 else
                 {
@@ -157,7 +157,7 @@ namespace Orbital.Core.Simulation
             {
                 if (IsCycle)
                 {
-                    double b = RelativeTrajectory.GetSemiMinorAxis(Eccentricity, SemiMajorAxis);
+                    double b = StaticTrajectory.GetSemiMinorAxis(Eccentricity, SemiMajorAxis);
 
                     double lApprox = Math.PI * Math.Sqrt(2 * (SemiMajorAxis * SemiMajorAxis + b * b));
                     _step = lApprox / accuracy;

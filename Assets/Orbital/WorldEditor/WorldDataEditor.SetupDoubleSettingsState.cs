@@ -27,11 +27,11 @@ namespace Orbital.WorldEditor
                 GUILayout.Label("Setup:");
                 EditorGUI.BeginChangeCheck();
                 
-                double aMajor = RelativeTrajectory.GetSemiMajorAxis(_trajectorySettingsA.bMass, _trajectorySettingsA.period, MassUtility.G);
-                double aEccentricity = RelativeTrajectory.GetEccentricity(_trajectorySettingsA.aPericenterRadius, aMajor);
-                double bMajor = RelativeTrajectory.GetSemiMajorAxis(_trajectorySettingsA.aMass, _trajectorySettingsA.period, MassUtility.G);
+                double aMajor = StaticTrajectory.GetSemiMajorAxis(_trajectorySettingsA.bMass, _trajectorySettingsA.period, MassUtility.G);
+                double aEccentricity = StaticTrajectory.GetEccentricity(_trajectorySettingsA.aPericenterRadius, aMajor);
+                double bMajor = StaticTrajectory.GetSemiMajorAxis(_trajectorySettingsA.aMass, _trajectorySettingsA.period, MassUtility.G);
                 double bPericenter = _trajectorySettingsA.aPericenterRadius * Math.Pow(_trajectorySettingsA.aMass / _trajectorySettingsA.bMass, 1.0 / 3.0);
-                double bEccentricity = RelativeTrajectory.GetEccentricity(bPericenter, bMajor);
+                double bEccentricity = StaticTrajectory.GetEccentricity(bPericenter, bMajor);
 
                 _trajectorySettingsA.aMass = EditorGUILayout.FloatField("A body mass", _trajectorySettingsB.aMass);
                 _trajectorySettingsA.bMass = EditorGUILayout.FloatField("B body mass", _trajectorySettingsB.bMass);

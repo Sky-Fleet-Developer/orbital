@@ -20,8 +20,8 @@ namespace Orbital.Core.Simulation
         private readonly Dictionary<SimulationSpace, Scene> _scenes = new ();
         private readonly Dictionary<SimulationSpace, Transform> _roots = new ();
         private readonly Queue<Scene> _scenesPool = new ();
-        private readonly Dictionary<SimulationSpace, HashSet<IRigidBody>> _simulationObjects = new();
-        private readonly Dictionary<IRigidBody, SimulationSpace> _simulationObjectPerSimulation = new();
+        private readonly Dictionary<SimulationSpace, HashSet<IDynamicBody>> _simulationObjects = new();
+        private readonly Dictionary<IDynamicBody, SimulationSpace> _simulationObjectPerSimulation = new();
         public float VisibleDistance => visibleDistance;
         
         private void Awake()
@@ -68,15 +68,15 @@ namespace Orbital.Core.Simulation
             Scene scene = _scenesPool.Dequeue();
             _roots.Add(simulationSpace, scene.GetRootGameObjects()[0].transform);
             _scenes.Add(simulationSpace, scene);
-            _simulationObjects.Add(simulationSpace, new HashSet<IRigidBody>());
+            _simulationObjects.Add(simulationSpace, new HashSet<IDynamicBody>());
             simulationSpace.RegisterComplete(scene);
             SceneManager.LoadSceneAsync(simulationSceneName, LoadSceneMode.Additive); //prepare next scene
         }
         
         public void UnregisterSimulation(SimulationSpace simulationSpace)
         {
-            IRigidBody[] array = _simulationObjects[simulationSpace].ToArray();
-            foreach (IRigidBody rigidBodySystemComponent in array)
+            IDynamicBody[] array = _simulationObjects[simulationSpace].ToArray();
+            foreach (IDynamicBody rigidBodySystemComponent in array)
             {
                 RigidbodyLeavesObserver(rigidBodySystemComponent, simulationSpace);
             }
@@ -86,14 +86,14 @@ namespace Orbital.Core.Simulation
             _roots.Remove(simulationSpace);
         }
 
-        public SimulationSpace GetObserverFor(IRigidBody target)
+        public SimulationSpace GetObserverFor(IDynamicBody target)
         {
             return _simulationObjectPerSimulation[target];
         }
         
-        public bool IsInSimulation(IRigidBody target)
+        public bool IsInSimulation(IDynamicBody target)
         {
-            return target.Mode != RigidBodyMode.Trajectory;
+            return target.Mode != DynamicBodyMode.Trajectory;
         }
 
         UpdateFrequency IUpdateByFrequencyHandler.Frequency => UpdateFrequency.Every100Frame;
@@ -101,7 +101,7 @@ namespace Orbital.Core.Simulation
         {
             foreach (SimulationSpace observer in _scenes.Keys)
             {
-                foreach (IRigidBody component in _world.GetChildren(observer.Parent))
+                foreach (IDynamicBody component in _world.GetChildren(observer.Parent))
                 {
                     double sqrDistanceInSpace = (component.TrajectorySampler.GetSample(TimeService.WorldTime).position - observer.Position).LengthSquared();
                     bool isInSimulation = IsInSimulation(component);
@@ -123,17 +123,17 @@ namespace Orbital.Core.Simulation
             }
         }
         
-        public void OnRigidbodyEnter(IRigidBody body, SimulationSpace simulationSpace)
+        public void OnRigidbodyEnter(IDynamicBody body, SimulationSpace simulationSpace)
         {
             body.Present(simulationSpace);
         }
 
-        public void OnRigidbodyExit(IRigidBody body, SimulationSpace simulationSpace)
+        public void OnRigidbodyExit(IDynamicBody body, SimulationSpace simulationSpace)
         {
             body.RemovePresent();
         }
         
-        private void RigidbodyEntersObserver(IRigidBody component, SimulationSpace simulationSpace)
+        private void RigidbodyEntersObserver(IDynamicBody component, SimulationSpace simulationSpace)
         {
             if (_simulationObjectPerSimulation.ContainsKey(component))
             {
@@ -150,7 +150,7 @@ namespace Orbital.Core.Simulation
                 subscriber.OnRigidbodyEnter(component, simulationSpace);
             }
         }
-        private void RigidbodyLeavesObserver(IRigidBody component, SimulationSpace simulationSpace)
+        private void RigidbodyLeavesObserver(IDynamicBody component, SimulationSpace simulationSpace)
         {
             _simulationObjectPerSimulation[component] = null;
             _simulationObjects[simulationSpace].Remove(component);

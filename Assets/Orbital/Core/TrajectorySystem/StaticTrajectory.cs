@@ -11,7 +11,7 @@ namespace Orbital.Core.TrajectorySystem
         DoubleSystem = 1,
     }
     
-    public class RelativeTrajectory : ITrajectorySampler
+    public class StaticTrajectory : ITrajectorySampler, IStaticTrajectory
     {
         public const double Deg2Rad = 0.01745329;
         public const double Rad2Deg = 57.29578;
@@ -31,7 +31,7 @@ namespace Orbital.Core.TrajectorySystem
 
         public DMatrix4x4 RotationMatrix => _rotationMatrix;
 
-        public RelativeTrajectory(ITrajectorySettingsHolder self, IMass other, SystemType systemType)
+        public StaticTrajectory(ITrajectorySettingsHolder self, IMass other, SystemType systemType)
         {
             _self = self;
             _other = other;
@@ -137,9 +137,9 @@ namespace Orbital.Core.TrajectorySystem
             _rotationMatrix = DMatrix4x4.CreateRotation(settings.latitudeShift * Deg2Rad, settings.longitudeShift * Deg2Rad, 0) * DMatrix4x4.CreateRotation(0, 0, settings.inclination * Deg2Rad);
         }
 
-        public (DVector3 position, DVector3 velocity) GetSample(double time)
+        public (DVector3 position, DVector3 velocity) GetSample(double time, bool positionRequired = true, bool velocityRequired = true)
         {
-            return (GetPosition(time), GetVelocity(time));
+            return (positionRequired ? GetPosition(time) : DVector3.Zero, velocityRequired ? GetVelocity(time) : DVector3.Zero);
         }
         
         public DVector3 GetPosition(double t)
@@ -289,9 +289,9 @@ namespace Orbital.Core.TrajectorySystem
             return trueAnomaly;
         }
 
-        public RelativeTrajectory Clone()
+        public StaticTrajectory Clone()
         {
-            return this.MemberwiseClone() as RelativeTrajectory;
+            return this.MemberwiseClone() as StaticTrajectory;
         }
     }
 }

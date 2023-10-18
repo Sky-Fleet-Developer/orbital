@@ -8,7 +8,7 @@ namespace Orbital.Core.Simulation
     public class RigidbodyPresentation : MonoBehaviour
     {
         private Rigidbody _rigidbody;
-        private IRigidBody _master;
+        private IDynamicBody _master;
         private SimulationSpace _simulationSpace;
         private ITrajectorySampler _trajectory;
         private double _interpolationLastTime = 0;
@@ -40,7 +40,7 @@ namespace Orbital.Core.Simulation
             _rigidbody = GetComponent<Rigidbody>();
         }
 
-        public void Init(IRigidBody component, SimulationSpace simulationSpace)
+        public void Init(IDynamicBody component, SimulationSpace simulationSpace)
         {
             _master = component;
             _simulationSpace = simulationSpace;
@@ -51,10 +51,10 @@ namespace Orbital.Core.Simulation
         {
             switch (_master.Mode)
             {
-                case RigidBodyMode.Sleep:
+                case DynamicBodyMode.Sleep:
                     FollowTrajectory();
                     break;
-                case RigidBodyMode.Simulation:
+                case DynamicBodyMode.Simulation:
                     break;
             }
         }
@@ -89,7 +89,7 @@ namespace Orbital.Core.Simulation
 
         private void OnCollisionEnter(Collision other)
         {
-            if (_master.Mode == RigidBodyMode.Sleep)
+            if (_master.Mode == DynamicBodyMode.Sleep)
             {
                 _master.AwakeFromSleep();
             }

@@ -8,22 +8,22 @@ using Zenject;
 
 namespace Orbital.Core.Simulation
 {
-    public class NMRigidbody : SystemComponent<NMRigidbodyVariables, NMRigidbodySettings>, IRigidBody
+    public class DynamicBody : SystemComponent<DynamicBodyVariables, DynamicBodySettings>, IDynamicBody
     {
         private static AsyncThreadScheduler _trajectoryRefreshScheduler = new AsyncThreadScheduler(3);
 
-        [SerializeField] private NMRigidbodyVariables variables;
-        [SerializeField] private NMRigidbodySettings settings;
+        [SerializeField] private DynamicBodyVariables variables;
+        [SerializeField] private DynamicBodySettings settings;
         [SerializeField] private int accuracy;
         [SerializeField] private float nonuniformity;
         [Inject] private World _world;
         private Track _trajectoryTrack;
         private TrajectoryContainer _trajectoryContainer;
-        private MassSystemComponent _parent;
+        private IStaticBody _parent;
 
         private float _awakeTime = 0;
         private const float AwakeDelay = 4;
-        private RigidBodyMode _mode = RigidBodyMode.Trajectory;
+        private DynamicBodyMode _mode = DynamicBodyMode.Trajectory;
         private SimulationSpace _simulationSpace;
         private RigidbodyPresentation _presentation;
         private Task _trajectoryCalculation;
@@ -31,31 +31,31 @@ namespace Orbital.Core.Simulation
         public Task WaitForTrajectoryCalculated => _trajectoryCalculation;
         public TrajectoryContainer TrajectoryContainer => _trajectoryContainer;
 
-        public override NMRigidbodyVariables Variables
+        public override DynamicBodyVariables Variables
         {
             get => variables;
             set => variables = value;
         }
 
-        public override NMRigidbodySettings Settings
+        public override DynamicBodySettings Settings
         {
             get => settings;
             set => settings = value;
         }
 
-        public MassSystemComponent Parent => _parent;
+        public IStaticBody Parent => _parent;
 
-        [ShowInInspector] public RigidBodyMode Mode => _mode;
+        [ShowInInspector] public DynamicBodyMode Mode => _mode;
 
-        ITrajectorySampler IRigidBody.TrajectorySampler => _trajectoryTrack;
+        ITrajectorySampler IDynamicBody.TrajectorySampler => _trajectoryTrack;
         public RigidbodyPresentation Presentation => _presentation;
 
-        public event Action<RigidBodyMode> ModeChangedHandler;
+        public event Action<DynamicBodyMode> ModeChangedHandler;
 
         protected override void Start()
         {
             base.Start();
-            _parent = GetComponentInParent<MassSystemComponent>();
+            _parent = GetComponentInParent<IStaticBody>();
             _world.RegisterRigidBody(this);
             _trajectoryContainer = new TrajectoryContainer(300);
             _trajectoryTrack = new Track(_trajectoryContainer);
@@ -64,8 +64,8 @@ namespace Orbital.Core.Simulation
 
         public void AwakeFromSleep()
         {
-            if (_mode == RigidBodyMode.Trajectory) throw new Exception("Can't accelerate in Trajectory mode!");
-            _mode = RigidBodyMode.Simulation;
+            if (_mode == DynamicBodyMode.Trajectory) throw new Exception("Can't accelerate in Trajectory mode!");
+            _mode = DynamicBodyMode.Simulation;
             //Debug.Log($"Call awake {name}");
             if (IsSleepTimerInCondition())
             {
@@ -101,16 +101,16 @@ namespace Orbital.Core.Simulation
         private async void Sleep()
         {
             //Debug.Log($"Sleep {name}");
-            if (_mode == RigidBodyMode.Trajectory) throw new Exception("Can't sleep in Trajectory mode!");
+            if (_mode == DynamicBodyMode.Trajectory) throw new Exception("Can't sleep in Trajectory mode!");
             await RefreshTrajectory();
-            _mode = RigidBodyMode.Sleep;
+            _mode = DynamicBodyMode.Sleep;
             ModeChangedHandler?.Invoke(_mode);
         }
 
         public void Present(SimulationSpace simulationSpace)
         {
-            if (_mode != RigidBodyMode.Trajectory) throw new Exception("Already presents!");
-            _mode = RigidBodyMode.Sleep;
+            if (_mode != DynamicBodyMode.Trajectory) throw new Exception("Already presents!");
+            _mode = DynamicBodyMode.Sleep;
 
 
             _simulationSpace = simulationSpace;
@@ -130,9 +130,9 @@ namespace Orbital.Core.Simulation
 
         public async void RemovePresent()
         {
-            if (_mode == RigidBodyMode.Trajectory) throw new Exception("Present is not exists!");
-            if (_mode != RigidBodyMode.Sleep) RefreshTrajectory();
-            _mode = RigidBodyMode.Trajectory;
+            if (_mode == DynamicBodyMode.Trajectory) throw new Exception("Present is not exists!");
+            if (_mode != DynamicBodyMode.Sleep) RefreshTrajectory();
+            _mode = DynamicBodyMode.Trajectory;
 
             Destroy(_presentation.gameObject);
 
@@ -156,13 +156,13 @@ namespace Orbital.Core.Simulation
         {
             await _trajectoryRefreshScheduler.Schedule(() =>
                 IterativeSimulation.FillTrajectoryContainer(_trajectoryContainer,
-                    TimeService.WorldTime, position, velocity, _parent.Mass, accuracy, nonuniformity));
+                    TimeService.WorldTime, position, velocity, _parent.MassSystem.Mass, accuracy, nonuniformity));
             _trajectoryTrack.ResetProgress();
         }
 
         private void RefreshVariables()
         {
-            NMRigidbodyVariables local = variables;
+            DynamicBodyVariables local = variables;
             (local.position, local.velocity) = _trajectoryTrack.GetSample(TimeService.WorldTime);
             variables = local;
         }
@@ -176,7 +176,7 @@ namespace Orbital.Core.Simulation
     }
 
     [Serializable]
-    public struct NMRigidbodyVariables
+    public struct DynamicBodyVariables
     {
         public Vector3 velocity;
         public Vector3 position;
@@ -184,7 +184,7 @@ namespace Orbital.Core.Simulation
     }
 
     [Serializable]
-    public struct NMRigidbodySettings
+    public struct DynamicBodySettings
     {
         public RigidbodyPresentation presentation;
     }

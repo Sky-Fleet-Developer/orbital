@@ -13,7 +13,7 @@ namespace Orbital.Core.Simulation
         [SerializeField] private SimulationSpaceVariables variables;
         [SerializeField] private SimulationSpaceSettings settings;
         [SerializeField] private float maxDistanceToAnchor;
-        private IRigidBody _anchor;
+        private IDynamicBody _anchor;
         [Inject] private SimulationService _simulationService;
         [Inject] private DiContainer _diContainer;
         private RuntimeTrajectory _trajectory;
@@ -32,7 +32,7 @@ namespace Orbital.Core.Simulation
             set => settings = value;
         }
 
-        public IRigidBody Anchor
+        public IDynamicBody Anchor
         {
             get => _anchor;
             set
@@ -52,7 +52,7 @@ namespace Orbital.Core.Simulation
             }
         }
 
-        public MassSystemComponent Parent => _anchor.Parent;
+        public IStaticBody Parent => _anchor.Parent;
 
         private void Awake()
         {
@@ -70,11 +70,11 @@ namespace Orbital.Core.Simulation
         private async void InitDelayed()
         {
             await Task.Yield();
-            Anchor = GetComponentInParent<IRigidBody>();
+            Anchor = GetComponentInParent<IDynamicBody>();
             _simulationService.RegisterSimulation(this);
         }
 
-        private void OnAnchorModeChanged(RigidBodyMode mode)
+        private void OnAnchorModeChanged(DynamicBodyMode mode)
         {
 
         }

@@ -4,7 +4,7 @@ namespace Orbital.Core.Handles
 {
     public interface ISimulationSpaceTriggerHandler
     {
-        void OnRigidbodyEnter(IRigidBody body, SimulationSpace simulationSpace);
-        void OnRigidbodyExit(IRigidBody body, SimulationSpace simulationSpace);
+        void OnRigidbodyEnter(IDynamicBody body, SimulationSpace simulationSpace);
+        void OnRigidbodyExit(IDynamicBody body, SimulationSpace simulationSpace);
     }
 }

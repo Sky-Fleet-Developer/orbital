@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.Rendering;
 
 [ExecuteInEditMode]
-public class LineRendering : MonoBehaviour 
+public class LineRenderingTest : MonoBehaviour 
 {
     public Material material;
     public Vector3[] positions;

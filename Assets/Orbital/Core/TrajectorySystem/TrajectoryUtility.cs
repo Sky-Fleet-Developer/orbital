@@ -10,17 +10,17 @@ namespace Orbital.Core.TrajectorySystem
             IMassSystem cache = massSystem;
             while (cache != tree.Root)
             {
-                result += tree._trajectories[cache].GetPosition(time);
+                result += tree._trajectories[cache].GetSample(time, true, false).position;
                 tree._parents.TryGetValue(cache, out cache);
             }
 
             return result;
         }
 
-        public static DVector3 GetGlobalPosition(this TreeContainer tree, MassSystemComponent massSystemComponent,
+        public static DVector3 GetGlobalPosition(this TreeContainer tree, IStaticBody staticBody,
             double time)
         {
-            return tree.GetGlobalPosition(tree._componentPerMass[massSystemComponent], time);
+            return tree.GetGlobalPosition(tree._massPerComponent[staticBody], time);
         }
     }
 }

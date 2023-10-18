@@ -3,20 +3,20 @@ using Orbital.Core.TrajectorySystem;
 
 namespace Orbital.Core.Simulation
 {
-    public interface IRigidBody
+    public interface IDynamicBody
     {
-        public MassSystemComponent Parent { get; }
-        public RigidBodyMode Mode { get; }
+        public IStaticBody Parent { get; }
+        public DynamicBodyMode Mode { get; }
         public ITrajectorySampler TrajectorySampler { get; }
         public TrajectoryContainer TrajectoryContainer { get; }
-        public event Action<RigidBodyMode> ModeChangedHandler;
+        public event Action<DynamicBodyMode> ModeChangedHandler;
         public void Present(SimulationSpace simulationSpace);
         public void RemovePresent();
         public void AwakeFromSleep();
 
     }
     
-    public enum RigidBodyMode
+    public enum DynamicBodyMode
     {
         Trajectory = 0,
         Sleep = 1,

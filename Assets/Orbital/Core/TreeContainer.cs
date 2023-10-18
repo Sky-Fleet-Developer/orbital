@@ -14,9 +14,10 @@ namespace Orbital.Core
     {
         [JsonProperty] public IMassSystem Root;
         [JsonIgnore] public Dictionary<IMassSystem, Transform> _transforms { get; private set; }
-        [JsonIgnore] public Dictionary<IMassSystem, RelativeTrajectory> _trajectories { get; private set; }
-        [JsonIgnore] public Dictionary<MassSystemComponent, IMassSystem> _componentPerMass { get; private set; }
-        [JsonIgnore] public Dictionary<IMassSystem, List<IRigidBody>> _children { get; private set; }
+        [JsonIgnore] public Dictionary<IMassSystem, IStaticTrajectory> _trajectories { get; private set; }
+        [JsonIgnore] internal Dictionary<IStaticBody, IMassSystem> _massPerComponent { get; private set; }
+        [JsonIgnore] internal Dictionary<IMassSystem, IStaticBody> _componentPerMass { get; private set; }
+        [JsonIgnore] public Dictionary<IMassSystem, List<IDynamicBody>> _children { get; private set; }
         [JsonIgnore] public Dictionary<IMassSystem, IMassSystem> _parents { get; private set; }
         [SerializeField, TextArea(minLines: 6, maxLines: 10)] private string serializedValue;
 
@@ -35,34 +36,41 @@ namespace Orbital.Core
             ReconstructHierarchy(Root, tRoot);
             foreach (IMassSystem massSystem in _transforms.Keys)
             {
-                _children.Add(massSystem, new List<IRigidBody>());
+                _children.Add(massSystem, new List<IDynamicBody>());
             }
         }
         
         private void CreateCache()
         {
-            _trajectories = new Dictionary<IMassSystem, RelativeTrajectory>();
-            _componentPerMass = new Dictionary<MassSystemComponent, IMassSystem>();
-            _children = new Dictionary<IMassSystem, List<IRigidBody>>();
+            _trajectories = new Dictionary<IMassSystem, IStaticTrajectory>();
+            _massPerComponent = new Dictionary<IStaticBody, IMassSystem>();
+            _componentPerMass = new Dictionary<IMassSystem, IStaticBody>();
+            _children = new Dictionary<IMassSystem, List<IDynamicBody>>();
             _parents = new Dictionary<IMassSystem, IMassSystem>();
         }
 
-        public void AddRigidbody(IRigidBody component)
+        public void AddRigidbody(IDynamicBody component)
         {
-            _children[_componentPerMass[component.Parent]].Add(component);
+            _children[_massPerComponent[component.Parent]].Add(component);
         }
         
         private void ReconstructHierarchy(IMassSystem mRoot, Transform tRoot)
         {
-            void SetupMassComponent(IMassSystem mass)
+            void SetupMassComponent(IMassSystem child)
             {
-                if (mass == null) return;
-                if (_transforms[mass].TryGetComponent(out MassSystemComponent value))
+                if (child == null) return;
+                if (_transforms[child].TryGetComponent(out IStaticBodyAccessor value))
                 {
-                    _componentPerMass.TryAdd(value, mass);
-                    if (_trajectories.TryGetValue(mass, out RelativeTrajectory trajectory))
+                    _massPerComponent.TryAdd(value.Self, child);
+                    _componentPerMass.TryAdd(child, value.Self);
+                    if (_trajectories.TryGetValue(child, out IStaticTrajectory trajectory))
                     {
-                        value.Setup(mass, trajectory);
+                        if (child != mRoot)
+                        {
+                            value.Parent = _componentPerMass[mRoot];
+                        }
+                        value.Trajectory = trajectory;
+                        value.MassSystem = child;
                     }
                 }
             }
@@ -106,7 +114,7 @@ namespace Orbital.Core
 
         private Transform MakeNewObject(string name, Transform parent)
         {
-            Transform newObject = new GameObject(name, new [] {typeof(MassSystemComponent)}).transform;
+            Transform newObject = new GameObject(name, new [] {typeof(StaticBody)}).transform;
             newObject.SetParent(parent);
             return newObject;
         }

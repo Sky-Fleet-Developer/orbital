@@ -5,17 +5,17 @@ using Zenject;
 
 namespace Orbital.Player
 {
-    [RequireComponent(typeof(NMRigidbody))]
+    [RequireComponent(typeof(DynamicBody))]
     public class BindRigidbodyToPlayer : MonoBehaviour
     {
         [SerializeField] private PlayerToBind playerToBind;
         [Inject] private CameraModel _camera;
-        private NMRigidbody _rigidbody;
+        private DynamicBody _rigidbody;
 
         private void Start()
         {
-            _rigidbody = GetComponent<NMRigidbody>();
-            if (_rigidbody.Mode != RigidBodyMode.Trajectory)
+            _rigidbody = GetComponent<DynamicBody>();
+            if (_rigidbody.Mode != DynamicBodyMode.Trajectory)
             {
                 _camera.BindToRigidbody(_rigidbody.Presentation);
             }
@@ -25,7 +25,7 @@ namespace Orbital.Player
             }
         }
 
-        private void OnModeChanged(RigidBodyMode mode)
+        private void OnModeChanged(DynamicBodyMode mode)
         {
             _rigidbody.ModeChangedHandler -= OnModeChanged;
             _camera.BindToRigidbody(_rigidbody.Presentation);

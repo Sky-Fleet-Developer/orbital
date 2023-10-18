@@ -24,7 +24,7 @@ namespace Orbital.Core.TrajectorySystem
                 i++;
                 if (mass == null) continue;
                 Transform tChild = tRoot.FindRegex($".*\\[{i}\\]$");
-                if (tChild != null)
+                if (tChild)
                 {
                     dictionary.Add(mass, tChild);
                     AddMapRecursively(dictionary, mass, tChild);
@@ -45,22 +45,22 @@ namespace Orbital.Core.TrajectorySystem
             }
         }
 
-        /*public static Dictionary<IMass, RelativeTrajectory> MakeTrajectories(this IMass mRoot)
+        /*public static Dictionary<IMass, StaticTrajectory> MakeTrajectories(this IMass mRoot)
         {
-            Dictionary<IMass, RelativeTrajectory> result = new();
+            Dictionary<IMass, StaticTrajectory> result = new();
             FillTrajectoriesRecursively(result, mRoot);
             return result;
         }*/
 
-        public static void FillTrajectoriesRecursively(this IMassSystem massSystem, Dictionary<IMassSystem, RelativeTrajectory> container)
+        public static void FillTrajectoriesRecursively(this IMassSystem massSystem, Dictionary<IMassSystem, IStaticTrajectory> container)
         {
             void SetupElement(IMassSystem child, IMassSystem other, SystemType type)
             {
                 if (child == null) return;
                 if (other == null) return;
-                if (!container.TryGetValue(child, out RelativeTrajectory trajectory))
+                if (!container.TryGetValue(child, out IStaticTrajectory trajectory))
                 {
-                    trajectory = new RelativeTrajectory(child, other, type);
+                    trajectory = new StaticTrajectory(child, other, type);
                     container.Add(child, trajectory);
                 }
 
