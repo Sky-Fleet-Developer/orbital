@@ -15,7 +15,6 @@ namespace Orbital.Core.Handles
         private HandlerContainer<IFixedUpdateHandler> _fixedUpdateContainer;
         private HandlerContainer<ILateUpdateHandler> _lateUpdateContainer;
         private HandlerContainer<IUpdateByFrequencyHandler> _frequencyUpdateContainer;
-        private HandlerContainer<IRenderHandler> _renderContainer;
         private long _frameCounter;
         [Inject] private DiContainer _diContainer;
 
@@ -65,7 +64,6 @@ namespace Orbital.Core.Handles
             _lateUpdateContainer = new HandlerContainer<ILateUpdateHandler>(_diContainer);
             _fixedUpdateContainer = new HandlerContainer<IFixedUpdateHandler>(_diContainer);
             _frequencyUpdateContainer = new HandlerContainer<IUpdateByFrequencyHandler>(_diContainer);
-            _renderContainer = new HandlerContainer<IRenderHandler>(_diContainer);
         }
 
         private void OnDestroy()
@@ -74,7 +72,6 @@ namespace Orbital.Core.Handles
             _lateUpdateContainer.Dispose();
             _fixedUpdateContainer.Dispose();
             _frequencyUpdateContainer.Dispose();
-            _renderContainer.Dispose();
         }
 
         /*private static void RemoveAndShift<T>(List<T> list, T element) where T : class

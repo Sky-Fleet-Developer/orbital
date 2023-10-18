@@ -8,21 +8,6 @@ using Zenject;
 
 namespace Orbital.Core
 {
-    public interface IStaticBody
-    {
-        public IMassSystem MassSystem { get; }
-        public IStaticBody Parent { get; }
-        public DVector3 Position { get; }
-    }
-
-    internal interface IStaticBodyAccessor
-    {
-        public IStaticBody Self { get; }
-        public IMassSystem MassSystem { get; set; }
-        public IStaticBody Parent { get; set; }
-        public IStaticTrajectory Trajectory { get; set; }
-    }
-    
     [ExecuteInEditMode]
     public class StaticBody : SystemComponent<StaticBodyVariables, StaticBodySettings>, IFixedUpdateHandler, IStaticBody, IStaticBodyAccessor
     {
@@ -55,6 +40,7 @@ namespace Orbital.Core
         }
 
         public DVector3 Position => _world.GetGlobalPosition(this);
+        public DVector3 LocalPosition => _trajectory.GetSample(TimeService.WorldTime, true, false).position;
         
         public double Mass => _massSystem.Mass;
         public IStaticTrajectory Trajectory => _trajectory;

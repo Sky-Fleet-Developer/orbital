@@ -56,6 +56,13 @@ namespace Orbital.Core
 
         private void InjectHierarchy()
         {
+            #if UNITY_EDITOR
+            if (_container == null)
+            {
+                if(Application.isPlaying) Debug.LogError("Has no DI container in World component");
+                return;
+            }
+            #endif
             _container.InjectGameObject(gameObject);
             foreach (Transform value in tree._transforms.Values)
             {
