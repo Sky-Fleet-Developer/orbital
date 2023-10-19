@@ -11,9 +11,18 @@ namespace Orbital.Core
     {
         [SerializeField] private TreeContainer tree;
         [Inject] private DiContainer _container;
-        
+        private bool _isLoaded = false;
         public void Load()
         {
+            if (_isLoaded)
+            {
+                if (Application.isPlaying)
+                {
+                    Debug.LogError("World has been already loaded!");
+                }
+                return;
+            }
+            _isLoaded = true;
             tree.Load();
             tree.CalculateForRoot(transform);
             InjectHierarchy();

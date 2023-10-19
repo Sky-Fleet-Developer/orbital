@@ -99,11 +99,11 @@ namespace Orbital.Core.Simulation
         UpdateFrequency IUpdateByFrequencyHandler.Frequency => UpdateFrequency.Every100Frame;
         void IUpdateByFrequencyHandler.Update()
         {
-            foreach (SimulationSpace observer in _scenes.Keys)
+            foreach (SimulationSpace simulationSpace in _scenes.Keys)
             {
-                foreach (IDynamicBody component in _world.GetChildren(observer.Parent))
+                foreach (IDynamicBody component in _world.GetChildren(simulationSpace.Parent))
                 {
-                    double sqrDistanceInSpace = (component.TrajectorySampler.GetSample(TimeService.WorldTime).position - observer.Position).LengthSquared();
+                    double sqrDistanceInSpace = (component.TrajectorySampler.GetSample(TimeService.WorldTime).position - simulationSpace.Position).LengthSquared();
                     bool isInSimulation = IsInSimulation(component);
                     bool distanceCompare = sqrDistanceInSpace < _visibleDistanceSqr;
                     
@@ -112,10 +112,10 @@ namespace Orbital.Core.Simulation
                         switch (distanceCompare)
                         {
                             case true:
-                                RigidbodyEntersObserver(component, observer);
+                                RigidbodyEntersObserver(component, simulationSpace);
                                 break;
                             case false:
-                                RigidbodyLeavesObserver(component, observer);
+                                RigidbodyLeavesObserver(component, simulationSpace);
                                 break;
                         }
                     }
@@ -154,9 +154,17 @@ namespace Orbital.Core.Simulation
         {
             _simulationObjectPerSimulation[component] = null;
             _simulationObjects[simulationSpace].Remove(component);
-            foreach (ISimulationSpaceTriggerHandler observerTriggerHandler in _triggerSubscribers.All())
+            foreach (ISimulationSpaceTriggerHandler simulationSpaceTriggerHandler in _triggerSubscribers.All())
             {
-                observerTriggerHandler.OnRigidbodyExit(component, simulationSpace);
+                simulationSpaceTriggerHandler.OnRigidbodyExit(component, simulationSpace);
+            }
+        }
+
+        public void SimulationWasMoved(SimulationSpace simulationSpace, DVector3 deltaPosition, DVector3 deltaVelocity)
+        {
+            foreach (IDynamicBody dynamicBody in _simulationObjects[simulationSpace])
+            {
+                dynamicBody.SimulationWasMoved(deltaPosition, deltaVelocity);
             }
         }
     }

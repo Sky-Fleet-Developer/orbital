@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4306337505488059977}
   - component: {fileID: 9105365122161674278}
+  - component: {fileID: 8216428966551001340}
   m_Layer: 0
   m_Name: RigidBody (1)
   m_TagString: Untagged
@@ -45,14 +46,33 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   variables:
-    velocity: {x: 7610, y: 0, z: 0}
-    position: {x: -300, y: 0, z: 6878000}
-    parentMass: 6e+24
+    velocity:
+      x: 7610
+      y: 0
+      z: 0
+    position:
+      x: -300
+      y: 0
+      z: 6878000
   settings:
     presentation: {fileID: 6605901092997738416, guid: 28883b6e7d549e5418a1e5aa2099706b,
       type: 3}
   accuracy: 200
   nonuniformity: 0.15
+--- !u!114 &8216428966551001340
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3944929291612492282}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4c2d19f415fb4094ab575908beef2999, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  material: {fileID: 2100000, guid: 87188d7fee3303c4bbdbbc2515b7f025, type: 2}
+  maxVertexCount: 300
 --- !u!1 &4079401439770663085
 GameObject:
   m_ObjectHideFlags: 0
@@ -109,7 +129,6 @@ GameObject:
   m_Component:
   - component: {fileID: 4465114332393762918}
   - component: {fileID: 4465114332393762913}
-  - component: {fileID: 1373791349861113208}
   m_Layer: 0
   m_Name: TestWorld
   m_TagString: Untagged
@@ -151,23 +170,6 @@ MonoBehaviour:
       Core","settings":{"mass":6E+24,"pericenterSpeed":0.0,"pericenterRadius":0.0,"latitudeShift":0.0,"longitudeShift":0.0,"inclination":0.0,"timeShift":0.0,"period":0.0}},"Children":[{"$type":"Orbital.Core.TrajectorySystem.CelestialBody,
       Core","settings":{"mass":1E+22,"pericenterSpeed":1071.03,"pericenterRadius":3E+08,"latitudeShift":3.88,"longitudeShift":0.0,"inclination":0.0,"timeShift":0.0,"period":0.0}},{"$type":"Orbital.Core.TrajectorySystem.CelestialBody,
       Core","settings":{"mass":1E+22,"pericenterSpeed":1200.0,"pericenterRadius":2.8E+08,"latitudeShift":0.0,"longitudeShift":-126.5,"inclination":0.0,"timeShift":0.0,"period":0.0}}]}}'
---- !u!114 &1373791349861113208
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4465114332393762912}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 337b6c81c18c00d46a292a56a82e71e1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  settings:
-    celestialTrajectoryAccuracy: 200
-    scale: 224400000
-    material: {fileID: 0}
-    bodyTrajectoryMaxBufferSize: 400
 --- !u!1 &4920228525569766976
 GameObject:
   m_ObjectHideFlags: 0
@@ -226,6 +228,8 @@ GameObject:
   - component: {fileID: 5599842919499006708}
   - component: {fileID: 5419791050431817659}
   - component: {fileID: 7867039090168182842}
+  - component: {fileID: 6160671314397983419}
+  - component: {fileID: 77198758193697747}
   m_Layer: 0
   m_Name: RigidBody
   m_TagString: Untagged
@@ -262,9 +266,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   variables:
-    velocity: {x: 7600, y: 0, z: 0}
-    position: {x: 0, y: 0, z: 6878000}
-    parentMass: 6e+24
+    velocity:
+      x: 7600
+      y: 0
+      z: 0
+    position:
+      x: 0
+      y: 0
+      z: 6878000
   settings:
     presentation: {fileID: 6605901092997738416, guid: 28883b6e7d549e5418a1e5aa2099706b,
       type: 3}
@@ -283,6 +292,33 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerToBind: 0
+--- !u!114 &6160671314397983419
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4963467543138443323}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4c2d19f415fb4094ab575908beef2999, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  material: {fileID: 2100000, guid: 87188d7fee3303c4bbdbbc2515b7f025, type: 2}
+  maxVertexCount: 300
+--- !u!114 &77198758193697747
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4963467543138443323}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d8fc518f447637b4baefa6b7c78eeaf4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  acceleration: 50000
 --- !u!1 &7303113335462906777
 GameObject:
   m_ObjectHideFlags: 0

@@ -89,10 +89,18 @@ namespace Orbital.Core.Simulation
 
         private void OnCollisionEnter(Collision other)
         {
-            if (_master.Mode == DynamicBodyMode.Sleep)
-            {
-                _master.AwakeFromSleep();
-            }
+            SetVelocityDirty();
+        }
+
+        private void SetVelocityDirty()
+        {
+            _master.SetVelocityDirty();
+        }
+
+        public void AddForce(Vector3 force)
+        {
+            _rigidbody.AddForce(force);
+            SetVelocityDirty();
         }
     }
 }

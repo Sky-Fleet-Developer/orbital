@@ -19,7 +19,9 @@ namespace Orbital.Core
         [JsonIgnore] internal Dictionary<IMassSystem, IStaticBody> _componentPerMass { get; private set; }
         [JsonIgnore] public Dictionary<IMassSystem, List<IDynamicBody>> _children { get; private set; }
         [JsonIgnore] public Dictionary<IMassSystem, IMassSystem> _parents { get; private set; }
-        [SerializeField, TextArea(minLines: 6, maxLines: 10)] private string serializedValue;
+
+        [SerializeField, TextArea(minLines: 6, maxLines: 10)]
+        private string serializedValue;
 
         public void Load()
         {
@@ -31,7 +33,7 @@ namespace Orbital.Core
         public void CalculateForRoot(Transform tRoot)
         {
             CreateCache();
-            if(Root == null) return;
+            if (Root == null) return;
             Root.FillTrajectoriesRecursively(_trajectories);
             ReconstructHierarchy(Root, tRoot);
             foreach (IMassSystem massSystem in _transforms.Keys)
@@ -39,7 +41,7 @@ namespace Orbital.Core
                 _children.Add(massSystem, new List<IDynamicBody>());
             }
         }
-        
+
         private void CreateCache()
         {
             _trajectories = new Dictionary<IMassSystem, IStaticTrajectory>();
@@ -51,9 +53,10 @@ namespace Orbital.Core
 
         public void AddRigidbody(IDynamicBody component)
         {
-            _children[_massPerComponent[component.Parent]].Add(component);
+            List<IDynamicBody> list = _children[_massPerComponent[component.Parent]];
+            if (!list.Contains(component)) list.Add(component);
         }
-        
+
         private void ReconstructHierarchy(IMassSystem mRoot, Transform tRoot)
         {
             void SetupMassComponent(IMassSystem child)
@@ -69,6 +72,7 @@ namespace Orbital.Core
                         {
                             value.Parent = _componentPerMass[mRoot];
                         }
+
                         value.Trajectory = trajectory;
                         value.MassSystem = child;
                     }
@@ -83,7 +87,7 @@ namespace Orbital.Core
             }
 
             ReconstructRecursively(mRoot, root);
-            
+
             _transforms = mRoot.GetMap(root);
             SetupMassComponent(mRoot);
             foreach (IMassSystem mass in mRoot.GetRecursively())
@@ -91,30 +95,32 @@ namespace Orbital.Core
                 SetupMassComponent(mass);
             }
         }
-        
+
         private void ReconstructRecursively(IMassSystem mRoot, Transform tRoot)
         {
             int i = -1;
             foreach (IMassSystem mass in mRoot.GetContent())
             {
-                if(mass == null) continue;
+                if (mass == null) continue;
                 if (!_parents.TryAdd(mass, mRoot))
                 {
                     _parents[mass] = mRoot;
                 }
+
                 i++;
                 Transform tChild = tRoot.FindRegex($".*\\[{i}\\]$");
                 if (!tChild)
                 {
                     tChild = MakeNewObject($"Child[{i}]", tRoot);
                 }
+
                 ReconstructRecursively(mass, tChild);
             }
         }
 
         private Transform MakeNewObject(string name, Transform parent)
         {
-            Transform newObject = new GameObject(name, new [] {typeof(StaticBody)}).transform;
+            Transform newObject = new GameObject(name, new[] {typeof(StaticBody)}).transform;
             newObject.SetParent(parent);
             return newObject;
         }

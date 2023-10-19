@@ -72,7 +72,7 @@ namespace Orbital.Core.Simulation
                         CorrectImpulse(r, ref velocity, ref position);
                     }
 
-                    DVector3 lastPos = position;
+                    //DVector3 lastPos = position;
                     double dt = DeltaTime;
                     // Полушаг для скорости
                     velocity += g * 0.5 * dt;
@@ -86,14 +86,14 @@ namespace Orbital.Core.Simulation
                     CurrentPosition = position;
                     CurrentVelocity = velocity;
 
-                    Vector3 pS = position / 224400000;
-                    Debug.DrawLine(pS, lastPos / 224400000, Color.red, 10);
-                    Debug.DrawLine(pS, pS + Vector3.up * ((float) SemiMajorAxis * 2e-10f), Color.red, 10);
+                    //Vector3 pS = position / 224400000;
+                    //Debug.DrawLine(pS, lastPos / 224400000, Color.red, 10);
+                    //Debug.DrawLine(pS, pS + Vector3.up * ((float) SemiMajorAxis * 2e-10f), Color.red, 10);
 
                     CurrentTime += dt;
                     if (IsComplete(position, velocity))
                     {
-                        Debug.Log($"Result reached in {i} iteration");
+                        //Debug.Log($"Result reached in {i} iteration");
                         break;
                     }
                 }
@@ -293,7 +293,7 @@ namespace Orbital.Core.Simulation
             private TrajectoryContainer _coniainer;
             private int _index = 0;
             private double _startTime;
-            public FillContainerSimulation(TrajectoryContainer container, double startTime, DVector3 initVelocity, DVector3 initPosition, double parentMass, int accuracy, double nonuniformity) : base(initVelocity, initPosition, parentMass, accuracy, nonuniformity, container.Capacity)
+            public FillContainerSimulation(TrajectoryContainer container, double startTime, DVector3 initVelocity, DVector3 initPosition, double parentMass, int accuracy, double nonuniformity) : base(initVelocity, initPosition, parentMass, accuracy, nonuniformity, container.Capacity - 1)
             {
                 _coniainer = container;
                 _startTime = startTime;

@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Ara3D;
@@ -10,13 +11,12 @@ namespace Orbital.Core.Simulation
     {
         private NativeArray<Mark> _path;
         private int _length;
+        public event Action PathChangedHandler;
 
         public TrajectoryContainer(int arraySize)
         {
             _path = new NativeArray<Mark>(arraySize, Allocator.Persistent);
         }
-
-        public NativeArray<Mark> GetPath() => _path;
 
         ~TrajectoryContainer()
         {
@@ -33,7 +33,12 @@ namespace Orbital.Core.Simulation
             }
         }
 
-        public NativeArray<Mark> Path => _path;
+        public void SetDirty()
+        {
+            PathChangedHandler?.Invoke();
+        }
+
+        NativeArray<Mark> IDynamicTrajectory.Path => _path;
         public int Length => _length;
         public int Capacity => _path.Length;
 

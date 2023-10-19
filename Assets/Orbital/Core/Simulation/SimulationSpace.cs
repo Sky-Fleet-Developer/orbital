@@ -70,8 +70,8 @@ namespace Orbital.Core.Simulation
         private async void InitDelayed()
         {
             await Task.Yield();
-            Anchor = GetComponentInParent<IDynamicBody>();
             _simulationService.RegisterSimulation(this);
+            Anchor = GetComponentInParent<IDynamicBody>();
         }
 
         private void OnAnchorModeChanged(DynamicBodyMode mode)
@@ -92,7 +92,11 @@ namespace Orbital.Core.Simulation
 
         private void RefreshAnchorPosition()
         {
+            Debug.Log("Refresh anchor position");
             var sample = _anchor.TrajectorySampler.GetSample(TimeService.WorldTime);
+            DVector3 deltaPosition = sample.position - _trajectory.Position;
+            DVector3 deltaVelocity = sample.velocity - _trajectory.Velocity;
+            _simulationService.SimulationWasMoved(this, deltaPosition, deltaVelocity);
             _trajectory.Place(sample.position, sample.velocity);
         }
         
@@ -104,7 +108,7 @@ namespace Orbital.Core.Simulation
             return _trajectory.GetSample(time);
         }
         
-        int IOrderHolder.Order => 1;
+        int IOrderHolder.Order => -1;
         UpdateFrequency IUpdateByFrequencyHandler.Frequency => UpdateFrequency.Every10Frame;
 
         void IUpdateByFrequencyHandler.Update()

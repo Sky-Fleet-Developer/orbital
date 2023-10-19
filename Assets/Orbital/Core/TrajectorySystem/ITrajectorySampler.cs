@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Ara3D;
 using Ara3D.Double;
@@ -28,5 +29,6 @@ namespace Orbital.Core.TrajectorySystem
     {
         public NativeArray<Mark> Path { get; }
         public int Length { get; }
+        public event Action PathChangedHandler;
     }
 }

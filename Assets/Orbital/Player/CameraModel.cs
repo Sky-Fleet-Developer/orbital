@@ -13,6 +13,7 @@ namespace Orbital.Player
         [SerializeField] private CamaraSettings settings;
         [SerializeField] private CamaraVariables variables;
         public State CurrentState { get; set; }
+        public Quaternion Rotation => transform.localRotation;
         private RigidbodyPresentation _target;
         public RigidbodyPresentation Target => _target;
         public event Action TargetChangedHandler;

@@ -16,20 +16,22 @@ namespace Orbital.Core.Simulation
         [SerializeField] private DynamicBodySettings settings;
         [SerializeField] private int accuracy;
         [SerializeField] private float nonuniformity;
-        [Inject] private World _world;
+        private World _world;
         private Track _trajectoryTrack;
         private TrajectoryContainer _trajectoryContainer;
         private IStaticBody _parent;
 
         private float _awakeTime = 0;
-        private const float AwakeDelay = 4;
+        private const float AwakeDelay = 0;
         private DynamicBodyMode _mode = DynamicBodyMode.Trajectory;
         private SimulationSpace _simulationSpace;
         private RigidbodyPresentation _presentation;
         private Task _trajectoryCalculation;
+        private bool _isVelocityDirty;
+        private bool _isTrajectoryCalculating;
 
         public Task WaitForTrajectoryCalculated => _trajectoryCalculation;
-        public TrajectoryContainer TrajectoryContainer => _trajectoryContainer;
+        public IDynamicTrajectory TrajectoryContainer => _trajectoryContainer;
 
         public override DynamicBodyVariables Variables
         {
@@ -43,6 +45,10 @@ namespace Orbital.Core.Simulation
             set => settings = value;
         }
 
+        /*public IDynamicBody Self => this;
+        IStaticBody IDynamicBodyAccessor.Parent { get => _parent; set => _parent = value; }
+        public IDynamicTrajectory Trajectory { get; set; }
+        public ITrajectorySampler TrajectorySampler { get; set; }*/
         public IStaticBody Parent => _parent;
 
         [ShowInInspector] public DynamicBodyMode Mode => _mode;
@@ -55,35 +61,74 @@ namespace Orbital.Core.Simulation
         protected override void Start()
         {
             base.Start();
-            _parent = GetComponentInParent<IStaticBody>();
-            _world.RegisterRigidBody(this);
-            _trajectoryContainer = new TrajectoryContainer(300);
-            _trajectoryTrack = new Track(_trajectoryContainer);
-            Task t = FillTrajectory(variables.position, variables.velocity);
+            Init();
         }
 
-        public void AwakeFromSleep()
+        public void Init()
         {
-            if (_mode == DynamicBodyMode.Trajectory) throw new Exception("Can't accelerate in Trajectory mode!");
-            _mode = DynamicBodyMode.Simulation;
-            //Debug.Log($"Call awake {name}");
-            if (IsSleepTimerInCondition())
+            _parent = GetComponentInParent<IStaticBody>();
+            _world = GetComponentInParent<World>();
+            _world.RegisterRigidBody(this);
+            _trajectoryContainer ??= new(300);
+            _trajectoryTrack ??= new Track(_trajectoryContainer);
+            _trajectoryCalculation = FillTrajectory(variables.position, variables.velocity);
+        }
+
+        private void OnValidate()
+        {
+            if(_trajectoryContainer == null) return;
+            if (Application.isPlaying)
             {
-                StartSleepTimer();
+                _trajectoryCalculation = RefreshTrajectory();
             }
             else
             {
-                _awakeTime = Time.realtimeSinceStartup;
+                FillTrajectory(variables.position, variables.velocity);
             }
-
-            ModeChangedHandler?.Invoke(_mode);
         }
 
-        private async void StartSleepTimer()
+        public void SetVelocityDirty()
+        {
+            if (_mode == DynamicBodyMode.Trajectory) throw new Exception("Can't accelerate in Trajectory mode!");
+            
+            _isVelocityDirty = true;
+            if (!_isTrajectoryCalculating)
+            {
+                RecalculateLoop();
+            }
+
+            if (_mode != DynamicBodyMode.Simulation)
+            {
+                _mode = DynamicBodyMode.Simulation;
+                ModeChangedHandler?.Invoke(_mode);
+            }
+        }
+
+        public void SimulationWasMoved(DVector3 deltaPosition, DVector3 deltaVelocity)
+        {
+            if (_mode == DynamicBodyMode.Simulation)
+            {
+                _presentation.Position -= (Vector3) deltaPosition;
+                _presentation.Velocity -= (Vector3) deltaVelocity;
+            }
+        }
+
+        private async void RecalculateLoop()
+        {
+            _isTrajectoryCalculating = true;
+            while (_isVelocityDirty)
+            {
+                _isVelocityDirty = false;
+                await RefreshTrajectory();
+            }
+            _isTrajectoryCalculating = false;
+            _mode = DynamicBodyMode.Sleep;
+        }
+
+       /* private async void StartSleepTimer()
         {
             //Debug.Log($"Begin timer {name}");
             _awakeTime = Time.realtimeSinceStartup;
-
             do
             {
                 await Task.Delay((int) (_awakeTime + AwakeDelay - Time.realtimeSinceStartup) * 998);
@@ -91,21 +136,13 @@ namespace Orbital.Core.Simulation
             } while (!IsSleepTimerInCondition());
 
             Sleep();
-        }
+        }*/
 
         private bool IsSleepTimerInCondition()
         {
             return _awakeTime + AwakeDelay < Time.realtimeSinceStartup;
         }
-
-        private async void Sleep()
-        {
-            //Debug.Log($"Sleep {name}");
-            if (_mode == DynamicBodyMode.Trajectory) throw new Exception("Can't sleep in Trajectory mode!");
-            await RefreshTrajectory();
-            _mode = DynamicBodyMode.Sleep;
-            ModeChangedHandler?.Invoke(_mode);
-        }
+        
 
         public void Present(SimulationSpace simulationSpace)
         {
@@ -131,7 +168,7 @@ namespace Orbital.Core.Simulation
         public async void RemovePresent()
         {
             if (_mode == DynamicBodyMode.Trajectory) throw new Exception("Present is not exists!");
-            if (_mode != DynamicBodyMode.Sleep) RefreshTrajectory();
+            if (_mode != DynamicBodyMode.Sleep) await RefreshTrajectory();
             _mode = DynamicBodyMode.Trajectory;
 
             Destroy(_presentation.gameObject);
@@ -154,9 +191,8 @@ namespace Orbital.Core.Simulation
 
         private async Task FillTrajectoryRoutine(DVector3 position, DVector3 velocity)
         {
-            await _trajectoryRefreshScheduler.Schedule(() =>
-                IterativeSimulation.FillTrajectoryContainer(_trajectoryContainer,
-                    TimeService.WorldTime, position, velocity, _parent.MassSystem.Mass, accuracy, nonuniformity));
+            await _trajectoryRefreshScheduler.Schedule(() => IterativeSimulation.FillTrajectoryContainer(_trajectoryContainer, TimeService.WorldTime, position, velocity, _parent.MassSystem.Mass, accuracy, nonuniformity));
+            _trajectoryContainer.SetDirty();
             _trajectoryTrack.ResetProgress();
         }
 
@@ -166,21 +202,13 @@ namespace Orbital.Core.Simulation
             (local.position, local.velocity) = _trajectoryTrack.GetSample(TimeService.WorldTime);
             variables = local;
         }
-
-        [Button]
-        private void Simulate()
-        {
-            IterativeSimulation.DrawTrajectoryCircle(variables.position, variables.velocity, variables.parentMass,
-                accuracy, nonuniformity);
-        }
     }
 
     [Serializable]
     public struct DynamicBodyVariables
     {
-        public Vector3 velocity;
-        public Vector3 position;
-        public float parentMass;
+        public DVector3 velocity;
+        public DVector3 position;
     }
 
     [Serializable]
