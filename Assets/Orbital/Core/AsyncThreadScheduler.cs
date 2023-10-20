@@ -20,12 +20,12 @@ namespace Orbital.Core
             {
                 work();
                 completionSource.SetResult(true);
+                _semaphore.Release();
             }
             _semaphore.WaitOne();
             Thread newThread = new Thread(Execute);
             newThread.Start();
             await completionSource.Task;
-            _semaphore.Release();
         }
 
         public async Task<T> Schedule<T>(Func<T> work)

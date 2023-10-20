@@ -1,4 +1,6 @@
 using System;
+using System.Globalization;
+using System.IO;
 using Ara3D;
 using Orbital.Core.TrajectorySystem;
 using UnityEngine;
@@ -14,16 +16,19 @@ namespace Orbital.Core.Simulation
             protected readonly double ParentMass;
             protected readonly DVector3 InitVelocity;
             protected readonly DVector3 InitPosition;
-            protected DVector3 CurrentPosition;
-            protected DVector3 CurrentVelocity;
+            protected DVector3 Position;
+            protected DVector3 Velocity;
             protected double Period;
             protected double SemiMajorAxis;
             protected double Eccentricity;
             protected bool IsCycle;
             protected double CurrentTime;
+            protected double Radius;
             private readonly int _maxIterations;
             private readonly double _nu;
             private double _semiMajorAxisInv;
+            //public FileStream DepStream;
+            //public TextWriter Writer;
 
             public Simulation(DVector3 initVelocity, DVector3 initPosition, double parentMass,
                 int maxIterations = 10000)
@@ -47,6 +52,13 @@ namespace Orbital.Core.Simulation
                 {
                     Debug.Log("Need to implement cross-system navigation");
                 }
+                //if (File.Exists("G:/Projects/orbital/DepStream.txt"))
+                //{
+                //    File.Delete("G:/Projects/orbital/DepStream.txt");
+                //}
+
+                //DepStream = new FileStream("G:/Projects/orbital/DepStream.txt", FileMode.Create);
+                //Writer = new StreamWriter(DepStream);
             }
 
 
@@ -59,46 +71,63 @@ namespace Orbital.Core.Simulation
 
             public void Run()
             {
-                DVector3 position = InitPosition;
-                DVector3 velocity = InitVelocity;
-                CurrentPosition = position;
-                CurrentVelocity = velocity;
+                Velocity = InitVelocity;
+                Position = InitPosition;
+                //DVector3 acceleration = GetGravityAcceleration(ref Position, Position.Length());
                 for (int i = 0; i < _maxIterations; i++)
                 {
-                    double r = position.Length();
-                    DVector3 g = GetGravityAcceleration(ref position, r);
+                    Radius = Position.Length();
                     if (IsCycle)
                     {
-                        CorrectImpulse(r, ref velocity, ref position);
+                        CorrectImpulse(Radius, ref Velocity, ref Position);
                     }
 
-                    //DVector3 lastPos = position;
+                    BeforeIteration();
+                    
+                    DVector3 lastPos = Position;
                     double dt = DeltaTime;
-                    // Полушаг для скорости
-                    velocity += g * 0.5 * dt;
-
-                    // Полушаг для позиции
-                    position += velocity * dt;
-
-                    // Полушаг для скорости (дополнительное обновление)
-                    r = position.Length();
-                    velocity += (-position * _nu / (r * r * r)) * 0.5 * dt;
-                    CurrentPosition = position;
-                    CurrentVelocity = velocity;
-
-                    //Vector3 pS = position / 224400000;
-                    //Debug.DrawLine(pS, lastPos / 224400000, Color.red, 10);
-                    //Debug.DrawLine(pS, pS + Vector3.up * ((float) SemiMajorAxis * 2e-10f), Color.red, 10);
+                    DVector3 acc = GetGravityAcceleration(ref Position, Radius);
+                    /*DVector3 b = (acc - acceleration) / dt;
+                    acceleration = acc;
+                    
+                    double halfDtSqr = (dt * dt * 0.5);
+                    Position += Velocity * dt + acceleration * halfDtSqr + b * (dt*dt*dt*0.166666666666);
+                    Velocity += acceleration * dt + b * halfDtSqr;*/
+                    Leapfrog();
+                    
+                    Vector3 pS = Position / 22440000;
+                    Debug.DrawLine(pS, lastPos / 22440000, Color.red, 0.2f);
+                    Debug.DrawLine(pS, pS + Vector3.up * ((float) SemiMajorAxis * 2e-9f), Color.red, 0.2f);
 
                     CurrentTime += dt;
-                    if (IsComplete(position, velocity))
+                    if (IsComplete(Position, Velocity))
                     {
-                        //Debug.Log($"Result reached in {i} iteration");
-                        break;
+                        Debug.Log($"Result reached in {i} iteration");
+                        return;
+                    }
+                    
+                    void Leapfrog()
+                    {
+                        // Полушаг для скорости
+                        Velocity += acc * 0.5 * dt;
+                        // Полушаг для позиции
+                        Position += Velocity * dt;
+                        // Полушаг для скорости (дополнительное обновление)
+                        Radius = Position.Length();
+                        Velocity += (-Position * _nu / (Radius * Radius * Radius)) * 0.5 * dt;
                     }
                 }
+                Debug.Log($"Result not reached in {_maxIterations} iterations");
             }
 
+            //public void Dispose()
+            //{
+            //    Writer.Close();
+            //    DepStream.Close();
+            //    Writer.Dispose();
+            //    DepStream.Dispose();
+            //}
+            
             //v = v0 / currentEnergy * energy
             private void CorrectImpulse(double radius, ref DVector3 velocity, ref DVector3 position)
             {
@@ -114,6 +143,7 @@ namespace Orbital.Core.Simulation
             }
 
             public abstract bool IsComplete(DVector3 position, DVector3 velocity);
+            public virtual void BeforeIteration(){}
         }
 
         private abstract class UniformDeltaTimeSimulation : Simulation
@@ -141,21 +171,26 @@ namespace Orbital.Core.Simulation
                 _step = step;
             }
 
-            protected override double DeltaTime => _step / CurrentVelocity.Length();
+            protected override double DeltaTime => _step / Velocity.Length();
         }
 
         private abstract class NonUniformDeltaPositionSimulation : Simulation
         {
+            private const double MinimalDt = 1;
+            private const double DeltaAngleCutoffInv = 100;
+            
             private readonly double _step;
             private readonly double _deltaTimeStep;
             private readonly double _nonuniformity;
-            private const double MinimalDt = 1;
-
+            private double _wantedDeltaAngle;
+            private DVector3 _velocityCache;
+            private double _deltaTime;
+            private double _radiusFactor;
             protected NonUniformDeltaPositionSimulation(DVector3 initVelocity, DVector3 initPosition, double parentMass,
                 int accuracy, double nonuniformity, int maxIterations = 10000) : base(initVelocity, initPosition,
                 parentMass, maxIterations)
             {
-                if (IsCycle)
+                /*if (IsCycle)
                 {
                     double b = StaticTrajectory.GetSemiMinorAxis(Eccentricity, SemiMajorAxis);
 
@@ -171,12 +206,41 @@ namespace Orbital.Core.Simulation
                     _deltaTimeStep = 30;
                     _step = initVelocity.Length() * _deltaTimeStep;
                     _nonuniformity = nonuniformity;
-                }
+                }*/
+                accuracy = (int) (Mathf.Lerp((float) accuracy, (float) maxIterations, Mathf.Abs((float) Eccentricity)));
+                _nonuniformity = nonuniformity;
+                _wantedDeltaAngle = Math.PI * 2 / accuracy;
+                _velocityCache = initVelocity.Normalize();
+                _deltaTime = MinimalDt;
+                _radiusFactor = 1 / initPosition.Length();
             }
 
-            protected override double DeltaTime =>
-                Math.Max(_deltaTimeStep + (_step / CurrentVelocity.Length() - _deltaTimeStep) * _nonuniformity,
-                    MinimalDt);
+            public override void BeforeIteration()
+            {
+                DVector3 vN = Velocity.Normalize();
+                double deltaAngle = Math.Acos(Vector3.Dot(vN, _velocityCache)) + 0.00000001;
+                deltaAngle /= 1 + (_radiusFactor * Radius - 1) * _nonuniformity;
+                //double ddt = (_wantedDeltaAngle - deltaAngle);
+                //bool isIncrease = ddt > 0;
+
+                double influence = Math.Min(deltaAngle * DeltaAngleCutoffInv, 1);
+                _deltaTime *= 1 + (_wantedDeltaAngle / deltaAngle - 1) * influence; //+= ddt * (isIncrease ? _nonuniformity.x : _nonuniformity.y);
+
+                _velocityCache = vN;
+            }
+
+            protected override double DeltaTime => _deltaTime * _radiusFactor * Radius;
+            /* {
+                 get
+                 {
+                     double vInv = 1 / Velocity.Length();
+                     double value = Math.Max(Math.Max(_deltaTimeStep + (_step * vInv - _deltaTimeStep) * _nonuniformity,
+                                                            MinimalDt * vInv), MinimalDt);
+                     //Writer.WriteLine($"{DVector3.Dot(Position.Normalize(), Velocity.Normalize()) : 0.0000000000}; {value : 00000.0000000000}");
+                     return value;
+                 }
+             }*/
+
         }
 
 
@@ -352,14 +416,14 @@ namespace Orbital.Core.Simulation
             int accuracy, double nonuniformity)
         {
             CircleOrbitSimulation simulation =
-                new CircleOrbitSimulation(initVelocity, initPosition, parentMass, accuracy, nonuniformity + 1);
+                new CircleOrbitSimulation(initVelocity, initPosition, parentMass, accuracy, nonuniformity);
             simulation.Run();
         }
 
         public static void FillTrajectoryContainer(TrajectoryContainer container, double startTime, DVector3 initPosition, DVector3 initVelocity, double parentMass,
-            int accuracy, double nonuniformity)
+            int accuracy, float nonuniformity)
         {
-            FillContainerSimulation simulation = new FillContainerSimulation(container, startTime, initVelocity, initPosition, parentMass, accuracy, nonuniformity + 1);
+            FillContainerSimulation simulation = new FillContainerSimulation(container, startTime, initVelocity, initPosition, parentMass, accuracy, nonuniformity);
             simulation.Run();
         }
     }

@@ -14,7 +14,8 @@ namespace Orbital.Core.Simulation
 
         [SerializeField] private DynamicBodyVariables variables;
         [SerializeField] private DynamicBodySettings settings;
-        [SerializeField] private int accuracy;
+        [SerializeField] private int targetAccuracy = 200;
+        [SerializeField] private int maxAccuracy = 400;
         [SerializeField] private float nonuniformity;
         private World _world;
         private Track _trajectoryTrack;
@@ -69,7 +70,7 @@ namespace Orbital.Core.Simulation
             _parent = GetComponentInParent<IStaticBody>();
             _world = GetComponentInParent<World>();
             _world.RegisterRigidBody(this);
-            _trajectoryContainer ??= new(300);
+            _trajectoryContainer ??= new(maxAccuracy);
             _trajectoryTrack ??= new Track(_trajectoryContainer);
             _trajectoryCalculation = FillTrajectory(variables.position, variables.velocity);
         }
@@ -191,10 +192,17 @@ namespace Orbital.Core.Simulation
 
         private async Task FillTrajectoryRoutine(DVector3 position, DVector3 velocity)
         {
-            await _trajectoryRefreshScheduler.Schedule(() => IterativeSimulation.FillTrajectoryContainer(_trajectoryContainer, TimeService.WorldTime, position, velocity, _parent.MassSystem.Mass, accuracy, nonuniformity));
+            await _trajectoryRefreshScheduler.Schedule(() => IterativeSimulation.FillTrajectoryContainer(_trajectoryContainer, TimeService.WorldTime, position, velocity, _parent.MassSystem.Mass, targetAccuracy, nonuniformity));
             _trajectoryContainer.SetDirty();
             _trajectoryTrack.ResetProgress();
         }
+        
+        /*[Button]
+        private void Simulate()
+        {
+            IterativeSimulation.DrawTrajectoryCircle(variables.position, variables.velocity, _parent.MassSystem.Mass,
+                targetAccuracy, nonuniformity);
+        }*/
 
         private void RefreshVariables()
         {

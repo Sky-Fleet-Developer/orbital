@@ -21,17 +21,7 @@ namespace Orbital.View
         private const string ViewName = "trajectory_view";
         private Transform _viewTransform;
         private Mesh _mesh;
-
-        private void Awake()
-        {
-            _body = GetComponent<IDynamicBody>();
-            if (!Application.isPlaying)
-            {
-                GetComponentInParent<World>().Load();
-                _body.Init();
-            }
-        }
-
+        
         private void Start()
         {
             if(Application.isPlaying) Initialize();
@@ -44,6 +34,13 @@ namespace Orbital.View
 
         private void Initialize()
         {
+            _body = GetComponent<IDynamicBody>();
+            if (!Application.isPlaying)
+            {
+                GetComponentInParent<World>().Load();
+                _body.Init();
+            }
+            
             _body.TrajectoryContainer.PathChangedHandler += Refresh;
 
             int searchIdx = transform.GetSiblingIndex() + 1;
@@ -105,7 +102,7 @@ namespace Orbital.View
 #if UNITY_EDITOR
             if(_body == null) return;
 #endif
-            Refresh(4.456328E-09F);
+            Refresh(4.456328E-08F);
         }
 
         private bool _isRefreshInProgress = false;
@@ -120,7 +117,20 @@ namespace Orbital.View
                 Positions = new NativeArray<Vector3>(maxVertexCount, Allocator.TempJob),
                 Scale = scale
             };
-            copy.Schedule(length, 32).Complete();
+            JobHandle copyHandler = copy.Schedule(length, 32);
+            int remains = maxVertexCount - _body.TrajectoryContainer.Length;
+            if (remains > 0)
+            {
+                ResetExcess reset = new()
+                {
+                    Positions = new NativeArray<Vector3>(remains, Allocator.TempJob),
+                    Target = _body.TrajectoryContainer.Path[_body.TrajectoryContainer.Length - 1].Position * scale
+                };
+                reset.Schedule(remains, 32).Complete();
+                _mesh.SetVertexBufferData(reset.Positions, 0, _body.TrajectoryContainer.Length, remains, 0, MeshUpdateFlags.DontValidateIndices | MeshUpdateFlags.DontResetBoneBounds | MeshUpdateFlags.DontRecalculateBounds);
+                reset.Positions.Dispose();
+            }
+            copyHandler.Complete();
             _mesh.SetVertexBufferData(copy.Positions, 0, 0, length, 0, MeshUpdateFlags.DontValidateIndices | MeshUpdateFlags.DontResetBoneBounds | MeshUpdateFlags.DontRecalculateBounds);
             copy.Positions.Dispose();
             _isRefreshInProgress = false;
@@ -141,9 +151,10 @@ namespace Orbital.View
         {
             public NativeArray<Vector3> Positions;
             public int Offset;
+            public Vector3 Target;
             public void Execute(int index)
             {
-                Positions[index + Offset] = Vector3.zero;
+                Positions[index + Offset] = Target;
             }
         }
     }
