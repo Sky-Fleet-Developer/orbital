@@ -35,7 +35,7 @@ namespace Orbital.WorldEditor
 
                 _trajectorySettingsA.aMass = EditorGUILayout.FloatField("A body mass", _trajectorySettingsB.aMass);
                 _trajectorySettingsA.bMass = EditorGUILayout.FloatField("B body mass", _trajectorySettingsB.bMass);
-                _trajectorySettingsA.period = EditorGUILayout.FloatField("Period", _trajectorySettingsB.period);
+                _trajectorySettingsA.period = EditorGUILayout.FloatField("period", _trajectorySettingsB.period);
                 _trajectorySettingsA.aPericenterRadius = EditorGUILayout.FloatField("A body pericenter", _trajectorySettingsB.aPericenterRadius);
                 
                 
@@ -47,9 +47,9 @@ namespace Orbital.WorldEditor
                 
 
                 
-                GUILayout.Box($"Eccentricity (a): {aEccentricity}");
+                GUILayout.Box($"eccentricity (a): {aEccentricity}");
                 GUILayout.Box($"Semi major axis (a): {aMajor :e2}");                
-                GUILayout.Box($"Eccentricity (b): {bEccentricity}");
+                GUILayout.Box($"eccentricity (b): {bEccentricity}");
                 GUILayout.Box($"Semi major axis (b): {bMajor :e2}");
                 
                 if (EditorGUI.EndChangeCheck())

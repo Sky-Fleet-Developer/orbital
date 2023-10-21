@@ -192,11 +192,11 @@ namespace Orbital.Core.Simulation
             {
                 /*if (IsCycle)
                 {
-                    double b = StaticTrajectory.GetSemiMinorAxis(Eccentricity, SemiMajorAxis);
+                    double b = StaticTrajectory.GetSemiMinorAxis(eccentricity, semiMajorAxis);
 
-                    double lApprox = Math.PI * Math.Sqrt(2 * (SemiMajorAxis * SemiMajorAxis + b * b));
+                    double lApprox = Math.PI * Math.Sqrt(2 * (semiMajorAxis * semiMajorAxis + b * b));
                     _step = lApprox / accuracy;
-                    _deltaTimeStep = Period / accuracy;
+                    _deltaTimeStep = period / accuracy;
                     double maxNonuniformity =
                         (MinimalDt - _deltaTimeStep) / (_step / initVelocity.Length() - _deltaTimeStep);
                     _nonuniformity = Math.Max(Math.Min(nonuniformity, maxNonuniformity), 1);

@@ -14,13 +14,16 @@ namespace Orbital.Core.TrajectorySystem
 
     public interface IStaticTrajectory : ITrajectorySampler
     {
-        public double Eccentricity { get; }
-        public double SemiMajorAxis { get; }
-        public double SemiMinorAxis { get; }
-        public double PericenterRadius { get; }
-        public double Period { get; }
-        public double TimeShift { get; }
-        public bool IsZero { get; }
+        public double inclination {get;}
+        public double eccentricity {get;}
+        public double semiMajorAxis {get;}
+        public double longitudeAscendingNode {get;}
+        public double argumentOfPeriapsis {get;}
+        public double epoch {get;}
+        public double SemiMinorAxis => semiMajorAxis * Math.Sqrt(1 - eccentricity * eccentricity);
+        public double period { get; }
+        public double PeR { get; }
+        public double ApR { get; }
         public DMatrix4x4 RotationMatrix { get; }
         public void Calculate();
     }

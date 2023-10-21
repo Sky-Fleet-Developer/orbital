@@ -58,10 +58,10 @@ namespace Orbital.View
         {
             Vector3 fwd = _body.Trajectory.RotationMatrix * DVector3.forward;
             Vector3 up = _body.Trajectory.RotationMatrix * DVector3.up;
-            _viewTransform.localPosition = ((Vector3) (_body.LocalPosition) - fwd * (float) _body.Trajectory.SemiMajorAxis) * scale;
+            _viewTransform.localPosition = ((Vector3) (_body.LocalPosition) - fwd * (float) _body.Trajectory.semiMajorAxis) * scale;
             _viewTransform.rotation = Quaternion.LookRotation(fwd, up);
             _viewTransform.localScale = new Vector3((float) _body.Trajectory.SemiMinorAxis * scale, 1,
-                (float) _body.Trajectory.SemiMajorAxis * scale);
+                (float) _body.Trajectory.semiMajorAxis * scale);
         }
 
 #if UNITY_EDITOR

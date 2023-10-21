@@ -16,7 +16,7 @@ namespace Orbital.WorldEditor
             var sample = trajectory.GetSample(time);
             outputOrigin = sample.position + inputOrigin;
             Vector3 sOutput = (Vector3) (outputOrigin) * scale;
-            Vector3 sPericenter = (Vector3) (trajectory.GetSample(-trajectory.TimeShift * trajectory.Period, true, false).position + inputOrigin) * scale;
+            //Vector3 sPericenter = (Vector3) (trajectory.GetSample(-trajectory.TimeShift * trajectory.period, true, false).position + inputOrigin) * scale;
             Vector3 sInput = (Vector3) (inputOrigin) * scale;
             Handles.matrix = trajectory.GetMatrixForTPreview(scale, sInput, 0);
             Handles.CircleHandleCap(-1, Vector3.zero, Quaternion.identity, 1f, EventType.Repaint);
@@ -24,7 +24,7 @@ namespace Orbital.WorldEditor
             Vector3 velocity = sample.velocity * scale;
             Handles.DrawDottedLine(sOutput, sInput, 10);
             Handles.color = Color.green;
-            Handles.DrawDottedLine(sPericenter, sInput, 6);
+            //Handles.DrawDottedLine(sPericenter, sInput, 6);
             Handles.DrawLine(sOutput, sOutput + velocity * 200);
             Handles.color = Color.white;
             if(drawSphere) Handles.SphereHandleCap(-1, sOutput, Quaternion.identity, 0.1f * HandleUtility.GetHandleSize(sOutput), EventType.Repaint);
@@ -57,7 +57,7 @@ namespace Orbital.WorldEditor
         {
             Quaternion handleRotationCorrection = Quaternion.Euler(-90, 0, 0);
             Matrix4x4 rotationMatrix = trajectory.RotationMatrix;
-            Matrix4x4 figureMatrix = Matrix4x4.TRS(new Vector3(0, 0, (float)((trajectory.PericenterRadius - trajectory.SemiMajorAxis) * scale)), handleRotationCorrection, new Vector3((float)trajectory.SemiMinorAxis, (float)trajectory.SemiMajorAxis, 0) * scale);
+            Matrix4x4 figureMatrix = Matrix4x4.TRS(new Vector3((float)((trajectory.PeR - trajectory.semiMajorAxis) * scale), 0, 0), handleRotationCorrection, new Vector3((float)trajectory.semiMajorAxis, (float)trajectory.SemiMinorAxis, 0) * scale);
             Matrix4x4 worldMatrix = Matrix4x4.TRS(position, Quaternion.identity, Vector3.one);
             return worldMatrix * rotationMatrix * figureMatrix;
         }

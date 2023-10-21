@@ -1,4 +1,5 @@
 using System;
+using System.Threading;
 using Ara3D;
 using Ara3D.Double;
 using UnityEngine;
@@ -18,18 +19,60 @@ namespace Orbital.Core.TrajectorySystem
         
         private IMass _other;
         private ITrajectorySettingsHolder _self;
-        public double Eccentricity { get; private set; }
-        public double SemiMajorAxis { get; private set; }
-        public double SemiMinorAxis { get; private set; }
-        public double PericenterRadius { get; private set; }
-        public double Period { get; private set; }
-        public double TimeShift { get; private set; }
-        public bool IsZero { get; private set; }
-
+        
+        public double inclination {get; private set;}
+        public double longitudeAscendingNode {get; private set;}
+        public double argumentOfPeriapsis {get; private set;}
+        public double eccentricity {get; private set;}
+        public double semiMajorAxis {get; private set;}
+        public double epoch {get; private set;}
+        public double period {get; private set;}
+        public double meanAnomaly {get; private set;}
+        public double orbitalEnergy;
+        public double trueAnomaly;
+        public double eccentricAnomaly;
+        public double radius;
+        public double altitude;
+        public double orbitPercent;
+        public double orbitTime;
+        public double OrbitTimeAtEpoch;
+        public double timeToPe;
+        public double timeToAp;
+        public DVector3 h;
+        public DVector3 eccVec;
+        public DVector3 an;
+        public double meanAnomalyAtEpoch;
+        public double meanMotion;
+        
+        
         private DMatrix4x4 _rotationMatrix;
+        public DMatrix4x4 RotationMatrix => _rotationMatrix;
         private SystemType _systemType;
 
-        public DMatrix4x4 RotationMatrix => _rotationMatrix;
+        public double semiMinorAxis
+        {
+            get
+            {
+                if (eccentricity < 1.0)
+                {
+                    return semiMajorAxis * Math.Sqrt(1.0 - eccentricity * eccentricity);
+                }
+
+                return semiMajorAxis * Math.Sqrt(eccentricity * eccentricity - 1.0);
+            }
+        }
+
+        private double Nu => _other.Mass * MassUtility.G;
+        public double semiLatusRectum => h.LengthSquared() / Nu;
+        public double PeR => (1.0 - eccentricity) * semiMajorAxis;
+
+        public double ApR => (1.0 + eccentricity) * semiMajorAxis;
+        
+        public double GetMeanMotion(double sma)
+        {
+            double num = Math.Abs(sma);
+            return Math.Sqrt(Nu / (num * num * num));
+        }
 
         public StaticTrajectory(ITrajectorySettingsHolder self, IMass other, SystemType systemType)
         {
@@ -42,8 +85,9 @@ namespace Orbital.Core.TrajectorySystem
         public void Calculate()
         {
             TrajectorySettings settings = _self.Settings;
-            TimeShift = settings.timeShift * 0.01f;
-            switch (_systemType)
+            SetOrbit(settings.inclination, settings.eccentricity, settings.semiMajorAxis,
+                settings.longitudeAscendingNode, settings.argumentOfPeriapsis, 0, settings.timeShift);
+            /*switch (_systemType)
             {
                 case SystemType.SingleCenter:
                     CalculateForSingleCenter(ref settings);
@@ -51,18 +95,72 @@ namespace Orbital.Core.TrajectorySystem
                 case SystemType.DoubleSystem:
                     CalculateForDoubleSystem(ref settings);
                     break;
-            }
+            }*/
         }
         
+        public void SetOrbit(double inclination,
+            double eccentricity,
+            double semiMajorAxis,
+            double longitudeAscendingNode,
+            double argumentOfPeriapsis,
+            double meanAnomalyAtEpoch,
+            double epoch)
+        {
+            this.inclination = inclination;
+            this.eccentricity = eccentricity;
+            this.semiMajorAxis = semiMajorAxis;
+            this.longitudeAscendingNode = longitudeAscendingNode;
+            this.argumentOfPeriapsis = argumentOfPeriapsis;
+            this.meanAnomalyAtEpoch = meanAnomalyAtEpoch;
+            this.epoch = epoch;
+            Init();
+        }
+        
+        public void Init()
+        {
+            _rotationMatrix = GetRotation(inclination, longitudeAscendingNode, argumentOfPeriapsis);
+            an = DVector3.Cross(DVector3.forward, _rotationMatrix.GetUp());
+            if (an.LengthSquared() == 0.0)
+            {
+                an = DVector3.right;
+            }
 
-        private void CalculateForSingleCenter(ref TrajectorySettings settings)
+            eccVec = _rotationMatrix.GetRight() * eccentricity;
+            double d = Nu * semiMajorAxis * (1.0 - eccentricity * eccentricity);
+            h = _rotationMatrix.GetUp() * Math.Sqrt(d);
+            meanMotion = GetMeanMotion(semiMajorAxis);
+            meanAnomaly = meanAnomalyAtEpoch;
+            orbitTime = meanAnomaly / meanMotion;
+            OrbitTimeAtEpoch = orbitTime;
+            if (eccentricity < 1.0)
+            {
+                period = 2.0 * Math.PI / meanMotion;
+                orbitPercent = meanAnomaly / (2.0 * Math.PI);
+            }
+            else
+            {
+                period = double.PositiveInfinity;
+                orbitPercent = 0.0;
+            }
+        }
+
+        public static DMatrix4x4 GetRotation(double inclination, double longitudeAscendingNode, double argumentOfPeriapsis)
+        {
+            DMatrix4x4 lan = DMatrix4x4.CreateRotation(0, longitudeAscendingNode, 0);
+            DMatrix4x4 inc = DMatrix4x4.CreateRotation(0, 0, inclination);
+            DMatrix4x4 aop = DMatrix4x4.CreateRotation(0, argumentOfPeriapsis, 0);
+
+            return aop * inc * lan;
+        }
+        
+        /*private void CalculateForSingleCenter(ref TrajectorySettings settings)
         {
             PericenterRadius = settings.pericenterRadius;
-            Eccentricity = GetEccentricity(settings.pericenterSpeed, settings.pericenterRadius, _other.Mass, MassUtility.G);
-            SemiMajorAxis = GetSemiMajorAxis(Eccentricity, settings.pericenterRadius);
-            SemiMinorAxis = GetSemiMinorAxis(Eccentricity, SemiMajorAxis);
-            Period = GetPeriod(SemiMajorAxis, MassUtility.G, _other.Mass);
-            IsZero = Period is 0 or double.NaN;
+            eccentricity = GetEccentricity(settings.pericenterSpeed, settings.pericenterRadius, _other.Mass, MassUtility.G);
+            semiMajorAxis = GetSemiMajorAxis(eccentricity, settings.pericenterRadius);
+            SemiMinorAxis = GetSemiMinorAxis(eccentricity, semiMajorAxis);
+            period = GetPeriod(semiMajorAxis, MassUtility.G, _other.Mass);
+            IsZero = period is 0 or double.NaN;
             if (!IsZero)
             {
                 CreateRotation(ref settings);
@@ -71,18 +169,18 @@ namespace Orbital.Core.TrajectorySystem
 
         private void CalculateForDoubleSystem(ref TrajectorySettings settings)
         {
-            Period = settings.period;
+            period = settings.period;
             PericenterRadius = settings.pericenterRadius;
-            SemiMajorAxis = GetSemiMajorAxis(_other.Mass, Period, MassUtility.G);
-            Eccentricity = GetEccentricity(PericenterRadius, SemiMajorAxis);
-            SemiMinorAxis = GetSemiMinorAxis(Eccentricity, SemiMajorAxis);
-            IsZero = Period is 0 or double.NaN;
+            semiMajorAxis = GetSemiMajorAxis(_other.Mass, period, MassUtility.G);
+            eccentricity = GetEccentricity(PericenterRadius, semiMajorAxis);
+            SemiMinorAxis = GetSemiMinorAxis(eccentricity, semiMajorAxis);
+            IsZero = period is 0 or double.NaN;
             if (!IsZero)
             {
                 CreateRotation(ref settings);
             }
         }
-        
+        */
         private static AsyncThreadScheduler _calculationScheduler = new AsyncThreadScheduler(3);
         
         /*public async Task SetupFromSimulation(DVector3 position, DVector3 velocity)
@@ -93,11 +191,11 @@ namespace Orbital.Core.TrajectorySystem
             //double i = Math.Acos(hh.y / h);
             double vSqr = velocity.LengthSquared();
             // semiMajorAxis
-            SemiMajorAxis = 1 / (2 / r - vSqr / (MassUtility.G * _other.Mass));
-            Eccentricity = Math.Sqrt(1 - (h * h / (MassUtility.G * _other.Mass * SemiMajorAxis)));
-            SemiMinorAxis = GetSemiMinorAxis(Eccentricity, SemiMajorAxis);
-            Period = GetPeriod(SemiMajorAxis, MassUtility.G, _other.Mass);
-            DVector3? pericenter = await _calculationScheduler.Schedule(() => IterativeSimulation.FindPericenter(velocity, position, SemiMajorAxis, _other.Mass, 1, out _, out _));
+            semiMajorAxis = 1 / (2 / r - vSqr / (MassUtility.G * _other.Mass));
+            eccentricity = Math.Sqrt(1 - (h * h / (MassUtility.G * _other.Mass * semiMajorAxis)));
+            SemiMinorAxis = GetSemiMinorAxis(eccentricity, semiMajorAxis);
+            period = GetPeriod(semiMajorAxis, MassUtility.G, _other.Mass);
+            DVector3? pericenter = await _calculationScheduler.Schedule(() => IterativeSimulation.FindPericenter(velocity, position, semiMajorAxis, _other.Mass, 1, out _, out _));
 
             _rotationMatrix = DMatrix4x4.LookRotation(pericenter.Value, hh);
             PericenterRadius = pericenter.Value.Length();
@@ -107,96 +205,183 @@ namespace Orbital.Core.TrajectorySystem
             double u = Math.Atan2(flatPos.x, flatPos.z);
 
             // eccentric anomaly
-            double E = CalculateEccentricAnomalyByTrue(u, Eccentricity);
+            double E = CalculateEccentricAnomalyByTrue(u, eccentricity);
 
             //mean anomaly
-            double M = E - Eccentricity * Math.Sin(E);
+            double M = E - eccentricity * Math.Sin(E);
 
             TimeShift = -M / (2 * Math.PI);
         }*/
 
-        public void UpdateSettings(ref TrajectorySettings settings)
+        /*public void UpdateSettings(ref TrajectorySettings settings)
         {
             settings.pericenterRadius = (float)PericenterRadius;
-            settings.period = (float)Period;
+            settings.period = (float)period;
             DVector3 fwd = _rotationMatrix * new DVector3(0, 0, 1);
             DVector3 up = _rotationMatrix * new DVector3(0, 0, 1);
             DVector3 right = DVector3.Cross(fwd, up);
-            settings.longitudeShift = (float)(Math.Atan2(fwd.x, fwd.z) * Rad2Deg);
-            Debug.Log("longitudeShift:" + settings.longitudeShift);
-            settings.latitudeShift = (float)(Math.Asin(fwd.y) * Rad2Deg);
-            Debug.Log("latitudeShift:" + settings.latitudeShift);
+            settings.longitudeAscendingNode = (float)(Math.Atan2(fwd.x, fwd.z) * Rad2Deg);
+            Debug.Log("longitudeAscendingNode:" + settings.longitudeAscendingNode);
+            settings.argumentOfPeriapsis = (float)(Math.Asin(fwd.y) * Rad2Deg);
+            Debug.Log("argumentOfPeriapsis:" + settings.argumentOfPeriapsis);
             settings.inclination = (float)(Math.Asin(right.x) * Rad2Deg);
             Debug.Log("inclination:" + settings.inclination);
-            settings.timeShift = (float)(TimeShift * 100);
-            Debug.Log("timeShift:" + settings.timeShift);
-        }
+            //settings.timeShift = (float)(TimeShift * 100);
+            //Debug.Log("timeShift:" + settings.timeShift);
+        }*/
 
-        private void CreateRotation(ref TrajectorySettings settings)
+        /*private void CreateRotation(ref TrajectorySettings settings)
         {
-            _rotationMatrix = DMatrix4x4.CreateRotation(settings.latitudeShift * Deg2Rad, settings.longitudeShift * Deg2Rad, 0) * DMatrix4x4.CreateRotation(0, 0, settings.inclination * Deg2Rad);
-        }
+            _rotationMatrix = DMatrix4x4.CreateRotation(settings.argumentOfPeriapsis * Deg2Rad, settings.longitudeAscendingNode * Deg2Rad, 0) * DMatrix4x4.CreateRotation(0, 0, settings.inclination * Deg2Rad);
+        }*/
 
         public (DVector3 position, DVector3 velocity) GetSample(double time, bool positionRequired = true, bool velocityRequired = true)
         {
-            return (positionRequired ? GetPosition(time) : DVector3.Zero, velocityRequired ? GetVelocity(time) : DVector3.Zero);
+            DVector3 pos, vel;
+            GetOrbitalStateVectorsAtObT(time, out pos, out vel);
+            return (pos, vel); //(positionRequired ? GetPosition(time) : DVector3.Zero, velocityRequired ? GetVelocity(time) : DVector3.Zero);
         }
         
-        public DVector3 GetPosition(double t)
+        public double TrueAnomalyAtT(double T)
         {
-            return TransformByShift(GetFlatPosition(t));
-        }
+            double num = this.solveEccentricAnomaly(T * this.meanMotion, this.eccentricity);
+            if (!double.IsNaN(num)) return this.GetTrueAnomaly(num);
 
-        public DVector3 GetFlatPosition(double t)
+            return double.NaN;
+        }
+        
+               private double solveEccentricAnomalyHyp(double M, double ecc, double maxError = 1E-07)
         {
-            if (IsZero)
+            if (double.IsInfinity(M))
             {
-                return new DVector3(0, 0, 0);
+                return M;
             }
-            // Средняя аномалия в момент времени t
-            double meanAnomaly = 2 * Math.PI * (t / Period + TimeShift);
-
-            // Решение уравнения Кеплера для нахождения эксцентрической аномалии E
-            double eccentricAnomaly = CalculateEccentricAnomalyByMean(meanAnomaly, Eccentricity);
-
-            // Вычисление координат (x, y)
-            double z = SemiMajorAxis * (Math.Cos(eccentricAnomaly) - Eccentricity);
-            double x = SemiMinorAxis * Math.Sin(eccentricAnomaly);
-            return new DVector3((float)x, 0, (float)z);
-        }
-        
-        public DVector3 GetVelocity(double t)
-        {
-            return TransformByShift(GetFlatVelocity(t));
-        }
-        
-        public DVector3 GetFlatVelocity(double t)
-        {
-            if (IsZero)
+            else
             {
-                return new DVector3(0, 0, 0);
+                double num1 = 1.0;
+                double num2 = 2.0 * M / ecc;
+                double num3 = Math.Log(Math.Sqrt(num2 * num2 + 1.0) + num2);
+                while (Math.Abs(num1) > maxError)
+                {
+                    num1 = (eccentricity * Math.Sinh(num3) - num3 - M) / (eccentricity * Math.Cosh(num3) - 1.0);
+                    num3 -= num1;
+                }
+                return num3;
             }
-            /*double M = 2 * Math.PI * (t / Period + TimeShift);
-            double eccentricAnomaly = CalculateEccentricAnomaly(M, Eccentricity);
-            double v = 2 * Math.Atan(Math.Sqrt((1 + Eccentricity) / (1 - Eccentricity)) * Math.Tan(eccentricAnomaly / 2));
-            
-            // Рассчитываем расстояние от спутника до центрального тела
-            double r = SemiMajorAxis * (1 - Eccentricity * Math.Cos(eccentricAnomaly));
-
-            // Производные радиус-вектора и эксцентрической аномалии по времени
-            double vr = Math.Sqrt(MassUtility.G * _other.Mass / SemiMinorAxis) * Eccentricity * Math.Sin(v);
-            double vn = Math.Sqrt(MassUtility.G * _other.Mass / SemiMinorAxis) * (1 + Eccentricity * Math.Cos(v));
-
-            return new DVector3(vr * Math.Sin(v) + vn * Math.Cos(v), 0, vr * Math.Cos(v) - vn * Math.Sin(v));*/
-
-            DVector3 a = GetFlatPosition(t - 1);
-            DVector3 b = GetFlatPosition(t + 1);
-            return (b - a) * 0.5;
         }
 
-        public DVector3 TransformByShift(DVector3 vector)
+        public double solveEccentricAnomaly(double M, double ecc, double maxError = 1E-07, int maxIterations = 8)
         {
-            return _rotationMatrix * vector;
+            if (eccentricity >= 1.0)
+            {
+
+                        return solveEccentricAnomalyHyp(M, eccentricity, maxError);
+                
+            }
+            else
+            {
+                if (eccentricity < 0.8)
+                    return solveEccentricAnomalyStd(M, eccentricity, maxError);
+                return solveEccentricAnomalyExtremeEcc(M, eccentricity, maxIterations);
+            }
+        }
+        private double solveEccentricAnomalyStd(double M, double ecc, double maxError = 1E-07)
+        {
+            double num1 = 1.0;
+            double num2 = M + ecc * Math.Sin(M) + 0.5 * ecc * ecc * Math.Sin(2.0 * M);
+            while (Math.Abs(num1) > maxError)
+            {
+                double num3 = num2 - ecc * Math.Sin(num2);
+                num1 = (M - num3) / (1.0 - ecc * Math.Cos(num2));
+                num2 += num1;
+            }
+            return num2;
+        }
+        
+        private double solveEccentricAnomalyExtremeEcc(double M, double ecc, int iterations = 8)
+        {
+            try
+            {
+                double num1 = M + 0.85 * eccentricity * Math.Sign(Math.Sin(M));
+                for (int index = 0; index < iterations; ++index)
+                {
+                    double num2 = ecc * Math.Sin(num1);
+                    double num3 = ecc * Math.Cos(num1);
+                    double num4 = num1 - num2 - M;
+                    double num5 = 1.0 - num3;
+                    double num6 = num2;
+                    num1 += -5.0 * num4 / (num5 + Math.Sign(num5) * Math.Sqrt(Math.Abs(16.0 * num5 * num5 - 20.0 * num4 * num6)));
+                }
+                return num1;
+            }
+            catch (Exception ex)
+            {
+                if (!Thread.CurrentThread.IsBackground)
+                {
+                    Console.WriteLine(ex);
+                }
+                return double.NaN;
+            }
+        }
+        
+        public double GetTrueAnomaly(double E)
+        {
+            double trueAnomaly;
+            if (eccentricity < 1.0)
+            {
+
+                double num1 = Math.Cos(E / 2.0);
+                double num2 = Math.Sin(E / 2.0);
+                trueAnomaly = 2.0 * Math.Atan2(Math.Sqrt(1.0 + eccentricity) * num2, Math.Sqrt(1.0 - eccentricity) * num1);
+            }
+            else if (double.IsPositiveInfinity(E))
+            {
+                
+                trueAnomaly = Math.Acos(-1.0 / eccentricity);
+            }
+            else if (double.IsNegativeInfinity(E))
+            {
+                trueAnomaly = -Math.Acos(-1.0 / eccentricity);
+            }
+            else
+            {
+                double num3 = Math.Sinh(E / 2.0);
+                double num4 = Math.Cosh(E / 2.0);
+                trueAnomaly = 2.0 * Math.Atan2(Math.Sqrt(eccentricity + 1.0) * num3, Math.Sqrt(eccentricity - 1.0) * num4);
+            }
+            return trueAnomaly;
+        }
+        public double getOrbitalSpeedAtDistance(double d) => Math.Sqrt(Nu * (2.0 / d - 1.0 / semiMajorAxis));
+        
+        public DVector3 getRelativePositionAtT(double T) => getPositionFromTrueAnomaly(GetTrueAnomaly(solveEccentricAnomaly(T * meanMotion, eccentricity)));
+        
+        public DVector3 getPositionFromTrueAnomaly(double tA)
+        {
+            double num1 = Math.Cos(tA);
+            double num2 = Math.Sin(tA);
+            DVector3 r = semiLatusRectum / (1.0 + eccentricity * num1) * (_rotationMatrix.GetRight() * num1 + _rotationMatrix.GetForward() * num2);
+            return r;
+        }
+        
+        public double GetOrbitalStateVectorsAtObT(double ObT, out DVector3 pos, out DVector3 vel)
+        {
+            return this.GetOrbitalStateVectorsAtTrueAnomaly(this.TrueAnomalyAtT(ObT), out pos, out vel);
+        }
+
+        public double GetOrbitalStateVectorsAtTrueAnomaly(double tA, out DVector3 pos, out DVector3 vel)
+        {
+            double num1 = Math.Cos(tA);
+            double num2 = Math.Sin(tA);
+            double num3 = this.semiMajorAxis * (1.0 - this.eccentricity * this.eccentricity);
+            double num4 = Math.Sqrt(Nu / num3);
+            double num5 = -num2 * num4;
+            double num6 = (num1 + this.eccentricity) * num4;
+            double vectorsAtTrueAnomaly = num3 / (1.0 + this.eccentricity * num1);
+            double num7 = num1 * vectorsAtTrueAnomaly;
+            double num8 = num2 * vectorsAtTrueAnomaly;
+            pos = _rotationMatrix.GetRight() * num7 + _rotationMatrix.GetForward() * num8;
+            vel = _rotationMatrix.GetRight() * num5 + _rotationMatrix.GetForward() * num6;
+            return vectorsAtTrueAnomaly;
         }
 
         /// <param name="v">speed counterclockwise in near point</param>

@@ -27,10 +27,10 @@ namespace Orbital.Core.TrajectorySystem
                     TrajectorySettings aSettings = ChildA.Settings;
                     aSettings.mass = value.aMass;
                     aSettings.period = value.period;
-                    aSettings.latitudeShift = value.latitudeShift;
-                    aSettings.longitudeShift = value.longitudeShift;
+                    aSettings.argumentOfPeriapsis = value.latitudeShift;
+                    aSettings.longitudeAscendingNode = value.longitudeShift;
                     aSettings.inclination = value.inclination;
-                    aSettings.pericenterRadius = value.aPericenterRadius;
+                    aSettings.semiMajorAxis = value.aPericenterRadius;
                     aSettings.timeShift = value.timeShift;
                     ChildA.Settings = aSettings;
                 }
@@ -38,10 +38,10 @@ namespace Orbital.Core.TrajectorySystem
                     TrajectorySettings bSettings = ChildB.Settings;
                     bSettings.mass = value.bMass;
                     bSettings.period = value.period;
-                    bSettings.latitudeShift = -value.latitudeShift;
-                    bSettings.longitudeShift = value.longitudeShift + 180;
+                    bSettings.argumentOfPeriapsis = -value.latitudeShift;
+                    bSettings.longitudeAscendingNode = value.longitudeShift + 180;
                     bSettings.inclination = -value.inclination;
-                    bSettings.pericenterRadius = value.aPericenterRadius * Mathf.Pow(value.aMass / value.bMass, 1.0f / 3.0f);
+                    bSettings.semiMajorAxis = value.aPericenterRadius * Mathf.Pow(value.aMass / value.bMass, 1.0f / 3.0f);
                     bSettings.timeShift = value.timeShift;
                     ChildB.Settings = bSettings;
                 }

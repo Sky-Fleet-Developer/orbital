@@ -99,6 +99,21 @@ namespace Ara3D.Double
             }
         }
 
+        public DVector3 GetRight()
+        {
+            return new DVector3(_array[0, 0], _array[1, 0], _array[2, 0]);
+        }
+        
+        public DVector3 GetUp()
+        {
+            return new DVector3(_array[0, 1], _array[1, 1], _array[2, 1]);
+        }
+        
+        public DVector3 GetForward()
+        {
+            return new DVector3(_array[0, 2], _array[1, 2], _array[2, 2]);
+        }
+        
         public static DMatrix4x4 Identity
         {
             get

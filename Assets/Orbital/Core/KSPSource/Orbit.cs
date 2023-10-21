@@ -9,10 +9,10 @@ namespace Orbital.Core.KSPSource
     public class Orbit
     {
         private IStaticBody referenceBody;
-        public double inclination;
         public double eccentricity;
         public double semiMajorAxis;
-        public double LAN;
+        public double inclination;
+        public double longitudeAscendingNode;
         public double argumentOfPeriapsis;
         public double epoch;
         public const double Rad2Deg = 57.295779513082323;
@@ -116,7 +116,7 @@ namespace Orbital.Core.KSPSource
             inclination = orbit.inclination;
             eccentricity = orbit.eccentricity;
             semiMajorAxis = orbit.semiMajorAxis;
-            LAN = orbit.LAN;
+            longitudeAscendingNode = orbit.longitudeAscendingNode;
             argumentOfPeriapsis = orbit.argumentOfPeriapsis;
             meanAnomalyAtEpoch = orbit.meanAnomalyAtEpoch;
             epoch = orbit.epoch;
@@ -165,7 +165,7 @@ namespace Orbital.Core.KSPSource
             inclination = inc;
             eccentricity = e;
             semiMajorAxis = sma;
-            LAN = lan;
+            longitudeAscendingNode = lan;
             argumentOfPeriapsis = argPe;
             meanAnomalyAtEpoch = mEp;
             epoch = t;
@@ -175,7 +175,7 @@ namespace Orbital.Core.KSPSource
 
         public void Init()
         {
-            Planetarium.CelestialFrame.OrbitalFrame(LAN, inclination, argumentOfPeriapsis, ref OrbitFrame);
+            Planetarium.CelestialFrame.OrbitalFrame(longitudeAscendingNode, inclination, argumentOfPeriapsis, ref OrbitFrame);
             an = DVector3.Cross(DVector3.forward, OrbitFrame.Z);
             if (an.LengthSquared() == 0.0)
             {
@@ -295,7 +295,7 @@ namespace Orbital.Core.KSPSource
             if (!double.IsNaN(argumentOfPeriapsis))
                 return;
 
-            DVector3 lhs = Quaternion.AngleAxis(-(float) LAN, Vector3.up) * Vector3.right;
+            DVector3 lhs = Quaternion.AngleAxis(-(float) longitudeAscendingNode, Vector3.up) * Vector3.right;
             DVector3 xzy = eccVec.XZY;
             double d = DVector3.Dot(lhs, xzy) / (lhs.Length() * xzy.Length());
             if (d > 1.0)
@@ -333,8 +333,8 @@ namespace Orbital.Core.KSPSource
                 an = DVector3.right;
             }
 
-            LAN = Math.Atan2(an.y, an.x) * (180.0 / Math.PI);
-            LAN = (LAN + 360.0) % 360.0;
+            longitudeAscendingNode = Math.Atan2(an.y, an.x) * (180.0 / Math.PI);
+            longitudeAscendingNode = (longitudeAscendingNode + 360.0) % 360.0;
             eccVec = (DVector3.Dot(vel, vel) / refBody.gravParameter - 1.0 / pos.Length()) * pos -
                      DVector3.Dot(pos, vel) * vel / refBody.gravParameter;
             eccentricity = eccVec.Length();
