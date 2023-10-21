@@ -56,8 +56,8 @@ namespace Orbital.View
 
         private void Update(float scale)
         {
-            Vector3 fwd = _body.Trajectory.RotationMatrix * DVector3.UnitZ;
-            Vector3 up = _body.Trajectory.RotationMatrix * DVector3.UnitY;
+            Vector3 fwd = _body.Trajectory.RotationMatrix * DVector3.forward;
+            Vector3 up = _body.Trajectory.RotationMatrix * DVector3.up;
             _viewTransform.localPosition = ((Vector3) (_body.LocalPosition) - fwd * (float) _body.Trajectory.SemiMajorAxis) * scale;
             _viewTransform.rotation = Quaternion.LookRotation(fwd, up);
             _viewTransform.localScale = new Vector3((float) _body.Trajectory.SemiMinorAxis * scale, 1,

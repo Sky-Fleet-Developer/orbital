@@ -54,7 +54,7 @@ namespace Ara3D.Single
 		[MethodImpl(MethodImplOptions.AggressiveInlining)] public Vector2(float value) : this(value, value) { }
 		[MethodImpl(MethodImplOptions.AggressiveInlining)] public static Vector2 operator -(Vector2 value) => Zero - value;
 		[MethodImpl(MethodImplOptions.AggressiveInlining)] public static float Dot(Vector2 value1, Vector2 value2) => value1.X * value2.X + value1.Y * value2.Y;
-		[MethodImpl(MethodImplOptions.AggressiveInlining)] public float Dot(Vector2 value) => Vector2.Dot(this, value);
+		[MethodImpl(MethodImplOptions.AggressiveInlining)] public float Dot(Vector2 value) => Dot(this, value);
 		[MethodImpl(MethodImplOptions.AggressiveInlining)] public bool AlmostZero(float tolerance = Constants.Tolerance) => X.Abs() < tolerance && Y.Abs() < tolerance;
 		[MethodImpl(MethodImplOptions.AggressiveInlining)] public bool AlmostEquals(Vector2 value, float tolerance = Constants.Tolerance) => (this - value).AlmostZero(tolerance);
 		[MethodImpl(MethodImplOptions.AggressiveInlining)] public bool IsNaN() => X.IsNaN() || Y.IsNaN();
@@ -109,7 +109,7 @@ namespace Ara3D.Single
 		[MethodImpl(MethodImplOptions.AggressiveInlining)] public Vector3(float value) : this(value, value, value) { }
 		[MethodImpl(MethodImplOptions.AggressiveInlining)] public static Vector3 operator -(Vector3 value) => Zero - value;
 		[MethodImpl(MethodImplOptions.AggressiveInlining)] public static float Dot(Vector3 value1, Vector3 value2) => value1.X * value2.X + value1.Y * value2.Y + value1.Z * value2.Z;
-		[MethodImpl(MethodImplOptions.AggressiveInlining)] public float Dot(Vector3 value) => Vector3.Dot(this, value);
+		[MethodImpl(MethodImplOptions.AggressiveInlining)] public float Dot(Vector3 value) => Dot(this, value);
 		[MethodImpl(MethodImplOptions.AggressiveInlining)] public bool AlmostZero(float tolerance = Constants.Tolerance) => X.Abs() < tolerance && Y.Abs() < tolerance && Z.Abs() < tolerance;
 		[MethodImpl(MethodImplOptions.AggressiveInlining)] public bool AlmostEquals(Vector3 value, float tolerance = Constants.Tolerance) => (this - value).AlmostZero(tolerance);
 		[MethodImpl(MethodImplOptions.AggressiveInlining)] public bool IsNaN() => X.IsNaN() || Y.IsNaN() || Z.IsNaN();
@@ -168,7 +168,7 @@ namespace Ara3D.Single
 		[MethodImpl(MethodImplOptions.AggressiveInlining)] public Vector4(float value) : this(value, value, value, value) { }
 		[MethodImpl(MethodImplOptions.AggressiveInlining)] public static Vector4 operator -(Vector4 value) => Zero - value;
 		[MethodImpl(MethodImplOptions.AggressiveInlining)] public static float Dot(Vector4 value1, Vector4 value2) => value1.X * value2.X + value1.Y * value2.Y + value1.Z * value2.Z + value1.W * value2.W;
-		[MethodImpl(MethodImplOptions.AggressiveInlining)] public float Dot(Vector4 value) => Vector4.Dot(this, value);
+		[MethodImpl(MethodImplOptions.AggressiveInlining)] public float Dot(Vector4 value) => Dot(this, value);
 		[MethodImpl(MethodImplOptions.AggressiveInlining)] public bool AlmostZero(float tolerance = Constants.Tolerance) => X.Abs() < tolerance && Y.Abs() < tolerance && Z.Abs() < tolerance && W.Abs() < tolerance;
 		[MethodImpl(MethodImplOptions.AggressiveInlining)] public bool AlmostEquals(Vector4 value, float tolerance = Constants.Tolerance) => (this - value).AlmostZero(tolerance);
 		[MethodImpl(MethodImplOptions.AggressiveInlining)] public bool IsNaN() => X.IsNaN() || Y.IsNaN() || Z.IsNaN() || W.IsNaN();
@@ -223,7 +223,7 @@ namespace Ara3D
 		[MethodImpl(MethodImplOptions.AggressiveInlining)] public DVector2(double value) : this(value, value) { }
 		[MethodImpl(MethodImplOptions.AggressiveInlining)] public static DVector2 operator -(DVector2 value) => Zero - value;
 		[MethodImpl(MethodImplOptions.AggressiveInlining)] public static double Dot(DVector2 value1, DVector2 value2) => value1.x * value2.x + value1.y * value2.y;
-		[MethodImpl(MethodImplOptions.AggressiveInlining)] public double Dot(DVector2 value) => DVector2.Dot(this, value);
+		[MethodImpl(MethodImplOptions.AggressiveInlining)] public double Dot(DVector2 value) => Dot(this, value);
 		[MethodImpl(MethodImplOptions.AggressiveInlining)] public bool AlmostZero(float tolerance = Constants.Tolerance) => x.Abs() < tolerance && y.Abs() < tolerance;
 		[MethodImpl(MethodImplOptions.AggressiveInlining)] public bool AlmostEquals(DVector2 value, float tolerance = Constants.Tolerance) => (this - value).AlmostZero(tolerance);
 		[MethodImpl(MethodImplOptions.AggressiveInlining)] public bool IsNaN() => x.IsNaN() || y.IsNaN();
@@ -258,6 +258,8 @@ namespace Ara3D
 		[DataMember, HorizontalGroup("gr", LabelWidth = 20)]
 		public double z;
 		[MethodImpl(MethodImplOptions.AggressiveInlining)] public DVector3(double x, double y, double z) { this.x = x; this.y = y; this.z = z; }
+		public DVector3 XZY => new DVector3(x, z, y);
+
 		[MethodImpl(MethodImplOptions.AggressiveInlining)] public override bool Equals(object obj) => obj is DVector3 x && Equals(x);
 		[MethodImpl(MethodImplOptions.AggressiveInlining)] public override int GetHashCode() => Hash.Combine(x.GetHashCode(), y.GetHashCode(), z.GetHashCode());
 		[MethodImpl(MethodImplOptions.AggressiveInlining)] public override string ToString() => $"DVector3(X = {x}, Y = {y}, Z = {z})";
@@ -283,9 +285,9 @@ namespace Ara3D
 		[MethodImpl(MethodImplOptions.AggressiveInlining)] public static DVector3 operator /(DVector3 value1, double value2) => new DVector3(value1.x / value2, value1.y / value2, value1.z / value2);
 		[MethodImpl(MethodImplOptions.AggressiveInlining)] public static DVector3 operator /(double value1, DVector3 value2) => new DVector3(value1 / value2.x, value1 / value2.y, value1 / value2.z);
 		public static DVector3 One = new DVector3(1.0);
-		public static DVector3 UnitX = Zero.SetX(1.0);
-		public static DVector3 UnitY = Zero.SetY(1.0);
-		public static DVector3 UnitZ = Zero.SetZ(1.0);
+		public static DVector3 right = Zero.SetX(1.0);
+		public static DVector3 up = Zero.SetY(1.0);
+		public static DVector3 forward = Zero.SetZ(1.0);
 		[MethodImpl(MethodImplOptions.AggressiveInlining)] public DVector3(double value) : this(value, value, value) { }
 		[MethodImpl(MethodImplOptions.AggressiveInlining)] public static DVector3 operator -(DVector3 value) => Zero - value;
 
@@ -303,7 +305,7 @@ namespace Ara3D
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)] public static DVector3 Cross(DVector3 a, DVector3 b) => new DVector3(a.y * b.z - a.z * b.y, a.z * b.x - a.x * b.z, a.x * b.y - a.y * b.x);
         [MethodImpl(MethodImplOptions.AggressiveInlining)] public static DVector3 Lerp(DVector3 a, DVector3 b, double t) => a + (b - a) * t;
-        [MethodImpl(MethodImplOptions.AggressiveInlining)] public double Dot(DVector3 value) => DVector3.Dot(this, value);
+        [MethodImpl(MethodImplOptions.AggressiveInlining)] public double Dot(DVector3 value) => Dot(this, value);
 		[MethodImpl(MethodImplOptions.AggressiveInlining)] public bool AlmostZero(float tolerance = Constants.Tolerance) => x.Abs() < tolerance && y.Abs() < tolerance && z.Abs() < tolerance;
 		[MethodImpl(MethodImplOptions.AggressiveInlining)] public bool AlmostEquals(DVector3 value, float tolerance = Constants.Tolerance) => (this - value).AlmostZero(tolerance);
 		[MethodImpl(MethodImplOptions.AggressiveInlining)] public bool IsNaN() => x.IsNaN() || y.IsNaN() || z.IsNaN();
@@ -362,7 +364,7 @@ namespace Ara3D
 		[MethodImpl(MethodImplOptions.AggressiveInlining)] public DVector4(double value) : this(value, value, value, value) { }
 		[MethodImpl(MethodImplOptions.AggressiveInlining)] public static DVector4 operator -(DVector4 value) => Zero - value;
 		[MethodImpl(MethodImplOptions.AggressiveInlining)] public static double Dot(DVector4 value1, DVector4 value2) => value1.X * value2.X + value1.Y * value2.Y + value1.Z * value2.Z + value1.W * value2.W;
-		[MethodImpl(MethodImplOptions.AggressiveInlining)] public double Dot(DVector4 value) => DVector4.Dot(this, value);
+		[MethodImpl(MethodImplOptions.AggressiveInlining)] public double Dot(DVector4 value) => Dot(this, value);
 		[MethodImpl(MethodImplOptions.AggressiveInlining)] public bool AlmostZero(float tolerance = Constants.Tolerance) => X.Abs() < tolerance && Y.Abs() < tolerance && Z.Abs() < tolerance && W.Abs() < tolerance;
 		[MethodImpl(MethodImplOptions.AggressiveInlining)] public bool AlmostEquals(DVector4 value, float tolerance = Constants.Tolerance) => (this - value).AlmostZero(tolerance);
 		[MethodImpl(MethodImplOptions.AggressiveInlining)] public bool IsNaN() => X.IsNaN() || Y.IsNaN() || Z.IsNaN() || W.IsNaN();
@@ -933,7 +935,7 @@ namespace Ara3D.Single
 		[MethodImpl(MethodImplOptions.AggressiveInlining)] public Int2(int value) : this(value, value) { }		
 		[MethodImpl(MethodImplOptions.AggressiveInlining)] public static Int2 operator -(Int2 value) => Zero - value;
 		[MethodImpl(MethodImplOptions.AggressiveInlining)] public static int Dot(Int2 value1, Int2 value2) => value1.A * value2.A + value1.B * value2.B;
-		[MethodImpl(MethodImplOptions.AggressiveInlining)] public int Dot(Int2 value) => Int2.Dot(this, value);
+		[MethodImpl(MethodImplOptions.AggressiveInlining)] public int Dot(Int2 value) => Dot(this, value);
 		[MethodImpl(MethodImplOptions.AggressiveInlining)] public bool AlmostZero(float tolerance = Constants.Tolerance) => A.Abs() < tolerance && B.Abs() < tolerance;	
 		[MethodImpl(MethodImplOptions.AggressiveInlining)] public bool AlmostEquals(Int2 value, float tolerance = Constants.Tolerance) => (this - value).AlmostZero(tolerance);	
 		[MethodImpl(MethodImplOptions.AggressiveInlining)] public bool IsNaN() => A.IsNaN() || B.IsNaN();
@@ -988,7 +990,7 @@ namespace Ara3D.Single
 		[MethodImpl(MethodImplOptions.AggressiveInlining)] public Int3(int value) : this(value, value, value) { }		
 		[MethodImpl(MethodImplOptions.AggressiveInlining)] public static Int3 operator -(Int3 value) => Zero - value;
 		[MethodImpl(MethodImplOptions.AggressiveInlining)] public static int Dot(Int3 value1, Int3 value2) => value1.A * value2.A + value1.B * value2.B + value1.C * value2.C;
-		[MethodImpl(MethodImplOptions.AggressiveInlining)] public int Dot(Int3 value) => Int3.Dot(this, value);
+		[MethodImpl(MethodImplOptions.AggressiveInlining)] public int Dot(Int3 value) => Dot(this, value);
 		[MethodImpl(MethodImplOptions.AggressiveInlining)] public bool AlmostZero(float tolerance = Constants.Tolerance) => A.Abs() < tolerance && B.Abs() < tolerance && C.Abs() < tolerance;	
 		[MethodImpl(MethodImplOptions.AggressiveInlining)] public bool AlmostEquals(Int3 value, float tolerance = Constants.Tolerance) => (this - value).AlmostZero(tolerance);	
 		[MethodImpl(MethodImplOptions.AggressiveInlining)] public bool IsNaN() => A.IsNaN() || B.IsNaN() || C.IsNaN();
@@ -1047,7 +1049,7 @@ namespace Ara3D.Single
 		[MethodImpl(MethodImplOptions.AggressiveInlining)] public Int4(int value) : this(value, value, value, value) { }		
 		[MethodImpl(MethodImplOptions.AggressiveInlining)] public static Int4 operator -(Int4 value) => Zero - value;
 		[MethodImpl(MethodImplOptions.AggressiveInlining)] public static int Dot(Int4 value1, Int4 value2) => value1.A * value2.A + value1.B * value2.B + value1.C * value2.C + value1.D * value2.D;
-		[MethodImpl(MethodImplOptions.AggressiveInlining)] public int Dot(Int4 value) => Int4.Dot(this, value);
+		[MethodImpl(MethodImplOptions.AggressiveInlining)] public int Dot(Int4 value) => Dot(this, value);
 		[MethodImpl(MethodImplOptions.AggressiveInlining)] public bool AlmostZero(float tolerance = Constants.Tolerance) => A.Abs() < tolerance && B.Abs() < tolerance && C.Abs() < tolerance && D.Abs() < tolerance;	
 		[MethodImpl(MethodImplOptions.AggressiveInlining)] public bool AlmostEquals(Int4 value, float tolerance = Constants.Tolerance) => (this - value).AlmostZero(tolerance);	
 		[MethodImpl(MethodImplOptions.AggressiveInlining)] public bool IsNaN() => A.IsNaN() || B.IsNaN() || C.IsNaN() || D.IsNaN();
