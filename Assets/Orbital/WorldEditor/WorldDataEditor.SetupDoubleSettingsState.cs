@@ -11,14 +11,14 @@ namespace Orbital.WorldEditor
         private class SetupDoubleSettingsState : WorldDataState
         {
             private INestedStateUser<DoubleSystemTrajectorySettings?> _lastState;
-            private DoubleSystemTrajectorySettings _trajectorySettingsA;
-            private DoubleSystemTrajectorySettings _trajectorySettingsB;
+            private DoubleSystemTrajectorySettings _trajectorySettingsDest;
+            private DoubleSystemTrajectorySettings _trajectorySettingsSource;
             private DoubleSystemTrajectorySettings _original;
             public SetupDoubleSettingsState(DoubleSystemTrajectorySettings original, INestedStateUser<DoubleSystemTrajectorySettings?> lastState, WorldDataEditor master) : base(master)
             {
                 _lastState = lastState;
-                _trajectorySettingsA = original;
-                _trajectorySettingsB = original;
+                _trajectorySettingsDest = original;
+                _trajectorySettingsSource = original;
                 _original = original;
             }
 
@@ -26,42 +26,38 @@ namespace Orbital.WorldEditor
             {
                 GUILayout.Label("Setup:");
                 EditorGUI.BeginChangeCheck();
-                
-                double aMajor = StaticTrajectory.GetSemiMajorAxis(_trajectorySettingsA.bMass, _trajectorySettingsA.period, MassUtility.G);
-                double aEccentricity = StaticTrajectory.GetEccentricity(_trajectorySettingsA.aPericenterRadius, aMajor);
-                double bMajor = StaticTrajectory.GetSemiMajorAxis(_trajectorySettingsA.aMass, _trajectorySettingsA.period, MassUtility.G);
-                double bPericenter = _trajectorySettingsA.aPericenterRadius * Math.Pow(_trajectorySettingsA.aMass / _trajectorySettingsA.bMass, 1.0 / 3.0);
-                double bEccentricity = StaticTrajectory.GetEccentricity(bPericenter, bMajor);
 
-                _trajectorySettingsA.aMass = EditorGUILayout.FloatField("A body mass", _trajectorySettingsB.aMass);
-                _trajectorySettingsA.bMass = EditorGUILayout.FloatField("B body mass", _trajectorySettingsB.bMass);
-                _trajectorySettingsA.period = EditorGUILayout.FloatField("period", _trajectorySettingsB.period);
-                _trajectorySettingsA.aPericenterRadius = EditorGUILayout.FloatField("A body pericenter", _trajectorySettingsB.aPericenterRadius);
+                double abK = Math.Pow(_trajectorySettingsDest.aMass / _trajectorySettingsDest.bMass, 1.0 / 3.0);
+                double bPericenter = _trajectorySettingsDest.aPericenterRadius * abK;
+                double aMajor = StaticTrajectory.GetSemiMajorAxis(_trajectorySettingsDest.eccentricity, _trajectorySettingsDest.aPericenterRadius);
+                double bMajor = StaticTrajectory.GetSemiMajorAxis(_trajectorySettingsDest.eccentricity, bPericenter);
+
+                _trajectorySettingsDest.aMass = EditorGUILayout.FloatField("A body mass", _trajectorySettingsSource.aMass);
+                _trajectorySettingsDest.bMass = EditorGUILayout.FloatField("B body mass", _trajectorySettingsSource.bMass);
+                _trajectorySettingsDest.eccentricity = EditorGUILayout.FloatField("Eccentricity", _trajectorySettingsSource.eccentricity);
+                _trajectorySettingsDest.aPericenterRadius = EditorGUILayout.FloatField("A body pericenter", _trajectorySettingsSource.aPericenterRadius);
                 
                 
                 GUILayout.Box($"B body pericenter: {bPericenter :e2}");
-                _trajectorySettingsA.latitudeShift = EditorGUILayout.FloatField("Latitude", _trajectorySettingsB.latitudeShift);
-                _trajectorySettingsA.longitudeShift = EditorGUILayout.FloatField("Longitude", _trajectorySettingsB.longitudeShift);
-                _trajectorySettingsA.inclination = EditorGUILayout.FloatField("Inclination", _trajectorySettingsB.inclination);
-                _trajectorySettingsA.timeShift = EditorGUILayout.FloatField("Time", _trajectorySettingsB.timeShift);
+                _trajectorySettingsDest.argumentOfPeriapsis = EditorGUILayout.FloatField("Argument Of Periapsis", _trajectorySettingsSource.argumentOfPeriapsis);
+                _trajectorySettingsDest.longitudeAscendingNode = EditorGUILayout.FloatField("Longitude Ascending Node", _trajectorySettingsSource.longitudeAscendingNode);
+                _trajectorySettingsDest.inclination = EditorGUILayout.FloatField("Inclination", _trajectorySettingsSource.inclination);
+                _trajectorySettingsDest.timeShift = EditorGUILayout.FloatField("Time", _trajectorySettingsSource.timeShift);
                 
 
-                
-                GUILayout.Box($"eccentricity (a): {aEccentricity}");
                 GUILayout.Box($"Semi major axis (a): {aMajor :e2}");                
-                GUILayout.Box($"eccentricity (b): {bEccentricity}");
                 GUILayout.Box($"Semi major axis (b): {bMajor :e2}");
                 
                 if (EditorGUI.EndChangeCheck())
                 {
-                    _trajectorySettingsB = _trajectorySettingsA;
-                    _lastState.NestedStateCallback(_trajectorySettingsB, false);
+                    _trajectorySettingsSource = _trajectorySettingsDest;
+                    _lastState.NestedStateCallback(_trajectorySettingsSource, false);
                 }
                 
                 GUILayout.BeginHorizontal();
                 if (GUILayout.Button("Ok"))
                 {
-                    _lastState.NestedStateCallback(_trajectorySettingsB);
+                    _lastState.NestedStateCallback(_trajectorySettingsSource);
                 }
 
                 if (GUILayout.Button("Cancel"))

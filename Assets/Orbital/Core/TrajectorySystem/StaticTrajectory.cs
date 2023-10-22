@@ -85,8 +85,8 @@ namespace Orbital.Core.TrajectorySystem
         public void Calculate()
         {
             TrajectorySettings settings = _self.Settings;
-            SetOrbit(settings.inclination, settings.eccentricity, settings.semiMajorAxis,
-                settings.longitudeAscendingNode, settings.argumentOfPeriapsis, 0, settings.timeShift);
+            SetOrbit(settings.inclination * Deg2Rad, settings.eccentricity, settings.semiMajorAxis,
+                settings.longitudeAscendingNode * Deg2Rad, settings.argumentOfPeriapsis * Deg2Rad, 0, settings.timeShift);
             /*switch (_systemType)
             {
                 case SystemType.SingleCenter:
@@ -238,7 +238,16 @@ namespace Orbital.Core.TrajectorySystem
         public (DVector3 position, DVector3 velocity) GetSample(double time, bool positionRequired = true, bool velocityRequired = true)
         {
             DVector3 pos, vel;
-            GetOrbitalStateVectorsAtObT(time, out pos, out vel);
+            if (double.IsInfinity(meanMotion))
+            {
+                pos = DVector3.Zero;
+                vel = DVector3.Zero;
+            }
+            else
+            {
+                GetOrbitalStateVectorsAtObT(time, out pos, out vel);
+            }
+
             return (pos, vel); //(positionRequired ? GetPosition(time) : DVector3.Zero, velocityRequired ? GetVelocity(time) : DVector3.Zero);
         }
         
