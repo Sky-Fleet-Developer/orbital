@@ -9,7 +9,7 @@ namespace Orbital.Core.Simulation
         public IStaticBody Parent { get; }
         public DynamicBodyMode Mode { get; }
         public ITrajectorySampler TrajectorySampler { get; }
-        public IDynamicTrajectory TrajectoryContainer { get; }
+        public IStaticTrajectory Trajectory { get; }
         public RigidbodyPresentation Presentation { get; }
         public event Action<DynamicBodyMode> ModeChangedHandler;
         public void Init();
@@ -23,7 +23,7 @@ namespace Orbital.Core.Simulation
     {
         public IDynamicBody Self { get; }
         public IStaticBody Parent { get; set; }
-        public IDynamicTrajectory Trajectory { get; set; }
+        public IStaticTrajectory Trajectory { get; set; }
         public ITrajectorySampler TrajectorySampler { get; set; }
 
     }

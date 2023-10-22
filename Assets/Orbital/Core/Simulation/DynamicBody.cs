@@ -8,18 +8,15 @@ using Zenject;
 
 namespace Orbital.Core.Simulation
 {
-    public class DynamicBody : SystemComponent<DynamicBodyVariables, DynamicBodySettings>, IDynamicBody
+    public class DynamicBody : SystemComponent<DynamicBodyVariables, DynamicBodySettings>, IDynamicBody, IDynamicBodyAccessor
     {
         private static AsyncThreadScheduler _trajectoryRefreshScheduler = new AsyncThreadScheduler(3);
 
         [SerializeField] private DynamicBodyVariables variables;
         [SerializeField] private DynamicBodySettings settings;
-        [SerializeField] private int targetAccuracy = 200;
-        [SerializeField] private int maxAccuracy = 400;
-        [SerializeField] private float nonuniformity;
         private World _world;
         private Track _trajectoryTrack;
-        private TrajectoryContainer _trajectoryContainer;
+        private IStaticTrajectory _trajectory;
         private IStaticBody _parent;
 
         private float _awakeTime = 0;
@@ -30,35 +27,47 @@ namespace Orbital.Core.Simulation
         private Task _trajectoryCalculation;
         private bool _isVelocityDirty;
         private bool _isTrajectoryCalculating;
+        private ITrajectorySampler _trajectorySampler;
+        private bool _isInitialized;
 
+        #region InterfaceImplementation
+        
         public Task WaitForTrajectoryCalculated => _trajectoryCalculation;
-        public IDynamicTrajectory TrajectoryContainer => _trajectoryContainer;
+        public IStaticTrajectory Trajectory => _trajectory;
+        public IStaticBody Parent => _parent;
+        [ShowInInspector] public DynamicBodyMode Mode => _mode;
+        ITrajectorySampler IDynamicBody.TrajectorySampler => _trajectoryTrack;
+        IDynamicBody IDynamicBodyAccessor.Self => this;
+        ITrajectorySampler IDynamicBodyAccessor.TrajectorySampler
+        {
+            get => _trajectorySampler;
+            set => _trajectorySampler = value;
+        }
+        IStaticBody IDynamicBodyAccessor.Parent
+        {
+            get => _parent;
+            set => _parent = value;
+        }
+        IStaticTrajectory IDynamicBodyAccessor.Trajectory
+        {
+            get => _trajectory;
+            set => _trajectory = value;
+        }
+        public RigidbodyPresentation Presentation => _presentation;
+        public event Action<DynamicBodyMode> ModeChangedHandler;
+        #endregion
 
         public override DynamicBodyVariables Variables
         {
             get => variables;
             set => variables = value;
         }
-
         public override DynamicBodySettings Settings
         {
             get => settings;
             set => settings = value;
         }
-
-        /*public IDynamicBody Self => this;
-        IStaticBody IDynamicBodyAccessor.Parent { get => _parent; set => _parent = value; }
-        public IDynamicTrajectory Trajectory { get; set; }
-        public ITrajectorySampler TrajectorySampler { get; set; }*/
-        public IStaticBody Parent => _parent;
-
-        [ShowInInspector] public DynamicBodyMode Mode => _mode;
-
-        ITrajectorySampler IDynamicBody.TrajectorySampler => _trajectoryTrack;
-        public RigidbodyPresentation Presentation => _presentation;
-
-        public event Action<DynamicBodyMode> ModeChangedHandler;
-
+        
         protected override void Start()
         {
             base.Start();
@@ -67,25 +76,43 @@ namespace Orbital.Core.Simulation
 
         public void Init()
         {
+            if(_isInitialized) return;
             _parent = GetComponentInParent<IStaticBody>();
             _world = GetComponentInParent<World>();
+            #if UNITY_EDITOR
+            if (!Application.isPlaying)
+            {
+                _world.Load();
+            }
+            #endif
             _world.RegisterRigidBody(this);
-            _trajectoryContainer ??= new(maxAccuracy);
-            _trajectoryTrack ??= new Track(_trajectoryContainer);
-            _trajectoryCalculation = FillTrajectory(variables.position, variables.velocity);
+            _trajectory.Calculate(variables.position, variables.velocity);
+            _isInitialized = true;
+            //_trajectoryCalculation = FillTrajectory(variables.position, variables.velocity);
+        }
+
+        private void OnDrawGizmosSelected()
+        {
+            if (_trajectory == null || _parent == null || _world == null)
+            {
+                _isInitialized = false;
+            }
+            Init();
+            _trajectory.DrawGizmos();
         }
 
         private void OnValidate()
         {
-            if(_trajectoryContainer == null) return;
-            if (Application.isPlaying)
+            if(_trajectory == null) return;
+            _isInitialized = false;
+            /*if (Application.isPlaying)
             {
                 _trajectoryCalculation = RefreshTrajectory();
             }
             else
             {
                 FillTrajectory(variables.position, variables.velocity);
-            }
+            }*/
         }
 
         public void SetVelocityDirty()
@@ -192,8 +219,8 @@ namespace Orbital.Core.Simulation
 
         private async Task FillTrajectoryRoutine(DVector3 position, DVector3 velocity)
         {
-            await _trajectoryRefreshScheduler.Schedule(() => IterativeSimulation.FillTrajectoryContainer(_trajectoryContainer, TimeService.WorldTime, position, velocity, _parent.MassSystem.Mass, targetAccuracy, nonuniformity));
-            _trajectoryContainer.SetDirty();
+            //await _trajectoryRefreshScheduler.Schedule(() => IterativeSimulation.FillTrajectoryContainer(_trajectory, TimeService.WorldTime, position, velocity, _parent.MassSystem.Mass, targetAccuracy, nonuniformity));
+            //_trajectory.SetDirty();
             _trajectoryTrack.ResetProgress();
         }
         

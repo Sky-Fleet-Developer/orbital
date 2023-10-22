@@ -54,30 +54,30 @@ namespace Orbital.Core.TrajectorySystem
 
         public static void FillTrajectoriesRecursively(this IMassSystem massSystem, Dictionary<IMassSystem, IStaticTrajectory> container)
         {
-            void SetupElement(IMassSystem child, IMassSystem other, SystemType type)
+            void SetupElement(IMassSystem child, IMassSystem other)
             {
                 if (child == null) return;
                 if (other == null) return;
                 if (!container.TryGetValue(child, out IStaticTrajectory trajectory))
                 {
-                    trajectory = new StaticTrajectory(child, other, type);
+                    trajectory = new StaticTrajectory(other);
                     container.Add(child, trajectory);
                 }
 
-                trajectory.Calculate();
+                trajectory.Calculate(child.Settings);
                 FillTrajectoriesRecursively(child, container);
             }
 
             if (massSystem is DoubleSystemBranch doubleSystemBranch)
             {
-                SetupElement(doubleSystemBranch.ChildA, doubleSystemBranch.ChildB, SystemType.DoubleSystem);
-                SetupElement(doubleSystemBranch.ChildB, doubleSystemBranch.ChildA, SystemType.DoubleSystem);
+                SetupElement(doubleSystemBranch.ChildA, doubleSystemBranch.ChildB);
+                SetupElement(doubleSystemBranch.ChildB, doubleSystemBranch.ChildA);
             }
             else
             {
                 foreach (IMassSystem child in massSystem.GetContent())
                 {
-                    SetupElement(child, massSystem, SystemType.SingleCenter);
+                    SetupElement(child, massSystem);
                 }
             }
         }

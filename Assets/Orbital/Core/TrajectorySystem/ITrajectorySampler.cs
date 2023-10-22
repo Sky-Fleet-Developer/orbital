@@ -25,7 +25,9 @@ namespace Orbital.Core.TrajectorySystem
         public double PeR { get; }
         public double ApR { get; }
         public DMatrix4x4 RotationMatrix { get; }
-        public void Calculate();
+        public void Calculate(TrajectorySettings settings);
+        public void Calculate(DVector3 position, DVector3 velocity);
+        public void DrawGizmos();
     }
 
     public interface IDynamicTrajectory

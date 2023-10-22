@@ -30,12 +30,18 @@ namespace Orbital.Core
 
         public IEnumerable<IDynamicBody> GetChildren(IStaticBody parent)
         {
-            return tree._children[tree._massPerComponent[parent]];
+            foreach (IDynamicBodyAccessor dynamicBodyAccessor in tree._children[tree._massPerComponent[parent]])
+            {
+                yield return dynamicBodyAccessor.Self;
+            }
         }
         
         public IEnumerable<IDynamicBody> GetChildren(IMassSystem parent)
         {
-            return tree._children[parent];
+            foreach (IDynamicBodyAccessor dynamicBodyAccessor in tree._children[parent])
+            {
+                yield return dynamicBodyAccessor.Self;
+            }
         }
 
         public IMassSystem GetParent(StaticBody mass)
@@ -48,7 +54,7 @@ namespace Orbital.Core
             return tree._parents.TryGetValue(mass, out IMassSystem value) ? value : null;
         }
 
-        public void RegisterRigidBody(IDynamicBody value)
+        internal void RegisterRigidBody(IDynamicBodyAccessor value)
         {
             tree.AddRigidbody(value);
         }

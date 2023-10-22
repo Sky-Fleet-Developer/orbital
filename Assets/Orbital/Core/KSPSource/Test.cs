@@ -36,7 +36,7 @@ public class Test : MonoBehaviour
     [Button]
     private void UpdateFromVelocity()
     {
-        orbit.UpdateFromStateVectors(position, velocity, body.GetComponent<IStaticBody>(), UT);
+        //orbit.UpdateFromStateVectors(position, velocity, body.GetComponent<IStaticBody>(), UT);
     }
 
     [Button]

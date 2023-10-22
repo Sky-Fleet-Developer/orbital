@@ -49,17 +49,22 @@ namespace Orbital.View
         private void Update()
         {
             #if UNITY_EDITOR
-            if(_body == null) return;
+            if (_body == null)
+            {
+                Awake();
+                return;
+            }
             #endif
             Update(4.456328E-09F);
         }
 
         private void Update(float scale)
         {
-            Vector3 fwd = _body.Trajectory.RotationMatrix * DVector3.forward;
-            Vector3 up = _body.Trajectory.RotationMatrix * DVector3.up;
-            _viewTransform.localPosition = ((Vector3) (_body.LocalPosition) - fwd * (float) _body.Trajectory.semiMajorAxis) * scale;
-            _viewTransform.rotation = Quaternion.LookRotation(fwd, up);
+            Vector3 right = _body.Trajectory.RotationMatrix.Right();
+            Vector3 up = _body.Trajectory.RotationMatrix.Up();
+            var pos = _body.LocalPosition;
+            _viewTransform.localPosition = ((Vector3) (pos) - right * (float) _body.Trajectory.semiMajorAxis) * scale;
+            _viewTransform.rotation = Quaternion.LookRotation(right, up);
             _viewTransform.localScale = new Vector3((float) _body.Trajectory.SemiMinorAxis * scale, 1,
                 (float) _body.Trajectory.semiMajorAxis * scale);
         }

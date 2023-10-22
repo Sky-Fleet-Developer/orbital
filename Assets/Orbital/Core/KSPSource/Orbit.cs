@@ -287,32 +287,14 @@ namespace Orbital.Core.KSPSource
             return vectorsAtTrueAnomaly;
         }
 
-        public void UpdateFromStateVectors(DVector3 pos, DVector3 vel, IStaticBody refBody, double UT)
+        public void UpdateFromStateVectors(DVector3 pos, DVector3 vel, IStaticBody refBody)
         {
             pos = Planetarium.Zup.LocalToWorld(pos);
             vel = Planetarium.Zup.LocalToWorld(vel);
-            UpdateFromFixedVectors(pos, vel, refBody, UT);
-            if (!double.IsNaN(argumentOfPeriapsis))
-                return;
-
-            DVector3 lhs = Quaternion.AngleAxis(-(float) longitudeAscendingNode, Vector3.up) * Vector3.right;
-            DVector3 xzy = eccVec.XZY;
-            double d = DVector3.Dot(lhs, xzy) / (lhs.Length() * xzy.Length());
-            if (d > 1.0)
-            {
-                argumentOfPeriapsis = 0.0;
-            }
-            else if (d < -1.0)
-            {
-                argumentOfPeriapsis = 180.0;
-            }
-            else
-            {
-                argumentOfPeriapsis = Math.Acos(d);
-            }
+            
         }
 
-        public void UpdateFromFixedVectors(DVector3 pos, DVector3 vel, IStaticBody refBody, double UT)
+        public void UpdateFromFixedVectors(DVector3 pos, DVector3 vel, IStaticBody refBody)
         {
             referenceBody = refBody;
             h = DVector3.Cross(pos, vel);
@@ -402,7 +384,6 @@ namespace Orbital.Core.KSPSource
 
             radius = pos.Length();
             altitude = radius - refBody.Radius;
-            epoch = UT;
             this.pos = Planetarium.Zup.WorldToLocal(pos);
             this.vel = Planetarium.Zup.WorldToLocal(vel);
             h = Planetarium.Zup.WorldToLocal(h);

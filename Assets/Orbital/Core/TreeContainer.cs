@@ -17,7 +17,7 @@ namespace Orbital.Core
         [JsonIgnore] public Dictionary<IMassSystem, IStaticTrajectory> _trajectories { get; private set; }
         [JsonIgnore] internal Dictionary<IStaticBody, IMassSystem> _massPerComponent { get; private set; }
         [JsonIgnore] internal Dictionary<IMassSystem, IStaticBody> _componentPerMass { get; private set; }
-        [JsonIgnore] public Dictionary<IMassSystem, List<IDynamicBody>> _children { get; private set; }
+        [JsonIgnore] internal Dictionary<IMassSystem, List<IDynamicBodyAccessor>> _children { get; private set; }
         [JsonIgnore] public Dictionary<IMassSystem, IMassSystem> _parents { get; private set; }
 
         [SerializeField, TextArea(minLines: 6, maxLines: 10)]
@@ -38,7 +38,7 @@ namespace Orbital.Core
             ReconstructHierarchy(Root, tRoot);
             foreach (IMassSystem massSystem in _transforms.Keys)
             {
-                _children.Add(massSystem, new List<IDynamicBody>());
+                _children.Add(massSystem, new List<IDynamicBodyAccessor>());
             }
         }
 
@@ -47,14 +47,19 @@ namespace Orbital.Core
             _trajectories = new Dictionary<IMassSystem, IStaticTrajectory>();
             _massPerComponent = new Dictionary<IStaticBody, IMassSystem>();
             _componentPerMass = new Dictionary<IMassSystem, IStaticBody>();
-            _children = new Dictionary<IMassSystem, List<IDynamicBody>>();
+            _children = new Dictionary<IMassSystem, List<IDynamicBodyAccessor>>();
             _parents = new Dictionary<IMassSystem, IMassSystem>();
         }
 
-        public void AddRigidbody(IDynamicBody component)
+        internal void AddRigidbody(IDynamicBodyAccessor component)
         {
-            List<IDynamicBody> list = _children[_massPerComponent[component.Parent]];
-            if (!list.Contains(component)) list.Add(component);
+            var parent = _massPerComponent[component.Parent];
+            List<IDynamicBodyAccessor> list = _children[parent];
+            if (!list.Contains(component))
+            {
+                list.Add(component);
+                component.Trajectory = new StaticTrajectory(parent);
+            }
         }
 
         private void ReconstructHierarchy(IMassSystem mRoot, Transform tRoot)
