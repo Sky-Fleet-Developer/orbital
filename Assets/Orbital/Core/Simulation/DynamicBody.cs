@@ -91,7 +91,7 @@ namespace Orbital.Core.Simulation
             //_trajectoryCalculation = FillTrajectory(variables.position, variables.velocity);
         }
 
-        private void OnDrawGizmosSelected()
+        /*private void OnDrawGizmosSelected()
         {
             if (_trajectory == null || _parent == null || _world == null)
             {
@@ -99,12 +99,13 @@ namespace Orbital.Core.Simulation
             }
             Init();
             _trajectory.DrawGizmos();
-        }
+        }*/
 
         private void OnValidate()
         {
             if(_trajectory == null) return;
             _isInitialized = false;
+            Init();
             /*if (Application.isPlaying)
             {
                 _trajectoryCalculation = RefreshTrajectory();

@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 261.8021, g: 324.32925, b: 429.24924, a: 1}
+  m_IndirectSpecularColor: {r: 0, g: 0, b: 0, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -779,6 +779,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1332985213}
   - component: {fileID: 1332985214}
+  - component: {fileID: 1332985215}
   m_Layer: 0
   m_Name: Rigidbody
   m_TagString: Untagged
@@ -815,18 +816,30 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   variables:
     velocity:
-      x: 169.3
+      x: 505
       y: 0
       z: 0
     position:
       x: 0
       y: 0
-      z: 100000000
+      z: 20000000
   settings:
     presentation: {fileID: 0}
-  targetAccuracy: 200
-  maxAccuracy: 400
-  nonuniformity: 0
+--- !u!114 &1332985215
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1332985212}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 884a87dc56580324bb81155add6f6ca7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  material: {fileID: 2100000, guid: 87188d7fee3303c4bbdbbc2515b7f025, type: 2}
+  accuracy: 200
+  dr: 10
 --- !u!1 &1786935491
 GameObject:
   m_ObjectHideFlags: 0
