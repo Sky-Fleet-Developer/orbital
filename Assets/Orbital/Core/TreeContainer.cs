@@ -23,6 +23,8 @@ namespace Orbital.Core
         [SerializeField, TextArea(minLines: 6, maxLines: 10)]
         private string serializedValue;
 
+        public bool IsInitialized => _transforms != null && Root != null;
+
         public void Load()
         {
             ISerializer serializer = new JsonPerformance();

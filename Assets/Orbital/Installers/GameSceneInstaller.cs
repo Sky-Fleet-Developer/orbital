@@ -18,7 +18,6 @@ namespace Orbital.Installers
             Container.BindInstance(GetComponentInChildren<EventLoopEmitterService>()).AsSingle();
             Container.BindInstance(GetComponentInChildren<ComponentsRegistrationService>()).AsSingle();
             Container.BindInstance(GetComponentInChildren<TimeService>()).AsSingle();
-            Container.BindInstance(GetComponentInChildren<SimulationService>()).AsSingle();
         }
 
 

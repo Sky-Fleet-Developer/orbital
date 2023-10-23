@@ -67,6 +67,10 @@ namespace Orbital.Core.TrajectorySystem
             return Math.Sqrt(Nu / (num * num * num));
         }
 
+        public StaticTrajectory()
+        {
+            _rotationMatrix = DMatrix4x4.Identity;
+        }
         public StaticTrajectory(IMass other)
         {
             _other = other;
@@ -418,10 +422,66 @@ namespace Orbital.Core.TrajectorySystem
             }
             return trueAnomaly;
         }
+        
+        public double RadiusAtTrueAnomaly(double tA) => this.SemiLatusRectum * (1.0 / (1.0 + this.Eccentricity * Math.Cos(tA)));
+
+        internal double TrueAnomalyAtRadiusSimple(double R) => Math.Acos(this.SemiLatusRectum / (R * Eccentricity) - 1.0 / Eccentricity);
+
+        public double TrueAnomalyAtRadius(double r)
+        {
+            double num1 = DVector3.Cross(this.GetRelativePositionFromEccAnomaly(0), this.GetOrbitalVelocityAtOrbitTime(0)).LengthSquared() / Nu;
+            if (Eccentricity < 1.0)
+            {
+
+                r = Math.Min(Math.Max(this.PeR, r), this.ApR);
+            }
+            else
+                r = Math.Max(this.PeR, r);
+            double num2 = Eccentricity * r;
+            return Math.Acos(num1 / num2 - 1.0 / Eccentricity);
+        }
+        
         public double GetOrbitalSpeedAtDistance(double d) => Math.Sqrt(Nu * (2.0 / d - 1.0 / SemiMajorAxis));
         public double GetOrbitalSpeedAtPos(DVector3 pos) => GetOrbitalSpeedAtDistance(pos.Length());
+        public DVector3 GetOrbitalVelocityAtOrbitTime(double orbitTime) => this.GetOrbitalVelocityAtTrueAnomaly(this.TrueAnomalyAtT(orbitTime));
+        public DVector3 GetOrbitalVelocityAtTrueAnomaly(double tA)
+        {
+            double num1 = Math.Cos(tA);
+            double num2 = Math.Sin(tA);
+            double num3 = Math.Sqrt(Nu / (this.SemiMajorAxis * (1.0 - this.Eccentricity * this.Eccentricity)));
+            double fwd = -num2 * num3;
+            double right = (num1 + Eccentricity) * num3;
+            return _rotationMatrix.Forward() * fwd + _rotationMatrix.Right() * right;
 
-        public DVector3 GetPositionAtT(double T) => GetPositionFromTrueAnomaly(GetTrueAnomaly(SolveEccentricAnomaly(T * MeanMotion, Eccentricity)));
+        }
+        public DVector3 GetRelativePositionFromEccAnomaly(double E)
+        {
+            double fwd;
+            double right;
+            if (Eccentricity < 1.0)
+            {
+                fwd = SemiMajorAxis * (Math.Cos(E) - Eccentricity);
+                right = SemiMajorAxis * Math.Sqrt(1.0 - Eccentricity * Eccentricity) * Math.Sin(E);
+            }
+            else if (Eccentricity > 1.0)
+            {
+
+                fwd = -SemiMajorAxis * (Eccentricity - Math.Cosh(E));
+                right = -SemiMajorAxis * Math.Sqrt(Eccentricity * Eccentricity - 1.0) * Math.Sinh(E);
+            }
+            else
+            {
+                fwd = 0.0;
+                right = 0.0;
+            }
+            return _rotationMatrix.Forward() * fwd + _rotationMatrix.Right() * right;
+        }
+        public DVector3 GetPositionAtT(double T)
+        {
+            if(double.IsInfinity(MeanMotion)) return DVector3.Zero;
+            return GetPositionFromTrueAnomaly(GetTrueAnomaly(SolveEccentricAnomaly(T * MeanMotion, Eccentricity)));
+        }
+
         public DVector3 GetPositionFromMeanAnomaly(double m) => this.GetPositionFromEccAnomaly(SolveEccentricAnomaly(m, Eccentricity, 1E-05));
 
         public DVector3 GetPositionFromTrueAnomaly(double trueAnomaly)
@@ -480,7 +540,7 @@ namespace Orbital.Core.TrajectorySystem
         /// <param name="r">minimal distance to parent</param>
         /// <param name="m">other mass</param>
         /// <param name="g">gravitational constant</param>
-        /// <returns>Kepler orbit eccentricity</returns>
+        /// <returns>Kepler orbit Eccentricity</returns>
         public static double GetEccentricity(double v, double r, double m, double g)
         { 
             return (v * v * r) / (g * m) - 1;
@@ -491,7 +551,7 @@ namespace Orbital.Core.TrajectorySystem
             return 1 - r / a;
         }
 
-        /// <param name="e">eccentricity</param>
+        /// <param name="e">Eccentricity</param>
         /// <param name="r">minimal distance to parent</param>
         public static double GetSemiMajorAxis(double e, double r)
         {
@@ -541,13 +601,13 @@ namespace Orbital.Core.TrajectorySystem
             return value;
         }
         
-        public static double CalculateEccentricAnomalyByTrue(double trueAnomaly, double eccentricity, double tolerance = 1e-6, int maxIterations = 100)
+        public static double CalculateEccentricAnomalyByTrue(double trueAnomaly, double Eccentricity, double tolerance = 1e-6, int maxIterations = 100)
         {
             double e = trueAnomaly; // Начальное приближение
 
             for (int i = 0; i < maxIterations; i++)
             {
-                double deltaE = (e + eccentricity * Math.Sin(e) - trueAnomaly) / (1 + eccentricity * Math.Cos(e));
+                double deltaE = (e + Eccentricity * Math.Sin(e) - trueAnomaly) / (1 + Eccentricity * Math.Cos(e));
                 e -= deltaE;
 
                 if (Math.Abs(deltaE) < tolerance)
@@ -560,18 +620,56 @@ namespace Orbital.Core.TrajectorySystem
             throw new Exception("Не удалось найти эксцентрическую аномалию с заданной точностью.");
         }
         
-        static double CalculateTrueAnomaly(double eccentricity, double eccentricAnomaly)
+        static double CalculateTrueAnomaly(double Eccentricity, double eccentricAnomaly)
         {
-            double trueAnomaly = 2 * Math.Atan2(Math.Sqrt(1 + eccentricity) * Math.Sin(eccentricAnomaly / 2), Math.Sqrt(1 - eccentricity) * Math.Cos(eccentricAnomaly / 2));
+            double trueAnomaly = 2 * Math.Atan2(Math.Sqrt(1 + Eccentricity) * Math.Sin(eccentricAnomaly / 2), Math.Sqrt(1 - Eccentricity) * Math.Cos(eccentricAnomaly / 2));
             return trueAnomaly;
         }
 
-         public void DrawGizmos()
+        public void DrawGizmosByT(double from, double to, DVector3 offset)
         {
-            int drawResolution = 20;
+            int drawResolution = 10;
             Color color = Color.black;
-            float scale = 1.470588E-07F;
+            float scale = 4.456328E-09F;
+            Vector3 scaledOffset = offset * scale;
+            if (Eccentricity < 1.0)
+            {
+                double delta = to - from;
+                if (delta > Period)
+                {
+                    DrawGizmos(offset);
+                    return;
+                }
+
+                double step = (delta / Period) * (360d / drawResolution);
+                for (double time = from; time < to; time += step)
+                {
+                    Vector3 positionFromTrueAnomaly1 = GetPositionAtT(time - Epoch);
+                    Vector3 positionFromTrueAnomaly2 = GetPositionAtT(time + step - Epoch);
+                    if (color == Color.black)
+                    {
+                        Debug.DrawLine(positionFromTrueAnomaly1 * scale + scaledOffset, positionFromTrueAnomaly2 * scale + scaledOffset, Color.Lerp(Color.yellow, Color.green, Mathf.InverseLerp((float) GetOrbitalSpeedAtDistance(PeR), (float) GetOrbitalSpeedAtDistance(ApR), (float) GetOrbitalSpeedAtPos(positionFromTrueAnomaly1))));
+                    }
+                    else
+                    {
+                        Debug.DrawLine(positionFromTrueAnomaly1 * scale + scaledOffset, positionFromTrueAnomaly2 * scale + scaledOffset, color);
+                    }
+                } 
+            }
+            else
+            {
+                
+            }
             
+        }
+
+        public void DrawGizmos(DVector3 offset)
+        {
+            int drawResolution = 10;
+            Color color = Color.black;
+            float scale = 4.456328E-09F;
+            Vector3 scaledOffset = offset * scale;
+
             if (Eccentricity < 1.0)
             {
                 for (double num = 0.0; num < 2.0 * Math.PI; num += drawResolution * (Math.PI / 180.0))
@@ -580,11 +678,11 @@ namespace Orbital.Core.TrajectorySystem
                     Vector3 positionFromTrueAnomaly2 = GetPositionFromTrueAnomaly((num + drawResolution * (Math.PI / 180.0)) % (2.0 * Math.PI));
                     if (color == Color.black)
                     {
-                        Debug.DrawLine(positionFromTrueAnomaly1 * scale, positionFromTrueAnomaly2 * scale, Color.Lerp(Color.yellow, Color.green, Mathf.InverseLerp((float) GetOrbitalSpeedAtDistance(PeR), (float) GetOrbitalSpeedAtDistance(ApR), (float) GetOrbitalSpeedAtPos(positionFromTrueAnomaly1))));
+                        Debug.DrawLine(positionFromTrueAnomaly1 * scale + scaledOffset, positionFromTrueAnomaly2 * scale + scaledOffset, Color.Lerp(Color.yellow, Color.green, Mathf.InverseLerp((float) GetOrbitalSpeedAtDistance(PeR), (float) GetOrbitalSpeedAtDistance(ApR), (float) GetOrbitalSpeedAtPos(positionFromTrueAnomaly1))));
                     }
                     else
                     {
-                        Debug.DrawLine(positionFromTrueAnomaly1 * scale, positionFromTrueAnomaly2 * scale, color);
+                        Debug.DrawLine(positionFromTrueAnomaly1 * scale + scaledOffset, positionFromTrueAnomaly2 * scale + scaledOffset, color);
                     }
                 }
             }
@@ -594,18 +692,18 @@ namespace Orbital.Core.TrajectorySystem
                 {
                     if (color == Color.black)
                     {
-                        Debug.DrawLine(GetPositionFromTrueAnomaly(tA) * scale, GetPositionFromTrueAnomaly(Math.Min(Math.Acos(-(1.0 / Eccentricity)), tA + drawResolution * (Math.PI / 180.0))) * scale, Color.green);
+                        Debug.DrawLine((Vector3)GetPositionFromTrueAnomaly(tA) * scale + scaledOffset, (Vector3)(GetPositionFromTrueAnomaly(Math.Min(Math.Acos(-(1.0 / Eccentricity)), tA + drawResolution * (Math.PI / 180.0))) * scale) + scaledOffset, Color.green);
                     }
                     else
-                        Debug.DrawLine(GetPositionFromTrueAnomaly(tA) * scale, GetPositionFromTrueAnomaly(Math.Min(Math.Acos(-(1.0 / Eccentricity)), tA + drawResolution * (Math.PI / 180.0))) * scale, color);
+                        Debug.DrawLine((Vector3)GetPositionFromTrueAnomaly(tA) * scale + scaledOffset, (Vector3)(GetPositionFromTrueAnomaly(Math.Min(Math.Acos(-(1.0 / Eccentricity)), tA + drawResolution * (Math.PI / 180.0))) * scale) + scaledOffset, color);
                 }
             }
 
-            Debug.DrawLine(GetPositionAtT(OrbitTime) * scale, Vector3.zero, Color.green);
+            Debug.DrawLine((Vector3)(GetPositionAtT(OrbitTime) * scale) + scaledOffset,  scaledOffset, Color.green);
             //Debug.DrawRay(getRelativePositionAtT(orbitTime)), new DVector3(vel.x, vel.z, vel.y) * 0.0099999997764825821, Color.white);
-            Debug.DrawLine(Vector3.zero, (An.XZY * Radius) * scale, Color.cyan);
-            Debug.DrawLine(Vector3.zero, GetPositionAtT(0.0) * scale, Color.magenta);
-            Debug.DrawRay(Vector3.zero, H.XZY * scale, Color.blue);
+            Debug.DrawLine(scaledOffset, (Vector3)((An.XZY * Radius) * scale) + scaledOffset, Color.cyan);
+            Debug.DrawLine(scaledOffset, (Vector3)(GetPositionAtT(0.0) * scale) + scaledOffset, Color.magenta);
+            Debug.DrawRay(scaledOffset, (Vector3)(H.XZY * scale) + scaledOffset, Color.blue);
         }
         
         public StaticTrajectory Clone()

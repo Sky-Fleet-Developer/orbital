@@ -11,10 +11,9 @@ namespace Orbital.Core
     {
         [SerializeField] private TreeContainer tree;
         [Inject] private DiContainer _container;
-        private bool _isLoaded = false;
         public void Load()
         {
-            if (_isLoaded)
+            if (tree.IsInitialized)
             {
                 if (Application.isPlaying)
                 {
@@ -22,7 +21,6 @@ namespace Orbital.Core
                 }
                 return;
             }
-            _isLoaded = true;
             tree.Load();
             tree.CalculateForRoot(transform);
             InjectHierarchy();
@@ -67,6 +65,42 @@ namespace Orbital.Core
         public DVector3 GetGlobalPosition(IMassSystem massSystem)
         {
             return tree.GetGlobalPosition(massSystem, TimeService.WorldTime);
+        }
+
+        public IStaticBody GetParentByWorldPosition(DVector3 worldPosition, double time)
+        {
+            bool Check(IStaticBody body, DVector3 relativePosition)
+            {
+                return relativePosition.Length() < MassUtility.GetGravityRadius(body.GravParameter);
+            }
+            
+            IEnumerable<IMassSystem> array = tree.Root.GetContent();
+            IMassSystem selected = tree.Root;
+            DVector3 position = worldPosition;
+            while (true)
+            {
+                IMassSystem next = null;
+                foreach (IMassSystem massSystem in array)
+                {
+                    var body = tree._componentPerMass[massSystem];
+                    DVector3 relativePosition = position - body.Trajectory.GetPositionAtT(time);
+                    if (Check(body, relativePosition))
+                    {
+                        position = relativePosition;
+                        next = massSystem;
+                        break;
+                    }
+                }
+
+                if (next == null)
+                {
+                    return tree._componentPerMass[selected];
+                }
+                else
+                {
+                    array = next.GetContent();
+                }
+            }
         }
 
         private void InjectHierarchy()

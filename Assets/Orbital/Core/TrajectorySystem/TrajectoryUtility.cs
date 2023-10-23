@@ -21,5 +21,9 @@ namespace Orbital.Core.TrajectorySystem
         {
             return tree.GetGlobalPosition(tree._massPerComponent[staticBody], time);
         }
+        
+        
+        
+        
     }
 }

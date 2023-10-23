@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Ara3D;
 using Orbital.Core.Utilities;
 using UnityEngine;
 
@@ -8,7 +9,7 @@ namespace Orbital.Core.TrajectorySystem
     public static class MassUtility
     {
         public const double G = 6.67430e-11;
-        private const double GravityEdgeInv = 1000;
+        private const double GravityEdgeInv = 50;
         public static double GetGravityRadius(double Nu)
         {
             return Math.Sqrt(Nu * GravityEdgeInv);
@@ -87,5 +88,25 @@ namespace Orbital.Core.TrajectorySystem
                 }
             }
         }
+        public static bool IsTrajectoryLeavesGravityRadius(IStaticTrajectory trajectory, IStaticBody body, out DVector3 leavePoint)
+        {
+            double gravityRadius = GetGravityRadius(body.GravParameter);
+            bool result = gravityRadius > trajectory.SemiMajorAxis;
+            if (result)
+            {
+                leavePoint = trajectory.GetPositionFromTrueAnomaly(trajectory.TrueAnomalyAtRadius(gravityRadius));
+                return true;
+            }
+            else
+            {
+                leavePoint = DVector3.Zero;
+                return false;
+            }
+        }
+        
+        /*public static bool CollideTrajectoryWithChildren(IStaticTrajectory trajectory, IStaticBody body, double time)
+        {
+            
+        }*/
     }
 }

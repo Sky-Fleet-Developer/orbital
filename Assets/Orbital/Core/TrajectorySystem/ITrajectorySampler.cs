@@ -36,7 +36,8 @@ namespace Orbital.Core.TrajectorySystem
         public void Calculate(TrajectorySettings settings);
         public void Calculate(DVector3 position, DVector3 velocity);
         public event Action WasChangedHandler;
-        public void DrawGizmos();
+        public void DrawGizmos(DVector3 offset);
+        public void DrawGizmosByT(double from, double to, DVector3 offset);
         public DVector3 GetPositionAtT(double T);
         public DVector3 GetPositionFromMeanAnomaly(double m);
         public DVector3 GetPositionFromEccAnomaly(double m);

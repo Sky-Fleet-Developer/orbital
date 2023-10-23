@@ -557,7 +557,7 @@ namespace Orbital.Core.KSPSource
 
         public DVector3 getPositionAtT(double T) => referenceBody.LocalPosition + getRelativePositionAtT(T).XZY;
         public DVector3 getRelativePositionAtT(double T) => getRelativePositionFromTrueAnomaly(GetTrueAnomaly(solveEccentricAnomaly(T * meanMotion, eccentricity)));
-        //public DVector3 getRelativePositionFromMeanAnomaly(double M) => this.getRelativePositionFromEccAnomaly(this.solveEccentricAnomaly(M, this.eccentricity, 1E-05));
+        //public DVector3 getRelativePositionFromMeanAnomaly(double M) => this.GetRelativePositionFromEccAnomaly(this.solveEccentricAnomaly(M, this.eccentricity, 1E-05));
         //public double TimeOfTrueAnomaly(double tA, double UT) => this.getUTAtMeanAnomaly(this.GetMeanAnomaly(this.GetEccentricAnomaly(tA)), UT);
         
         

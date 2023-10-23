@@ -39,8 +39,8 @@ namespace Orbital.Core
             set => _trajectory = value;
         }
 
-        public DVector3 Position => _world.GetGlobalPosition(this);
-        public DVector3 LocalPosition => _trajectory.GetSample(TimeService.WorldTime, true, false).position;
+        //public DVector3 Position => _world.GetGlobalPosition(this);
+        public DVector3 LocalPosition => _trajectory.GetPositionAtT(TimeService.WorldTime);
         
         public double Mass => _massSystem.Mass;
         public IStaticTrajectory Trajectory => _trajectory;

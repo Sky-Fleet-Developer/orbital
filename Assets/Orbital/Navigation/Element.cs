@@ -1,4 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
+using Newtonsoft.Json;
+using Sirenix.OdinInspector;
+using UnityEngine;
 
 namespace Orbital.Navigation
 {
@@ -21,10 +25,25 @@ namespace Orbital.Navigation
             }
             return null;
         }
-        
+        public void Reconstruct()
+        {
+            if(Next == null) return;
+            Next.Previous = this;
+            Next.Reconstruct();
+        }
+        public IEnumerable<Element> Enumerate()
+        {
+            yield return this;
+            var element = Next;
+            while (element != null)
+            {
+                yield return element;
+                element = element.Next;
+            }
+        }
         //// Dirty flag
         public bool IsDirty => _isSelfDirty || (Previous?.IsDirty ?? false);
-        private bool _isSelfDirty;
+        private bool _isSelfDirty = true;
         public void SetDirty()
         {
             if(IsDirty) return;
@@ -37,12 +56,22 @@ namespace Orbital.Navigation
             Refresh();
             Next?.CallRefresh();
         }
+
+        public Element GetFirstDirty()
+        {
+            if (_isSelfDirty) return this;
+            else if(Next != null)
+            {
+                return Next.GetFirstDirty();
+            }
+            return null;
+        }
         protected abstract void Refresh();
         protected virtual void OnSetDirty(){}
 
         //// Time position
-        private double _time;
-        public double Time
+        [JsonProperty] private double _time;
+        [JsonIgnore, ShowInInspector] public double Time
         {
             get => _time;
             set
