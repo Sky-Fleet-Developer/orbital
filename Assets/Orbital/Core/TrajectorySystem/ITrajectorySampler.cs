@@ -12,14 +12,21 @@ namespace Orbital.Core.TrajectorySystem
         public (DVector3 position, DVector3 velocity) GetSample(double time, bool positionRequired = true, bool velocityRequired = true);
     }
 
-    public interface IStaticTrajectory : ITrajectorySampler
+    public interface ITrajectoryRefSampler
+    {
+        public double GetOrbitalStateVectorsAtOrbitTime(double orbitTime, out DVector3 pos, out DVector3 vel);
+        public double GetOrbitalStateVectorsAtTrueAnomaly(double trueAnomaly, out DVector3 pos, out DVector3 vel);
+        public double Epoch { get; }
+    }
+    
+    public interface IStaticTrajectory : ITrajectorySampler, ITrajectoryRefSampler
     {
         public double Inclination {get;}
         public double Eccentricity {get;}
         public double SemiMajorAxis {get;}
         public double LongitudeAscendingNode {get;}
         public double ArgumentOfPeriapsis {get;}
-        public double Epoch {get;}
+        //double ITrajectoryRefSampler.Epoch {get;}
         public double SemiMinorAxis => SemiMajorAxis * Math.Sqrt(1 - Eccentricity * Eccentricity);
         public double Period { get; }
         public double PeR { get; }

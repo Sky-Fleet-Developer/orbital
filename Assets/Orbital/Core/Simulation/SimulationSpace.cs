@@ -93,11 +93,11 @@ namespace Orbital.Core.Simulation
         private void RefreshAnchorPosition()
         {
             Debug.Log("Refresh anchor position");
-            var sample = _anchor.TrajectorySampler.GetSample(TimeService.WorldTime);
+            /*var sample = _anchor.TrajectorySampler.GetSample(TimeService.WorldTime);
             DVector3 deltaPosition = sample.position - _trajectory.Position;
             DVector3 deltaVelocity = sample.velocity - _trajectory.Velocity;
             _simulationService.SimulationWasMoved(this, deltaPosition, deltaVelocity);
-            _trajectory.Place(sample.position, sample.velocity);
+            _trajectory.Place(sample.position, sample.velocity);*/
         }
         
         public DVector3 Position => _trajectory.Position;
@@ -113,11 +113,11 @@ namespace Orbital.Core.Simulation
 
         void IUpdateByFrequencyHandler.Update()
         {
-            double distSqr = (_trajectory.Position - _anchor.TrajectorySampler.GetSample(TimeService.WorldTime).position).LengthSquared();
+            /*double distSqr = (_trajectory.Position - _anchor.TrajectorySampler.GetSample(TimeService.WorldTime).position).LengthSquared();
             if (distSqr > _maxDistanceToAnchorSqr)
             {
                 RefreshAnchorPosition();
-            }
+            }*/
         }
         
     }

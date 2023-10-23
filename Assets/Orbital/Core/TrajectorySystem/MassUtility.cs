@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Orbital.Core.Utilities;
 using UnityEngine;
@@ -7,6 +8,11 @@ namespace Orbital.Core.TrajectorySystem
     public static class MassUtility
     {
         public const double G = 6.67430e-11;
+        private const double GravityEdgeInv = 1000;
+        public static double GetGravityRadius(double Nu)
+        {
+            return Math.Sqrt(Nu * GravityEdgeInv);
+        }
         
         public static Dictionary<IMassSystem, Transform> GetMap(this IMassSystem mRoot, Transform tRoot)
         {

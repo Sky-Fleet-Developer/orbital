@@ -17,8 +17,7 @@ namespace Orbital.Core.TrajectorySystem
             return result;
         }
 
-        public static DVector3 GetGlobalPosition(this TreeContainer tree, IStaticBody staticBody,
-            double time)
+        public static DVector3 GetGlobalPosition(this TreeContainer tree, IStaticBody staticBody, double time)
         {
             return tree.GetGlobalPosition(tree._massPerComponent[staticBody], time);
         }

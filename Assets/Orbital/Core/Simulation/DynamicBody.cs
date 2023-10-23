@@ -15,7 +15,7 @@ namespace Orbital.Core.Simulation
         [SerializeField] private DynamicBodyVariables variables;
         [SerializeField] private DynamicBodySettings settings;
         private World _world;
-        private Track _trajectoryTrack;
+        //private Track _trajectoryTrack;
         private IStaticTrajectory _trajectory;
         private IStaticBody _parent;
 
@@ -27,7 +27,6 @@ namespace Orbital.Core.Simulation
         private Task _trajectoryCalculation;
         private bool _isVelocityDirty;
         private bool _isTrajectoryCalculating;
-        private ITrajectorySampler _trajectorySampler;
         private bool _isInitialized;
 
         #region InterfaceImplementation
@@ -36,13 +35,8 @@ namespace Orbital.Core.Simulation
         public IStaticTrajectory Trajectory => _trajectory;
         public IStaticBody Parent => _parent;
         [ShowInInspector] public DynamicBodyMode Mode => _mode;
-        ITrajectorySampler IDynamicBody.TrajectorySampler => _trajectoryTrack;
+        ITrajectoryRefSampler IDynamicBody.TrajectorySampler => _trajectory;
         IDynamicBody IDynamicBodyAccessor.Self => this;
-        ITrajectorySampler IDynamicBodyAccessor.TrajectorySampler
-        {
-            get => _trajectorySampler;
-            set => _trajectorySampler = value;
-        }
         IStaticBody IDynamicBodyAccessor.Parent
         {
             get => _parent;
@@ -182,7 +176,7 @@ namespace Orbital.Core.Simulation
             _simulationSpace = simulationSpace;
             DVector3 origin = simulationSpace.Position;
             DVector3 originVelocity = simulationSpace.Velocity;
-            var sample = _trajectoryTrack.GetSample(TimeService.WorldTime);
+            var sample = _trajectory.GetSample(TimeService.WorldTime);
             Vector3 localPosition = sample.position - origin;
 
             _presentation = Instantiate(Settings.presentation, simulationSpace.Root);
@@ -207,23 +201,23 @@ namespace Orbital.Core.Simulation
 
         private async Task RefreshTrajectory()
         {
-            await FillTrajectory((DVector3) _presentation.Position + _simulationSpace.Position,
-                (DVector3) _presentation.Velocity + _simulationSpace.Velocity);
-            RefreshVariables();
+            //await FillTrajectory((DVector3) _presentation.Position + _simulationSpace.Position,
+               // (DVector3) _presentation.Velocity + _simulationSpace.Velocity);
+            //RefreshVariables();
         }
 
-        private Task FillTrajectory(DVector3 position, DVector3 velocity)
+       /* private Task FillTrajectory(DVector3 position, DVector3 velocity)
         {
             _trajectoryCalculation = FillTrajectoryRoutine(position, velocity);
             return _trajectoryCalculation;
-        }
+        }*/
 
-        private async Task FillTrajectoryRoutine(DVector3 position, DVector3 velocity)
+        /*private async Task FillTrajectoryRoutine(DVector3 position, DVector3 velocity)
         {
             //await _trajectoryRefreshScheduler.Schedule(() => IterativeSimulation.FillTrajectoryContainer(_trajectory, TimeService.WorldTime, position, velocity, _parent.MassSystem.Mass, targetAccuracy, nonuniformity));
             //_trajectory.SetDirty();
             _trajectoryTrack.ResetProgress();
-        }
+        }*/
         
         /*[Button]
         private void Simulate()
@@ -235,7 +229,7 @@ namespace Orbital.Core.Simulation
         private void RefreshVariables()
         {
             DynamicBodyVariables local = variables;
-            (local.position, local.velocity) = _trajectoryTrack.GetSample(TimeService.WorldTime);
+            //(local.position, local.velocity) = _trajectoryTrack.GetSample(TimeService.WorldTime);
             variables = local;
         }
     }

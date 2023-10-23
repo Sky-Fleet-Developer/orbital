@@ -103,7 +103,8 @@ namespace Orbital.Core.Simulation
             {
                 foreach (IDynamicBody component in _world.GetChildren(simulationSpace.Parent))
                 {
-                    double sqrDistanceInSpace = (component.TrajectorySampler.GetSample(TimeService.WorldTime).position - simulationSpace.Position).LengthSquared();
+                    component.TrajectorySampler.GetOrbitalStateVectorsAtOrbitTime(TimeService.WorldTime - component.TrajectorySampler.Epoch, out DVector3 position, out _);
+                    double sqrDistanceInSpace = (position - simulationSpace.Position).LengthSquared();
                     bool isInSimulation = IsInSimulation(component);
                     bool distanceCompare = sqrDistanceInSpace < _visibleDistanceSqr;
                     

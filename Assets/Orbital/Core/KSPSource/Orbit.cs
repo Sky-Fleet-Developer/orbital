@@ -137,7 +137,7 @@ namespace Orbital.Core.KSPSource
             }
         }
 
-        public double semiLatusRectum => h.LengthSquared() / referenceBody.gravParameter;
+        public double semiLatusRectum => h.LengthSquared() / referenceBody.GravParameter;
         public double PeR => (1.0 - eccentricity) * semiMajorAxis;
 
         public double ApR => (1.0 + eccentricity) * semiMajorAxis;
@@ -149,7 +149,7 @@ namespace Orbital.Core.KSPSource
         public double GetMeanMotion(double sma)
         {
             double num = Math.Abs(sma);
-            return Math.Sqrt(referenceBody.gravParameter / (num * num * num));
+            return Math.Sqrt(referenceBody.GravParameter / (num * num * num));
         }
 
         public void SetOrbit(
@@ -183,7 +183,7 @@ namespace Orbital.Core.KSPSource
             }
 
             eccVec = Planetarium.Zup.WorldToLocal(OrbitFrame.X * eccentricity);
-            double d = referenceBody.gravParameter * semiMajorAxis * (1.0 - eccentricity * eccentricity);
+            double d = referenceBody.GravParameter * semiMajorAxis * (1.0 - eccentricity * eccentricity);
             h = Planetarium.Zup.WorldToLocal(OrbitFrame.Z * Math.Sqrt(d));
             meanMotion = GetMeanMotion(semiMajorAxis);
             meanAnomaly = meanAnomalyAtEpoch;
@@ -265,7 +265,7 @@ namespace Orbital.Core.KSPSource
             double num1 = Math.Cos(tA);
             double num2 = Math.Sin(tA);
             double num3 = this.semiMajorAxis * (1.0 - this.eccentricity * this.eccentricity);
-            double num4 = Math.Sqrt(this.referenceBody.gravParameter / num3);
+            double num4 = Math.Sqrt(this.referenceBody.GravParameter / num3);
             double num5 = -num2 * num4;
             double num6 = (num1 + this.eccentricity) * num4;
             double vectorsAtTrueAnomaly = num3 / (1.0 + this.eccentricity * num1);
@@ -317,17 +317,17 @@ namespace Orbital.Core.KSPSource
 
             longitudeAscendingNode = Math.Atan2(an.y, an.x) * (180.0 / Math.PI);
             longitudeAscendingNode = (longitudeAscendingNode + 360.0) % 360.0;
-            eccVec = (DVector3.Dot(vel, vel) / refBody.gravParameter - 1.0 / pos.Length()) * pos -
-                     DVector3.Dot(pos, vel) * vel / refBody.gravParameter;
+            eccVec = (DVector3.Dot(vel, vel) / refBody.GravParameter - 1.0 / pos.Length()) * pos -
+                     DVector3.Dot(pos, vel) * vel / refBody.GravParameter;
             eccentricity = eccVec.Length();
-            orbitalEnergy = vel.LengthSquared() / 2.0 - refBody.gravParameter / pos.Length();
+            orbitalEnergy = vel.LengthSquared() / 2.0 - refBody.GravParameter / pos.Length();
             double num;
             if (eccentricity >= 1.0)
             {
                 num = -semiLatusRectum / (eccVec.LengthSquared() - 1.0);
             }
             else
-                num = -refBody.gravParameter / (2.0 * orbitalEnergy);
+                num = -refBody.GravParameter / (2.0 * orbitalEnergy);
 
             semiMajorAxis = num;
             if (eccentricity.Equals(0.0))
@@ -550,7 +550,7 @@ namespace Orbital.Core.KSPSource
                 return double.NaN;
             }
         }
-        public double getOrbitalSpeedAtDistance(double d) => Math.Sqrt(referenceBody.gravParameter * (2.0 / d - 1.0 / semiMajorAxis));
+        public double getOrbitalSpeedAtDistance(double d) => Math.Sqrt(referenceBody.GravParameter * (2.0 / d - 1.0 / semiMajorAxis));
         public double getOrbitalSpeedAtPos(DVector3 pos) => getOrbitalSpeedAtDistance((referenceBody.LocalPosition - pos).Length());
 
         public DVector3 getRelativePositionFromTrueAnomaly(double tA) => getPositionFromTrueAnomaly(tA, true);

@@ -460,10 +460,10 @@ namespace Orbital.Core.TrajectorySystem
             return GetOrbitalStateVectorsAtTrueAnomaly(TrueAnomalyAtT(orbitTime), out pos, out vel);
         }
 
-        public double GetOrbitalStateVectorsAtTrueAnomaly(double tA, out DVector3 pos, out DVector3 vel)
+        public double GetOrbitalStateVectorsAtTrueAnomaly(double trueAnomaly, out DVector3 pos, out DVector3 vel)
         {
-            double num1 = Math.Cos(tA);
-            double num2 = Math.Sin(tA);
+            double num1 = Math.Cos(trueAnomaly);
+            double num2 = Math.Sin(trueAnomaly);
             double num3 = SemiMajorAxis * (1.0 - Eccentricity * Eccentricity);
             double num4 = Math.Sqrt(Nu / num3);
             double num5 = -num2 * num4;

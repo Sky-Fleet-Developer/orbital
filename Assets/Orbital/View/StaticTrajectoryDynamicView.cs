@@ -109,7 +109,7 @@ namespace Orbital.View
                         _positions[i++] = _body.Trajectory.GetPositionFromTrueAnomaly(tA) * scale;
                     }*/
 
-                    /*float m = (float)Math.Sqrt(_body.Parent.gravParameter / 0.001);
+                    /*float m = (float)Math.Sqrt(_body.Parent.GravParameter / 0.001);
                     _positions[0] = _positions[0].normalized * m;
                     _positions[accuracy - 1] = _positions[accuracy - 1].normalized * m;*/
                 }
