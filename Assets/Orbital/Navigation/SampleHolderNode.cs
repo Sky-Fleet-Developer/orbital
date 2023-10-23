@@ -6,7 +6,7 @@ namespace Orbital.Navigation
 {
     public abstract class SampleHolderNode : Element
     {
-        [JsonIgnore] public abstract ITrajectoryRefSampler TrajectorySampler { get; }
+        [JsonIgnore] public abstract IStaticTrajectory Trajectory { get; }
         [JsonIgnore] public IStaticBody Celestial;
     }
 }

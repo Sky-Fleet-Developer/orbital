@@ -28,7 +28,7 @@ namespace Orbital.Navigation
             get => null;
             set { }
         }
-        public override ITrajectoryRefSampler TrajectorySampler => _trajectory;
+        public override IStaticTrajectory Trajectory => _trajectory;
         
         public PathRoot(){}
 

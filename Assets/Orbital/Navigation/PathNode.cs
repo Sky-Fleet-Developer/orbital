@@ -27,13 +27,13 @@ namespace Orbital.Navigation
             set => _previous = value;
         }
 
-        [JsonIgnore] public StaticTrajectory Trajectory = new StaticTrajectory();
-        [JsonIgnore] public override ITrajectoryRefSampler TrajectorySampler => Trajectory;
+        [JsonIgnore] private StaticTrajectory _trajectory = new StaticTrajectory();
+        [JsonIgnore] public override IStaticTrajectory Trajectory => _trajectory;
 
         protected override void Refresh()
         {
             SampleHolderNode prevSampler = GetParentOfType<SampleHolderNode>();
-            ITrajectoryRefSampler toSample = prevSampler.TrajectorySampler;
+            IStaticTrajectory toSample = prevSampler.Trajectory;
             toSample.GetOrbitalStateVectorsAtOrbitTime(Time - toSample.Epoch, out DVector3 position, out DVector3 velocity);
             IStaticBody prevNodeCelestial = prevSampler.Celestial;
 
@@ -48,7 +48,7 @@ namespace Orbital.Navigation
                 
             }
             
-            Trajectory.Calculate(position, velocity + _deltaVelocity);
+            _trajectory.Calculate(position, velocity + _deltaVelocity);
             
             
         }
