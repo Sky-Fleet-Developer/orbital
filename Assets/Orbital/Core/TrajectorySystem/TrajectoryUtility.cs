@@ -106,10 +106,10 @@ namespace Orbital.Core.TrajectorySystem
                 .LengthSquared() / tr.Nu;
             if (tr.Eccentricity < 1.0)
             {
-                r = Math.Min(Math.Max(tr.PeR, r), tr.ApR);
+                r = Math.Min(Math.Max(tr.Pericenter, r), tr.Apocenter);
             }
             else
-                r = Math.Max(tr.PeR, r);
+                r = Math.Max(tr.Pericenter, r);
 
             double num2 = tr.Eccentricity * r;
             return Math.Acos(num1 / num2 - 1.0 / tr.Eccentricity);

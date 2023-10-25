@@ -22,7 +22,7 @@ namespace Orbital.Core
                 return;
             }
             tree.Load();
-            tree.CalculateForRoot(transform);
+            tree.CalculateForRoot(transform, this);
             InjectHierarchy();
         }
 

@@ -57,7 +57,7 @@ namespace Orbital.WorldEditor
         {
             Quaternion handleRotationCorrection = Quaternion.Euler(-90, 0, 0);
             Matrix4x4 rotationMatrix = trajectory.RotationMatrix;
-            Matrix4x4 figureMatrix = Matrix4x4.TRS(new Vector3((float)((trajectory.PeR - trajectory.SemiMajorAxis) * scale), 0, 0), handleRotationCorrection, new Vector3((float)trajectory.SemiMajorAxis, (float)trajectory.SemiMinorAxis, 0) * scale);
+            Matrix4x4 figureMatrix = Matrix4x4.TRS(new Vector3((float)((trajectory.Pericenter - trajectory.SemiMajorAxis) * scale), 0, 0), handleRotationCorrection, new Vector3((float)trajectory.SemiMajorAxis, (float)trajectory.SemiMinorAxis, 0) * scale);
             Matrix4x4 worldMatrix = Matrix4x4.TRS(position, Quaternion.identity, Vector3.one);
             return worldMatrix * rotationMatrix * figureMatrix;
         }

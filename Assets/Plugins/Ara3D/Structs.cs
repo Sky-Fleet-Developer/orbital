@@ -305,6 +305,13 @@ namespace Ara3D
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)] public static DVector3 Cross(DVector3 a, DVector3 b) => new DVector3(a.y * b.z - a.z * b.y, a.z * b.x - a.x * b.z, a.x * b.y - a.y * b.x);
         [MethodImpl(MethodImplOptions.AggressiveInlining)] public static DVector3 Lerp(DVector3 a, DVector3 b, double t) => a + (b - a) * t;
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static DVector3 ProjectOnPlane(DVector3 value, DVector3 normal)
+        {
+	        DVector3 normalized = normal.Normalize();
+	        return value - Dot(value, normalized) * normalized;
+        }
         [MethodImpl(MethodImplOptions.AggressiveInlining)] public double Dot(DVector3 value) => Dot(this, value);
 		[MethodImpl(MethodImplOptions.AggressiveInlining)] public bool AlmostZero(float tolerance = Constants.Tolerance) => x.Abs() < tolerance && y.Abs() < tolerance && z.Abs() < tolerance;
 		[MethodImpl(MethodImplOptions.AggressiveInlining)] public bool AlmostEquals(DVector3 value, float tolerance = Constants.Tolerance) => (this - value).AlmostZero(tolerance);

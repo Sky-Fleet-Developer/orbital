@@ -1,4 +1,5 @@
-﻿using Ara3D;
+﻿using System.Collections.Generic;
+using Ara3D;
 using Orbital.Core.TrajectorySystem;
 
 namespace Orbital.Core
@@ -7,7 +8,8 @@ namespace Orbital.Core
     {
         public IMassSystem MassSystem { get; }
         public IStaticBody Parent { get; }
-        //public DVector3 Position { get; }
+        public IEnumerable<IStaticBody> Children { get; }
+        public DVector3 Position { get; }
         public DVector3 LocalPosition { get; }
         public IStaticTrajectory Trajectory { get; }
         double GravParameter => MassSystem.Mass * MassUtility.G;

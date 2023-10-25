@@ -48,7 +48,7 @@ namespace Orbital.Navigation
                 
             }
             
-            _trajectory.Calculate(position, velocity + _deltaVelocity);
+            _trajectory.Calculate(position, velocity + _deltaVelocity, Time);
             
             
         }

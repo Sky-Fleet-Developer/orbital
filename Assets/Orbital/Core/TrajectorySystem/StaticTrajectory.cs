@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace Orbital.Core.TrajectorySystem
 {
-    public class StaticTrajectory : ITrajectorySampler, IStaticTrajectory
+    public class StaticTrajectory : IStaticTrajectory
     {
         private const double Deg2Rad = 0.01745329;
         private const double Rad2Deg = 57.29578;
@@ -57,9 +57,9 @@ namespace Orbital.Core.TrajectorySystem
 
         public double Nu => _other.Mass * MassUtility.G;
         public double SemiLatusRectum => H.LengthSquared() / Nu;
-        public double PeR => (1.0 - Eccentricity) * SemiMajorAxis;
+        public double Pericenter => (1.0 - Eccentricity) * SemiMajorAxis;
 
-        public double ApR => (1.0 + Eccentricity) * SemiMajorAxis;
+        public double Apocenter => (1.0 + Eccentricity) * SemiMajorAxis;
         
         public double GetMeanMotion(double sma)
         {
@@ -124,13 +124,14 @@ namespace Orbital.Core.TrajectorySystem
             Init();
         }
         
-        public void Calculate(TrajectorySettings settings)
+        public void Calculate(TrajectorySettings settings, double epoch)
         {
-            SetOrbit(settings.inclination * Deg2Rad, settings.eccentricity, settings.semiMajorAxis, settings.longitudeAscendingNode * Deg2Rad, settings.argumentOfPeriapsis * Deg2Rad, 0, settings.timeShift);
+            SetOrbit(settings.inclination * Deg2Rad, settings.eccentricity, settings.semiMajorAxis, settings.longitudeAscendingNode * Deg2Rad, settings.argumentOfPeriapsis * Deg2Rad, 0, epoch);
         }
         
-        public void Calculate(DVector3 position, DVector3 velocity)
+        public void Calculate(DVector3 position, DVector3 velocity, double epoch)
         {
+            Epoch = epoch;
             UpdateFromFixedVectors(position, velocity);
             if (!double.IsNaN(ArgumentOfPeriapsis))
                 return;
@@ -310,7 +311,7 @@ namespace Orbital.Core.TrajectorySystem
                     Vector3 positionFromTrueAnomaly2 = this.GetPositionAtT(time + step - Epoch);
                     if (color == Color.black)
                     {
-                        Debug.DrawLine(positionFromTrueAnomaly1 * scale + scaledOffset, positionFromTrueAnomaly2 * scale + scaledOffset, Color.Lerp(Color.yellow, Color.green, Mathf.InverseLerp((float) this.GetOrbitalSpeedAtDistance(PeR), (float) this.GetOrbitalSpeedAtDistance(ApR), (float) this.GetOrbitalSpeedAtPos(positionFromTrueAnomaly1))));
+                        Debug.DrawLine(positionFromTrueAnomaly1 * scale + scaledOffset, positionFromTrueAnomaly2 * scale + scaledOffset, Color.Lerp(Color.yellow, Color.green, Mathf.InverseLerp((float) this.GetOrbitalSpeedAtDistance(Pericenter), (float) this.GetOrbitalSpeedAtDistance(Apocenter), (float) this.GetOrbitalSpeedAtPos(positionFromTrueAnomaly1))));
                     }
                     else
                     {
@@ -340,7 +341,7 @@ namespace Orbital.Core.TrajectorySystem
                     Vector3 positionFromTrueAnomaly2 = this.GetPositionFromTrueAnomaly((num + drawResolution * (Math.PI / 180.0)) % (2.0 * Math.PI));
                     if (color == Color.black)
                     {
-                        Debug.DrawLine(positionFromTrueAnomaly1 * scale + scaledOffset, positionFromTrueAnomaly2 * scale + scaledOffset, Color.Lerp(Color.yellow, Color.green, Mathf.InverseLerp((float) this.GetOrbitalSpeedAtDistance(PeR), (float) this.GetOrbitalSpeedAtDistance(ApR), (float) this.GetOrbitalSpeedAtPos(positionFromTrueAnomaly1))));
+                        Debug.DrawLine(positionFromTrueAnomaly1 * scale + scaledOffset, positionFromTrueAnomaly2 * scale + scaledOffset, Color.Lerp(Color.yellow, Color.green, Mathf.InverseLerp((float) this.GetOrbitalSpeedAtDistance(Pericenter), (float) this.GetOrbitalSpeedAtDistance(Apocenter), (float) this.GetOrbitalSpeedAtPos(positionFromTrueAnomaly1))));
                     }
                     else
                     {

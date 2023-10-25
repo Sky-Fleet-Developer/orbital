@@ -67,7 +67,7 @@ namespace Orbital.Core.Simulation
             }
             #endif
             _world.RegisterRigidBody(this);
-            _trajectory.Calculate(variables.position, variables.velocity);
+            _trajectory.Calculate(variables.position, variables.velocity, TimeService.WorldTime);
         }
 
         private void OnValidate()

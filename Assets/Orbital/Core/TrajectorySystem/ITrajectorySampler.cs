@@ -27,11 +27,11 @@ namespace Orbital.Core.TrajectorySystem
         double Epoch { get; }
         public double SemiMinorAxis => SemiMajorAxis * Math.Sqrt(1 - Eccentricity * Eccentricity);
         public double Period { get; }
-        public double PeR { get; }
-        public double ApR { get; }
+        public double Pericenter { get; }
+        public double Apocenter { get; }
         public DMatrix4x4 RotationMatrix { get; }
-        public void Calculate(TrajectorySettings settings);
-        public void Calculate(DVector3 position, DVector3 velocity);
+        public void Calculate(TrajectorySettings settings, double epoch);
+        public void Calculate(DVector3 position, DVector3 velocity, double epoch);
         public event Action WasChangedHandler;
         public void DrawGizmos(DVector3 offset);
         public void DrawGizmosByT(double from, double to, DVector3 offset);

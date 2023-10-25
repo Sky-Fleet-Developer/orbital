@@ -62,7 +62,7 @@ namespace Orbital.View
         {
             Vector3 right = _body.Trajectory.RotationMatrix.Right();
             Vector3 up = _body.Trajectory.RotationMatrix.Up();
-            var pos = _body.LocalPosition;
+            var pos = _body.Position;
             _viewTransform.localPosition = ((Vector3) (pos) - right * (float) _body.Trajectory.SemiMajorAxis) * scale;
             _viewTransform.rotation = Quaternion.LookRotation(right, up);
             _viewTransform.localScale = new Vector3((float) _body.Trajectory.SemiMinorAxis * scale, 1,

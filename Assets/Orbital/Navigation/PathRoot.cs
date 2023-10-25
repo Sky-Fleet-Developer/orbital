@@ -40,7 +40,7 @@ namespace Orbital.Navigation
 
         protected override void Refresh()
         {
-            _trajectory.Calculate(position, velocity);
+            _trajectory.Calculate(position, velocity, Time);
         }
         
         public void AddElement(Element element)

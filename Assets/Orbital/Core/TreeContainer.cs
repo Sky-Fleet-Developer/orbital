@@ -19,7 +19,7 @@ namespace Orbital.Core
         [JsonIgnore] internal Dictionary<IMassSystem, IStaticBody> _componentPerMass { get; private set; }
         [JsonIgnore] internal Dictionary<IMassSystem, List<IDynamicBodyAccessor>> _children { get; private set; }
         [JsonIgnore] public Dictionary<IMassSystem, IMassSystem> _parents { get; private set; }
-
+        private World _world;
         [SerializeField, TextArea(minLines: 6, maxLines: 10)]
         private string serializedValue;
 
@@ -32,8 +32,9 @@ namespace Orbital.Core
             serializer.Populate(this, serializedValue);
         }
 
-        public void CalculateForRoot(Transform tRoot)
+        public void CalculateForRoot(Transform tRoot, World world)
         {
+            _world = world;
             CreateCache();
             if (Root == null) return;
             Root.FillTrajectoriesRecursively(_trajectories);
@@ -77,11 +78,12 @@ namespace Orbital.Core
                     {
                         if (child != mRoot)
                         {
-                            value.Parent = _componentPerMass[mRoot];
+                            value.Parent = _componentPerMass[_parents[child]];
                         }
 
                         value.Trajectory = trajectory;
                         value.MassSystem = child;
+                        value.World = _world;
                     }
                 }
             }
