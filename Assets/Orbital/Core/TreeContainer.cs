@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Newtonsoft.Json;
 using Orbital.Core.Serialization;
 using Orbital.Core.Simulation;
@@ -16,8 +17,9 @@ namespace Orbital.Core
         [JsonIgnore] public Dictionary<IMassSystem, Transform> _transforms { get; private set; }
         [JsonIgnore] public Dictionary<IMassSystem, IStaticTrajectory> _trajectories { get; private set; }
         [JsonIgnore] internal Dictionary<IStaticBody, IMassSystem> _massPerComponent { get; private set; }
-        [JsonIgnore] internal Dictionary<IMassSystem, IStaticBody> _componentPerMass { get; private set; }
-        [JsonIgnore] internal Dictionary<IMassSystem, List<IDynamicBodyAccessor>> _children { get; private set; }
+        [JsonIgnore] internal Dictionary<IMassSystem, IStaticBodyAccessor> _componentPerMass { get; private set; }
+        [JsonIgnore] internal Dictionary<IMassSystem, List<IDynamicBodyAccessor>> _dynamicChildren { get; private set; }
+        [JsonIgnore] internal Dictionary<IMassSystem, IMassSystem[]> _staticChildren { get; private set; }
         [JsonIgnore] public Dictionary<IMassSystem, IMassSystem> _parents { get; private set; }
         private World _world;
         [SerializeField, TextArea(minLines: 6, maxLines: 10)]
@@ -41,7 +43,7 @@ namespace Orbital.Core
             ReconstructHierarchy(Root, tRoot);
             foreach (IMassSystem massSystem in _transforms.Keys)
             {
-                _children.Add(massSystem, new List<IDynamicBodyAccessor>());
+                _dynamicChildren.Add(massSystem, new List<IDynamicBodyAccessor>());
             }
         }
 
@@ -49,15 +51,16 @@ namespace Orbital.Core
         {
             _trajectories = new Dictionary<IMassSystem, IStaticTrajectory>();
             _massPerComponent = new Dictionary<IStaticBody, IMassSystem>();
-            _componentPerMass = new Dictionary<IMassSystem, IStaticBody>();
-            _children = new Dictionary<IMassSystem, List<IDynamicBodyAccessor>>();
+            _componentPerMass = new Dictionary<IMassSystem, IStaticBodyAccessor>();
+            _dynamicChildren = new Dictionary<IMassSystem, List<IDynamicBodyAccessor>>();
+            _staticChildren = new Dictionary<IMassSystem, IMassSystem[]>();
             _parents = new Dictionary<IMassSystem, IMassSystem>();
         }
 
         internal void AddRigidbody(IDynamicBodyAccessor component)
         {
             var parent = _massPerComponent[component.Parent];
-            List<IDynamicBodyAccessor> list = _children[parent];
+            List<IDynamicBodyAccessor> list = _dynamicChildren[parent];
             if (!list.Contains(component))
             {
                 list.Add(component);
@@ -70,21 +73,21 @@ namespace Orbital.Core
             void SetupMassComponent(IMassSystem child)
             {
                 if (child == null) return;
+                _staticChildren.Add(child, child.GetContent().ToArray());
                 if (_transforms[child].TryGetComponent(out IStaticBodyAccessor value))
                 {
                     _massPerComponent.TryAdd(value.Self, child);
-                    _componentPerMass.TryAdd(child, value.Self);
+                    _componentPerMass.TryAdd(child, value);
+                    if (child != mRoot)
+                    {
+                        value.Parent = _componentPerMass[_parents[child]].Self;
+                    }
                     if (_trajectories.TryGetValue(child, out IStaticTrajectory trajectory))
                     {
-                        if (child != mRoot)
-                        {
-                            value.Parent = _componentPerMass[_parents[child]];
-                        }
-
                         value.Trajectory = trajectory;
-                        value.MassSystem = child;
-                        value.World = _world;
                     }
+                    value.MassSystem = child;
+                    value.World = _world;
                 }
             }
 
@@ -102,6 +105,15 @@ namespace Orbital.Core
             foreach (IMassSystem mass in mRoot.GetRecursively())
             {
                 SetupMassComponent(mass);
+            }
+            foreach (KeyValuePair<IMassSystem, IMassSystem[]> kv in _staticChildren)
+            {
+                if (_componentPerMass.TryGetValue(kv.Key, out IStaticBodyAccessor component))
+                {
+                    component.Children = kv.Value
+                        .Select(x => _componentPerMass.TryGetValue(x, out IStaticBodyAccessor value) ? value.Self : null)
+                        .Where(x => x != null).ToArray();
+                }
             }
         }
 

@@ -15,6 +15,7 @@ public class TrajectoryTest : MonoBehaviour
     private IStaticBody _parent;
     private World _world;
 
+    public bool needSample;
     public StaticTrajectory Trajectory;
     public DVector3 pos;
     public DVector3 vel;
@@ -22,6 +23,7 @@ public class TrajectoryTest : MonoBehaviour
     public double testD;
     public double t;
     public double epoch;
+    public double testEpoch;
     private const float scale = 4.456328E-09F;
     void Refresh()
     {
@@ -30,14 +32,19 @@ public class TrajectoryTest : MonoBehaviour
         _world = GetComponentInParent<World>();
         _world.Load();
         Trajectory = new StaticTrajectory(_parent.MassSystem);
+        if (needSample)
+        {
+            _body.Trajectory.GetOrbitalStateVectorsAtOrbitTime(0, out pos, out vel);
+        }
         Trajectory.Calculate(pos, vel, epoch);
     }
 
     private void OnValidate()
     {
-        Trajectory.Calculate(pos, vel, epoch);
-        Vector3 scaledPos = _parent.LocalPosition * scale;
-        t = MassUtility.GetClosestPointTime(Trajectory, _body.Trajectory, 0, scaledPos, scale);
+        Refresh();
+        //Vector3 scaledPos = _parent.LocalPosition * scale;
+       // double gravityRadius = MassUtility.GetGravityRadius(_body.GravParameter);
+        //t = MassUtility.GetClosestPointTimeForDistance(Trajectory, _body.Trajectory, gravityRadius, 0, out double distance);
     }
 
     void Update()
@@ -55,13 +62,21 @@ public class TrajectoryTest : MonoBehaviour
         if(!enabled) return;
         Handles.color = Color.green * 0.7f;
         Vector3 scaledPos = _parent.LocalPosition * scale;
-        Debug.DrawLine(scaledPos, scaledPos + (Vector3)Trajectory.GetPositionAtT(t - Trajectory.Epoch) * scale, Color.cyan);
-        Debug.DrawLine(scaledPos, scaledPos + (Vector3)_body.Trajectory.GetPositionAtT(t - _body.Trajectory.Epoch) * scale, Color.cyan);
-        var a = (Vector3) Trajectory.GetPositionAtT(testT - Trajectory.Epoch) * scale;
-        var b = (Vector3) _body.Trajectory.GetPositionAtT(testT - _body.Trajectory.Epoch) * scale;
-        Debug.DrawLine(scaledPos, scaledPos + a, Color.magenta);
-        Debug.DrawLine(scaledPos, scaledPos + b, Color.magenta);
-        testD = (a - b).magnitude;
-        Trajectory.DrawGizmos(_parent.LocalPosition);
+        var a = (Vector3) Trajectory.GetPositionAtT(t) * scale;
+        //var b = (Vector3) _body.Trajectory.GetPositionAtT(t - _body.Trajectory.Epoch) * scale;
+        Debug.DrawLine(scaledPos, scaledPos + a, Color.cyan);
+        //Debug.DrawLine(scaledPos, scaledPos + b, Color.cyan);
+        var at = (Vector3) Trajectory.GetPositionAtT(testEpoch) * scale;
+        //var bt = (Vector3) _body.Trajectory.GetPositionAtT(testEpoch - _body.Trajectory.Epoch) * scale;
+        Debug.DrawLine(scaledPos, scaledPos + at, Color.magenta);
+        Debug.DrawRay(pos * scale, vel * 0.005f, Color.red);
+        //Debug.DrawLine(scaledPos, scaledPos + bt, Color.magenta);
+        //var d = Quaternion.LookRotation(a - b, Vector3.up) * Quaternion.Euler(90, 0, 0);
+        //Handles.CircleHandleCap(-1, scaledPos + b, d, (float)MassUtility.GetGravityRadius(_body.GravParameter) * scale, EventType.Repaint);
+        Handles.color = Color.magenta * 0.7f;
+        //var dt = Quaternion.LookRotation(at - bt, Vector3.up) * Quaternion.Euler(90, 0, 0);
+        //Handles.CircleHandleCap(-1, scaledPos + bt, dt, (float)MassUtility.GetGravityRadius(_body.GravParameter) * scale, EventType.Repaint);
+        //testD = (a - b).magnitude / scale;
+        Trajectory.DrawGizmos(_parent.LocalPosition + DVector3.up * 10000);
     }
 }

@@ -76,7 +76,7 @@ namespace Orbital.Navigation
             get => _time;
             set
             {
-                _time = Math.Max(Previous._time, value);
+                _time = Math.Max(Previous?._time ?? 0, value);
                 if (Next != null)
                 {
                     _time = Math.Min(Next._time, _time);

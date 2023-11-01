@@ -28,7 +28,7 @@ namespace Orbital.Core
 
         public IEnumerable<IDynamicBody> GetChildren(IStaticBody parent)
         {
-            foreach (IDynamicBodyAccessor dynamicBodyAccessor in tree._children[tree._massPerComponent[parent]])
+            foreach (IDynamicBodyAccessor dynamicBodyAccessor in tree._dynamicChildren[tree._massPerComponent[parent]])
             {
                 yield return dynamicBodyAccessor.Self;
             }
@@ -36,7 +36,7 @@ namespace Orbital.Core
         
         public IEnumerable<IDynamicBody> GetChildren(IMassSystem parent)
         {
-            foreach (IDynamicBodyAccessor dynamicBodyAccessor in tree._children[parent])
+            foreach (IDynamicBodyAccessor dynamicBodyAccessor in tree._dynamicChildren[parent])
             {
                 yield return dynamicBodyAccessor.Self;
             }
@@ -69,9 +69,9 @@ namespace Orbital.Core
 
         public IStaticBody GetParentByWorldPosition(DVector3 worldPosition, double time)
         {
-            bool Check(IStaticBody body, DVector3 relativePosition)
+            bool Check(IStaticBodyAccessor body, DVector3 relativePosition)
             {
-                return relativePosition.Length() < MassUtility.GetGravityRadius(body.GravParameter);
+                return relativePosition.Length() < MassUtility.GetGravityRadius(body.Self.GravParameter);
             }
             
             IEnumerable<IMassSystem> array = tree.Root.GetContent();
@@ -94,7 +94,7 @@ namespace Orbital.Core
 
                 if (next == null)
                 {
-                    return tree._componentPerMass[selected];
+                    return tree._componentPerMass[selected].Self;
                 }
                 else
                 {

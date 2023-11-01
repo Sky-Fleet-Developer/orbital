@@ -12,16 +12,22 @@ namespace Orbital.Navigation
     public class PathNode : SampleHolderNode
     {
         [JsonProperty, ShowInInspector] private DVector3 _deltaVelocity;
-        
-        
+
+
         [JsonProperty, ShowInInspector] private Element _next;
-        [JsonIgnore] public override Element Next
+        [JsonIgnore, ShowInInspector] private OrbitExodus _exodus;
+
+        [JsonIgnore]
+        public override Element Next
         {
             get => _next;
             set => _next = value;
         }
+
         [JsonIgnore] private Element _previous;
-        [JsonIgnore] public override Element Previous
+
+        [JsonIgnore]
+        public override Element Previous
         {
             get => _previous;
             set => _previous = value;
@@ -34,23 +40,37 @@ namespace Orbital.Navigation
         {
             SampleHolderNode prevSampler = GetParentOfType<SampleHolderNode>();
             IStaticTrajectory toSample = prevSampler.Trajectory;
-            toSample.GetOrbitalStateVectorsAtOrbitTime(Time - toSample.Epoch, out DVector3 position, out DVector3 velocity);
-            IStaticBody prevNodeCelestial = prevSampler.Celestial;
+            _exodus = MassUtility.GetOrbitExodus(toSample, prevSampler.Celestial, prevSampler.Time, out _, out double exodusTime, out Celestial);
+            if (_exodus != OrbitExodus.Cycle)
+            {
+                Time = exodusTime;
+            }
 
-            double radius = MassUtility.GetGravityRadius(prevNodeCelestial.GravParameter);
-            if (position.Length() > radius)
+            toSample.GetOrbitalStateVectorsAtOrbitTime(Time, out DVector3 position, out DVector3 velocity);
+
+            switch (_exodus)
             {
-                Celestial = prevNodeCelestial.Parent;
-                position += Celestial.Trajectory.GetPositionAtT(Time - toSample.Epoch);
+                case OrbitExodus.Leave:
+                {
+                    prevSampler.Celestial.Trajectory.GetOrbitalStateVectorsAtOrbitTime(Time, out DVector3 pos, out DVector3 vel);
+                    position += pos;
+                    velocity += vel;
+                    float scale = 4.456328E-09F;
+                    Debug.DrawRay(position * scale, velocity * 0.001f, Color.blue, 5);
+                }
+                    break;
+                case OrbitExodus.Entry:
+                {
+                    Celestial.Trajectory.GetOrbitalStateVectorsAtOrbitTime(Time, out DVector3 pos, out DVector3 vel);
+                    position -= pos;
+                    velocity -= vel;
+                }
+                    break;
             }
-            else
-            {
-                
-            }
-            
+
+            _trajectory.Nu = Celestial.GravParameter;
             _trajectory.Calculate(position, velocity + _deltaVelocity, Time);
-            
-            
+            Debug.Log($"{position} : {_trajectory.GetPositionAtT(Time)}");
         }
     }
 }

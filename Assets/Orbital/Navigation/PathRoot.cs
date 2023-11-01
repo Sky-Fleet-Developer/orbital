@@ -14,7 +14,6 @@ namespace Orbital.Navigation
         [JsonProperty] public DVector3 position;
         [JsonProperty] public DVector3 velocity;
 
-        [JsonIgnore] private IStaticBody _parent;
         [JsonIgnore, NonSerialized] public World World;
         [JsonIgnore] private StaticTrajectory _trajectory;
         [JsonProperty, ShowInInspector] private PathNode _next;
@@ -34,7 +33,7 @@ namespace Orbital.Navigation
 
         public void Init(World world, IStaticBody parent)
         {
-            _parent = parent;
+            Celestial = parent;
             _trajectory = new StaticTrajectory(parent.MassSystem);
         }
 
@@ -54,7 +53,7 @@ namespace Orbital.Navigation
 
         public void RefreshDirty()
         {
-            _next.GetFirstDirty()?.CallRefresh();
+            GetFirstDirty()?.CallRefresh();
         }
     }
 }

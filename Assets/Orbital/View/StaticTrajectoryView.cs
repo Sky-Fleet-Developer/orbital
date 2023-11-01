@@ -1,5 +1,6 @@
 using Ara3D;
 using Orbital.Core;
+using Orbital.Core.TrajectorySystem;
 using Sirenix.OdinInspector;
 #if UNITY_EDITOR
 using UnityEditor;
@@ -62,9 +63,10 @@ namespace Orbital.View
         {
             Vector3 right = _body.Trajectory.RotationMatrix.Right();
             Vector3 up = _body.Trajectory.RotationMatrix.Up();
-            var pos = _body.Position;
-            _viewTransform.localPosition = ((Vector3) (pos) - right * (float) _body.Trajectory.SemiMajorAxis) * scale;
-            _viewTransform.rotation = Quaternion.LookRotation(right, up);
+            Vector3 fwd = _body.Trajectory.RotationMatrix.Forward();
+            var pos = _body.Trajectory.GetPositionFromTrueAnomaly(0);
+            _viewTransform.localPosition = ((Vector3) (pos) - fwd * (float) _body.Trajectory.SemiMajorAxis) * scale;
+            _viewTransform.rotation = Quaternion.LookRotation(fwd, up);
             _viewTransform.localScale = new Vector3((float) _body.Trajectory.SemiMinorAxis * scale, 1,
                 (float) _body.Trajectory.SemiMajorAxis * scale);
         }

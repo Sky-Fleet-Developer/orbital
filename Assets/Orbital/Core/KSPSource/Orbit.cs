@@ -437,7 +437,7 @@ namespace Orbital.Core.KSPSource
                 return E;
             }
         }
-        public DVector3 getPositionFromTrueAnomaly(double tA) => referenceBody.LocalPosition + getRelativePositionFromTrueAnomaly(tA).XZY;
+        public DVector3 getPositionFromTrueAnomaly(double tA) => referenceBody.LocalPosition + getRelativePositionFromTrueAnomaly(tA);
 
         public DVector3 getPositionFromTrueAnomaly(double tA, bool worldToLocal)
         {
@@ -555,7 +555,7 @@ namespace Orbital.Core.KSPSource
 
         public DVector3 getRelativePositionFromTrueAnomaly(double tA) => getPositionFromTrueAnomaly(tA, true);
 
-        public DVector3 getPositionAtT(double T) => referenceBody.LocalPosition + getRelativePositionAtT(T).XZY;
+        public DVector3 getPositionAtT(double T) => referenceBody.LocalPosition + getRelativePositionAtT(T);
         public DVector3 getRelativePositionAtT(double T) => getRelativePositionFromTrueAnomaly(GetTrueAnomaly(solveEccentricAnomaly(T * meanMotion, eccentricity)));
         //public DVector3 getRelativePositionFromMeanAnomaly(double M) => this.GetRelativePositionFromEccAnomaly(this.solveEccentricAnomaly(M, this.eccentricity, 1E-05));
         //public double TimeOfTrueAnomaly(double tA, double UT) => this.getUTAtMeanAnomaly(this.GetMeanAnomaly(this.GetEccentricAnomaly(tA)), UT);
@@ -597,9 +597,9 @@ namespace Orbital.Core.KSPSource
 
             Debug.DrawLine(ScaledSpace.LocalToScaledSpace(getPositionAtT(ObT)), ScaledSpace.LocalToScaledSpace(referenceBody.LocalPosition), Color.green);
             Debug.DrawRay(ScaledSpace.LocalToScaledSpace(getPositionAtT(ObT)), new DVector3(vel.x, vel.z, vel.y) * 0.0099999997764825821, Color.white);
-            Debug.DrawLine(ScaledSpace.LocalToScaledSpace(referenceBody.LocalPosition), ScaledSpace.LocalToScaledSpace(referenceBody.LocalPosition + (an.XZY * radius)), Color.cyan);
+            Debug.DrawLine(ScaledSpace.LocalToScaledSpace(referenceBody.LocalPosition), ScaledSpace.LocalToScaledSpace(referenceBody.LocalPosition + (an * radius)), Color.cyan);
             Debug.DrawLine(ScaledSpace.LocalToScaledSpace(referenceBody.LocalPosition), ScaledSpace.LocalToScaledSpace(getPositionAtT(0.0)), Color.magenta);
-            Debug.DrawRay(ScaledSpace.LocalToScaledSpace(referenceBody.LocalPosition), ScaledSpace.LocalToScaledSpace(h.XZY), Color.blue);
+            Debug.DrawRay(ScaledSpace.LocalToScaledSpace(referenceBody.LocalPosition), ScaledSpace.LocalToScaledSpace(h), Color.blue);
         }
     }
 }

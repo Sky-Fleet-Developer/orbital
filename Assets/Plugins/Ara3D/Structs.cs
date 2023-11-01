@@ -258,7 +258,6 @@ namespace Ara3D
 		[DataMember, HorizontalGroup("gr", LabelWidth = 20)]
 		public double z;
 		[MethodImpl(MethodImplOptions.AggressiveInlining)] public DVector3(double x, double y, double z) { this.x = x; this.y = y; this.z = z; }
-		public DVector3 XZY => new DVector3(x, z, y);
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)] public override bool Equals(object obj) => obj is DVector3 x && Equals(x);
 		[MethodImpl(MethodImplOptions.AggressiveInlining)] public override int GetHashCode() => Hash.Combine(x.GetHashCode(), y.GetHashCode(), z.GetHashCode());

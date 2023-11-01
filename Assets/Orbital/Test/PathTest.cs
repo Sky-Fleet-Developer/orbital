@@ -2,8 +2,10 @@ using System;
 using Ara3D;
 using Orbital.Core;
 using Orbital.Core.Serialization;
+using Orbital.Core.TrajectorySystem;
 using Orbital.Navigation;
 using Sirenix.OdinInspector;
+using UnityEditor;
 using UnityEngine;
 
 namespace Orbital.Test
@@ -62,6 +64,8 @@ namespace Orbital.Test
             _world = GetComponentInParent<World>();
             _world.Load();
             _parent = GetComponentInParent<IStaticBody>();
+            _pathRoot.Init(_world, _parent);
+            _pathRoot.Reconstruct();
         }
 
         [Button]
@@ -77,17 +81,30 @@ namespace Orbital.Test
         [Button]
         public void Refresh()
         {
+            Init();
+            PathRoot.SetDirty();
             PathRoot.RefreshDirty();    
         }
 
         private void OnDrawGizmosSelected()
         {
+            float scale = 4.456328E-09F;
             foreach (Element element in _pathRoot.Enumerate())
             {
-                if (element is PathNode node)
+                if (element is SampleHolderNode node)
                 {
                     //DVector3 relativePosition = 
-                    //node.Trajectory.DrawGizmosByT(node.Previous.Time, node.Time, );
+                    //node.Trajectory.DrawGizmos(node.Celestial.Position);
+                    Handles.color = Color.green * 0.7f;
+                    Handles.CircleHandleCap(-1, node.Celestial.Position * scale, Quaternion.Euler(-90, 0, 0), (float) MassUtility.GetGravityRadius(node.Celestial.GravParameter) * scale, EventType.Repaint);
+                    if (node.Next == null)
+                    {
+                        node.Trajectory.DrawGizmosByT(node.Time, node.Time + 30000, node.Celestial.Position);
+                    }
+                    else
+                    {
+                        node.Trajectory.DrawGizmosByT(node.Time, node.Next.Time, node.Celestial.Position);
+                    }
                 }
             }
         }
