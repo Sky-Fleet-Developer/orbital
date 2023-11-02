@@ -1,9 +1,6 @@
 ﻿<#@ template language="C#" #>
-<#@ import namespace="System" #>
-<#@ import namespace="System.Text" #>
 <#@ import namespace="System.Collections.Generic" #>
 <#@ assembly name="System" #>
-<#@ import namespace="System.Reflection" #>
 <#
     List<string> registeredTypes = new List<string>
     {

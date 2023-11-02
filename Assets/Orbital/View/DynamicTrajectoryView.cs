@@ -41,7 +41,7 @@ namespace Orbital.View
                 _body.Init();
             }
             
-            _body.TrajectoryContainer.PathChangedHandler += Refresh;
+            //_body.Orbit.PathChangedHandler += Refresh;
 
             int searchIdx = transform.GetSiblingIndex() + 1;
             if (searchIdx < transform.parent.childCount)
@@ -67,12 +67,12 @@ namespace Orbital.View
 
         private void OnDisable()
         {
-            _body.TrajectoryContainer.PathChangedHandler -= Refresh;
+            //_body.Orbit.PathChangedHandler -= Refresh;
         }
 
         private void GenerateMesh()
         {
-            _mesh = new Mesh {name = "Trajectory line"};
+            _mesh = new Mesh {name = "Orbit line"};
             _mesh.MarkDynamic();
             _mesh.bounds = new Bounds(Vector3.zero, Vector3.one * 1000);
             
@@ -108,32 +108,32 @@ namespace Orbital.View
         private bool _isRefreshInProgress = false;
         private void Refresh(float scale)
         {
-            if(_isRefreshInProgress) return;
+            /*if(_isRefreshInProgress) return;
             _isRefreshInProgress = true;
-            int length = Math.Min(maxVertexCount, _body.TrajectoryContainer.Length);
+            int length = Math.Min(maxVertexCount, _body.Orbit.Length);
             CopyVerticesJob copy = new ()
             {
-                Marks = _body.TrajectoryContainer.Path,
+                Marks = _body.Orbit.Path,
                 Positions = new NativeArray<Vector3>(maxVertexCount, Allocator.TempJob),
                 Scale = scale
             };
             JobHandle copyHandler = copy.Schedule(length, 32);
-            int remains = maxVertexCount - _body.TrajectoryContainer.Length;
+            int remains = maxVertexCount - _body.Orbit.Length;
             if (remains > 0)
             {
                 ResetExcess reset = new()
                 {
                     Positions = new NativeArray<Vector3>(remains, Allocator.TempJob),
-                    Target = _body.TrajectoryContainer.Path[_body.TrajectoryContainer.Length - 1].Position * scale
+                    Target = _body.Orbit.Path[_body.Orbit.Length - 1].Position * scale
                 };
                 reset.Schedule(remains, 32).Complete();
-                _mesh.SetVertexBufferData(reset.Positions, 0, _body.TrajectoryContainer.Length, remains, 0, MeshUpdateFlags.DontValidateIndices | MeshUpdateFlags.DontResetBoneBounds | MeshUpdateFlags.DontRecalculateBounds);
+                _mesh.SetVertexBufferData(reset.Positions, 0, _body.Orbit.Length, remains, 0, MeshUpdateFlags.DontValidateIndices | MeshUpdateFlags.DontResetBoneBounds | MeshUpdateFlags.DontRecalculateBounds);
                 reset.Positions.Dispose();
             }
             copyHandler.Complete();
             _mesh.SetVertexBufferData(copy.Positions, 0, 0, length, 0, MeshUpdateFlags.DontValidateIndices | MeshUpdateFlags.DontResetBoneBounds | MeshUpdateFlags.DontRecalculateBounds);
             copy.Positions.Dispose();
-            _isRefreshInProgress = false;
+            _isRefreshInProgress = false;*/
         }
 
         private struct CopyVerticesJob : IJobParallelFor

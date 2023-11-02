@@ -1,6 +1,4 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using Ara3D;
 using Orbital.Core.TrajectorySystem;
 using Unity.Collections;
@@ -53,7 +51,7 @@ namespace Orbital.Core.Simulation
         }
     }
 
-    public class Track : ITrajectorySampler
+    public class Track : IOrbitSampler
     {
         private TrajectoryContainer _container;
         private Mark _lastMark;

@@ -15,6 +15,12 @@ namespace Orbital.Core.TrajectorySystem
             get => settings;
             set => settings = value;
         }
+
+        public bool IsSatellite(IMassSystem subSystem)
+        {
+            return Children.Contains(subSystem);
+        }
+
         public SingleCenterBranch()
         {
             Central = null;

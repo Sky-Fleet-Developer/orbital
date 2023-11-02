@@ -26,22 +26,22 @@ namespace Orbital.Core.TrajectorySystem
                 {
                     TrajectorySettings aSettings = ChildA.Settings;
                     aSettings.mass = value.aMass;
-                    aSettings.period = value.period;
-                    aSettings.latitudeShift = value.latitudeShift;
-                    aSettings.longitudeShift = value.longitudeShift;
+                    aSettings.eccentricity = value.eccentricity;
+                    aSettings.argumentOfPeriapsis = value.argumentOfPeriapsis;
+                    aSettings.longitudeAscendingNode = value.longitudeAscendingNode;
                     aSettings.inclination = value.inclination;
-                    aSettings.pericenterRadius = value.aPericenterRadius;
+                    aSettings.semiMajorAxis = value.aPericenterRadius;
                     aSettings.timeShift = value.timeShift;
                     ChildA.Settings = aSettings;
                 }
                 {
                     TrajectorySettings bSettings = ChildB.Settings;
                     bSettings.mass = value.bMass;
-                    bSettings.period = value.period;
-                    bSettings.latitudeShift = -value.latitudeShift;
-                    bSettings.longitudeShift = value.longitudeShift + 180;
-                    bSettings.inclination = -value.inclination;
-                    bSettings.pericenterRadius = value.aPericenterRadius * Mathf.Pow(value.aMass / value.bMass, 1.0f / 3.0f);
+                    bSettings.eccentricity = value.eccentricity;
+                    bSettings.argumentOfPeriapsis = value.argumentOfPeriapsis;
+                    bSettings.longitudeAscendingNode = value.longitudeAscendingNode + 180;
+                    bSettings.inclination = value.inclination;
+                    bSettings.semiMajorAxis = value.aPericenterRadius * Mathf.Pow(value.aMass / value.bMass, 1.0f / 3.0f);
                     bSettings.timeShift = value.timeShift;
                     ChildB.Settings = bSettings;
                 }
@@ -63,7 +63,10 @@ namespace Orbital.Core.TrajectorySystem
             yield return ChildA;
             yield return ChildB;
         }
-
+        public bool IsSatellite(IMassSystem subSystem)
+        {
+            return false;
+        }
         [JsonProperty] public IMassSystem ChildA;
         [JsonProperty] public IMassSystem ChildB;
     }

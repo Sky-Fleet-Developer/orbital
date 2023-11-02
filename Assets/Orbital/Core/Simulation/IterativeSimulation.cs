@@ -1,6 +1,4 @@
 using System;
-using System.Globalization;
-using System.IO;
 using Ara3D;
 using Orbital.Core.TrajectorySystem;
 using UnityEngine;
@@ -46,7 +44,7 @@ namespace Orbital.Core.Simulation
                 if (IsCycle)
                 {
                     _semiMajorAxisInv = 1 / SemiMajorAxis;
-                    Period = StaticTrajectory.GetPeriod(SemiMajorAxis, MassUtility.G, parentMass);
+                    Period = StaticOrbit.GetPeriod(SemiMajorAxis, MassUtility.G, parentMass);
                 }
                 else
                 {
@@ -192,11 +190,11 @@ namespace Orbital.Core.Simulation
             {
                 /*if (IsCycle)
                 {
-                    double b = StaticTrajectory.GetSemiMinorAxis(Eccentricity, SemiMajorAxis);
+                    double b = StaticOrbit.GetSemiMinorAxis(eccentricity, semiMajorAxis);
 
-                    double lApprox = Math.PI * Math.Sqrt(2 * (SemiMajorAxis * SemiMajorAxis + b * b));
+                    double lApprox = Math.PI * Math.Sqrt(2 * (semiMajorAxis * semiMajorAxis + b * b));
                     _step = lApprox / accuracy;
-                    _deltaTimeStep = Period / accuracy;
+                    _deltaTimeStep = period / accuracy;
                     double maxNonuniformity =
                         (MinimalDt - _deltaTimeStep) / (_step / initVelocity.Length() - _deltaTimeStep);
                     _nonuniformity = Math.Max(Math.Min(nonuniformity, maxNonuniformity), 1);

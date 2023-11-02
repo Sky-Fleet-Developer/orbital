@@ -7,10 +7,10 @@ namespace Orbital.Core.TrajectorySystem
     {
         public float aMass;
         public float bMass;
-        public float period;
+        public float eccentricity;
         public float aPericenterRadius;
-        public float latitudeShift;
-        public float longitudeShift;
+        public float argumentOfPeriapsis;
+        public float longitudeAscendingNode;
         public float inclination;
         public float timeShift;
     }

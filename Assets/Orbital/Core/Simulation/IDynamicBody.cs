@@ -1,5 +1,3 @@
-using System;
-using Ara3D;
 using Orbital.Core.TrajectorySystem;
 
 namespace Orbital.Core.Simulation
@@ -7,24 +5,17 @@ namespace Orbital.Core.Simulation
     public interface IDynamicBody
     {
         public IStaticBody Parent { get; }
-        public DynamicBodyMode Mode { get; }
-        public ITrajectorySampler TrajectorySampler { get; }
-        public IDynamicTrajectory TrajectoryContainer { get; }
-        public RigidbodyPresentation Presentation { get; }
-        public event Action<DynamicBodyMode> ModeChangedHandler;
+        public IStaticOrbit Orbit { get; }
         public void Init();
-        public void Present(SimulationSpace simulationSpace);
-        public void RemovePresent();
-        public void SetVelocityDirty();
-        public void SimulationWasMoved(DVector3 deltaPosition, DVector3 deltaVelocity);
+        /*public void Present();
+        public void RemovePresent();*/
     }
     
     internal interface IDynamicBodyAccessor
     {
         public IDynamicBody Self { get; }
         public IStaticBody Parent { get; set; }
-        public IDynamicTrajectory Trajectory { get; set; }
-        public ITrajectorySampler TrajectorySampler { get; set; }
+        public IStaticOrbit Orbit { get; set; }
 
     }
     

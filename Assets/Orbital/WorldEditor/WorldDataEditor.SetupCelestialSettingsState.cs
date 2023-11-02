@@ -34,28 +34,28 @@ namespace Orbital.WorldEditor
                     _settingsA.mass = EditorGUILayout.FloatField("Mass", _settingsB.mass);
                 }
                 
-                _settingsA.pericenterRadius = EditorGUILayout.FloatField("Pericenter", _settingsB.pericenterRadius);
-                _settingsA.pericenterSpeed = EditorGUILayout.FloatField("Speed", _settingsB.pericenterSpeed);
-                _settingsA.latitudeShift = EditorGUILayout.FloatField("Latitude", _settingsB.latitudeShift);
-                _settingsA.longitudeShift = EditorGUILayout.FloatField("Longitude", _settingsB.longitudeShift);
+                _settingsA.semiMajorAxis = EditorGUILayout.FloatField("Semi Major Axis", _settingsB.semiMajorAxis);
+                _settingsA.eccentricity = EditorGUILayout.FloatField("Eccentricity", _settingsB.eccentricity);
+                _settingsA.argumentOfPeriapsis = EditorGUILayout.FloatField("Argument Of Periapsis", _settingsB.argumentOfPeriapsis);
+                _settingsA.longitudeAscendingNode = EditorGUILayout.FloatField("Longitude Ascending Node", _settingsB.longitudeAscendingNode);
                 _settingsA.inclination = EditorGUILayout.FloatField("Inclination", _settingsB.inclination);
                 _settingsA.timeShift = EditorGUILayout.FloatField("Time", _settingsB.timeShift);
-                double m = Master._currentParent.Mass;
-                double e = StaticTrajectory.GetEccentricity(_settingsA.pericenterSpeed, _settingsA.pericenterRadius,
+                /*double m = Master._currentParent.Mass;
+                double e = StaticOrbit.GetEccentricity(_settingsA.eccentricity, _settingsA.semiMajorAxis,
                     m, MassUtility.G);
-                double a = StaticTrajectory.GetSemiMajorAxis(e, _settingsA.pericenterRadius);
-                double t = StaticTrajectory.GetPeriod(a, MassUtility.G, m);
-                GUILayout.Box($"Eccentricity: {e}");
+                double a = StaticOrbit.GetSemiMajorAxis(e, _settingsA.semiMajorAxis);
+                double t = StaticOrbit.GetPeriod(a, MassUtility.G, m);
+                GUILayout.Box($"eccentricity: {e}");
                 GUILayout.Box($"Semi major axis: {a}");
                 if (double.IsNaN(t))
                 {
-                    GUILayout.Box($"Period: NaN");
+                    GUILayout.Box($"period: NaN");
                 }
                 else
                 {
                     var ts = TimeSpan.FromSeconds((long) t);
-                    GUILayout.Box($"Period: {ts.Days} d, {ts.Hours} h, {ts.Minutes} m");
-                }
+                    GUILayout.Box($"period: {ts.Days} d, {ts.Hours} h, {ts.Minutes} m");
+                }*/
 
                 if (EditorGUI.EndChangeCheck())
                 {

@@ -69,7 +69,7 @@ namespace Orbital.WorldEditor
             {
                 _tree = new TreeContainer();
             }
-            _tree.CalculateForRoot(_tRoot);
+            _tree.CalculateForRoot(_tRoot, target as World);
             PreviewScaleValue = PlayerPrefs.GetFloat(PreviewScaleKey, 0);
             if (_tree == null)
             {
@@ -123,7 +123,7 @@ namespace Orbital.WorldEditor
 
         private void RefreshHierarchy()
         {
-            _tree.CalculateForRoot(_tRoot);
+            _tree.CalculateForRoot(_tRoot, target as World);
         }
 
         private static void BeginTab()

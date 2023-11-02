@@ -99,6 +99,21 @@ namespace Ara3D.Double
             }
         }
 
+        public DVector3 Right()
+        {
+            return new DVector3(_array[0, 0], _array[1, 0], _array[2, 0]);
+        }
+        
+        public DVector3 Up()
+        {
+            return new DVector3(_array[0, 1], _array[1, 1], _array[2, 1]);
+        }
+        
+        public DVector3 Forward()
+        {
+            return new DVector3(_array[0, 2], _array[1, 2], _array[2, 2]);
+        }
+        
         public static DMatrix4x4 Identity
         {
             get
@@ -171,9 +186,9 @@ namespace Ara3D.Double
             {
                 _array = new double[4,4]
                 {
-                    {right.x, right.y, right.z, 0},
-                    {up.x, up.y, up.z, 0},
-                    {forward.x, forward.y, forward.z, 0},
+                    {right.x, up.x, forward.x, 0},
+                    {right.y, up.y, forward.y, 0},
+                    {right.z, up.z, forward.z, 0},
                     {0, 0, 0, 1}
                 }
             };

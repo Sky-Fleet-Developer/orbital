@@ -11,10 +11,9 @@ namespace Orbital.Core
     {
         [SerializeField] private TreeContainer tree;
         [Inject] private DiContainer _container;
-        private bool _isLoaded = false;
         public void Load()
         {
-            if (_isLoaded)
+            if (tree.IsInitialized)
             {
                 if (Application.isPlaying)
                 {
@@ -22,20 +21,25 @@ namespace Orbital.Core
                 }
                 return;
             }
-            _isLoaded = true;
             tree.Load();
-            tree.CalculateForRoot(transform);
+            tree.CalculateForRoot(transform, this);
             InjectHierarchy();
         }
 
         public IEnumerable<IDynamicBody> GetChildren(IStaticBody parent)
         {
-            return tree._children[tree._massPerComponent[parent]];
+            foreach (IDynamicBodyAccessor dynamicBodyAccessor in tree._dynamicChildren[tree._massPerComponent[parent]])
+            {
+                yield return dynamicBodyAccessor.Self;
+            }
         }
         
         public IEnumerable<IDynamicBody> GetChildren(IMassSystem parent)
         {
-            return tree._children[parent];
+            foreach (IDynamicBodyAccessor dynamicBodyAccessor in tree._dynamicChildren[parent])
+            {
+                yield return dynamicBodyAccessor.Self;
+            }
         }
 
         public IMassSystem GetParent(StaticBody mass)
@@ -48,7 +52,7 @@ namespace Orbital.Core
             return tree._parents.TryGetValue(mass, out IMassSystem value) ? value : null;
         }
 
-        public void RegisterRigidBody(IDynamicBody value)
+        internal void RegisterRigidBody(IDynamicBodyAccessor value)
         {
             tree.AddRigidbody(value);
         }
@@ -61,6 +65,42 @@ namespace Orbital.Core
         public DVector3 GetGlobalPosition(IMassSystem massSystem)
         {
             return tree.GetGlobalPosition(massSystem, TimeService.WorldTime);
+        }
+
+        public IStaticBody GetParentByWorldPosition(DVector3 worldPosition, double time)
+        {
+            bool Check(IStaticBodyAccessor body, DVector3 relativePosition)
+            {
+                return relativePosition.Length() < MassUtility.GetGravityRadius(body.Self.GravParameter);
+            }
+            
+            IEnumerable<IMassSystem> array = tree.Root.GetContent();
+            IMassSystem selected = tree.Root;
+            DVector3 position = worldPosition;
+            while (true)
+            {
+                IMassSystem next = null;
+                foreach (IMassSystem massSystem in array)
+                {
+                    var body = tree._componentPerMass[massSystem];
+                    DVector3 relativePosition = position - body.Orbit.GetPositionAtT(time);
+                    if (Check(body, relativePosition))
+                    {
+                        position = relativePosition;
+                        next = massSystem;
+                        break;
+                    }
+                }
+
+                if (next == null)
+                {
+                    return tree._componentPerMass[selected].Self;
+                }
+                else
+                {
+                    array = next.GetContent();
+                }
+            }
         }
 
         private void InjectHierarchy()
