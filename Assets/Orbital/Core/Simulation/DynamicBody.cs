@@ -1,10 +1,8 @@
 using System;
-using System.Threading.Tasks;
 using Ara3D;
 using Orbital.Core.TrajectorySystem;
 using Sirenix.OdinInspector;
 using UnityEngine;
-using Zenject;
 
 namespace Orbital.Core.Simulation
 {

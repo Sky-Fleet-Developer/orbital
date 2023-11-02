@@ -1,8 +1,6 @@
 using System;
-using System.Threading;
 using Ara3D;
 using Ara3D.Double;
-using Orbital.Core.KSPSource;
 using UnityEngine;
 
 namespace Orbital.Core.TrajectorySystem
@@ -158,7 +156,7 @@ namespace Orbital.Core.TrajectorySystem
             {
                 AscendingNode = DVector3.Cross(DVector3.up, H);
                 up = H / H.Length();
-                //Inclination = UtilMath.AngleBetween(up, DVector3.up) * (180.0 / Math.PI);
+                //Inclination = MathUtilities.AngleBetween(up, DVector3.up) * (180.0 / Math.PI);
             }
 
             if (AscendingNode.LengthSquared().Equals(0.0))
@@ -189,7 +187,7 @@ namespace Orbital.Core.TrajectorySystem
             else
             {
                 fwd = EccVec.Normalize();
-                //ArgumentOfPeriapsis = UtilMath.AngleBetween(AscendingNode, fwd);
+                //ArgumentOfPeriapsis = MathUtilities.AngleBetween(AscendingNode, fwd);
                 /*if (DVector3.Dot(DVector3.Cross(AscendingNode, fwd), H) < 0.0)
                 {
                     ArgumentOfPeriapsis = 2.0 * Math.PI - ArgumentOfPeriapsis;

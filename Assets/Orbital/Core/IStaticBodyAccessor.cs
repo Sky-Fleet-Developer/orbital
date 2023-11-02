@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using Orbital.Core.TrajectorySystem;
+﻿using Orbital.Core.TrajectorySystem;
 
 namespace Orbital.Core
 {

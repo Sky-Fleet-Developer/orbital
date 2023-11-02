@@ -1,6 +1,4 @@
-﻿using Orbital.Core.Simulation;
-
-namespace Orbital.Core.Handles
+﻿namespace Orbital.Core.Handles
 {
     public interface ISimulationSpaceTriggerHandler
     {

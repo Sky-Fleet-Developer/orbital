@@ -5,7 +5,6 @@ using Orbital.Core.Handles;
 using Orbital.Core.TrajectorySystem;
 using Sirenix.OdinInspector;
 using UnityEngine;
-using Zenject;
 
 namespace Orbital.Core
 {

@@ -1,7 +1,7 @@
 using System;
 using System.Threading;
 using Ara3D;
-using Orbital.Core.KSPSource;
+using Orbital.Core.Utilities;
 
 namespace Orbital.Core.TrajectorySystem
 {
@@ -59,7 +59,7 @@ namespace Orbital.Core.TrajectorySystem
             double angle = meanAnomaly - meanAnomalyAtUt;
             if (tr.Eccentricity < 1.0)
             {
-                angle = UtilMath.ClampRadiansTwoPI(angle);
+                angle = MathUtilities.ClampRadiansTwoPI(angle);
             }
             return time + angle / tr.GetMeanMotion(tr.SemiMajorAxis);
         }
@@ -71,7 +71,7 @@ namespace Orbital.Core.TrajectorySystem
             double angle = tr.GetMeanMotion(tr.SemiMajorAxis) * (time - tr.Epoch) - tr.MeanAnomalyAtEpoch;
             if (tr.Eccentricity < 1.0)
             {
-                angle = UtilMath.ClampRadiansTwoPI(angle);
+                angle = MathUtilities.ClampRadiansTwoPI(angle);
             }
             return angle;
         }
@@ -79,7 +79,7 @@ namespace Orbital.Core.TrajectorySystem
         {
             if (tr.Eccentricity < 1.0)
             {
-                return UtilMath.ClampRadiansTwoPI(e - tr.Eccentricity * Math.Sin(e));
+                return MathUtilities.ClampRadiansTwoPI(e - tr.Eccentricity * Math.Sin(e));
             }
             else
             {

@@ -1,18 +1,12 @@
 ﻿using System;
 using Ara3D;
 
-namespace Orbital.Core.KSPSource
+namespace Orbital.Core.Utilities
 {
-    public class UtilMath
+    public class MathUtilities
     {
-        public const double Rad2Deg = 57.295779513082323;
-        public const double Deg2Rad = 0.017453292519943295;
         public static double TwoPI = 2.0 * Math.PI;
         public static float TwoPIf = 6.28318548f;
-        public static double HalfPI = Math.PI / 2.0;
-        public static float HalfPIf = 1.57079637f;
-        public static float RPM2RadPerSec = TwoPIf / 60f;
-        public static float RadPerSec2RPM = 60f / TwoPIf;
         
         
         public static double ClampRadiansTwoPI(double angle)
