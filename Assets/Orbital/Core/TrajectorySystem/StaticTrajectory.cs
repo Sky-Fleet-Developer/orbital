@@ -289,35 +289,27 @@ namespace Orbital.Core.TrajectorySystem
             Color color = Color.black;
             float scale = 4.456328E-09F;
             Vector3 scaledOffset = offset * scale;
-            if (Eccentricity < 1.0)
+            double delta = to - from;
+            if (delta > Period)
             {
-                double delta = to - from;
-                if (delta > Period)
-                {
-                    DrawGizmos(offset);
-                    return;
-                }
+                DrawGizmos(offset);
+                return;
+            }
 
-                double step = Period / delta * drawResolution;
-                for (double time = from; time < to; time += step)
-                {
-                    Vector3 positionFromTrueAnomaly1 = this.GetPositionAtT(time);
-                    Vector3 positionFromTrueAnomaly2 = this.GetPositionAtT(time + step);
-                    if (color == Color.black)
-                    {
-                        Debug.DrawLine(positionFromTrueAnomaly1 * scale + scaledOffset, positionFromTrueAnomaly2 * scale + scaledOffset, Color.Lerp(Color.yellow, Color.green, Mathf.InverseLerp((float) this.GetOrbitalSpeedAtDistance(Pericenter), (float) this.GetOrbitalSpeedAtDistance(Apocenter), (float) this.GetOrbitalSpeedAtPos(positionFromTrueAnomaly1))));
-                    }
-                    else
-                    {
-                        Debug.DrawLine(positionFromTrueAnomaly1 * scale + scaledOffset, positionFromTrueAnomaly2 * scale + scaledOffset, color);
-                    }
-                } 
-            }
-            else
+            double step = delta / drawResolution;
+            for (double time = from; time < to; time += step)
             {
-                
+                Vector3 positionFromTrueAnomaly1 = this.GetPositionAtT(time);
+                Vector3 positionFromTrueAnomaly2 = this.GetPositionAtT(time + step);
+                if (color == Color.black)
+                {
+                    Debug.DrawLine(positionFromTrueAnomaly1 * scale + scaledOffset, positionFromTrueAnomaly2 * scale + scaledOffset, Color.Lerp(Color.yellow, Color.green, Mathf.InverseLerp((float) this.GetOrbitalSpeedAtDistance(Pericenter), (float) this.GetOrbitalSpeedAtDistance(Apocenter), (float) this.GetOrbitalSpeedAtPos(positionFromTrueAnomaly1))));
+                }
+                else
+                {
+                    Debug.DrawLine(positionFromTrueAnomaly1 * scale + scaledOffset, positionFromTrueAnomaly2 * scale + scaledOffset, color);
+                }
             }
-            
         }
 
         public void DrawGizmos(DVector3 offset)

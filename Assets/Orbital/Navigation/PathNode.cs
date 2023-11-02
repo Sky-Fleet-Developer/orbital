@@ -70,7 +70,6 @@ namespace Orbital.Navigation
 
             _trajectory.Nu = Celestial.GravParameter;
             _trajectory.Calculate(position, velocity + _deltaVelocity, Time);
-            Debug.Log($"{position} : {_trajectory.GetPositionAtT(Time)}");
         }
     }
 }

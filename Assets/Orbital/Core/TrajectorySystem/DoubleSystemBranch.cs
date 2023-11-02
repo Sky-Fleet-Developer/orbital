@@ -63,7 +63,10 @@ namespace Orbital.Core.TrajectorySystem
             yield return ChildA;
             yield return ChildB;
         }
-
+        public bool IsSatellite(IMassSystem subSystem)
+        {
+            return false;
+        }
         [JsonProperty] public IMassSystem ChildA;
         [JsonProperty] public IMassSystem ChildB;
     }

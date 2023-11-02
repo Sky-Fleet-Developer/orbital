@@ -88,6 +88,7 @@ namespace Orbital.Core
                     }
                     value.MassSystem = child;
                     value.World = _world;
+                    value.IsSatellite = _parents.TryGetValue(child, out IMassSystem parent) && parent.IsSatellite(child);
                 }
             }
 

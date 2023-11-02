@@ -10,6 +10,7 @@ namespace Orbital.Core
         public IStaticBody Parent { get; set; }
         public IStaticBody[] Children { get; set; }
         public IStaticTrajectory Trajectory { get; set; }
+        public bool IsSatellite { get; set; }
         public World World { set; }
     }
 }

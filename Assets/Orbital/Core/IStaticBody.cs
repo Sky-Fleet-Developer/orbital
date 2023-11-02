@@ -12,8 +12,10 @@ namespace Orbital.Core
         public DVector3 Position { get; }
         public DVector3 LocalPosition { get; }
         public IStaticTrajectory Trajectory { get; }
-        double GravParameter => MassSystem.Mass * MassUtility.G;
-        double Radius
+        public double GravParameter => MassSystem.Mass * MassUtility.G;
+        public bool IsSatellite { get; }
+
+        public double Radius
         {
             get => 1;
         }

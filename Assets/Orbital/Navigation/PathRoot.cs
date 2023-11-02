@@ -11,8 +11,9 @@ namespace Orbital.Navigation
     [Serializable]
     public class PathRoot : SampleHolderNode
     {
-        [JsonProperty] public DVector3 position;
-        [JsonProperty] public DVector3 velocity;
+        [JsonProperty] public float rotation;
+        [JsonProperty] public Vector3 position;
+        [JsonProperty] public Vector3 velocity;
 
         [JsonIgnore, NonSerialized] public World World;
         [JsonIgnore] private StaticTrajectory _trajectory;
@@ -39,7 +40,9 @@ namespace Orbital.Navigation
 
         protected override void Refresh()
         {
-            _trajectory.Calculate(position, velocity, Time);
+            Vector3 h = Vector3.Cross(position, velocity).normalized;
+            Quaternion quaternion = Quaternion.AngleAxis(rotation, h);
+            _trajectory.Calculate(quaternion * position, quaternion * velocity, Time);
         }
         
         public void AddElement(Element element)

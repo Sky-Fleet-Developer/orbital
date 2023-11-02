@@ -20,5 +20,6 @@ namespace Orbital.Core.TrajectorySystem
     
     public interface IMassSystem : IMass, IMassContainer, ITrajectorySettingsHolder
     {
+        bool IsSatellite(IMassSystem subSystem);
     }
 }

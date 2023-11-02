@@ -20,37 +20,38 @@ namespace Orbital.Core
         private IStaticTrajectory _trajectory;
         [ShowInInspector] private IStaticBody _parent;
         [ShowInInspector] private IStaticBody[] _children;
-
+        private bool _isSatellite;
         IMassSystem IStaticBody.MassSystem => _massSystem;
 
         IStaticBody IStaticBody.Parent => _parent;
         IEnumerable<IStaticBody> IStaticBody.Children => _children;
+        bool IStaticBody.IsSatellite => _isSatellite;
         IStaticBody IStaticBodyAccessor.Self => this;
-
         IMassSystem IStaticBodyAccessor.MassSystem
         {
             get => _massSystem;
             set => _massSystem = value;
         }
-
         IStaticBody IStaticBodyAccessor.Parent
         {
             get => _parent;
             set => _parent = value;
         }
-
         IStaticTrajectory IStaticBodyAccessor.Trajectory
         {
             get => _trajectory;
             set => _trajectory = value;
         }
-
         IStaticBody[] IStaticBodyAccessor.Children
         {
             get => _children;
             set => _children = value;
         }
-
+        bool IStaticBodyAccessor.IsSatellite
+        {
+            get => _isSatellite;
+            set => _isSatellite = value;
+        }
         World IStaticBodyAccessor.World
         {
             set => _world = value;

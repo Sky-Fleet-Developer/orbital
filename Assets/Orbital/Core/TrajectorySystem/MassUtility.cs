@@ -92,8 +92,7 @@ namespace Orbital.Core.TrajectorySystem
 
         public static OrbitExodus GetOrbitExodus(IStaticTrajectory trajectory, IStaticBody parent, double fromTime, out DVector3 endPoint, out double endTime, out IStaticBody transitionBody)
         {
-            double gravityRadius = GetGravityRadius(parent.GravParameter);
-            IStaticBody internalCollision = CollideTrajectoryWithChildren(trajectory, parent, gravityRadius, fromTime, out double collisionTime);
+            IStaticBody internalCollision = CollideTrajectoryWithChildren(trajectory, parent, fromTime, out double collisionTime);
             DVector3 collisionPos = DVector3.Zero;
             if (internalCollision != null)
             {
@@ -108,7 +107,7 @@ namespace Orbital.Core.TrajectorySystem
                 }
             }
 
-            bool isLeaves = IsTrajectoryLeavesGravityRadius(trajectory, gravityRadius, fromTime, out DVector3 leavePoint, out double leaveTime);
+            bool isLeaves = IsTrajectoryLeavesGravityRadius(trajectory, GetGravityRadius(parent.GravParameter), fromTime, out DVector3 leavePoint, out double leaveTime);
             if (isLeaves)
             {
                 if (internalCollision != null)
@@ -141,7 +140,7 @@ namespace Orbital.Core.TrajectorySystem
         
         public static bool IsTrajectoryLeavesGravityRadius(IStaticTrajectory trajectory, double gravityRadius, double fromTime, out DVector3 leavePoint, out double leaveTime)
         {
-            bool result = trajectory.Apocenter > gravityRadius;
+            bool result = trajectory.Eccentricity > 1 || trajectory.Apocenter > gravityRadius;
             if (result)
             {
                 double leaveTrueAnomaly = trajectory.TrueAnomalyAtRadius(gravityRadius);
@@ -155,7 +154,7 @@ namespace Orbital.Core.TrajectorySystem
             return false;
         }
         
-        public static IStaticBody CollideTrajectoryWithChildren(IStaticTrajectory trajectory, IStaticBody body, double gravityRadius, double time, out double collisionTime)
+        public static IStaticBody CollideTrajectoryWithChildren(IStaticTrajectory trajectory, IStaticBody body, double time, out double collisionTime)
         {
             bool IsProjectionCrossing(IStaticTrajectory other, double width)
             {
@@ -165,10 +164,12 @@ namespace Orbital.Core.TrajectorySystem
             }
 
             
-            (double time, double distance, IStaticBody body)[] collisions = body.Children
-                .Where(x => IsProjectionCrossing(x.Trajectory, gravityRadius))
-                .Select(b => (GetClosestPointTimeForDistance(trajectory, b.Trajectory, gravityRadius, time, out double distance), distance, b))
-                .Where(x => x.distance < gravityRadius * 1.0001)
+            (double time, double distance, IStaticBody body, double radius)[] collisions = body.Children
+                .Where(x => x.IsSatellite)
+                .Select(x => (radius: GetGravityRadius(x.GravParameter), body: x))
+                .Where(x => IsProjectionCrossing(x.body.Trajectory, x.radius))
+                .Select(x => (GetClosestPointTimeForDistance(trajectory, x.body.Trajectory, x.radius, time, out double distance), distance, x.body, x.radius))
+                .Where(x => x.distance < x.radius * 1.0001)
                 .OrderBy(x => x.Item1).ToArray();
 
             if (collisions.Length == 0)
@@ -181,11 +182,6 @@ namespace Orbital.Core.TrajectorySystem
             return collisions[0].body;
         }
 
-        /*public static void DrawClosestPoint(IStaticTrajectory a, IStaticTrajectory b, double scale)
-        {
-            
-        }*/
-        
         public static double GetClosestPointTimeForDistance(IStaticTrajectory a, IStaticTrajectory b, double wantedDistance, double startTime, out double distance/*, Vector3 drawOffset, float scale*/)
         {
             double rSqr = wantedDistance * wantedDistance;
@@ -195,7 +191,6 @@ namespace Orbital.Core.TrajectorySystem
             double maxDelta = 0.5;
 
             double step = (endTime - startTime) / accuracy;
-            double? firstComingTime = null;
             double[] distances = {double.MaxValue, double.MaxValue};
             double[] times = {startTime, startTime};
             for (double t = startTime; t < endTime; t += step)
@@ -217,15 +212,6 @@ namespace Orbital.Core.TrajectorySystem
                 }
                 
                 if(isLessThenWanted) break;
-
-                /*if (d < rSqr)
-                {
-                    firstComingTime ??= t;
-                }
-                else if(distances[0] < d)
-                {
-                    break;
-                }*/
             }
             //Debug.DrawLine(drawOffset + (Vector3)a.GetPositionAtT(times[0] - a.Epoch) * scale, drawOffset + (Vector3)b.GetPositionAtT(times[0] - b.Epoch) * scale, Color.yellow, 0.5f);
             //Debug.DrawLine(drawOffset + (Vector3)a.GetPositionAtT(times[1] - a.Epoch) * scale, drawOffset + (Vector3)b.GetPositionAtT(times[1] - b.Epoch) * scale, Color.red, 0.5f);

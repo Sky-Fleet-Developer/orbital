@@ -18,7 +18,10 @@ namespace Orbital.Core.TrajectorySystem
         public CelestialBody()
         {
         }
-
+        public bool IsSatellite(IMassSystem subSystem)
+        {
+            return false;
+        }
 
         public IEnumerable<IMassSystem> GetContent()
         {
