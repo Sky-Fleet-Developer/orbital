@@ -1,12 +1,9 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using Ara3D;
 using Orbital.Core;
 using Orbital.Core.TrajectorySystem;
-using Sirenix.OdinInspector;
 using UnityEditor;
 using UnityEngine;
+
 [ExecuteAlways]
 public class TrajectoryTest : MonoBehaviour
 {
@@ -25,6 +22,7 @@ public class TrajectoryTest : MonoBehaviour
     public double epoch;
     public double testEpoch;
     private const float scale = 4.456328E-09F;
+
     void Refresh()
     {
         _body = body;
@@ -36,6 +34,7 @@ public class TrajectoryTest : MonoBehaviour
         {
             _body.Orbit.GetOrbitalStateVectorsAtOrbitTime(0, out pos, out vel);
         }
+
         Orbit.Calculate(pos, vel, epoch);
     }
 
@@ -43,23 +42,22 @@ public class TrajectoryTest : MonoBehaviour
     {
         Refresh();
         //Vector3 scaledPos = _parent.LocalPosition * scale;
-       // double gravityRadius = MassUtility.GetGravityRadius(_body.GravParameter);
+        // double gravityRadius = MassUtility.GetGravityRadius(_body.GravParameter);
         //t = MassUtility.GetClosestPointTimeForDistance(Orbit, _body.Orbit, gravityRadius, 0, out double distance);
     }
 
     void Update()
     {
-        if(!enabled) return;
+        if (!enabled) return;
         if (_parent == null)
         {
             Refresh();
         }
-        
     }
 
     private void OnDrawGizmosSelected()
     {
-        if(!enabled) return;
+        if (!enabled) return;
         Handles.color = Color.green * 0.7f;
         Vector3 scaledPos = _parent.LocalPosition * scale;
         var a = (Vector3) Orbit.GetPositionAtT(t) * scale;
