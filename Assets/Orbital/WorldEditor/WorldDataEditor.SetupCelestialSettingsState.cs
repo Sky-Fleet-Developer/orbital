@@ -41,10 +41,10 @@ namespace Orbital.WorldEditor
                 _settingsA.inclination = EditorGUILayout.FloatField("Inclination", _settingsB.inclination);
                 _settingsA.timeShift = EditorGUILayout.FloatField("Time", _settingsB.timeShift);
                 /*double m = Master._currentParent.Mass;
-                double e = StaticTrajectory.GetEccentricity(_settingsA.eccentricity, _settingsA.semiMajorAxis,
+                double e = StaticOrbit.GetEccentricity(_settingsA.eccentricity, _settingsA.semiMajorAxis,
                     m, MassUtility.G);
-                double a = StaticTrajectory.GetSemiMajorAxis(e, _settingsA.semiMajorAxis);
-                double t = StaticTrajectory.GetPeriod(a, MassUtility.G, m);
+                double a = StaticOrbit.GetSemiMajorAxis(e, _settingsA.semiMajorAxis);
+                double t = StaticOrbit.GetPeriod(a, MassUtility.G, m);
                 GUILayout.Box($"eccentricity: {e}");
                 GUILayout.Box($"Semi major axis: {a}");
                 if (double.IsNaN(t))

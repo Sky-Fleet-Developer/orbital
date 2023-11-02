@@ -15,9 +15,10 @@ namespace Orbital.Navigation
         {
             return Next == null ? this : Next.GetLastElement();
         }
-        public T GetParentOfType<T>() where T : class
+
+        public T FirstPreviousOfType<T>(bool includeThis = false) where T : Element
         {
-            Element e = Previous;
+            Element e = includeThis ? this : Previous;
             while (e != null)
             {
                 if (e is T node) return node;
@@ -25,6 +26,17 @@ namespace Orbital.Navigation
             }
             return null;
         }
+        public T FirstNextOfType<T>(bool includeThis = false) where T : Element
+        {
+            Element e = includeThis ? this : Next;
+            while (e != null)
+            {
+                if (e is T node) return node;
+                e = e.Next;
+            }
+            return null;
+        }
+        
         public void Reconstruct()
         {
             if(Next == null) return;
@@ -42,8 +54,8 @@ namespace Orbital.Navigation
             }
         }
         //// Dirty flag
-        public bool IsDirty => _isSelfDirty || (Previous?.IsDirty ?? false);
-        private bool _isSelfDirty = true;
+        [JsonIgnore] public bool IsDirty => _isSelfDirty || (Previous?.IsDirty ?? false);
+        [JsonProperty] private bool _isSelfDirty = true;
         public void SetDirty()
         {
             if(IsDirty) return;
@@ -76,11 +88,12 @@ namespace Orbital.Navigation
             get => _time;
             set
             {
-                _time = Math.Max(Previous?._time ?? 0, value);
-                if (Next != null)
+                if (double.IsNaN(value))
                 {
-                    _time = Math.Min(Next._time, _time);
+                    _time = 0;
+                    return;
                 }
+                _time = Math.Max(Previous?._time ?? 0, value);
                 SetDirty();
             }
         }

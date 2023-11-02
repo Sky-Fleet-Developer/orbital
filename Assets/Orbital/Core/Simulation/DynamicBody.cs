@@ -16,13 +16,13 @@ namespace Orbital.Core.Simulation
         [SerializeField] private DynamicBodySettings settings;
         private World _world;
         //private Track _trajectoryTrack;
-        private IStaticTrajectory _trajectory;
+        private IStaticOrbit _orbit;
         private IStaticBody _parent;
 
         private DynamicBodyMode _mode = DynamicBodyMode.Trajectory;
 
         #region InterfaceImplementation
-        public IStaticTrajectory Trajectory => _trajectory;
+        public IStaticOrbit Orbit => _orbit;
         public IStaticBody Parent => _parent;
         [ShowInInspector] public DynamicBodyMode Mode => _mode;
         IDynamicBody IDynamicBodyAccessor.Self => this;
@@ -31,10 +31,10 @@ namespace Orbital.Core.Simulation
             get => _parent;
             set => _parent = value;
         }
-        IStaticTrajectory IDynamicBodyAccessor.Trajectory
+        IStaticOrbit IDynamicBodyAccessor.Orbit
         {
-            get => _trajectory;
-            set => _trajectory = value;
+            get => _orbit;
+            set => _orbit = value;
         }
         #endregion
 
@@ -67,12 +67,12 @@ namespace Orbital.Core.Simulation
             }
             #endif
             _world.RegisterRigidBody(this);
-            _trajectory.Calculate(variables.position, variables.velocity, TimeService.WorldTime);
+            _orbit.Calculate(variables.position, variables.velocity, TimeService.WorldTime);
         }
 
         private void OnValidate()
         {
-            if(_trajectory == null) return;
+            if(_orbit == null) return;
             Init();
         }
     }

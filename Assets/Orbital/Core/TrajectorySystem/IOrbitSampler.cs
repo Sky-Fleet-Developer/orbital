@@ -7,14 +7,14 @@ using Unity.Collections;
 
 namespace Orbital.Core.TrajectorySystem
 {
-    public interface ITrajectorySampler
+    public interface IOrbitSampler
     {
         public (DVector3 position, DVector3 velocity) GetSample(double time, bool positionRequired = true,
             bool velocityRequired = true);
     }
 
 
-    public interface IStaticTrajectory : ITrajectorySampler
+    public interface IStaticOrbit : IOrbitSampler
     {
         public double Inclination { get; }
         public double Eccentricity { get; }

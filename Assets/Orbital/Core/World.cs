@@ -83,7 +83,7 @@ namespace Orbital.Core
                 foreach (IMassSystem massSystem in array)
                 {
                     var body = tree._componentPerMass[massSystem];
-                    DVector3 relativePosition = position - body.Trajectory.GetPositionAtT(time);
+                    DVector3 relativePosition = position - body.Orbit.GetPositionAtT(time);
                     if (Check(body, relativePosition))
                     {
                         position = relativePosition;

@@ -26,34 +26,34 @@ namespace Orbital.Core.TrajectorySystem
         }
 
 
-        public static double RadiusAtTrueAnomaly(this IStaticTrajectory tr, double tA) =>
+        public static double RadiusAtTrueAnomaly(this IStaticOrbit tr, double tA) =>
             tr.SemiLatusRectum * (1.0 / (1.0 + tr.Eccentricity * Math.Cos(tA)));
 
-        public static double GetOrbitalStateVectorsAtOrbitTime(this IStaticTrajectory tr, double orbitTime, out DVector3 pos, out DVector3 vel)
+        public static double GetOrbitalStateVectorsAtOrbitTime(this IStaticOrbit tr, double orbitTime, out DVector3 pos, out DVector3 vel)
         {
             return tr.GetOrbitalStateVectorsAtTrueAnomaly(tr.TrueAnomalyAtT(orbitTime), out pos, out vel);
         }
         
-        public static double GetOrbitalStateVectorsAtTrueAnomaly(this IStaticTrajectory tr, double trueAnomaly, out DVector3 pos, out DVector3 vel)
+        public static double GetOrbitalStateVectorsAtTrueAnomaly(this IStaticOrbit tr, double trueAnomaly, out DVector3 pos, out DVector3 vel)
         {
             double cos = Math.Cos(trueAnomaly);
             double sin = Math.Sin(trueAnomaly);
             double minor = tr.SemiMajorAxis * (1.0 - tr.Eccentricity * tr.Eccentricity);
             double num4 = Math.Sqrt(tr.Nu / minor);
-            double num5 = -sin * num4;
+            double num5 = -sin * num4; //-
             double num6 = (cos + tr.Eccentricity) * num4;
             double vectorsAtTrueAnomaly = minor / (1.0 + tr.Eccentricity * cos);
             double cosM = cos * vectorsAtTrueAnomaly;
             double sinM = sin * vectorsAtTrueAnomaly;
             pos = tr.RotationMatrix.Forward() * cosM + tr.RotationMatrix.Right() * sinM;
-            vel = tr.RotationMatrix.Forward() * num5 + tr.RotationMatrix.Right() * num6;
+            vel = tr.RotationMatrix.Forward() * num5 + tr.RotationMatrix.Right() * num6; //-
             return vectorsAtTrueAnomaly;
         }
 
         #region Time
-        public static double TimeOfTrueAnomaly(this IStaticTrajectory tr, double trueAnomaly, double time) => tr.GetTimeAtMeanAnomaly(tr.GetMeanAnomaly(tr.GetEccentricAnomaly(trueAnomaly)), time);
+        public static double TimeOfTrueAnomaly(this IStaticOrbit tr, double trueAnomaly, double time) => tr.GetTimeAtMeanAnomaly(tr.GetMeanAnomaly(tr.GetEccentricAnomaly(trueAnomaly)), time);
 
-        public static double GetTimeAtMeanAnomaly(this IStaticTrajectory tr, double meanAnomaly, double time)
+        public static double GetTimeAtMeanAnomaly(this IStaticOrbit tr, double meanAnomaly, double time)
         {
             double meanAnomalyAtUt = tr.GetMeanAnomalyAtTime(time);
             double angle = meanAnomaly - meanAnomalyAtUt;
@@ -66,16 +66,16 @@ namespace Orbital.Core.TrajectorySystem
         #endregion
 
         #region MeanAnomaly
-        public static double GetMeanAnomalyAtTime(this IStaticTrajectory tr, double time)
+        public static double GetMeanAnomalyAtTime(this IStaticOrbit tr, double time)
         {
-            double angle = tr.MeanAnomalyAtEpoch + tr.GetMeanMotion(tr.SemiMajorAxis) * (time - tr.Epoch);
+            double angle = tr.GetMeanMotion(tr.SemiMajorAxis) * (time - tr.Epoch) - tr.MeanAnomalyAtEpoch;
             if (tr.Eccentricity < 1.0)
             {
                 angle = UtilMath.ClampRadiansTwoPI(angle);
             }
             return angle;
         }
-        public static double GetMeanAnomaly(this IStaticTrajectory tr, double e)
+        public static double GetMeanAnomaly(this IStaticOrbit tr, double e)
         {
             if (tr.Eccentricity < 1.0)
             {
@@ -88,14 +88,14 @@ namespace Orbital.Core.TrajectorySystem
             }
         }
         #endregion
-        public static double GetMeanMotion(this IStaticTrajectory tr, double sma)
+        public static double GetMeanMotion(this IStaticOrbit tr, double sma)
         {
             double num = Math.Abs(sma);
             return Math.Sqrt(tr.Nu / (num * num * num));
         }
         #region TrueAnomaly
 
-        public static double GetTrueAnomaly(this IStaticTrajectory tr, double e)
+        public static double GetTrueAnomaly(this IStaticOrbit tr, double e)
         {
             double trueAnomaly;
             if (tr.Eccentricity < 1.0)
@@ -124,13 +124,16 @@ namespace Orbital.Core.TrajectorySystem
             return trueAnomaly;
         }
 
-        internal static double TrueAnomalyAtRadiusSimple(this IStaticTrajectory tr, double r) =>
+        public static double TrueAnomalyAtRadiusSimple(this IStaticOrbit tr, double r) =>
             Math.Acos(tr.SemiLatusRectum / (r * tr.Eccentricity) - 1.0 / tr.Eccentricity);
 
-        public static double TrueAnomalyAtRadius(this IStaticTrajectory tr, double r)
+        public static double TrueAnomalyAtRadius(this IStaticOrbit tr, double r, double t)
         {
-            double num1 = DVector3.Cross(tr.GetPositionFromEccAnomaly(0), tr.GetOrbitalVelocityAtOrbitTime(0))
-                .LengthSquared() / tr.Nu;
+            //double trueAnomaly = tr.GetTrueAnomaly(tr.SolveEccentricAnomaly((t - tr.Epoch) * tr.MeanMotion, tr.Eccentricity));
+            //double ta = 
+            var p = tr.GetPositionFromTrueAnomaly(0);
+            var v = tr.GetOrbitalVelocityAtTrueAnomaly(0);
+            double num1 = DVector3.Cross(p, v).LengthSquared() / tr.Nu;
             if (tr.Eccentricity < 1.0)
             {
                 r = Math.Min(Math.Max(tr.Pericenter, r), tr.Apocenter);
@@ -142,7 +145,7 @@ namespace Orbital.Core.TrajectorySystem
             return Math.Acos(num1 / num2 - 1.0 / tr.Eccentricity);
         }
 
-        public static double TrueAnomalyAtT(this IStaticTrajectory tr, double T)
+        public static double TrueAnomalyAtT(this IStaticOrbit tr, double T)
         {
             double num = tr.SolveEccentricAnomaly((T - tr.Epoch) * tr.MeanMotion - tr.MeanAnomalyAtEpoch, tr.Eccentricity);
             if (!double.IsNaN(num)) return tr.GetTrueAnomaly(num);
@@ -153,7 +156,7 @@ namespace Orbital.Core.TrajectorySystem
         #endregion
 
         #region EccentricAnomaly
-        public static double GetEccentricAnomaly(this IStaticTrajectory tr, double tA)
+        public static double GetEccentricAnomaly(this IStaticOrbit tr, double tA)
         {
             double cos = Math.Cos(tA / 2.0);
             double sin = Math.Sin(tA / 2.0);
@@ -180,7 +183,7 @@ namespace Orbital.Core.TrajectorySystem
 
             return eccentricAnomaly;
         }
-        private static double SolveEccentricAnomalyHyp(this IStaticTrajectory tr, double m, double ecc,
+        private static double SolveEccentricAnomalyHyp(this IStaticOrbit tr, double m, double ecc,
             double maxError = 1E-07)
         {
             if (double.IsInfinity(m))
@@ -202,7 +205,7 @@ namespace Orbital.Core.TrajectorySystem
             }
         }
 
-        public static double SolveEccentricAnomaly(this IStaticTrajectory tr, double m, double ecc,
+        public static double SolveEccentricAnomaly(this IStaticOrbit tr, double m, double ecc,
             double maxError = 1E-07, int maxIterations = 8)
         {
             if (tr.Eccentricity >= 1.0)
@@ -230,7 +233,7 @@ namespace Orbital.Core.TrajectorySystem
             return num2;
         }
 
-        private static double SolveEccentricAnomalyExtremeEcc(this IStaticTrajectory tr, double m, double ecc,
+        private static double SolveEccentricAnomalyExtremeEcc(this IStaticOrbit tr, double m, double ecc,
             int iterations = 8)
         {
             try
@@ -264,26 +267,26 @@ namespace Orbital.Core.TrajectorySystem
 
         #region Speed
 
-        public static double GetOrbitalSpeedAtDistance(this IStaticTrajectory tr, double d) =>
+        public static double GetOrbitalSpeedAtDistance(this IStaticOrbit tr, double d) =>
             Math.Sqrt(tr.Nu * (2.0 / d - 1.0 / tr.SemiMajorAxis));
 
-        public static double GetOrbitalSpeedAtPos(this IStaticTrajectory tr, DVector3 pos) =>
+        public static double GetOrbitalSpeedAtPos(this IStaticOrbit tr, DVector3 pos) =>
             tr.GetOrbitalSpeedAtDistance(pos.Length());
 
         #endregion
 
         #region Position
 
-        public static DVector3 GetPositionAtT(this IStaticTrajectory tr, double T)
+        public static DVector3 GetPositionAtT(this IStaticOrbit tr, double T)
         {
             if (tr == null || double.IsInfinity(tr.MeanMotion)) return DVector3.Zero;
             return tr.GetPositionFromTrueAnomaly(tr.GetTrueAnomaly(tr.SolveEccentricAnomaly((T - tr.Epoch) * tr.MeanMotion - tr.MeanAnomalyAtEpoch, tr.Eccentricity)));
         }
 
-        public static DVector3 GetPositionFromMeanAnomaly(this IStaticTrajectory tr, double m) =>
+        public static DVector3 GetPositionFromMeanAnomaly(this IStaticOrbit tr, double m) =>
             tr.GetPositionFromEccAnomaly(tr.SolveEccentricAnomaly(m, tr.Eccentricity, 1E-05));
 
-        public static DVector3 GetPositionFromTrueAnomaly(this IStaticTrajectory tr, double trueAnomaly)
+        public static DVector3 GetPositionFromTrueAnomaly(this IStaticOrbit tr, double trueAnomaly)
         {
             double cos = Math.Cos(trueAnomaly);
             double sin = Math.Sin(trueAnomaly);
@@ -291,7 +294,7 @@ namespace Orbital.Core.TrajectorySystem
             return r;
         }
 
-        public static DVector3 GetPositionFromEccAnomaly(this IStaticTrajectory tr, double E)
+        public static DVector3 GetPositionFromEccAnomaly(this IStaticOrbit tr, double E)
         {
             double cos;
             double sin;
@@ -318,17 +321,17 @@ namespace Orbital.Core.TrajectorySystem
 
         #region Velocity
 
-        public static DVector3 GetOrbitalVelocityAtOrbitTime(this IStaticTrajectory tr, double orbitTime) =>
+        public static DVector3 GetOrbitalVelocityAtOrbitTime(this IStaticOrbit tr, double orbitTime) =>
             tr.GetOrbitalVelocityAtTrueAnomaly(tr.TrueAnomalyAtT(orbitTime));
 
-        public static DVector3 GetOrbitalVelocityAtTrueAnomaly(this IStaticTrajectory tr, double tA)
+        public static DVector3 GetOrbitalVelocityAtTrueAnomaly(this IStaticOrbit tr, double tA)
         {
             double cos = Math.Cos(tA);
             double sin = Math.Sin(tA);
             double num3 = Math.Sqrt(tr.Nu / (tr.SemiMajorAxis * (1.0 - tr.Eccentricity * tr.Eccentricity)));
-            double fwd = -sin * num3;
+            double fwd = -sin * num3; //-
             double right = (cos + tr.Eccentricity) * num3;
-            return tr.RotationMatrix.Forward() * fwd + tr.RotationMatrix.Right() * right;
+            return tr.RotationMatrix.Forward() * fwd + tr.RotationMatrix.Right() * right; //-
         }
 
         #endregion

@@ -7,7 +7,7 @@ namespace Orbital.Core.Simulation
     public interface IDynamicBody
     {
         public IStaticBody Parent { get; }
-        public IStaticTrajectory Trajectory { get; }
+        public IStaticOrbit Orbit { get; }
         public void Init();
         /*public void Present();
         public void RemovePresent();*/
@@ -17,7 +17,7 @@ namespace Orbital.Core.Simulation
     {
         public IDynamicBody Self { get; }
         public IStaticBody Parent { get; set; }
-        public IStaticTrajectory Trajectory { get; set; }
+        public IStaticOrbit Orbit { get; set; }
 
     }
     

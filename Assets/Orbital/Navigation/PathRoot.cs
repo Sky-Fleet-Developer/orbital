@@ -16,7 +16,7 @@ namespace Orbital.Navigation
         [JsonProperty] public Vector3 velocity;
 
         [JsonIgnore, NonSerialized] public World World;
-        [JsonIgnore] private StaticTrajectory _trajectory;
+        [JsonIgnore] private StaticOrbit _orbit;
         [JsonProperty, ShowInInspector] private PathNode _next;
         [JsonIgnore] public override Element Next
         {
@@ -28,30 +28,44 @@ namespace Orbital.Navigation
             get => null;
             set { }
         }
-        public override IStaticTrajectory Trajectory => _trajectory;
+        public override IStaticOrbit Orbit => _orbit;
         
         public PathRoot(){}
 
         public void Init(World world, IStaticBody parent)
         {
             Celestial = parent;
-            _trajectory = new StaticTrajectory(parent.MassSystem);
+            _orbit = new StaticOrbit(parent.MassSystem);
+        }
+
+        public int GetElementsCount()
+        {
+            Element element = this;
+            int count = 0;
+            while (element != null)
+            {
+                count++;
+                element = element.Next;
+            }
+            return count;
         }
 
         protected override void Refresh()
         {
             Vector3 h = Vector3.Cross(position, velocity).normalized;
             Quaternion quaternion = Quaternion.AngleAxis(rotation, h);
-            _trajectory.Calculate(quaternion * position, quaternion * velocity, Time);
+            _orbit.Calculate(quaternion * position, quaternion * velocity, Time);
+            Debug.Log($"v : {quaternion * velocity}, p': {_orbit.GetPositionAtT(Time)}, v': {_orbit.GetOrbitalVelocityAtOrbitTime(Time)}");
+            FindEnding();
         }
         
-        public void AddElement(Element element)
+        public void AddElement(Element element, bool refreshNow = true)
         {
             var last = GetLastElement();
             last.Next = element;
             last.Reconstruct();
             element.SetDirty();
-            RefreshDirty();
+            if(refreshNow) RefreshDirty();
         }
 
         public void RefreshDirty()

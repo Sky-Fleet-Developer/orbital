@@ -167,7 +167,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7539abe9f7036f14ebf4496c6fc956b9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  pathJson: '{"position":{"x":0.0,"y":0.0,"z":18000000.0},"velocity":{"x":-555.0,"y":0.0,"z":0.0},"_next":{"_deltaVelocity":{"x":0.0,"y":0.0,"z":0.0},"_next":null,"_time":86321.794321665628,"IsDirty":true},"_time":0.0,"IsDirty":false}'
+  pathJson: '{"rotation":0.0,"position":{"x":0.0,"y":0.0,"z":4.5E+07},"velocity":{"x":-250.0,"y":0.0,"z":-95.0},"_next":{"_deltaVelocity":{"x":0.0,"y":0.0,"z":0.0},"_next":null,"_isSelfDirty":true,"_time":451644.28173066676},"_isSelfDirty":false,"_time":0.0}'
 --- !u!1 &42118331
 GameObject:
   m_ObjectHideFlags: 0
@@ -706,7 +706,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7539abe9f7036f14ebf4496c6fc956b9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  pathJson: '{"position":{"x":-300000000.0,"y":0.0,"z":-400000000.0},"velocity":{"x":3150.0,"y":0.0,"z":-3150.0},"_next":{"_deltaVelocity":{"x":0.0,"y":0.0,"z":0.0},"_next":null,"_time":436181.35637973878,"IsDirty":false},"_time":0.0,"IsDirty":false}'
+  pathJson: '{"rotation":-4.0,"position":{"x":0.0,"y":0.0,"z":8.2E+08},"velocity":{"x":3200.0,"y":0.0,"z":5.0},"_next":null,"_isSelfDirty":false,"_time":0.0}'
 --- !u!1 &755220438
 GameObject:
   m_ObjectHideFlags: 0
@@ -807,6 +807,53 @@ MonoBehaviour:
   _armInput: 0
   _orientation: {x: 0, y: 0, z: 0, w: 1}
   _isActive: 0
+--- !u!1 &1125701919
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1125701920}
+  - component: {fileID: 1125701921}
+  m_Layer: 0
+  m_Name: Test (1)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!4 &1125701920
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1125701919}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 3273259785943471009}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1125701921
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1125701919}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7539abe9f7036f14ebf4496c6fc956b9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  pathJson: '{"rotation":0.0,"position":{"x":-7932239.0,"y":0.0,"z":-15535018.0},"velocity":{"x":-574.4119,"y":0.0,"z":293.296875},"_next":{"_deltaVelocity":{"x":0.0,"y":0.0,"z":0.0},"_next":{"$type":"Orbital.Navigation.PathNode,
+    Orbital.Navigation","_deltaVelocity":{"x":0.0,"y":0.0,"z":0.0},"_next":{"$type":"Orbital.Navigation.PathNode,
+    Orbital.Navigation","_deltaVelocity":{"x":0.0,"y":0.0,"z":0.0},"_next":null,"_isSelfDirty":false,"_time":273350.31300692365},"_isSelfDirty":false,"_time":273350.31300386542},"_isSelfDirty":true,"_time":273350.31300386542},"_isSelfDirty":false,"_time":0.0}'
 --- !u!1 &1823688464
 GameObject:
   m_ObjectHideFlags: 0
@@ -1333,6 +1380,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 38218435}
+  - {fileID: 1125701920}
   m_Father: {fileID: 3199735041321278250}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

@@ -14,8 +14,7 @@ namespace Orbital.Navigation
         [JsonProperty, ShowInInspector] private DVector3 _deltaVelocity;
 
 
-        [JsonProperty, ShowInInspector] private Element _next;
-        [JsonIgnore, ShowInInspector] private OrbitExodus _exodus;
+        [JsonProperty, ShowInInspector, PropertyOrder(10)] private Element _next;
 
         [JsonIgnore]
         public override Element Next
@@ -33,43 +32,49 @@ namespace Orbital.Navigation
             set => _previous = value;
         }
 
-        [JsonIgnore] private StaticTrajectory _trajectory = new StaticTrajectory();
-        [JsonIgnore] public override IStaticTrajectory Trajectory => _trajectory;
+        [JsonIgnore] private StaticOrbit _orbit = new StaticOrbit();
+        [JsonIgnore] public override IStaticOrbit Orbit => _orbit;
 
         protected override void Refresh()
         {
-            SampleHolderNode prevSampler = GetParentOfType<SampleHolderNode>();
-            IStaticTrajectory toSample = prevSampler.Trajectory;
-            _exodus = MassUtility.GetOrbitExodus(toSample, prevSampler.Celestial, prevSampler.Time, out _, out double exodusTime, out Celestial);
-            if (_exodus != OrbitExodus.Cycle)
+            float scale = 4.456328E-09F;
+            
+            SampleHolderNode prevSampler = FirstPreviousOfType<SampleHolderNode>();
+            
+            if (prevSampler.Ending.Type != OrbitEndingType.Cycle && prevSampler.Ending.NextCelestial != null)
             {
-                Time = exodusTime;
+                Time = prevSampler.Ending.Time;
+                Celestial = prevSampler.Ending.NextCelestial;
+            }
+            else
+            {
+                Celestial = prevSampler.Celestial;
             }
 
-            toSample.GetOrbitalStateVectorsAtOrbitTime(Time, out DVector3 position, out DVector3 velocity);
+            prevSampler.Orbit.GetOrbitalStateVectorsAtOrbitTime(Time, out DVector3 position, out DVector3 velocity);
 
-            switch (_exodus)
+            switch (prevSampler.Ending.Type)
             {
-                case OrbitExodus.Leave:
+                case OrbitEndingType.Leave:
                 {
-                    prevSampler.Celestial.Trajectory.GetOrbitalStateVectorsAtOrbitTime(Time, out DVector3 pos, out DVector3 vel);
+                    prevSampler.Celestial.Orbit.GetOrbitalStateVectorsAtOrbitTime(Time, out DVector3 pos, out DVector3 vel);
                     position += pos;
                     velocity += vel;
-                    float scale = 4.456328E-09F;
                     Debug.DrawRay(position * scale, velocity * 0.001f, Color.blue, 5);
                 }
                     break;
-                case OrbitExodus.Entry:
+                case OrbitEndingType.Entry:
                 {
-                    Celestial.Trajectory.GetOrbitalStateVectorsAtOrbitTime(Time, out DVector3 pos, out DVector3 vel);
+                    Celestial.Orbit.GetOrbitalStateVectorsAtOrbitTime(Time, out DVector3 pos, out DVector3 vel);
                     position -= pos;
                     velocity -= vel;
                 }
                     break;
             }
 
-            _trajectory.Nu = Celestial.GravParameter;
-            _trajectory.Calculate(position, velocity + _deltaVelocity, Time);
+            _orbit.Nu = Celestial.GravParameter;
+            _orbit.Calculate(position, velocity + _deltaVelocity, Time);
+            FindEnding();
         }
     }
 }

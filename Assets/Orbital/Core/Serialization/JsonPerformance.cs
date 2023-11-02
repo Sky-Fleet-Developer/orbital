@@ -10,14 +10,14 @@ namespace Orbital.Core.Serialization
         {
             _settings = new JsonSerializerSettings();
             _settings.TypeNameHandling = TypeNameHandling.Auto;
+            _settings.Converters.Add(new VectorConverter());
+            _settings.Converters.Add(new Matrix4x4Converter());
         }
         
         [Inject]
         public void Inject(DiContainer container)
         {
             //_settings.Converters.Add(new ComponentConverter(container));
-            _settings.Converters.Add(new VectorConverter());
-            _settings.Converters.Add(new Matrix4x4Converter());
         }
 
         public string Serialize(object value)

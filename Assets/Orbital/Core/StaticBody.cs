@@ -17,7 +17,7 @@ namespace Orbital.Core
         [ShowInInspector] private StaticBodyVariables _variables;
         private World _world;
         private IMassSystem _massSystem;
-        private IStaticTrajectory _trajectory;
+        private IStaticOrbit _orbit;
         [ShowInInspector] private IStaticBody _parent;
         [ShowInInspector] private IStaticBody[] _children;
         private bool _isSatellite;
@@ -37,10 +37,10 @@ namespace Orbital.Core
             get => _parent;
             set => _parent = value;
         }
-        IStaticTrajectory IStaticBodyAccessor.Trajectory
+        IStaticOrbit IStaticBodyAccessor.Orbit
         {
-            get => _trajectory;
-            set => _trajectory = value;
+            get => _orbit;
+            set => _orbit = value;
         }
         IStaticBody[] IStaticBodyAccessor.Children
         {
@@ -59,12 +59,12 @@ namespace Orbital.Core
 
         public DVector3 Position => _parent == null
             ? DVector3.Zero
-            : _parent.Position + _trajectory.GetPositionAtT(TimeService.WorldTime);
+            : _parent.Position + _orbit.GetPositionAtT(TimeService.WorldTime);
 
-        public DVector3 LocalPosition => _trajectory.GetPositionAtT(TimeService.WorldTime);
+        public DVector3 LocalPosition => _orbit.GetPositionAtT(TimeService.WorldTime);
 
         public double Mass => _massSystem.Mass;
-        public IStaticTrajectory Trajectory => _trajectory;
+        public IStaticOrbit Orbit => _orbit;
 
         public override StaticBodySettings Settings
         {
@@ -81,7 +81,7 @@ namespace Orbital.Core
         void IFixedUpdateHandler.FixedUpdate()
         {
             _variables.localPosition =
-                _trajectory?.GetSample(TimeService.WorldTime, true, false).position ?? DVector3.Zero;
+                _orbit?.GetSample(TimeService.WorldTime, true, false).position ?? DVector3.Zero;
         }
     }
 

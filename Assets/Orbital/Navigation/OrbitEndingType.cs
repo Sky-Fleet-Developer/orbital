@@ -1,6 +1,6 @@
-﻿namespace Orbital.Core.TrajectorySystem
+﻿namespace Orbital.Navigation
 {
-    public enum OrbitExodus
+    public enum OrbitEndingType
     {
         Cycle = 0,
         Leave = 1,

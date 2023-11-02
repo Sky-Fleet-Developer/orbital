@@ -11,7 +11,7 @@ namespace Orbital.Core
         public IEnumerable<IStaticBody> Children { get; }
         public DVector3 Position { get; }
         public DVector3 LocalPosition { get; }
-        public IStaticTrajectory Trajectory { get; }
+        public IStaticOrbit Orbit { get; }
         public double GravParameter => MassSystem.Mass * MassUtility.G;
         public bool IsSatellite { get; }
 

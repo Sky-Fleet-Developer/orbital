@@ -25,7 +25,7 @@ namespace Orbital.View
 
         protected override Mesh GetMesh()
         {
-            _mesh = new Mesh {name = "Trajectory line"};
+            _mesh = new Mesh {name = "Orbit line"};
             _mesh.MarkDynamic();
             _mesh.bounds = new Bounds(Vector3.zero, Vector3.one * 1000);
             
@@ -62,7 +62,7 @@ namespace Orbital.View
                 _body.Init();
             }
 
-            _body.Trajectory.WasChangedHandler += Refresh;
+            _body.Orbit.WasChangedHandler += Refresh;
         }
         
         private void Refresh()
@@ -81,32 +81,32 @@ namespace Orbital.View
 
             await _copyVerticesScheduler.Schedule(() =>
             {
-                if (_body.Trajectory.Eccentricity < 0.999)
+                if (_body.Orbit.Eccentricity < 0.999)
                 {
                     //float indexMp = Math.PI / (accuracy - f1);
                     for (int i = 0; i < _positions.Length; i++)
                     {
                         float val = i / (accuracy - 1f) * 2 - 1;
                         val = Mathf.Pow(Mathf.Abs(val), 1.2f) * Math.Sign(val);
-                        _positions[i] = _body.Trajectory.GetPositionFromEccAnomaly(val * Math.PI) * scale;
+                        _positions[i] = _body.Orbit.GetPositionFromEccAnomaly(val * Math.PI) * scale;
                     }
                 }
                 else
                 {
                     float indexMp = (float) Math.PI * 2 / (accuracy - 1);
-                    float start = (float)(-Math.Acos(-(1.0 / Math.Max(_body.Trajectory.Eccentricity, 1))) + dr * (Math.PI / 180.0));
+                    float start = (float)(-Math.Acos(-(1.0 / Math.Max(_body.Orbit.Eccentricity, 1))) + dr * (Math.PI / 180.0));
                     float end = -start;
                     for (int i = 0; i < _positions.Length; i++)
                     {
-                        _positions[i] = _body.Trajectory.GetPositionFromTrueAnomaly(Mathf.Lerp(start, end, i / (accuracy - 1f))) * scale;
+                        _positions[i] = _body.Orbit.GetPositionFromTrueAnomaly(Mathf.Lerp(start, end, i / (accuracy - 1f))) * scale;
                     }
-                   /*double eccentricity = _body.Trajectory.Eccentricity;
+                   /*double eccentricity = _body.Orbit.Eccentricity;
                     int i = 0;
                     for (double tA = -Math.Acos(-(1.0 / eccentricity)) + accuracy * (Math.PI / 180.0);
                         tA < Math.Acos(-(1.0 / eccentricity)) - accuracy * (Math.PI / 180.0);
                         tA += accuracy * (Math.PI / 180.0))
                     {
-                        _positions[i++] = _body.Trajectory.GetPositionFromTrueAnomaly(tA) * scale;
+                        _positions[i++] = _body.Orbit.GetPositionFromTrueAnomaly(tA) * scale;
                     }*/
 
                     /*float m = (float)Math.Sqrt(_body.Parent.GravParameter / 0.001);
@@ -121,20 +121,20 @@ namespace Orbital.View
         
         private void OnDisable()
         {
-            _body.Trajectory.WasChangedHandler -= Refresh;
+            _body.Orbit.WasChangedHandler -= Refresh;
             _positions.Dispose();
         }
 
         
         private struct CopyVerticesJob : IJobParallelFor
         {
-            public IStaticTrajectory Trajectory;
+            public IStaticOrbit Orbit;
             [WriteOnly] public NativeArray<Vector3> Positions;
             public float Scale;
             public float IndexMp;
             public void Execute(int index)
             {
-                Positions[index] = Trajectory.GetPositionFromTrueAnomaly(index * IndexMp) * Scale;
+                Positions[index] = Orbit.GetPositionFromTrueAnomaly(index * IndexMp) * Scale;
             }
         }
         

@@ -82,8 +82,9 @@ namespace Orbital.Test
         public void Refresh()
         {
             Init();
-            PathRoot.SetDirty();
-            PathRoot.RefreshDirty();    
+            _pathRoot.BuildTransitions();
+            /*PathRoot.SetDirty();
+            PathRoot.RefreshDirty();    */
         }
 
         private void OnDrawGizmosSelected()
@@ -94,17 +95,20 @@ namespace Orbital.Test
                 if (element is SampleHolderNode node)
                 {
                     //DVector3 relativePosition = 
-                    //node.Trajectory.DrawGizmos(node.Celestial.Position);
+                    //node.Orbit.DrawGizmos(node.Celestial.Position);
                     Handles.color = Color.green * 0.7f;
                     Handles.CircleHandleCap(-1, node.Celestial.Position * scale, Quaternion.Euler(-90, 0, 0), (float) MassUtility.GetGravityRadius(node.Celestial.GravParameter) * scale, EventType.Repaint);
-                    if (node.Next == null)
+                    if (node.Next == null || node.Ending.Type == OrbitEndingType.Cycle)
                     {
-                        node.Trajectory.DrawGizmos(node.Celestial.Position);
+                        node.Orbit.DrawGizmos(node.Celestial.Position);
                     }
                     else
                     {
-                        node.Trajectory.DrawGizmosByT(node.Time, node.Next.Time, node.Celestial.Position);
+                        if(Math.Abs(node.Time - node.Next.Time) < 1e-8) continue;
+                        node.Orbit.DrawGizmosByT(node.Time, node.Next.Time, node.Celestial.Position);
                     }
+                    Debug.DrawLine(node.Celestial.Position * scale, (node.Celestial.Position + node.Orbit.GetPositionAtT(node.Time)) * scale, Color.yellow, 2);
+                    Debug.DrawLine(node.Celestial.Position * scale, (node.Celestial.Position + node.Orbit.GetPositionAtT(node.Ending.Time)) * scale, Color.green, 2);
                 }
             }
         }

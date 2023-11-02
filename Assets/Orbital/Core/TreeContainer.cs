@@ -15,7 +15,7 @@ namespace Orbital.Core
     {
         [JsonProperty] public IMassSystem Root;
         [JsonIgnore] public Dictionary<IMassSystem, Transform> _transforms { get; private set; }
-        [JsonIgnore] public Dictionary<IMassSystem, IStaticTrajectory> _trajectories { get; private set; }
+        [JsonIgnore] public Dictionary<IMassSystem, IStaticOrbit> _trajectories { get; private set; }
         [JsonIgnore] internal Dictionary<IStaticBody, IMassSystem> _massPerComponent { get; private set; }
         [JsonIgnore] internal Dictionary<IMassSystem, IStaticBodyAccessor> _componentPerMass { get; private set; }
         [JsonIgnore] internal Dictionary<IMassSystem, List<IDynamicBodyAccessor>> _dynamicChildren { get; private set; }
@@ -49,7 +49,7 @@ namespace Orbital.Core
 
         private void CreateCache()
         {
-            _trajectories = new Dictionary<IMassSystem, IStaticTrajectory>();
+            _trajectories = new Dictionary<IMassSystem, IStaticOrbit>();
             _massPerComponent = new Dictionary<IStaticBody, IMassSystem>();
             _componentPerMass = new Dictionary<IMassSystem, IStaticBodyAccessor>();
             _dynamicChildren = new Dictionary<IMassSystem, List<IDynamicBodyAccessor>>();
@@ -64,7 +64,7 @@ namespace Orbital.Core
             if (!list.Contains(component))
             {
                 list.Add(component);
-                component.Trajectory = new StaticTrajectory(parent);
+                component.Orbit = new StaticOrbit(parent);
             }
         }
 
@@ -82,9 +82,9 @@ namespace Orbital.Core
                     {
                         value.Parent = _componentPerMass[_parents[child]].Self;
                     }
-                    if (_trajectories.TryGetValue(child, out IStaticTrajectory trajectory))
+                    if (_trajectories.TryGetValue(child, out IStaticOrbit trajectory))
                     {
-                        value.Trajectory = trajectory;
+                        value.Orbit = trajectory;
                     }
                     value.MassSystem = child;
                     value.World = _world;
