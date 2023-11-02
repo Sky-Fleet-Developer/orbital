@@ -139,7 +139,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &38218435
 Transform:
   m_ObjectHideFlags: 0
@@ -353,7 +353,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &151863323
 Transform:
   m_ObjectHideFlags: 0
@@ -386,9 +386,9 @@ MonoBehaviour:
   pos:
     x: 0
     y: 0
-    z: 368719998.0020523
+    z: 838000000
   vel:
-    x: 1301.6446664033824
+    x: 691.283961170096
     y: 0
     z: 0
   testT: 0
@@ -1407,7 +1407,7 @@ MonoBehaviour:
       Core","settings":{"mass":6E+24,"eccentricity":0.0,"semiMajorAxis":0.0,"inclination":0.0,"argumentOfPeriapsis":0.0,"longitudeAscendingNode":0.0,"timeShift":1E+08,"period":0.0},"localTrajectorySettings":{"aMass":4E+24,"bMass":2E+24,"eccentricity":0.1,"aPericenterRadius":2954300.0,"argumentOfPeriapsis":0.0,"longitudeAscendingNode":0.0,"inclination":0.0,"timeShift":0.0},"ChildA":{"$type":"Orbital.Core.TrajectorySystem.CelestialBody,
       Core","settings":{"mass":4E+24,"eccentricity":0.1,"semiMajorAxis":2954300.0,"inclination":0.0,"argumentOfPeriapsis":0.0,"longitudeAscendingNode":0.0,"timeShift":0.0,"period":0.0}},"ChildB":{"$type":"Orbital.Core.TrajectorySystem.CelestialBody,
       Core","settings":{"mass":2E+24,"eccentricity":0.1,"semiMajorAxis":3722184.75,"inclination":0.0,"argumentOfPeriapsis":0.0,"longitudeAscendingNode":180.0,"timeShift":0.0,"period":0.0}}},"Children":[{"$type":"Orbital.Core.TrajectorySystem.CelestialBody,
-      Core","settings":{"mass":7.35E+22,"eccentricity":0.56,"semiMajorAxis":8.38E+08,"inclination":0.0,"argumentOfPeriapsis":0.0,"longitudeAscendingNode":0.0,"timeShift":0.0,"period":0.0}}]},"IsInitialized":true}'
+      Core","settings":{"mass":7.35E+22,"eccentricity":0.0,"semiMajorAxis":8.38E+08,"inclination":0.0,"argumentOfPeriapsis":0.0,"longitudeAscendingNode":0.0,"timeShift":0.0,"period":0.0}}]},"IsInitialized":true}'
 --- !u!1 &5637055361539967342
 GameObject:
   m_ObjectHideFlags: 0

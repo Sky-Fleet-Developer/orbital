@@ -99,7 +99,7 @@ namespace Orbital.Test
                     Handles.CircleHandleCap(-1, node.Celestial.Position * scale, Quaternion.Euler(-90, 0, 0), (float) MassUtility.GetGravityRadius(node.Celestial.GravParameter) * scale, EventType.Repaint);
                     if (node.Next == null)
                     {
-                        node.Trajectory.DrawGizmosByT(node.Time, node.Time + 30000, node.Celestial.Position);
+                        node.Trajectory.DrawGizmos(node.Celestial.Position);
                     }
                     else
                     {

@@ -10,7 +10,7 @@ namespace Orbital.Core.TrajectorySystem
     public static partial class MassUtility
     {
         public const double G = 6.67430e-11;
-        private const double GravityEdgeInv = 50;
+        private const double GravityEdgeInv = 100;
         public static double GetGravityRadius(double Nu)
         {
             return Math.Sqrt(Nu * GravityEdgeInv);
@@ -141,7 +141,7 @@ namespace Orbital.Core.TrajectorySystem
         
         public static bool IsTrajectoryLeavesGravityRadius(IStaticTrajectory trajectory, double gravityRadius, double fromTime, out DVector3 leavePoint, out double leaveTime)
         {
-            bool result = trajectory.SemiMajorAxis > gravityRadius;
+            bool result = trajectory.Apocenter > gravityRadius;
             if (result)
             {
                 double leaveTrueAnomaly = trajectory.TrueAnomalyAtRadius(gravityRadius);

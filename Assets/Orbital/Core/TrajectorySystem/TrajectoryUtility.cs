@@ -328,7 +328,7 @@ namespace Orbital.Core.TrajectorySystem
             double num3 = Math.Sqrt(tr.Nu / (tr.SemiMajorAxis * (1.0 - tr.Eccentricity * tr.Eccentricity)));
             double fwd = -sin * num3;
             double right = (cos + tr.Eccentricity) * num3;
-            return tr.RotationMatrix.Forward() * right + tr.RotationMatrix.Right() * fwd;
+            return tr.RotationMatrix.Forward() * fwd + tr.RotationMatrix.Right() * right;
         }
 
         #endregion
