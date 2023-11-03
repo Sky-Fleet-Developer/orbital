@@ -1,5 +1,8 @@
-﻿using System.Drawing;
-namespace System.Windows.Forms
+﻿using System;
+using UnityWinForms.Core;
+using UnityWinForms.System.Drawing;
+
+namespace UnityWinForms.System.Windows.Forms
 {
 
     internal sealed class ResizeButton : Button, IResizableControl

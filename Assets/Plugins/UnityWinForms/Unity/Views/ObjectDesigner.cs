@@ -1,14 +1,15 @@
-﻿namespace Unity.Views
-{
-    using System;
-    using System.Collections;
-    using System.Collections.Generic;
-    using System.Drawing;
-    using System.Globalization;
-    using System.Linq;
-    using System.Reflection;
-    using System.Windows.Forms;
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
+using System.Reflection;
+using UnityWinForms.System.Drawing;
+using UnityWinForms.System.Windows.Forms;
+using UnityWinForms.Utility;
 
+namespace UnityWinForms.Unity.Views
+{
     public class ObjectDesigner : IObjectDesigner
     {
         private readonly ObjectEditor editor;

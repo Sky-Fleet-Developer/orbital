@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel;
-namespace System.Windows.Forms
+
+namespace UnityWinForms.System.Windows.Forms
 {
 
     public delegate void TabControlCancelEventHandler(object sender, TabControlCancelEventArgs e);

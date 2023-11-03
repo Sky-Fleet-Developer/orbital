@@ -1,8 +1,10 @@
-﻿namespace UnityWinForms.Examples.Panels
+﻿using UnityWinForms.Controls;
+using System;
+using UnityWinForms.System.Drawing;
+using UnityWinForms.System.Windows.Forms;
+
+namespace UnityWinForms.Examples.Panels
 {
-    using System;
-    using System.Drawing;
-    using System.Windows.Forms;
     
     public class PanelForm : BaseExamplePanel
     {

@@ -1,6 +1,9 @@
-﻿using System.Drawing;
+﻿using System;
 using System.Globalization;
-namespace System.Windows.Forms
+using UnityWinForms.System.Drawing;
+using UnityWinForms.Utility;
+
+namespace UnityWinForms.System.Windows.Forms
 {
     public class ProgressBar : Control
     {

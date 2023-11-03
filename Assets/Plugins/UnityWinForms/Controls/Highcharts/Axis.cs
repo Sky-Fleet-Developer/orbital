@@ -1,9 +1,9 @@
-﻿namespace Highcharts
-{
-    using System;
-    using System.Collections.Generic;
-    using System.Drawing;
+﻿using System;
+using System.Collections.Generic;
+using UnityWinForms.System.Drawing;
 
+namespace UnityWinForms.Controls.Highcharts
+{
     public class Axis : IDisposable
     {
         internal Pen  gridPen = new Pen(Color.Transparent);

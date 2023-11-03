@@ -1,8 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
-using System.Drawing;
+using UnityWinForms.System.Drawing;
+using UnityWinForms.Utility;
 
-namespace System.Windows.Forms
+namespace UnityWinForms.System.Windows.Forms
 {
     public class ToolTip : Component
     {

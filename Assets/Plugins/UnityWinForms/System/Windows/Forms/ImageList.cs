@@ -2,8 +2,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
-using System.Drawing;
-namespace System.Windows.Forms
+using UnityWinForms.System.Drawing;
+
+namespace UnityWinForms.System.Windows.Forms
 {
 
     public sealed class ImageList

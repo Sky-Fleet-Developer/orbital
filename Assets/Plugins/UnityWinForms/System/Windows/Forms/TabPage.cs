@@ -1,5 +1,6 @@
-﻿using System.Drawing;
-namespace System.Windows.Forms
+﻿using UnityWinForms.System.Drawing;
+
+namespace UnityWinForms.System.Windows.Forms
 {
 
     public class TabPage : Panel

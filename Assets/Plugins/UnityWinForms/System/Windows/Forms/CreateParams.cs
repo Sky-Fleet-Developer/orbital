@@ -1,5 +1,7 @@
-﻿using System.Text;
-namespace System.Windows.Forms
+﻿using System;
+using System.Text;
+
+namespace UnityWinForms.System.Windows.Forms
 {
 
     public class CreateParams

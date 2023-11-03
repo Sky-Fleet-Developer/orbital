@@ -1,9 +1,9 @@
-﻿namespace Highcharts
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+
+namespace UnityWinForms.Controls.Highcharts
 {
-    using System;
-    using System.Collections;
-    using System.Collections.Generic;
-    
     public class AxisCollection : IList<Axis>
     {
         private readonly List<Axis> items = new List<Axis>();

@@ -1,13 +1,12 @@
-﻿#if UNITY_EDITOR
+﻿using System;
+using UnityEditor;
+using UnityEngine;
+using UnityWinForms.System.Windows.Forms;
 
-namespace Unity.Views
+#if UNITY_EDITOR
+
+namespace UnityWinForms.Unity.Views
 {
-    using System;
-    using System.Windows.Forms;
-
-    using UnityEngine;
-    using UnityEditor;
-
     public class ControlInspector : EditorWindow
     {
         private IObjectDesigner designer;

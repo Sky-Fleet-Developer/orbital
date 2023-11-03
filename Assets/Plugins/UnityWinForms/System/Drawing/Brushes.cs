@@ -1,4 +1,4 @@
-﻿namespace System.Drawing
+﻿namespace UnityWinForms.System.Drawing
 {
     public static class Brushes
     {

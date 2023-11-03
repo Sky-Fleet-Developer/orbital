@@ -1,6 +1,7 @@
-﻿using System.Drawing;
+﻿using UnityWinForms.System.Drawing;
+using UnityWinForms.System.Windows.Forms;
 
-namespace System.Windows.Forms
+namespace UnityWinForms.Utility
 {
 
     /// <summary>

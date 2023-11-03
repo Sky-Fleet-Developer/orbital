@@ -1,4 +1,4 @@
-﻿namespace Highcharts
+﻿namespace UnityWinForms.Controls.Highcharts
 {
     public class PlotOptions
     {

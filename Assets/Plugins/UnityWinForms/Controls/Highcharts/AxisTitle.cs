@@ -1,8 +1,8 @@
-﻿namespace Highcharts
-{
-    using System;
-    using System.Windows.Forms;
+﻿using System;
+using UnityWinForms.System.Windows.Forms;
 
+namespace UnityWinForms.Controls.Highcharts
+{
     public class AxisTitle : IDisposable
     {
         private readonly Axis owner;

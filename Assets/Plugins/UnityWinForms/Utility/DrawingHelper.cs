@@ -1,6 +1,9 @@
 ﻿#define UNITY_GDI
 
-namespace System.Drawing
+using System;
+using UnityWinForms.System.Drawing;
+
+namespace UnityWinForms.Utility
 {
     /// <summary>
     /// You can copy this to your native windows forms application.

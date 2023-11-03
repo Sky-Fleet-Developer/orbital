@@ -1,11 +1,11 @@
-﻿namespace UnityWinForms.Examples.Panels
+﻿using UnityWinForms.Controls.Highcharts;
+using System;
+using UnityWinForms.System.Drawing;
+using UnityWinForms.System.Windows.Forms;
+
+namespace UnityWinForms.Examples.Panels
 {
-    using System;
-    using System.Drawing;
-    using System.Windows.Forms;
-    
-    using Highcharts;
-    
+
     public class PanelChart : BaseExamplePanel
     {
         private double x;

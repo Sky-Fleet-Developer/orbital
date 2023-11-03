@@ -1,13 +1,11 @@
-﻿namespace Unity.Views
+﻿using System;
+using System.Globalization;
+using UnityEngine;
+using UnityWinForms.Controls;
+using UnityWinForms.Unity.API;
+
+namespace UnityWinForms.Unity.Views
 {
-    using System;
-    using System.Globalization;
-    using System.Windows.Forms;
-
-    using Unity.API;
-
-    using UnityEngine;
-
     public static class Editor
     {
         private static readonly string[] boolOnOff = { "On", "Off" };
@@ -92,7 +90,7 @@
         {
             return GUILayout.Button(text, GUILayout.Width(width));
         }
-        public static void ColorField(string name, System.Drawing.Color value, Action<System.Drawing.Color> setColor)
+        public static void ColorField(string name, global::UnityWinForms.System.Drawing.Color value, Action<global::UnityWinForms.System.Drawing.Color> setColor)
         {
             GUILayout.BeginHorizontal();
             GUILayout.Label(name + ":", GUILayout.Width(_nameWidth));
@@ -297,7 +295,7 @@
         {
             return GUILayout.Toggle(value, name, GUILayout.Width(_width));
         }
-        public static void SetBackColor(System.Drawing.Color color)
+        public static void SetBackColor(global::UnityWinForms.System.Drawing.Color color)
         {
             GUI.backgroundColor = color.ToUnityColor();
         }

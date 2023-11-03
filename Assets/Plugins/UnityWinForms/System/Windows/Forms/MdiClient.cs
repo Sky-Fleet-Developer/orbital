@@ -1,6 +1,8 @@
-﻿using System.Collections;
-using System.Drawing;
-namespace System.Windows.Forms
+﻿using System;
+using System.Collections;
+using UnityWinForms.System.Drawing;
+
+namespace UnityWinForms.System.Windows.Forms
 {
 
 

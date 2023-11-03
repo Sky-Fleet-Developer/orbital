@@ -1,10 +1,10 @@
-﻿using System.Drawing;
-using System.Globalization;
+﻿using System.Globalization;
 using System.Linq;
-
 using UnityEngine;
+using UnityWinForms.Core.API;
+using UnityWinForms.System.Drawing;
 
-namespace Unity.API
+namespace UnityWinForms.Unity.API
 {
     public class UnitySystem : IApiSystem
     {
@@ -73,8 +73,8 @@ namespace Unity.API
                 var mp = UnityEngine.Input.mousePosition;
                 var mx = mp.x;
                 var my = UnityEngine.Screen.height - mp.y;
-                var sx = System.Windows.Forms.Application.ScaleX;
-                var sy = System.Windows.Forms.Application.ScaleY;
+                var sx = global::UnityWinForms.System.Windows.Forms.Application.ScaleX;
+                var sy = global::UnityWinForms.System.Windows.Forms.Application.ScaleY;
                 
                 return new Point((int) (mx / sx), (int) (my / sy));
             }

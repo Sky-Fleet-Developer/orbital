@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
-namespace System.Windows.Forms
+﻿using System;
+using System.Collections.Generic;
+
+namespace UnityWinForms.System.Windows.Forms
 {
 
     [Serializable]

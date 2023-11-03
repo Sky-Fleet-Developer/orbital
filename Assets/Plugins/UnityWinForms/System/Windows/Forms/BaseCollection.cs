@@ -1,5 +1,7 @@
-﻿using System.Collections;
-namespace System.Windows.Forms
+﻿using System;
+using System.Collections;
+
+namespace UnityWinForms.System.Windows.Forms
 {
 
     public class BaseCollection : ICollection

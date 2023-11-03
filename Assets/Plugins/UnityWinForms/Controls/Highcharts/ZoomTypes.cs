@@ -1,4 +1,4 @@
-namespace Highcharts
+namespace UnityWinForms.Controls.Highcharts
 {
     public enum ZoomTypes
     {

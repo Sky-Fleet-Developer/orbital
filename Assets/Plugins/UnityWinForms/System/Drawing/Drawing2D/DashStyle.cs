@@ -1,4 +1,4 @@
-﻿namespace System.Drawing.Drawing2D
+﻿namespace UnityWinForms.System.Drawing.Drawing2D
 {
     public enum DashStyle
     {

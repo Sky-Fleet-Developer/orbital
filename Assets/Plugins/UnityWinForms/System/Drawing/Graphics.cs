@@ -1,9 +1,11 @@
-﻿using System.Drawing.API;
-using System.Drawing.Drawing2D;
-using System.Windows.Forms;
-
-using Unity.API; // TODO: remove
-namespace System.Drawing
+﻿using System;
+using UnityWinForms.Core;
+using UnityWinForms.Core.API;
+using UnityWinForms.System.Drawing.Drawing2D;
+using UnityWinForms.System.Windows.Forms;
+using UnityWinForms.Unity.API;
+using UnityWinForms.Utility; // TODO: remove
+namespace UnityWinForms.System.Drawing
 {
 
     public sealed class Graphics : IDeviceContext, IDisposable

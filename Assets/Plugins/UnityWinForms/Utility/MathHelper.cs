@@ -1,6 +1,7 @@
-﻿using System.Drawing;
+﻿using System;
+using UnityWinForms.System.Drawing;
 
-namespace System.Windows.Forms
+namespace UnityWinForms.Utility
 {
     public static class MathHelper
     {

@@ -1,11 +1,12 @@
-﻿namespace Highcharts
-{
-    using System;
-    using System.Collections.Generic;
-    using System.Drawing;
-    using System.Linq;
-    using System.Windows.Forms;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using UnityWinForms.System.Drawing;
+using UnityWinForms.System.Windows.Forms;
+using UnityWinForms.Utility;
 
+namespace UnityWinForms.Controls.Highcharts
+{
     // Based on https://www.highcharts.com/
     public class Highchart : Control
     {

@@ -1,6 +1,9 @@
-﻿using System.Drawing;
+﻿using System;
+using UnityWinForms.Core;
+using UnityWinForms.System.Drawing;
+using UnityWinForms.Utility;
 
-namespace System.Windows.Forms
+namespace UnityWinForms.System.Windows.Forms
 {
     public enum TickStyle 
     {

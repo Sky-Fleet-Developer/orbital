@@ -1,12 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Windows.Forms;
-    
+﻿using System.Collections.Generic;
+using UnityWinForms.Core;
+using UnityWinForms.System.Drawing;
+using UnityWinForms.System.Windows.Forms;
+using UnityWinForms.Unity.API;
+using UnityWinForms.Utility;
+using Application = UnityWinForms.System.Windows.Forms.Application;
+using Cursor = UnityWinForms.System.Windows.Forms.Cursor;
+using Screen = UnityWinForms.System.Windows.Forms.Screen;
 using UE = UnityEngine;
-using SWF = System.Windows.Forms;
 
-namespace Unity.API
+namespace UnityWinForms.Unity
 {
 [UE.ExecuteAlways]
     public sealed class UnityWinForms : UE.MonoBehaviour
@@ -323,8 +326,8 @@ namespace Unity.API
             }
 
             // Scale if needed.
-            var scaleX = SWF.Application.ScaleX;
-            var scaleY = SWF.Application.ScaleY;
+            var scaleX = Application.ScaleX;
+            var scaleY = Application.ScaleY;
             if (scaleX != 1f || scaleY != 1f)
                 UnityEngine.GUI.matrix = UnityEngine.Matrix4x4.TRS(
                     UE.Vector3.zero,

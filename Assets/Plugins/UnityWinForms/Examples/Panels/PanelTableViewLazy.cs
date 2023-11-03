@@ -1,6 +1,8 @@
-﻿namespace UnityWinForms.Examples.Panels
+﻿using UnityWinForms.Controls;
+
+using System.Diagnostics;
+namespace UnityWinForms.Examples.Panels
 {
-    using System.Diagnostics;
     using System.Windows.Forms;
     
     public class PanelTableViewLazy : BaseExamplePanel

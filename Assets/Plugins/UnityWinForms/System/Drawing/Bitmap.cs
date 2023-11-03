@@ -1,5 +1,8 @@
-﻿using System.Drawing.API;
-namespace System.Drawing
+﻿using System;
+using UnityWinForms.Core.API;
+using UnityWinForms.Utility;
+
+namespace UnityWinForms.System.Drawing
 {
     
     [Serializable]

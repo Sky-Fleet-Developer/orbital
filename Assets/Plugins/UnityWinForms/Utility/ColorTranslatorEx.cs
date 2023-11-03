@@ -1,4 +1,7 @@
-﻿namespace System.Drawing
+﻿using System;
+using UnityWinForms.System.Drawing;
+
+namespace UnityWinForms.Utility
 {
     public static class ColorTranslatorEx
     {

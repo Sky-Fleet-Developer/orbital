@@ -1,4 +1,6 @@
 ﻿using System.Drawing;
+using UnityWinForms.Controls;
+using Size = UnityWinForms.System.Drawing.Size;
 
 namespace UnityWinForms.Examples.Panels
 {

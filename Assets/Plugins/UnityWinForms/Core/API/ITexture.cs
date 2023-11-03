@@ -1,4 +1,6 @@
-﻿namespace System.Drawing.API
+﻿using UnityWinForms.System.Drawing;
+
+namespace UnityWinForms.Core.API
 {
     public interface ITexture
     {

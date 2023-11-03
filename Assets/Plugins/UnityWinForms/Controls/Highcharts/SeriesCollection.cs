@@ -1,9 +1,9 @@
-﻿namespace Highcharts
-{
-    using System;
-    using System.Collections;
-    using System.Collections.Generic;
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 
+namespace UnityWinForms.Controls.Highcharts
+{
     public class SeriesCollection : IList<Series>, IDisposable
     {
         internal readonly Highchart chart;

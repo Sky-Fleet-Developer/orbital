@@ -3,10 +3,10 @@ Author: PeterSvP
 http://pastebin.com/qkkhWs2J
 */
 
-namespace Unity.External
-{
-    using UnityEngine;
+using UnityEngine;
 
+namespace UnityWinForms.Unity.External
+{
     /// A unility class with functions to scale Texture2D Data.
     ///
     /// Scale is performed on the GPU using RTT, so it's blazing fast.

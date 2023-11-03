@@ -1,4 +1,4 @@
-﻿namespace System.Drawing.API
+﻿namespace UnityWinForms.Core.API
 {
     public interface IApiInput
     {

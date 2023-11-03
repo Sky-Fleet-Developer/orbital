@@ -1,6 +1,8 @@
-﻿using System.Drawing;
+﻿using System;
+using UnityWinForms.System.Drawing;
+using UnityWinForms.System.Windows.Forms;
 
-namespace System.Windows.Forms
+namespace UnityWinForms.Controls
 {
 
     public class ColorPicker : Button

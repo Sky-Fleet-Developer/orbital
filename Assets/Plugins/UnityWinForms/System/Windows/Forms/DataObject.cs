@@ -1,4 +1,6 @@
-﻿namespace System.Windows.Forms
+﻿using System;
+
+namespace UnityWinForms.System.Windows.Forms
 {
     public class DataObject : IDataObject
     {

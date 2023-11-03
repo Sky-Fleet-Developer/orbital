@@ -1,8 +1,10 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
-using System.Drawing;
+using UnityWinForms.System.Drawing;
+using UnityWinForms.Utility;
 
-namespace System.Windows.Forms
+namespace UnityWinForms.System.Windows.Forms
 {
 
     public class ComboBox : ListControl

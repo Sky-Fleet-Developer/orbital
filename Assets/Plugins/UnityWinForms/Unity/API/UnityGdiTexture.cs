@@ -1,8 +1,8 @@
-﻿namespace Unity.API
-{
-    using System.Drawing;
-    using System.Drawing.API;
+﻿using UnityWinForms.Core.API;
+using Color = UnityWinForms.System.Drawing.Color;
 
+namespace UnityWinForms.Unity.API
+{
     using UE = UnityEngine;
 
     public class UnityGdiTexture : ITexture

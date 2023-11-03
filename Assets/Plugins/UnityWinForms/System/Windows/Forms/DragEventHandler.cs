@@ -1,4 +1,4 @@
-﻿namespace System.Windows.Forms
+﻿namespace UnityWinForms.System.Windows.Forms
 {
     public delegate void DragEventHandler(object sender, DragEventArgs e);
 }

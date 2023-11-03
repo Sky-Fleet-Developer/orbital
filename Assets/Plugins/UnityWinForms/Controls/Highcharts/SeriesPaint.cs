@@ -1,7 +1,7 @@
-namespace Highcharts
+using UnityWinForms.System.Drawing;
+
+namespace UnityWinForms.Controls.Highcharts
 {
-    using System.Drawing;
-    
     public static class SeriesPaint
     {
         private static readonly SolidBrush pointBrush = new SolidBrush(Color.Black);

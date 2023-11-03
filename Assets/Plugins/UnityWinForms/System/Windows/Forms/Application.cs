@@ -1,9 +1,12 @@
-﻿using System.Collections.Generic;
-using System.Drawing;
+﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using UnityWinForms.Core;
+using UnityWinForms.System.Drawing;
+using UnityWinForms.Utility;
 
-namespace System.Windows.Forms
+namespace UnityWinForms.System.Windows.Forms
 {
 
     internal delegate void DragDropRenderHandler(Graphics g);
@@ -271,7 +274,7 @@ namespace System.Windows.Forms
             var mousePosition = Control.MousePosition;
             cursor.Draw(
                 paintEventArgs.Graphics,
-                new Drawing.Rectangle(
+                new global::UnityWinForms.System.Drawing.Rectangle(
                     mousePosition.X,
                     mousePosition.Y,
                     (int)(cursorSize.Width / scaleX),

@@ -1,15 +1,11 @@
-﻿#if UNITY_EDITOR
-namespace Unity.Views
+﻿using System.Collections.Generic;
+using System.Linq;
+using UnityEditor;
+using UnityEngine;
+
+#if UNITY_EDITOR
+namespace UnityWinForms.Unity.Views
 {
-    using System.Collections.Generic;
-    using System.Linq;
-
-    using Unity.API;
-
-    using UnityEditor;
-
-    using UnityEngine;
-
     public static class EditorMenu
     {
         [MenuItem("Window/UnityWinForms/AppControlList")]

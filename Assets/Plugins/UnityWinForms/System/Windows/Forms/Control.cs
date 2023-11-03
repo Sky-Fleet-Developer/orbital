@@ -1,10 +1,12 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Drawing;
-using System.Drawing.Drawing2D;
+using UnityWinForms.Core;
+using UnityWinForms.System.Drawing;
+using UnityWinForms.System.Drawing.Drawing2D;
 
-namespace System.Windows.Forms
+namespace UnityWinForms.System.Windows.Forms
 {
     public class Control : Component, IDropTarget
     {

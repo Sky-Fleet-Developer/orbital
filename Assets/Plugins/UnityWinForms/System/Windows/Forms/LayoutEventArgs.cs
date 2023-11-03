@@ -1,5 +1,7 @@
-﻿using System.ComponentModel;
-namespace System.Windows.Forms
+﻿using System;
+using System.ComponentModel;
+
+namespace UnityWinForms.System.Windows.Forms
 {
 
     public class LayoutEventArgs : EventArgs

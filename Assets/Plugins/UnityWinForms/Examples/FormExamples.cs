@@ -1,10 +1,10 @@
-﻿namespace UnityWinForms.Examples
-{
-    using System;
-    using System.Drawing;
-    using System.Windows.Forms;
+﻿using System;
+using UnityWinForms.System.Drawing;
+using UnityWinForms.System.Windows.Forms;
 
-    using Examples.Panels;
+using UnityWinForms.Examples.Panels;
+namespace UnityWinForms.Examples
+{
 
     public sealed class FormExamples : Form
     {

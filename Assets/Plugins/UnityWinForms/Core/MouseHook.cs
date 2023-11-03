@@ -1,4 +1,7 @@
-﻿namespace System.Windows.Forms
+﻿using System;
+using UnityWinForms.System.Windows.Forms;
+
+namespace UnityWinForms.Core
 {
     /// <summary>
     /// implement your windows hook here.

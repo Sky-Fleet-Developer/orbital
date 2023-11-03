@@ -1,4 +1,4 @@
-﻿namespace System.Windows.Forms
+﻿namespace UnityWinForms.Utility
 {
     public static class KeyHelper
     {

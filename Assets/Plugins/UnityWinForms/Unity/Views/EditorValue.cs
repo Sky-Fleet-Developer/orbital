@@ -1,7 +1,7 @@
-namespace Unity.Views
-{
-    using System.Collections.Generic;
+using System.Collections.Generic;
 
+namespace UnityWinForms.Unity.Views
+{
     public struct EditorValue<T>
     {
         private readonly bool changed;

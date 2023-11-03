@@ -1,5 +1,10 @@
 ﻿using System.Drawing;
 using System.Windows.Forms;
+using Color = UnityWinForms.System.Drawing.Color;
+using Keys = UnityWinForms.System.Windows.Forms.Keys;
+using MenuStrip = UnityWinForms.System.Windows.Forms.MenuStrip;
+using ToolStripMenuItem = UnityWinForms.System.Windows.Forms.ToolStripMenuItem;
+using ToolStripSeparator = UnityWinForms.System.Windows.Forms.ToolStripSeparator;
 
 namespace UnityWinForms.Examples.Panels
 {

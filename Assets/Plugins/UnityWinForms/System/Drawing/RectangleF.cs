@@ -1,5 +1,7 @@
-﻿using System.Globalization;
-namespace System.Drawing
+﻿using System;
+using System.Globalization;
+
+namespace UnityWinForms.System.Drawing
 {
     
     public struct RectangleF : IEquatable<RectangleF>

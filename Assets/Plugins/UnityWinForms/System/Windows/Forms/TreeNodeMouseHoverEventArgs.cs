@@ -1,4 +1,6 @@
-﻿namespace System.Windows.Forms
+﻿using System;
+
+namespace UnityWinForms.System.Windows.Forms
 {
     public delegate void TreeNodeMouseHoverEventHandler(object sender, TreeNodeMouseHoverEventArgs e);
 

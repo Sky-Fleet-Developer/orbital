@@ -1,8 +1,9 @@
-﻿namespace UnityWinForms.Examples.Panels
+﻿using System;
+using System.Linq;
+using UnityWinForms.System.Windows.Forms;
+namespace UnityWinForms.Examples.Panels
 {
-    using System;
-    using System.Linq;
-    using System.Windows.Forms;
+
 
     public class PanelPanel : BaseExamplePanel
     {

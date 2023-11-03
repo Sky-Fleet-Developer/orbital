@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
+using UnityWinForms.System.Windows.Forms;
 
-namespace System.Windows.Forms
+namespace UnityWinForms.Core
 {
     internal static class ApplicationResources
     {

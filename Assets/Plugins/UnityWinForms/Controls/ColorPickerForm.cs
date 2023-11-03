@@ -1,6 +1,10 @@
-using System.Drawing;
+using System;
+using UnityWinForms.Core;
+using UnityWinForms.System.Drawing;
+using UnityWinForms.System.Windows.Forms;
+using UnityWinForms.Utility;
 
-namespace System.Windows.Forms
+namespace UnityWinForms.Controls
 {
 
     public class ColorPickerForm : Form

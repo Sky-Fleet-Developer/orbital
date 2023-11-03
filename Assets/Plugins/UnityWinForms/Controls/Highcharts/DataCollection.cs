@@ -1,9 +1,8 @@
-﻿namespace Highcharts
-{
-    using System;
-    using System.Collections;
-    using System.Collections.Generic;
+﻿using System;
+using System.Collections;
 
+namespace UnityWinForms.Controls.Highcharts
+{
     public class DataCollection : IEnumerable
     {
         private static readonly double[] emptyArray = new double[0];

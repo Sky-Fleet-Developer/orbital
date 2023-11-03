@@ -1,5 +1,7 @@
-﻿using System.Drawing.Drawing2D;
-namespace System.Drawing
+﻿using System;
+using UnityWinForms.System.Drawing.Drawing2D;
+
+namespace UnityWinForms.System.Drawing
 {
 
     public sealed class Pen : IDisposable, ICloneable

@@ -1,8 +1,8 @@
-﻿namespace UnityWinForms.Examples
+﻿using System;
+using UnityWinForms.System.Drawing;
+using UnityWinForms.System.Windows.Forms;
+namespace UnityWinForms.Examples
 {
-    using System;
-    using System.Drawing;
-    using System.Windows.Forms;
 
     [Flags]
     public enum AnchorStylesExtended

@@ -15,7 +15,7 @@
             var tree = this.Create<TreeView>(); 
             tree.Size = new Size(320, 400);
 
-            var watch = System.Diagnostics.Stopwatch.StartNew();
+            var watch = global::System.Diagnostics.Stopwatch.StartNew();
             
             for (int i = 0; i < nodesCount; i++)
                 tree.Nodes.Add("node " + i);

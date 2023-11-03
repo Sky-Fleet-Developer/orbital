@@ -1,6 +1,7 @@
-﻿using System.Drawing;
+﻿using UnityWinForms.Core;
+using UnityWinForms.System.Drawing;
 
-namespace System.Windows.Forms
+namespace UnityWinForms.System.Windows.Forms
 {
 
     public sealed class Cursor

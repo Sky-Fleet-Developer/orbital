@@ -1,9 +1,8 @@
-﻿namespace Highcharts
-{
-    using System;
-    using System.Drawing;
-    using System.Windows.Forms;
+﻿using UnityWinForms.System.Drawing;
+using UnityWinForms.System.Windows.Forms;
 
+namespace UnityWinForms.Controls.Highcharts
+{
     internal sealed class LegendButton : Button
     {
         private const int DefaultTextMarginLeft = 16;

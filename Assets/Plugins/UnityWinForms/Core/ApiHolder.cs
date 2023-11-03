@@ -1,7 +1,6 @@
-﻿using System.Drawing;
-using System.Drawing.API;
+﻿using UnityWinForms.Core.API;
 
-namespace System.Windows.Forms
+namespace UnityWinForms.Core
 {
     /// <summary>
     /// Replace with your own implementation if needed.

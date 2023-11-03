@@ -1,8 +1,8 @@
-﻿namespace Highcharts
-{
-    using System;
-    using System.Drawing;
+﻿using System;
+using UnityWinForms.System.Drawing;
 
+namespace UnityWinForms.Controls.Highcharts
+{
     public class Chart : IDisposable
     {
         internal Pen borderPen     = new Pen(Color.White);

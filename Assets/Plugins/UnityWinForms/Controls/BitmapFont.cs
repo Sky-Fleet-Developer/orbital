@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Text;
 using System.Xml.Serialization;
+using UnityWinForms.System.Drawing;
+using UnityWinForms.Utility;
 
-namespace Unity.Controls
+namespace UnityWinForms.Controls
 {
     public class BitmapFont
     {
@@ -26,7 +25,7 @@ namespace Unity.Controls
         public void Load(Bitmap fontImage, byte[] format)
         {
             var ser = new XmlSerializer(typeof(font));
-            using (var str = new System.IO.MemoryStream(format))
+            using (var str = new global::System.IO.MemoryStream(format))
             {
                 var font = (font)ser.Deserialize(str);
                 textureList = new Dictionary<int, BitmapChar>();
@@ -80,8 +79,8 @@ namespace Unity.Controls
         }
 
         /// <remarks/>
-        [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
-        [System.Xml.Serialization.XmlRootAttribute(Namespace = "", IsNullable = false)]
+        [XmlType(AnonymousType = true)]
+        [XmlRoot(Namespace = "", IsNullable = false)]
         public partial class font
         {
 
@@ -135,7 +134,7 @@ namespace Unity.Controls
             }
 
             /// <remarks/>
-            [System.Xml.Serialization.XmlArrayItemAttribute("char", IsNullable = false)]
+            [XmlArrayItem("char", IsNullable = false)]
             public fontChar[] chars
             {
                 get
@@ -149,7 +148,7 @@ namespace Unity.Controls
             }
 
             /// <remarks/>
-            [System.Xml.Serialization.XmlAttributeAttribute()]
+            [XmlAttribute()]
             public string type
             {
                 get
@@ -164,7 +163,7 @@ namespace Unity.Controls
         }
 
         /// <remarks/>
-        [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
+        [XmlType(AnonymousType = true)]
         public partial class fontDescription
         {
 
@@ -175,7 +174,7 @@ namespace Unity.Controls
             private string styleField;
 
             /// <remarks/>
-            [System.Xml.Serialization.XmlAttributeAttribute()]
+            [XmlAttribute()]
             public byte size
             {
                 get
@@ -189,7 +188,7 @@ namespace Unity.Controls
             }
 
             /// <remarks/>
-            [System.Xml.Serialization.XmlAttributeAttribute()]
+            [XmlAttribute()]
             public string family
             {
                 get
@@ -203,7 +202,7 @@ namespace Unity.Controls
             }
 
             /// <remarks/>
-            [System.Xml.Serialization.XmlAttributeAttribute()]
+            [XmlAttribute()]
             public string style
             {
                 get
@@ -218,7 +217,7 @@ namespace Unity.Controls
         }
 
         /// <remarks/>
-        [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
+        [XmlType(AnonymousType = true)]
         public partial class fontMetrics
         {
 
@@ -229,7 +228,7 @@ namespace Unity.Controls
             private sbyte descenderField;
 
             /// <remarks/>
-            [System.Xml.Serialization.XmlAttributeAttribute()]
+            [XmlAttribute()]
             public byte ascender
             {
                 get
@@ -243,7 +242,7 @@ namespace Unity.Controls
             }
 
             /// <remarks/>
-            [System.Xml.Serialization.XmlAttributeAttribute()]
+            [XmlAttribute()]
             public byte height
             {
                 get
@@ -257,7 +256,7 @@ namespace Unity.Controls
             }
 
             /// <remarks/>
-            [System.Xml.Serialization.XmlAttributeAttribute()]
+            [XmlAttribute()]
             public sbyte descender
             {
                 get
@@ -272,7 +271,7 @@ namespace Unity.Controls
         }
 
         /// <remarks/>
-        [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
+        [XmlType(AnonymousType = true)]
         public partial class fontTexture
         {
 
@@ -283,7 +282,7 @@ namespace Unity.Controls
             private string fileField;
 
             /// <remarks/>
-            [System.Xml.Serialization.XmlAttributeAttribute()]
+            [XmlAttribute()]
             public ushort width
             {
                 get
@@ -297,7 +296,7 @@ namespace Unity.Controls
             }
 
             /// <remarks/>
-            [System.Xml.Serialization.XmlAttributeAttribute()]
+            [XmlAttribute()]
             public ushort height
             {
                 get
@@ -311,7 +310,7 @@ namespace Unity.Controls
             }
 
             /// <remarks/>
-            [System.Xml.Serialization.XmlAttributeAttribute()]
+            [XmlAttribute()]
             public string file
             {
                 get
@@ -326,7 +325,7 @@ namespace Unity.Controls
         }
 
         /// <remarks/>
-        [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
+        [XmlType(AnonymousType = true)]
         public partial class fontChar
         {
 
@@ -339,7 +338,7 @@ namespace Unity.Controls
             private string idField;
 
             /// <remarks/>
-            [System.Xml.Serialization.XmlAttributeAttribute()]
+            [XmlAttribute()]
             public string offset
             {
                 get
@@ -353,7 +352,7 @@ namespace Unity.Controls
             }
 
             /// <remarks/>
-            [System.Xml.Serialization.XmlAttributeAttribute()]
+            [XmlAttribute()]
             public string rect
             {
                 get
@@ -367,7 +366,7 @@ namespace Unity.Controls
             }
 
             /// <remarks/>
-            [System.Xml.Serialization.XmlAttributeAttribute()]
+            [XmlAttribute()]
             public byte advance
             {
                 get
@@ -381,7 +380,7 @@ namespace Unity.Controls
             }
 
             /// <remarks/>
-            [System.Xml.Serialization.XmlAttributeAttribute()]
+            [XmlAttribute()]
             public string id
             {
                 get

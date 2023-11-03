@@ -1,4 +1,8 @@
 ﻿using System.Windows.Forms;
+using Button = UnityWinForms.System.Windows.Forms.Button;
+using DialogResult = UnityWinForms.System.Windows.Forms.DialogResult;
+using FontDialog = UnityWinForms.System.Windows.Forms.FontDialog;
+using Label = UnityWinForms.System.Windows.Forms.Label;
 
 namespace UnityWinForms.Examples.Panels
 {

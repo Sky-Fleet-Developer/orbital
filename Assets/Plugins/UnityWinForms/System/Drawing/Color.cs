@@ -1,4 +1,6 @@
-﻿namespace System.Drawing
+﻿using System;
+
+namespace UnityWinForms.System.Drawing
 {
     [Serializable]
     public struct Color : IEquatable<Color>

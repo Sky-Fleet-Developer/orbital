@@ -1,6 +1,6 @@
-﻿namespace UnityWinForms.Examples.Panels
+﻿using System;
+namespace UnityWinForms.Examples.Panels
 {
-    using System;
     using System.Windows.Forms;
 
     public class PanelPictureBox : BaseExamplePanel

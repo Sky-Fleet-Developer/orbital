@@ -1,8 +1,8 @@
-﻿namespace Highcharts
-{
-    using System.Drawing;
-    using System.Windows.Forms;
+﻿using UnityWinForms.System.Drawing;
+using UnityWinForms.System.Windows.Forms;
 
+namespace UnityWinForms.Controls.Highcharts
+{
     public class HightchartSubtitle
     {
         public HightchartSubtitle()

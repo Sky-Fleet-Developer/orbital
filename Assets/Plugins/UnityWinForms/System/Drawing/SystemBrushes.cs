@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
-namespace System.Drawing
+﻿using System;
+using System.Collections.Generic;
+
+namespace UnityWinForms.System.Drawing
 {
     
     public static class SystemBrushes

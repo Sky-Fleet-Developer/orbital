@@ -1,5 +1,6 @@
-﻿using System.Drawing.API;    
-namespace System.Drawing
+﻿using UnityWinForms.Core.API;
+
+namespace UnityWinForms.System.Drawing
 {
     
     public abstract class Image

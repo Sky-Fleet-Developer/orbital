@@ -1,4 +1,6 @@
-﻿namespace System.Drawing
+﻿using System;
+
+namespace UnityWinForms.System.Drawing
 {
     public abstract class Brush : ICloneable, IDisposable
     {

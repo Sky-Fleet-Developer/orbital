@@ -1,7 +1,7 @@
-namespace Highcharts
+using UnityWinForms.System.Drawing;
+
+namespace UnityWinForms.Controls.Highcharts
 {
-    using System.Drawing;
-    
     public class SeriesLineSolid : Series
     {
         private readonly Pen iconPen = new Pen(Color.Black, 2);

@@ -1,4 +1,4 @@
-﻿namespace System.Windows.Forms
+﻿namespace UnityWinForms.System.Windows.Forms
 {
     internal static class NativeMethods
     {

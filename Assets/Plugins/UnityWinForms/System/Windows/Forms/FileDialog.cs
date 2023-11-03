@@ -1,11 +1,15 @@
 ﻿#if UNITY_STANDALONE || UNITY_ANDROID
 #define IO_SUPPORTED
 #endif
+using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Globalization;
 using System.Linq;
-namespace System.Windows.Forms
+using UnityWinForms.Core;
+using UnityWinForms.System.Drawing;
+using UnityWinForms.Utility;
+
+namespace UnityWinForms.System.Windows.Forms
 {
     public abstract class FileDialog : Form
     {
@@ -35,7 +39,7 @@ namespace System.Windows.Forms
 
             BackColor = Color.White;
             Filter = "All files|*.*";
-            MinimumSize = new Drawing.Size(240, 240);
+            MinimumSize = new global::UnityWinForms.System.Drawing.Size(240, 240);
             KeyPreview = true;
             Padding = new Padding(12, 12, 12, 12);
             SizeGripStyle = SizeGripStyle.Show;
@@ -49,7 +53,7 @@ namespace System.Windows.Forms
             buttonBack = new Button();
             buttonBack.BackgroundImageLayout = ImageLayout.Center;
             buttonBack.Enabled = false;
-            buttonBack.Font = new Drawing.Font("Arial", 16, FontStyle.Bold);
+            buttonBack.Font = new global::UnityWinForms.System.Drawing.Font("Arial", 16, FontStyle.Bold);
             buttonBack.Image = ApplicationResources.Images.FileDialogBack;
             buttonBack.Location = new Point(Padding.Left, uwfHeaderHeight + Padding.Top);
             buttonBack.BackColor = Color.Transparent;
@@ -69,12 +73,12 @@ namespace System.Windows.Forms
             // Button Up.
             buttonUp = new Button();
             buttonUp.BackgroundImageLayout = ImageLayout.Center;
-            buttonUp.Font = new Drawing.Font("Arial", 16, FontStyle.Bold);
+            buttonUp.Font = new global::UnityWinForms.System.Drawing.Font("Arial", 16, FontStyle.Bold);
             buttonUp.Image = ApplicationResources.Images.FileDialogUp;
             buttonUp.Location = new Point(buttonBack.Location.X + buttonBack.Width + 8, buttonBack.Location.Y);
             buttonUp.BackColor = Color.Transparent;
             buttonUp.uwfBorderColor = Color.Transparent;
-            buttonUp.Size = new Drawing.Size(22, 22);
+            buttonUp.Size = new global::UnityWinForms.System.Drawing.Size(22, 22);
             if (buttonUp.Image == null) buttonUp.Text = "▲";
             buttonUp.Click += (sender, args) => ButtonUp();
             Controls.Add(buttonUp);
@@ -103,9 +107,9 @@ namespace System.Windows.Forms
             // Textbox Path.
             textBoxPath = new PathTextBox(this);
             textBoxPath.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            textBoxPath.Font = new Drawing.Font("Arial", 12);
+            textBoxPath.Font = new global::UnityWinForms.System.Drawing.Font("Arial", 12);
             textBoxPath.Location = new Point(buttonUp.Location.X + buttonUp.Width + 8, buttonUp.Location.Y);
-            textBoxPath.Size = new Drawing.Size(Width - textBoxPath.Location.X - Padding.Right - buttonRefresh.Width + 1, buttonBack.Height);
+            textBoxPath.Size = new global::UnityWinForms.System.Drawing.Size(Width - textBoxPath.Location.X - Padding.Right - buttonRefresh.Width + 1, buttonBack.Height);
             Controls.Add(textBoxPath);
             
             // Button Cancel.
@@ -115,7 +119,7 @@ namespace System.Windows.Forms
             buttonCancel.Text = "Cancel";
             buttonCancel.Click += (sender, args) =>
             {
-                DialogResult = Forms.DialogResult.Cancel;
+                DialogResult = global::UnityWinForms.System.Windows.Forms.DialogResult.Cancel;
                 Close();
             };
             Controls.Add(buttonCancel);
@@ -132,7 +136,7 @@ namespace System.Windows.Forms
             labelFilename = new Label();
             labelFilename.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
             labelFilename.Location = new Point(8, buttonOk.Location.Y - 30);
-            labelFilename.Size = new Drawing.Size(64, 22);
+            labelFilename.Size = new global::UnityWinForms.System.Drawing.Size(64, 22);
             labelFilename.Text = "File: ";
             labelFilename.TextAlign = ContentAlignment.MiddleRight;
             Controls.Add(labelFilename);
@@ -141,14 +145,14 @@ namespace System.Windows.Forms
             textBoxFilename = new TextBox();
             textBoxFilename.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             textBoxFilename.Location = new Point(labelFilename.Location.X + labelFilename.Width, labelFilename.Location.Y);
-            textBoxFilename.Size = new Drawing.Size(Width - 32 - (buttonOk.Width + 8 + buttonCancel.Width) - labelFilename.Width, 22);
+            textBoxFilename.Size = new global::UnityWinForms.System.Drawing.Size(Width - 32 - (buttonOk.Width + 8 + buttonCancel.Width) - labelFilename.Width, 22);
             Controls.Add(textBoxFilename);
             
             // Combobox Filter.
             comboFilter = new ComboBox();
             comboFilter.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
             comboFilter.DropDownStyle = ComboBoxStyle.DropDownList;
-            comboFilter.Size = new Drawing.Size(buttonOk.Width + 8 + buttonCancel.Width, 22);
+            comboFilter.Size = new global::UnityWinForms.System.Drawing.Size(buttonOk.Width + 8 + buttonCancel.Width, 22);
             comboFilter.Location = new Point(Width - Padding.Right - comboFilter.Width, textBoxFilename.Location.Y);
             Controls.Add(comboFilter);
             
@@ -157,7 +161,7 @@ namespace System.Windows.Forms
             fileRenderer.Anchor = AnchorStyles.Left | AnchorStyles.Top | AnchorStyles.Right | AnchorStyles.Bottom;
             fileRenderer.Location = new Point(Padding.Left, buttonBack.Location.Y + buttonBack.Height + 8);
             fileRenderer.Name = "fileRenderer";
-            fileRenderer.Size = new Drawing.Size(Width - Padding.Left - Padding.Right, textBoxFilename.Location.Y - buttonBack.Location.Y - buttonBack.Height - 16);
+            fileRenderer.Size = new global::UnityWinForms.System.Drawing.Size(Width - Padding.Left - Padding.Right, textBoxFilename.Location.Y - buttonBack.Location.Y - buttonBack.Height - 16);
             fileRenderer.DirectoryChanged += () =>
             {
                 if (fileRenderer.prevPathes.Count > 0)
@@ -301,10 +305,10 @@ namespace System.Windows.Forms
 #if IO_SUPPORTED
 
             // Check if file is not a directory.
-            if (!IO.Directory.Exists(filename))
+            if (!global::System.IO.Directory.Exists(filename))
             {
                 // Add extension to the end of file if needed.
-                var hasExtension = IO.Path.HasExtension(filename);
+                var hasExtension = global::System.IO.Path.HasExtension(filename);
                 if (!hasExtension)
                 {
                     var extension = currentFilter;
@@ -371,7 +375,7 @@ namespace System.Windows.Forms
                 filesTree = new FileTreeView();
                 filesTree.Anchor = AnchorStyles.Left | AnchorStyles.Top | AnchorStyles.Right | AnchorStyles.Bottom;
                 filesTree.BorderStyle = BorderStyle.None;
-                filesTree.Size = new Drawing.Size(Width, Height);
+                filesTree.Size = new global::UnityWinForms.System.Drawing.Size(Width, Height);
                 filesTree.AfterSelect += filesTree_SelectedNodeChanged;
                 filesTree.NodeMouseDoubleClick += filesTree_NodeMouseDoubleClick;
                 Controls.Add(filesTree);
@@ -421,7 +425,7 @@ namespace System.Windows.Forms
             {
 #if IO_SUPPORTED
                 if (path.Length <= 2) return;
-                if (IO.Directory.Exists(path) == false) return;
+                if (global::System.IO.Directory.Exists(path) == false) return;
 
                 if (addPrevPath)
                     prevPathes.Add(currentPath);
@@ -433,12 +437,12 @@ namespace System.Windows.Forms
                 try
                 {
                     if (filter == "*" || filter == "*.*")
-                        files = IO.Directory.GetFiles(currentPath, "*.*")
+                        files = global::System.IO.Directory.GetFiles(currentPath, "*.*")
                             .Select(f => f.Substring(currentPath.Length))
                             .ToArray();
                     else
-                        files = IO.Directory.GetFiles(currentPath, "*.*")
-                            .Where(f => filter.Contains(IO.Path.GetExtension(f).ToLower()))
+                        files = global::System.IO.Directory.GetFiles(currentPath, "*.*")
+                            .Where(f => filter.Contains(global::System.IO.Path.GetExtension(f).ToLower()))
                             .Select(f => f.Substring(currentPath.Length))
                             .ToArray();
                 }
@@ -458,7 +462,7 @@ namespace System.Windows.Forms
                     return;
                 }
 
-                var dirs = IO.Directory.GetDirectories(currentPath)
+                var dirs = global::System.IO.Directory.GetDirectories(currentPath)
                     .Select(f => f.Substring(currentPath.Length))
                     .ToArray();
 
@@ -505,18 +509,18 @@ namespace System.Windows.Forms
             public void Up()
             {
 #if IO_SUPPORTED
-                IO.DirectoryInfo parent;
+                global::System.IO.DirectoryInfo parent;
                 try
                 {
                     // Can throw NullReferenceExepcetion for path like 'C:\'.
-                    parent = IO.Directory.GetParent(currentPath);
+                    parent = global::System.IO.Directory.GetParent(currentPath);
                 }
                 catch (Exception e) { return; }
                 
                 if (parent == null || parent.Exists == false) return;
                 
                 prevPathes.Add(currentPath);
-                fromFolder = IO.Path.GetFileName(currentPath);
+                fromFolder = global::System.IO.Path.GetFileName(currentPath);
                 SetDirectory(parent.FullName);
 #endif
             }
@@ -614,17 +618,17 @@ namespace System.Windows.Forms
         internal class FileInfo
         {
 #if IO_SUPPORTED
-            private IO.FileInfo info;
-            public IO.FileInfo Info
+            private global::System.IO.FileInfo info;
+            public global::System.IO.FileInfo Info
             {
                 get
                 {
                     if (IsDirectory)
                         return null;
 
-                    if (info == null && IO.File.Exists(CurrentPath + Name))
+                    if (info == null && global::System.IO.File.Exists(CurrentPath + Name))
                     {
-                        info = new IO.FileInfo(CurrentPath + Name);
+                        info = new global::System.IO.FileInfo(CurrentPath + Name);
                         sizeStr = HumanizeBytes(info.Length);
                     }
                     
@@ -663,14 +667,14 @@ namespace System.Windows.Forms
             public FormFileInfo(string path)
             {
 #if IO_SUPPORTED
-                Size = new Drawing.Size(320, 120);
+                Size = new global::UnityWinForms.System.Drawing.Size(320, 120);
                 Location = new Point(Screen.PrimaryScreen.WorkingArea.Width / 2 - Width / 2, Screen.PrimaryScreen.WorkingArea.Height / 2 - Height / 2);
                 FormBorderStyle = FormBorderStyle.FixedSingle;
                 Text = "Properties: ";
 
-                if (IO.File.Exists(path) == false) return;
+                if (global::System.IO.File.Exists(path) == false) return;
 
-                var info = new IO.FileInfo(path);
+                var info = new global::System.IO.FileInfo(path);
                 var bytes = info.Length;
                 string sbytes = bytes.ToString() + " bytes";
                 if (bytes >= 1000000000)
@@ -695,7 +699,7 @@ namespace System.Windows.Forms
                 labelModDate.Text = "Date modified: " + info.LastWriteTime.ToString();
                 Controls.Add(labelModDate);
 
-                string fileName = IO.Path.GetFileName(path);
+                string fileName = global::System.IO.Path.GetFileName(path);
                 Text += fileName;
 #endif
             }
@@ -789,8 +793,8 @@ namespace System.Windows.Forms
                 if (string.IsNullOrEmpty(currentPath))
                     return;
                 
-                var directories = new List<IO.DirectoryInfo>();
-                var cdir = new IO.DirectoryInfo(currentPath);
+                var directories = new List<global::System.IO.DirectoryInfo>();
+                var cdir = new global::System.IO.DirectoryInfo(currentPath);
                 directories.Add(cdir);
 
                 var count = 0;
@@ -798,7 +802,7 @@ namespace System.Windows.Forms
                 {
                     try
                     {
-                        var dir = IO.Directory.GetParent(currentPath);
+                        var dir = global::System.IO.Directory.GetParent(currentPath);
                         if (dir == null) break;
 
                         directories.Add(dir);

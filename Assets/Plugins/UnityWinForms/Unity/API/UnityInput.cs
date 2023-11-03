@@ -1,7 +1,7 @@
-﻿namespace Unity.API
-{
-    using System.Drawing.API;
+﻿using UnityWinForms.Core.API;
 
+namespace UnityWinForms.Unity.API
+{
     public class UnityInput : IApiInput
     {
         public bool CursorVisible

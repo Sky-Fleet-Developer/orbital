@@ -1,11 +1,14 @@
-﻿namespace Unity.API
-{
-    using System;
-    using System.Drawing;
-    using System.Drawing.API;
-    using System.Drawing.Drawing2D;
-    using System.Windows.Forms;
+﻿using System;
+using UnityWinForms.Core.API;
+using UnityWinForms.System.Drawing;
+using UnityWinForms.System.Drawing.Drawing2D;
+using UnityWinForms.System.Windows.Forms;
+using Color = UnityWinForms.System.Drawing.Color;
+using Font = UnityWinForms.System.Drawing.Font;
+using FontStyle = UnityWinForms.System.Drawing.FontStyle;
 
+namespace UnityWinForms.Unity.API
+{
     using UE = UnityEngine;
     
     public class UnityGdi : IApiGraphics
@@ -120,7 +123,7 @@
             {
                 float dx = x2 - x1;
                 float dy = y2 - y1;
-                float length = (float) System.Math.Sqrt(dx * dx + dy * dy);
+                float length = (float) global::System.Math.Sqrt(dx * dx + dy * dy);
 
                 if (length < 0.001f)
                     return;
@@ -244,7 +247,7 @@
             
             switch (penDash)
             {
-                case System.Drawing.Drawing2D.DashStyle.Solid:
+                case global::UnityWinForms.System.Drawing.Drawing2D.DashStyle.Solid:
                     UE.Graphics.DrawTexture(new UE.Rect(x, y, width, penWidth), defaultTexture, sourceRect, 0, 0, 0, 0, color, blendMaterial);
                     UE.Graphics.DrawTexture(new UE.Rect(x + width - penWidth, y + penWidth, penWidth, height - penWidth * 2), defaultTexture, sourceRect, 0, 0, 0, 0, color, blendMaterial);
                     
@@ -256,7 +259,7 @@
 
                     break;
                 
-                case System.Drawing.Drawing2D.DashStyle.Dash:
+                case global::UnityWinForms.System.Drawing.Drawing2D.DashStyle.Dash:
                     float dash_step = penWidth * 6;
                     for (float i = 0; i < width; i += dash_step)
                     {
@@ -483,9 +486,9 @@
             int guiSkinFontSizeBuffer = style.fontSize;
             if (font != null)
             {
-                if (font.fontObject == null && Unity.API.UnityWinForms.gResources != null)
+                if (font.fontObject == null && global::UnityWinForms.Unity.UnityWinForms.gResources != null)
                 {
-                    var fonts = Unity.API.UnityWinForms.gResources.Fonts;
+                    var fonts = global::UnityWinForms.Unity.UnityWinForms.gResources.Fonts;
                     if (fonts != null)
                         for (int i = 0; i < fonts.Count; i++)
                         {

@@ -1,7 +1,7 @@
-namespace Highcharts
+using UnityWinForms.System.Drawing;
+
+namespace UnityWinForms.Controls.Highcharts
 {
-    using System.Drawing;
-    
     public class SeriesAreaSolidOutline : Series
     {
         public SeriesAreaSolidOutline() : this("")

@@ -1,9 +1,9 @@
-﻿namespace Unity.Controls
-{
-    using System;
-    using System.Drawing;
-    using System.Windows.Forms;
+﻿using System;
+using UnityWinForms.System.Drawing;
+using UnityWinForms.System.Windows.Forms;
 
+namespace UnityWinForms.Controls
+{
     /// <summary>
     /// Less allocation, slower baking.
     /// Multiline not supported yet.

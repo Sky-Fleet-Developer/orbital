@@ -1,9 +1,9 @@
 ﻿#define ALLOW_SPECIAL_KEYS
 
-namespace Unity
-{
-    using System.Windows.Forms;
+using UnityWinForms.System.Windows.Forms;
 
+namespace UnityWinForms.Unity
+{
     using UE = UnityEngine;
 
     public static class UnityKeyTranslator

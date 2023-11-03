@@ -1,4 +1,8 @@
-﻿namespace System.Windows.Forms
+﻿using System;
+using UnityWinForms.Core;
+using UnityWinForms.Utility;
+
+namespace UnityWinForms.System.Windows.Forms
 {
     internal class RepeatButton : Button
     {

@@ -1,6 +1,7 @@
-﻿using System.Drawing.Drawing2D;
+﻿using UnityWinForms.System.Drawing;
+using UnityWinForms.System.Drawing.Drawing2D;
 
-namespace System.Drawing.API
+namespace UnityWinForms.Core.API
 {
     public interface IApiGraphics
     {

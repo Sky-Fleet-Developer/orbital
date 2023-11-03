@@ -1,6 +1,8 @@
-﻿using System.ComponentModel;
-using System.Drawing;
-namespace System.Windows.Forms
+﻿using System;
+using System.ComponentModel;
+using UnityWinForms.System.Drawing;
+
+namespace UnityWinForms.System.Windows.Forms
 {
     public abstract class ToolStripItem : Component
     {

@@ -1,7 +1,8 @@
-﻿using System.Drawing;
-
+﻿using UnityWinForms.System.Drawing;
+using Color = UnityWinForms.System.Drawing.Color;
+using Graphics = UnityWinForms.System.Drawing.Graphics;
 using UE = UnityEngine;
-namespace Unity.API
+namespace UnityWinForms.Unity.API
 {
 
     public static class UnityGdiHelper

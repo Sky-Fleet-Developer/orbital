@@ -1,4 +1,8 @@
-﻿namespace System.Windows.Forms
+﻿using System;
+using UnityWinForms.Core;
+using UnityWinForms.System.Windows.Forms;
+
+namespace UnityWinForms.Utility
 {
     public static class swfHelper
     {

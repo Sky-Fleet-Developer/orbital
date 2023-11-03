@@ -1,7 +1,9 @@
+using System;
 using System.Collections.Generic;
-using System.Drawing;
+using UnityWinForms.Core;
+using UnityWinForms.System.Drawing;
 
-namespace System.Windows.Forms
+namespace UnityWinForms.System.Windows.Forms
 {
     public class ToolStripMenuItem : ToolStripDropDownItem
     {
@@ -139,9 +141,9 @@ namespace System.Windows.Forms
         {
             // More efficient than Enum.GetNames(...).
             var fields = type.GetFields(
-                Reflection.BindingFlags.Public |
-                Reflection.BindingFlags.NonPublic |
-                Reflection.BindingFlags.Static);
+                global::System.Reflection.BindingFlags.Public |
+                global::System.Reflection.BindingFlags.NonPublic |
+                global::System.Reflection.BindingFlags.Static);
 
             var fieldsLength = fields.Length;
 

@@ -1,7 +1,8 @@
-﻿using System.Drawing;
-using System.Drawing.Drawing2D;
+﻿using System;
+using UnityWinForms.System.Drawing;
+using UnityWinForms.System.Drawing.Drawing2D;
 
-namespace System.Windows.Forms
+namespace UnityWinForms.System.Windows.Forms
 {
 
     public static class ControlPaint

@@ -1,4 +1,6 @@
-﻿namespace System.Windows.Forms
+﻿using System;
+
+namespace UnityWinForms.System.Windows.Forms
 {
     public class KeyEventArgs : EventArgs
     {
@@ -73,9 +75,9 @@
             if (keyValuesRaw == null)
             {
                 var fields = typeof(Keys).GetFields(
-                    Reflection.BindingFlags.Public |
-                    Reflection.BindingFlags.NonPublic |
-                    Reflection.BindingFlags.Static);
+                    global::System.Reflection.BindingFlags.Public |
+                    global::System.Reflection.BindingFlags.NonPublic |
+                    global::System.Reflection.BindingFlags.Static);
 
                 keyValuesRaw = new object[fields.Length];
                 for (int i = 0; i < fields.Length; i++)

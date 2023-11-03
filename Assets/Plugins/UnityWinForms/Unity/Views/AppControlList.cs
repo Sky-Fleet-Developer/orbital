@@ -1,9 +1,10 @@
 ﻿#if UNITY_EDITOR
-using UnityEngine;
 using UnityEditor;
-using SWF = System.Windows.Forms;
+using UnityEngine;
+using UnityWinForms.System.Windows.Forms;
+using Application = UnityEngine.Application;
 
-namespace Unity.Views
+namespace UnityWinForms.Unity.Views
 {
     public class AppControlList : EditorWindow
     {
@@ -24,7 +25,7 @@ namespace Unity.Views
         void OnGUI()
         {
             if (!Application.isPlaying) return;
-            if (SWF.Control.uwfDefaultController == null)
+            if (Control.uwfDefaultController == null)
             {
                 GUILayout.Label("SWF.Control.DefaultController is null");
                 return;
@@ -36,25 +37,25 @@ namespace Unity.Views
             
             GUILayout.Label("Context");
             
-            for (int i = 0; i < SWF.Control.uwfDefaultController.Contexts.Count; i++)
-                PaintControl(SWF.Control.uwfDefaultController.Contexts[i]);
+            for (int i = 0; i < Control.uwfDefaultController.Contexts.Count; i++)
+                PaintControl(Control.uwfDefaultController.Contexts[i]);
 
             GUILayout.Space(24);
             GUILayout.Label("Modal Forms");
 
-            for (int i = 0; i < SWF.Control.uwfDefaultController.ModalForms.Count; i++)
-                PaintControl(SWF.Control.uwfDefaultController.ModalForms[i]);
+            for (int i = 0; i < Control.uwfDefaultController.ModalForms.Count; i++)
+                PaintControl(Control.uwfDefaultController.ModalForms[i]);
 
             GUILayout.Space(24);
             GUILayout.Label("Forms");
             
-            for (int i = 0; i < SWF.Control.uwfDefaultController.Forms.Count; i++)
-                PaintControl(SWF.Control.uwfDefaultController.Forms[i]);
+            for (int i = 0; i < Control.uwfDefaultController.Forms.Count; i++)
+                PaintControl(Control.uwfDefaultController.Forms[i]);
 
             GUILayout.Space(24);
             GUILayout.Label("Hovered Control");
 
-            var hoveredControl = SWF.Control.uwfDefaultController.hoveredControl;
+            var hoveredControl = Control.uwfDefaultController.hoveredControl;
             if (hoveredControl != null) 
                 PaintControl(hoveredControl);
             
@@ -62,7 +63,7 @@ namespace Unity.Views
             GUILayout.EndScrollView();
         }
 
-        private void PaintControl(SWF.Control control)
+        private void PaintControl(Control control)
         {
             string controlType = control.GetType().ToString().Replace("System.Windows.Forms", "SWF");
             string controlName = control.Name;

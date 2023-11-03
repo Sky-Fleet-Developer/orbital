@@ -1,8 +1,10 @@
-﻿using System.Drawing;
+﻿using System;
 using System.Linq;
 using System.Text;
+using UnityWinForms.Core;
+using UnityWinForms.System.Drawing;
 
-namespace System.Windows.Forms
+namespace UnityWinForms.System.Windows.Forms
 {
 
 

@@ -1,9 +1,10 @@
 #if UNITY_STANDALONE_WIN
 #define KEYBOARD_LAYOUT_SUPPORTED
 #endif
+using System;
 using System.Globalization;
 
-namespace System.Windows.Forms
+namespace UnityWinForms.System.Windows.Forms
 {
 
     public sealed class InputLanguage

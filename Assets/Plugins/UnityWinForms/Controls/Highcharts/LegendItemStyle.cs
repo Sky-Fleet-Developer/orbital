@@ -1,8 +1,8 @@
-﻿namespace Highcharts
-{
-    using System;
-    using System.Drawing;
+﻿using System;
+using UnityWinForms.System.Drawing;
 
+namespace UnityWinForms.Controls.Highcharts
+{
     public struct LegendItemStyle : IEquatable<LegendItemStyle>
     {
         public readonly Color color;

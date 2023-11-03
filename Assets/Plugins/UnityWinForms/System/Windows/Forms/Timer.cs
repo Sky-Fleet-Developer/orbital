@@ -1,5 +1,8 @@
-﻿using System.ComponentModel;
-namespace System.Windows.Forms
+﻿using System;
+using System.ComponentModel;
+using UnityWinForms.Utility;
+
+namespace UnityWinForms.System.Windows.Forms
 {
 
     public class Timer : Component

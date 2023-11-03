@@ -1,4 +1,6 @@
-﻿namespace System.Windows.Forms
+﻿using UnityWinForms.System.Windows.Forms;
+
+namespace UnityWinForms.Core
 {
     internal static class KeyboardHook
     {

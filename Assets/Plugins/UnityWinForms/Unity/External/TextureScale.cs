@@ -5,12 +5,11 @@ http://wiki.unity3d.com/index.php/TextureScale
 
 // Only works on ARGB32, RGB24 and Alpha8 textures that are marked readable
 
-namespace Unity.External
+using System.Threading;
+using UnityEngine;
+
+namespace UnityWinForms.Unity.External
 {
-    using System.Threading;
-
-    using UnityEngine;
-
     public static class TextureScale
     {
         public class ThreadData
@@ -109,7 +108,7 @@ namespace Unity.External
             tex.Apply();
         }
 
-        public static void BilinearScale(System.Object obj)
+        public static void BilinearScale(global::System.Object obj)
         {
             ThreadData threadData = (ThreadData)obj;
             for (var y = threadData.start; y < threadData.end; y++)
@@ -134,7 +133,7 @@ namespace Unity.External
             mutex.ReleaseMutex();
         }
 
-        public static void PointScale(System.Object obj)
+        public static void PointScale(global::System.Object obj)
         {
             ThreadData threadData = (ThreadData)obj;
             for (var y = threadData.start; y < threadData.end; y++)
