@@ -1,7 +1,9 @@
 using Ara3D;
 using Orbital.Core;
 using Orbital.Core.TrajectorySystem;
+#if UNITY_EDITOR
 using UnityEditor;
+#endif
 using UnityEngine;
 
 [ExecuteAlways]
@@ -54,7 +56,7 @@ public class TrajectoryTest : MonoBehaviour
             Refresh();
         }
     }
-
+#if UNITY_EDITOR
     private void OnDrawGizmosSelected()
     {
         if (!enabled) return;
@@ -77,4 +79,5 @@ public class TrajectoryTest : MonoBehaviour
         //testD = (a - b).magnitude / scale;
         Orbit.DrawGizmos(_parent.LocalPosition + DVector3.up * 10000);
     }
+    #endif
 }

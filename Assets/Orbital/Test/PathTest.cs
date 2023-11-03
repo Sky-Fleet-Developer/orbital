@@ -87,6 +87,7 @@ namespace Orbital.Test
             PathRoot.RefreshDirty();    */
         }
 
+        #if UNITY_EDITOR
         private void OnDrawGizmosSelected()
         {
             float scale = 4.456328E-09F;
@@ -112,5 +113,6 @@ namespace Orbital.Test
                 }
             }
         }
+        #endif
     }
 }

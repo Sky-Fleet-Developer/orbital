@@ -70,9 +70,19 @@ namespace UnityWinForms.Unity.API
         { 
             get
             {
-                var mp = UnityEngine.Input.mousePosition;
-                var mx = mp.x;
-                var my = UnityEngine.Screen.height - mp.y;
+                float mx, my;
+                if (Event.current != null)
+                {
+                    mx = Event.current.mousePosition.x;
+                    my = Event.current.mousePosition.y;
+                }
+                else
+                {
+                    var mp = UnityEngine.Input.mousePosition;
+                    mx = mp.x;
+                    my = UnityEngine.Screen.height - mp.y;
+                }
+
                 var sx = global::UnityWinForms.System.Windows.Forms.Application.ScaleX;
                 var sy = global::UnityWinForms.System.Windows.Forms.Application.ScaleY;
                 

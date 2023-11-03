@@ -14,7 +14,7 @@ namespace UnityWinForms.Unity.API
     public class UnityGdi : IApiGraphics
     {
         public static UE.Color cursorSelectionColor = Color.FromArgb(128, SystemColors.Highlight).ToUnityColor();
-        public static UE.Texture2D defaultTexture = UnityWinForms.DefaultTexture;
+        public static UE.Texture2D defaultTexture => UnityWinForms.DefaultTexture;
 
         private static readonly UE.GUIContent textContent = new UE.GUIContent(""); // GUIContent.Temp(text) replacement.
         private static readonly UE.Rect sourceRect = new UE.Rect(0f, 0f, 1f, 1f);

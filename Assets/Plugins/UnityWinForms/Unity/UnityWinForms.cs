@@ -1,4 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using Sirenix.OdinInspector;
+using UnityEditor;
 using UnityWinForms.Core;
 using UnityWinForms.System.Drawing;
 using UnityWinForms.System.Windows.Forms;
@@ -11,7 +14,6 @@ using UE = UnityEngine;
 
 namespace UnityWinForms.Unity
 {
-[UE.ExecuteAlways]
     public sealed class UnityWinForms : UE.MonoBehaviour
     {
         public AppResources Resources;
@@ -32,7 +34,8 @@ namespace UnityWinForms.Unity
         private bool  shiftPressed;
         private float shiftDownTimer;
         private float shiftDownDelayTimer; // Shift pressing is really fast.
-        private bool  paused;
+
+        private bool paused;
         
         internal static UE.Texture2D DefaultTexture
         {
@@ -55,8 +58,7 @@ namespace UnityWinForms.Unity
             Views.ControlInspector.DesignerObject = obj;
 #endif
         }
-
-        private void Awake()
+        public void Awake()
         {
             defaultTexture = new UE.Texture2D(1, 1);
             defaultTexture.SetPixel(0, 0, UE.Color.white);
@@ -143,7 +145,7 @@ namespace UnityWinForms.Unity
             MouseHook.MouseUp += (sender, args) => Inspect(sender);
 #endif
         }
-        private void Update()
+        public void Update()
         {
             var ueScreenWidth = UE.Screen.width;
             var ueScreenHeight = UE.Screen.height;
@@ -301,9 +303,10 @@ namespace UnityWinForms.Unity
             }
 
             // Mouse.
-            var mouseX = UE.Input.mousePosition.x;
-            var mouseY = UE.Screen.height - UE.Input.mousePosition.y;
-
+            //var mouseX = UE.Input.mousePosition.x;
+            //var mouseY = UE.Screen.height - UE.Input.mousePosition.y;
+            var mouseX = currentEvent.mousePosition.x;
+            var mouseY = currentEvent.mousePosition.y;
             controller.ProcessMouse(mouseEvent, mouseX, mouseY, mouseButton, currentClicks, (int) mouseWheelDelta);
         }
         private void OnApplicationFocus(bool focusStatus)
@@ -315,7 +318,7 @@ namespace UnityWinForms.Unity
             
             UE.Cursor.visible = Cursor.IsVisible;
         }
-        private void OnGUI()
+        public void OnGUI()
         {
             if (controller == null) return;
 
@@ -337,4 +340,25 @@ namespace UnityWinForms.Unity
             controller.Redraw();
         }
     }
+    
+    #if UNITY_EDITOR
+    [CustomEditor(typeof(UnityWinForms))]
+    public class UnityWinFormsEditor : Editor
+    {
+        private UnityWinForms script;
+        private void OnEnable()
+        {
+            script = (UnityWinForms) target;
+            script.Awake();
+        }
+
+        public override void OnInspectorGUI()
+        {
+            UE.GUILayout.Space(500);
+            script.OnGUI();
+            script.Update();
+            Repaint();
+        }
+    }
+    #endif
 }
