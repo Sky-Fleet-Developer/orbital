@@ -37,7 +37,7 @@ namespace Orbital.Navigation
                 }
                 if(parent.Parent != null) return new OrbitEnding(OrbitEndingType.Leave, leavePoint, leaveTime, parent.Parent);
             }
-            return new OrbitEnding(OrbitEndingType.Cycle, DVector3.Zero, -1, parent);
+            return new OrbitEnding(OrbitEndingType.Cycle, DVector3.Zero, double.PositiveInfinity, parent);
         }
 
         public static bool IsLeavesGravityRadius(this IStaticOrbit orbit, double gravityRadius, double fromTime,

@@ -18,7 +18,7 @@ namespace Orbital.Core
         [JsonIgnore] public Dictionary<IMassSystem, IStaticOrbit> _trajectories { get; private set; }
         [JsonIgnore] internal Dictionary<IStaticBody, IMassSystem> _massPerComponent { get; private set; }
         [JsonIgnore] internal Dictionary<IMassSystem, IStaticBodyAccessor> _componentPerMass { get; private set; }
-        [JsonIgnore] internal Dictionary<IMassSystem, List<IDynamicBodyAccessor>> _dynamicChildren { get; private set; }
+        [JsonIgnore] internal Dictionary<IMassSystem, List<IDynamicBody>> _dynamicChildren { get; private set; }
         [JsonIgnore] internal Dictionary<IMassSystem, IMassSystem[]> _staticChildren { get; private set; }
         [JsonIgnore] public Dictionary<IMassSystem, IMassSystem> _parents { get; private set; }
         private World _world;
@@ -43,7 +43,7 @@ namespace Orbital.Core
             ReconstructHierarchy(Root, tRoot);
             foreach (IMassSystem massSystem in _transforms.Keys)
             {
-                _dynamicChildren.Add(massSystem, new List<IDynamicBodyAccessor>());
+                _dynamicChildren.Add(massSystem, new List<IDynamicBody>());
             }
         }
 
@@ -52,19 +52,18 @@ namespace Orbital.Core
             _trajectories = new Dictionary<IMassSystem, IStaticOrbit>();
             _massPerComponent = new Dictionary<IStaticBody, IMassSystem>();
             _componentPerMass = new Dictionary<IMassSystem, IStaticBodyAccessor>();
-            _dynamicChildren = new Dictionary<IMassSystem, List<IDynamicBodyAccessor>>();
+            _dynamicChildren = new Dictionary<IMassSystem, List<IDynamicBody>>();
             _staticChildren = new Dictionary<IMassSystem, IMassSystem[]>();
             _parents = new Dictionary<IMassSystem, IMassSystem>();
         }
 
-        internal void AddRigidbody(IDynamicBodyAccessor component)
+        internal void AddRigidbody(IDynamicBody component)
         {
             var parent = _massPerComponent[component.Parent];
-            List<IDynamicBodyAccessor> list = _dynamicChildren[parent];
+            List<IDynamicBody> list = _dynamicChildren[parent];
             if (!list.Contains(component))
             {
                 list.Add(component);
-                component.Orbit = new StaticOrbit(parent);
             }
         }
 
@@ -142,7 +141,7 @@ namespace Orbital.Core
 
         private Transform MakeNewObject(string name, Transform parent)
         {
-            Transform newObject = new GameObject(name, new[] {typeof(StaticBody)}).transform;
+            Transform newObject = new GameObject(name).transform;
             newObject.SetParent(parent);
             return newObject;
         }

@@ -9,8 +9,7 @@ using UnityEngine;
 namespace Orbital.Core
 {
     [ExecuteInEditMode]
-    public class StaticBody : SystemComponent<StaticBodyVariables, StaticBodySettings>, IFixedUpdateHandler,
-        IStaticBody, IStaticBodyAccessor
+    public class StaticBody : SystemComponent<StaticBodyVariables, StaticBodySettings>, IStaticBody, IStaticBodyAccessor
     {
         private StaticBodySettings _settings;
         [ShowInInspector] private StaticBodyVariables _variables;
@@ -76,18 +75,11 @@ namespace Orbital.Core
             get => _variables;
             set => _variables = value;
         }
-
-        void IFixedUpdateHandler.FixedUpdate()
-        {
-            _variables.localPosition =
-                _orbit?.GetSample(TimeService.WorldTime, true, false).position ?? DVector3.Zero;
-        }
     }
 
     [Serializable]
     public struct StaticBodyVariables
     {
-        public DVector3 localPosition;
     }
 
     [Serializable]

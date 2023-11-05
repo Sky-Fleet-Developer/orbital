@@ -2,7 +2,7 @@
 
 namespace Orbital.Core
 {
-    internal interface IStaticBodyAccessor
+    public interface IStaticBodyAccessor
     {
         public IStaticBody Self { get; }
         public IMassSystem MassSystem { get; set; }

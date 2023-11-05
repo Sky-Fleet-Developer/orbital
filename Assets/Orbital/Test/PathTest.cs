@@ -12,9 +12,13 @@ namespace Orbital.Test
 {
     public class PathTest : MonoBehaviour
     {
+        public float rotation;
+        public Vector3 position;
+        public Vector3 velocity;
+        
         private World _world;
         private IStaticBody _parent;
-        private PathRoot _pathRoot;
+        private NavigationPath _navigationPath;
 
         [ShowInInspector]private string EditorRefresh
         {
@@ -28,29 +32,28 @@ namespace Orbital.Test
                 return "ready";
             }
         }
-        [ShowInInspector] public PathRoot PathRoot
+        [ShowInInspector] public NavigationPath NavigationPath
         {
             get
             {
-                if (_pathRoot == null)
+                if (_navigationPath == null)
                 {
                     if (string.IsNullOrEmpty(pathJson) || pathJson == "null")
                     {
-                        _pathRoot = new PathRoot();
+                        _navigationPath = new NavigationPath();
                     }
                     else
                     {
-                        _pathRoot = _serializer.Deserialize<PathRoot>(pathJson);
+                        _navigationPath = _serializer.Deserialize<NavigationPath>(pathJson);
                     }
-                    _pathRoot.Init(_world, _parent);
-                    _pathRoot.Reconstruct();
+                    CalculatePath();
                 }
 
-                return _pathRoot;
+                return _navigationPath;
             }
             set
             {
-                _pathRoot = value;
+                _navigationPath = value;
                 pathJson = _serializer.Serialize(value);
             }
         }
@@ -63,38 +66,42 @@ namespace Orbital.Test
         {
             _world = GetComponentInParent<World>();
             _world.Load();
-            _parent = GetComponentInParent<IStaticBody>();
-            _pathRoot.Init(_world, _parent);
-            _pathRoot.Reconstruct();
+            CalculatePath();
+        }
+
+        private void CalculatePath()
+        {
+            Vector3 h = Vector3.Cross(position, velocity).normalized;
+            Quaternion quaternion = Quaternion.AngleAxis(rotation, h);
+            _navigationPath.Calculate(GetComponentInParent<IStaticBody>(), quaternion * position, quaternion * velocity, TimeService.WorldTime);
+            //_navigationPath.Reconstruct();
         }
 
         [Button]
         private void Serialize()
         {
-            pathJson = _serializer.Serialize(_pathRoot);
+            pathJson = _serializer.Serialize(_navigationPath);
         }
         [Button]
         public void AddPathNode()
         {
-            PathRoot.AddElement(new PathNode());
+            NavigationPath.AddElement(new PathNode());
         }
         [Button]
         public void Refresh()
         {
             Init();
-            _pathRoot.BuildTransitions();
-            /*PathRoot.SetDirty();
-            PathRoot.RefreshDirty();    */
+            _navigationPath.BuildTransitions(0);
+            /*NavigationPath.SetDirty();
+            NavigationPath.RefreshDirty();    */
         }
 
         #if UNITY_EDITOR
         private void OnDrawGizmosSelected()
         {
             float scale = 4.456328E-09F;
-            foreach (Element element in _pathRoot.Enumerate())
+            foreach (PathElement node in _navigationPath.Enumerate())
             {
-                if (element is SampleHolderNode node)
-                {
                     //DVector3 relativePosition = 
                     //node.Orbit.DrawGizmos(node.Celestial.Position);
                     Handles.color = Color.green * 0.7f;
@@ -110,7 +117,6 @@ namespace Orbital.Test
                     }
                     Debug.DrawLine(node.Celestial.Position * scale, (node.Celestial.Position + node.Orbit.GetPositionAtT(node.Time)) * scale, Color.yellow, 2);
                     Debug.DrawLine(node.Celestial.Position * scale, (node.Celestial.Position + node.Orbit.GetPositionAtT(node.Ending.Time)) * scale, Color.green, 2);
-                }
             }
         }
         #endif

@@ -9,24 +9,24 @@ using UnityEngine;
 namespace Orbital.Navigation
 {
     [Serializable]
-    public class PathNode : SampleHolderNode
+    public class PathNode : PathElement
     {
         [JsonProperty, ShowInInspector] private DVector3 _deltaVelocity;
 
 
-        [JsonProperty, ShowInInspector, PropertyOrder(10)] private Element _next;
+        [JsonProperty, ShowInInspector, PropertyOrder(10)] private PathElement _next;
 
         [JsonIgnore]
-        public override Element Next
+        public override PathElement Next
         {
             get => _next;
             set => _next = value;
         }
 
-        [JsonIgnore] private Element _previous;
+        [JsonIgnore] private PathElement _previous;
 
         [JsonIgnore]
-        public override Element Previous
+        public override PathElement Previous
         {
             get => _previous;
             set => _previous = value;
@@ -39,25 +39,23 @@ namespace Orbital.Navigation
         {
             float scale = 4.456328E-09F;
             
-            SampleHolderNode prevSampler = FirstPreviousOfType<SampleHolderNode>();
-            
-            if (prevSampler.Ending.Type != OrbitEndingType.Cycle && prevSampler.Ending.NextCelestial != null)
+            if (Previous.Ending.Type != OrbitEndingType.Cycle && Previous.Ending.NextCelestial != null)
             {
-                Time = prevSampler.Ending.Time;
-                Celestial = prevSampler.Ending.NextCelestial;
+                Time = Previous.Ending.Time;
+                Celestial = Previous.Ending.NextCelestial;
             }
             else
             {
-                Celestial = prevSampler.Celestial;
+                Celestial = Previous.Celestial;
             }
 
-            prevSampler.Orbit.GetOrbitalStateVectorsAtOrbitTime(Time, out DVector3 position, out DVector3 velocity);
+            Previous.Orbit.GetOrbitalStateVectorsAtOrbitTime(Time, out DVector3 position, out DVector3 velocity);
 
-            switch (prevSampler.Ending.Type)
+            switch (Previous.Ending.Type)
             {
                 case OrbitEndingType.Leave:
                 {
-                    prevSampler.Celestial.Orbit.GetOrbitalStateVectorsAtOrbitTime(Time, out DVector3 pos, out DVector3 vel);
+                    Previous.Celestial.Orbit.GetOrbitalStateVectorsAtOrbitTime(Time, out DVector3 pos, out DVector3 vel);
                     position += pos;
                     velocity += vel;
                     Debug.DrawRay(position * scale, velocity * 0.001f, Color.blue, 5);

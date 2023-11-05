@@ -1,24 +1,34 @@
 ﻿using System;
 using System.Collections.Generic;
 using Newtonsoft.Json;
+using Orbital.Core;
+using Orbital.Core.TrajectorySystem;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
 namespace Orbital.Navigation
 {
-    public abstract class Element
+    public abstract class PathElement
     {
         //// Navigation
-        public abstract Element Next { get; set; }
-        public abstract Element Previous { get; set; }
-        public Element GetLastElement()
+        public abstract PathElement Next { get; set; }
+        public abstract PathElement Previous { get; set; }
+        public abstract IStaticOrbit Orbit { get; }
+        public IStaticBody Celestial;
+        [ShowInInspector] public OrbitEnding Ending { get; private set; }
+        public void FindEnding()
+        {
+            Ending = Orbit.GetEnding(Celestial, Time);
+        }
+        
+        public PathElement GetLastElement()
         {
             return Next == null ? this : Next.GetLastElement();
         }
 
-        public T FirstPreviousOfType<T>(bool includeThis = false) where T : Element
+        public T FirstPreviousOfType<T>(bool includeThis = false) where T : PathElement
         {
-            Element e = includeThis ? this : Previous;
+            PathElement e = includeThis ? this : Previous;
             while (e != null)
             {
                 if (e is T node) return node;
@@ -26,9 +36,9 @@ namespace Orbital.Navigation
             }
             return null;
         }
-        public T FirstNextOfType<T>(bool includeThis = false) where T : Element
+        public T FirstNextOfType<T>(bool includeThis = false) where T : PathElement
         {
-            Element e = includeThis ? this : Next;
+            PathElement e = includeThis ? this : Next;
             while (e != null)
             {
                 if (e is T node) return node;
@@ -37,13 +47,14 @@ namespace Orbital.Navigation
             return null;
         }
         
-        public void Reconstruct()
+        public void Reconstruct(List<PathElement> indexList, int myIndex)
         {
             if(Next == null) return;
             Next.Previous = this;
-            Next.Reconstruct();
+            indexList[myIndex] = this;
+            Next.Reconstruct(indexList, myIndex + 1);
         }
-        public IEnumerable<Element> Enumerate()
+        public IEnumerable<PathElement> Enumerate()
         {
             yield return this;
             var element = Next;
@@ -53,9 +64,17 @@ namespace Orbital.Navigation
                 element = element.Next;
             }
         }
+        public IEnumerable<T> Enumerate<T>() where  T : PathElement
+        {
+            foreach (PathElement element in Enumerate())
+            {
+                if(element is T type) yield return type;
+            }
+        }
+        
         //// Dirty flag
-        [JsonIgnore] public bool IsDirty => _isSelfDirty || (Previous?.IsDirty ?? false);
-        [JsonProperty] private bool _isSelfDirty = true;
+        public bool IsDirty => _isSelfDirty || (Previous?.IsDirty ?? false);
+        private bool _isSelfDirty = true;
         public void SetDirty()
         {
             if(IsDirty) return;
@@ -69,7 +88,7 @@ namespace Orbital.Navigation
             Next?.CallRefresh();
         }
 
-        public Element GetFirstDirty()
+        public PathElement GetFirstDirty()
         {
             if (_isSelfDirty) return this;
             else if(Next != null)
@@ -82,8 +101,8 @@ namespace Orbital.Navigation
         protected virtual void OnSetDirty(){}
 
         //// Time position
-        [JsonProperty] private double _time;
-        [JsonIgnore, ShowInInspector] public double Time
+        private double _time;
+        public double Time
         {
             get => _time;
             set
@@ -97,5 +116,16 @@ namespace Orbital.Navigation
                 SetDirty();
             }
         }
+
+        // Lifetime
+        public void Dispose()
+        {
+            Previous = null;
+            Next?.Dispose();
+            Next = null;
+            OnDisposed();
+        }
+
+        public virtual void OnDisposed(){}
     }
 }

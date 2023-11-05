@@ -1,39 +1,23 @@
 using System;
 using Ara3D;
 using Orbital.Core.TrajectorySystem;
+using Orbital.Navigation;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
 namespace Orbital.Core.Simulation
 {
-    public partial class DynamicBody : SystemComponent<DynamicBodyVariables, DynamicBodySettings>, IDynamicBody, IDynamicBodyAccessor
+    public partial class DynamicBody : SystemComponent<DynamicBodyVariables, DynamicBodySettings>, IDynamicBody
     {
-        private static AsyncThreadScheduler _trajectoryRefreshScheduler = new AsyncThreadScheduler(3);
-
         [SerializeField] private DynamicBodyVariables variables;
         [SerializeField] private DynamicBodySettings settings;
         private World _world;
         //private Track _trajectoryTrack;
-        private IStaticOrbit _orbit;
-        private IStaticBody _parent;
-
-        private DynamicBodyMode _mode = DynamicBodyMode.Trajectory;
+        private NavigationPath _path;
 
         #region InterfaceImplementation
-        public IStaticOrbit Orbit => _orbit;
-        public IStaticBody Parent => _parent;
-        [ShowInInspector] public DynamicBodyMode Mode => _mode;
-        IDynamicBody IDynamicBodyAccessor.Self => this;
-        IStaticBody IDynamicBodyAccessor.Parent
-        {
-            get => _parent;
-            set => _parent = value;
-        }
-        IStaticOrbit IDynamicBodyAccessor.Orbit
-        {
-            get => _orbit;
-            set => _orbit = value;
-        }
+        public IStaticOrbit Orbit => _path.GetOrbitAtTime(TimeService.WorldTime);
+        public IStaticBody Parent => _path.GetParentAtTime(TimeService.WorldTime);
         #endregion
 
         public override DynamicBodyVariables Variables
@@ -55,8 +39,6 @@ namespace Orbital.Core.Simulation
 
         public void Init()
         {
-            if(_parent != null && _world != null) return;
-            _parent = GetComponentInParent<IStaticBody>();
             _world = GetComponentInParent<World>();
             #if UNITY_EDITOR
             if (!Application.isPlaying)
@@ -64,14 +46,22 @@ namespace Orbital.Core.Simulation
                 _world.Load();
             }
             #endif
+            
+            _path = new NavigationPath();
+            _path.Calculate(GetComponentInParent<IStaticBody>(), variables.position, variables.velocity, TimeService.WorldTime);
+            _path.BuildTransitions(0);
             _world.RegisterRigidBody(this);
-            _orbit.Calculate(variables.position, variables.velocity, TimeService.WorldTime);
         }
 
         private void OnValidate()
         {
-            if(_orbit == null) return;
             Init();
+        }
+
+        protected override void OnDestroy()
+        {
+            base.OnDestroy();
+            _path.Dispose();
         }
     }
 

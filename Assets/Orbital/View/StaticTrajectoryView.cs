@@ -64,8 +64,8 @@ namespace Orbital.View
             Vector3 right = _body.Orbit.RotationMatrix.Right();
             Vector3 up = _body.Orbit.RotationMatrix.Up();
             Vector3 fwd = _body.Orbit.RotationMatrix.Forward();
-            var pos = _body.Orbit.GetPositionFromTrueAnomaly(0);
-            _viewTransform.localPosition = ((Vector3) (pos) - fwd * (float) _body.Orbit.SemiMajorAxis) * scale;
+            var pos = _body.Position;
+            _viewTransform.position = ((Vector3) (pos) - fwd * (float) _body.Orbit.SemiMajorAxis) * scale;
             _viewTransform.rotation = Quaternion.LookRotation(fwd, up);
             _viewTransform.localScale = new Vector3((float) _body.Orbit.SemiMinorAxis * scale, 1,
                 (float) _body.Orbit.SemiMajorAxis * scale);

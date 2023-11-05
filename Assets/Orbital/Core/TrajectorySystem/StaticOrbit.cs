@@ -1,6 +1,7 @@
 using System;
 using Ara3D;
 using Ara3D.Double;
+using Orbital.Core.Utilities;
 using UnityEngine;
 
 namespace Orbital.Core.TrajectorySystem
@@ -22,7 +23,6 @@ namespace Orbital.Core.TrajectorySystem
         public double TrueAnomaly {get; private set;}
         public double EccentricAnomaly {get; private set;}
         public double Radius {get; private set;}
-        public double Altitude {get; private set;}
         public double OrbitPercent {get; private set;}
         public double OrbitTime {get; private set;}
         public double OrbitTimeAtEpoch {get; private set;}
@@ -149,14 +149,14 @@ namespace Orbital.Core.TrajectorySystem
             H = DVector3.Cross(velocity, position);
             if (H.LengthSquared().Equals(0.0))
             {
-                //Inclination = Math.Acos(position.y / position.Length()) * (180.0 / Math.PI);
+                Inclination = Math.Acos(position.y / position.Length());
                 AscendingNode = DVector3.Cross(position, DVector3.up);
             }
             else
             {
                 AscendingNode = DVector3.Cross(DVector3.up, H);
                 up = H / H.Length();
-                //Inclination = MathUtilities.AngleBetween(up, DVector3.up) * (180.0 / Math.PI);
+                Inclination = MathUtilities.AngleBetween(up, DVector3.up);
             }
 
             if (AscendingNode.LengthSquared().Equals(0.0))
@@ -164,8 +164,7 @@ namespace Orbital.Core.TrajectorySystem
                 AscendingNode = DVector3.forward;
             }
 
-            //LongitudeAscendingNode = Math.Atan2(AscendingNode.x, AscendingNode.z) * (180.0 / Math.PI);
-            //LongitudeAscendingNode = (LongitudeAscendingNode + 360.0) % 360.0;
+            LongitudeAscendingNode = MathUtilities.ClampRadiansTwoPI(Math.Atan2(AscendingNode.x, AscendingNode.z));
             EccVec = (DVector3.Dot(velocity, velocity) / Nu - 1.0 / position.Length()) * position -
                      DVector3.Dot(position, velocity) * velocity / Nu;
             Eccentricity = EccVec.Length();
@@ -182,16 +181,16 @@ namespace Orbital.Core.TrajectorySystem
             if (Eccentricity.Equals(0.0))
             {
                 fwd = AscendingNode.Normalize();
-                //ArgumentOfPeriapsis = 0.0;
+                ArgumentOfPeriapsis = 0.0;
             }
             else
             {
                 fwd = EccVec.Normalize();
-                //ArgumentOfPeriapsis = MathUtilities.AngleBetween(AscendingNode, fwd);
-                /*if (DVector3.Dot(DVector3.Cross(AscendingNode, fwd), H) < 0.0)
+                ArgumentOfPeriapsis = MathUtilities.AngleBetween(AscendingNode, fwd);
+                if (DVector3.Dot(DVector3.Cross(AscendingNode, fwd), H) < 0.0)
                 {
                     ArgumentOfPeriapsis = 2.0 * Math.PI - ArgumentOfPeriapsis;
-                }*/
+                }
             }
 
             if (H.LengthSquared().Equals(0.0))
@@ -202,7 +201,6 @@ namespace Orbital.Core.TrajectorySystem
             else
                 right = DVector3.Cross(up, fwd);
 
-            //ArgumentOfPeriapsis *= 180.0 / Math.PI;
             MeanMotion = this.GetMeanMotion(SemiMajorAxis);
             double x = DVector3.Dot(position, fwd);
             TrueAnomaly = Math.Atan2(DVector3.Dot(position, right), x);
@@ -232,7 +230,6 @@ namespace Orbital.Core.TrajectorySystem
             }
 
             Radius = position.Length();
-            //altitude = radius - _other.Radius;
             _rotationMatrix = DMatrix4x4.LookRotation(fwd, up);
             Debug.DrawRay(Vector3.zero, up, Color.green, 1);
             Debug.DrawRay(Vector3.zero, fwd, Color.blue, 1);
