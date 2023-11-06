@@ -1,11 +1,12 @@
 using System;
 using Ara3D;
+using Orbital.Core;
+using Orbital.Core.Simulation;
 using Orbital.Core.TrajectorySystem;
 using Orbital.Navigation;
-using Sirenix.OdinInspector;
 using UnityEngine;
 
-namespace Orbital.Core.Simulation
+namespace Orbital
 {
     public partial class DynamicBody : SystemComponent<DynamicBodyVariables, DynamicBodySettings>, IDynamicBody
     {
@@ -17,6 +18,7 @@ namespace Orbital.Core.Simulation
 
         #region InterfaceImplementation
         public IStaticOrbit Orbit => _path.GetOrbitAtTime(TimeService.WorldTime);
+        public event Action OrbitChangedHandler;
         public IStaticBody Parent => _path.GetParentAtTime(TimeService.WorldTime);
         #endregion
 

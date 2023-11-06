@@ -47,7 +47,6 @@ namespace Orbital.Navigation
             if (result)
             {
                 double leaveTrueAnomaly = orbit.TrueAnomalyAtRadius(gravityRadius, fromTime);
-                Debug.Log(leaveTrueAnomaly);
                 leavePoint = orbit.GetPositionFromTrueAnomaly(leaveTrueAnomaly);
                 leaveTime = orbit.TimeOfTrueAnomaly(leaveTrueAnomaly, fromTime);
                 return true;
@@ -120,6 +119,8 @@ namespace Orbital.Navigation
                 if (isLessThenWanted) break;
             }
 
+            double maxTime = Math.Max(times[0], times[1]);
+
             //Debug.DrawLine(drawOffset + (Vector3)a.GetPositionAtT(times[0] - a.Epoch) * scale, drawOffset + (Vector3)b.GetPositionAtT(times[0] - b.Epoch) * scale, Color.yellow, 0.5f);
             //Debug.DrawLine(drawOffset + (Vector3)a.GetPositionAtT(times[1] - a.Epoch) * scale, drawOffset + (Vector3)b.GetPositionAtT(times[1] - b.Epoch) * scale, Color.red, 0.5f);
             double delta = double.MaxValue;
@@ -157,6 +158,12 @@ namespace Orbital.Navigation
                     distance = Math.Sqrt(distances[0]);
                     return times[0];
                 }
+            }
+
+            if (times[0] < startTime)
+            {
+                distance = Math.Sqrt(LengthSqr(startTime));
+                return startTime;
             }
 
             void IterateBinarySearch()
@@ -201,7 +208,7 @@ namespace Orbital.Navigation
                 return Math.Abs((aa - bb).LengthSquared() - rSqr);
             }
 
-            distance = Math.Sqrt(distances[0]);
+            distance = Math.Sqrt(LengthSqr(times[0]));
             return times[0];
         }
     }

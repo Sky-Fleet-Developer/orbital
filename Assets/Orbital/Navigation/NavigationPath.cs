@@ -51,8 +51,8 @@ namespace Orbital.Navigation
 
         private void CacheTimeIntervals()
         {
-            int count = GetElementsCount();
-            if(_timeIntervals.Length != count) _timeIntervals = new double[count + 1];
+            int count = GetElementsCount() + 1;
+            if(_timeIntervals.Length != count) _timeIntervals = new double[count];
             _timeIntervals[0] = -1;
             for (int i = 0; i < _allElements.Count; i++)
             {
@@ -62,6 +62,10 @@ namespace Orbital.Navigation
 
         public PathElement GetElementForTime(double time)
         {
+            if (time > _timeIntervals[^1])
+            {
+                this.BuildTransitions(time);
+            }
             int left = 1;
             int right = _timeIntervals.Length;
 
@@ -138,7 +142,7 @@ namespace Orbital.Navigation
             var last = GetLastElement();
             last.Next = pathElement;
             _allElements.Add(null);
-            last.Reconstruct(_allElements, count);
+            Reconstruct(_allElements, count - 1);
             pathElement.SetDirty();
             if (refreshNow)
             {

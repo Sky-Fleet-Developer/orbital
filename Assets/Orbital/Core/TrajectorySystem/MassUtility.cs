@@ -64,13 +64,15 @@ namespace Orbital.Core.TrajectorySystem
             {
                 if (child == null) return;
                 if (other == null) return;
-                if (!container.TryGetValue(child, out IStaticOrbit trajectory))
+                if (!container.TryGetValue(child, out IStaticOrbit orbit))
                 {
-                    trajectory = new StaticOrbit(other);
-                    container.Add(child, trajectory);
+                    orbit = new StaticOrbit();
+                    orbit.Nu = other.Mass * G;
+                    container.Add(child, orbit);
                 }
 
-                trajectory.Calculate(child.Settings, TimeService.WorldTime);
+                orbit.Calculate(child.Settings, TimeService.WorldTime);
+                container[child] = orbit;
                 FillTrajectoriesRecursively(child, container);
             }
 

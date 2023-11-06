@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Windows.Forms;
 using UnityEngine;
 
+namespace Orbital.Test
+{
     public class FormsTest : MonoBehaviour
     {
         void Start()
@@ -47,3 +49,4 @@ using UnityEngine;
 
         private System.Windows.Forms.Button button1;
     }
+}

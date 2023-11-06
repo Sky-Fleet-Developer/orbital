@@ -1,0 +1,51 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-5338861467072744683
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 09368471963d4e8cadd66ab3b08519db, type: 3}
+  m_Name: CelestialViewSettings
+  m_EditorClassIdentifier: 
+  orbitMaterial: {fileID: 2100000, guid: 87188d7fee3303c4bbdbbc2515b7f025, type: 2}
+  orbitMesh: {fileID: 4300000, guid: edc124365cfe5d34e8acd39cbde3964d, type: 2}
+  celestialMaterial: {fileID: 2100000, guid: 87188d7fee3303c4bbdbbc2515b7f025, type: 2}
+  celestialMesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &-4000122974023388819
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7e3ff5c735d54afdaac5ac2190e81e65, type: 3}
+  m_Name: DynamicBodyViewSettings
+  m_EditorClassIdentifier: 
+  orbitMaterial: {fileID: 2100000, guid: 87188d7fee3303c4bbdbbc2515b7f025, type: 2}
+  nodeMaterial: {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
+  nodeMesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
+  selfMaterial: {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
+  selfMesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+  orbitMaxVerticesCount: 250
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2ac43ac2adc148b987ef27cce23cdfbf, type: 3}
+  m_Name: ViewSettingsContainer
+  m_EditorClassIdentifier: 
+  nestedAssets:
+  - {fileID: -5338861467072744683}
+  - {fileID: -4000122974023388819}

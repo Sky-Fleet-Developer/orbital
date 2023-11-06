@@ -1,12 +1,12 @@
 using System;
 using System.Collections.Generic;
 using Ara3D;
-using Orbital.Core.Handles;
+using Orbital.Core;
 using Orbital.Core.TrajectorySystem;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
-namespace Orbital.Core
+namespace Orbital
 {
     [ExecuteInEditMode]
     public class StaticBody : SystemComponent<StaticBodyVariables, StaticBodySettings>, IStaticBody, IStaticBodyAccessor
@@ -54,10 +54,6 @@ namespace Orbital.Core
         {
             set => _world = value;
         }
-
-        public DVector3 Position => _parent == null
-            ? DVector3.Zero
-            : _parent.Position + _orbit.GetPositionAtT(TimeService.WorldTime);
 
         public DVector3 LocalPosition => _orbit.GetPositionAtT(TimeService.WorldTime);
 

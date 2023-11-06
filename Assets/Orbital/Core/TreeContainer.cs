@@ -81,9 +81,9 @@ namespace Orbital.Core
                     {
                         value.Parent = _componentPerMass[_parents[child]].Self;
                     }
-                    if (_trajectories.TryGetValue(child, out IStaticOrbit trajectory))
+                    if (_trajectories.TryGetValue(child, out IStaticOrbit orbit))
                     {
-                        value.Orbit = trajectory;
+                        value.Orbit = orbit;
                     }
                     value.MassSystem = child;
                     value.World = _world;

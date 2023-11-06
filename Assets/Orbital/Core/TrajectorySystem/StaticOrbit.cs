@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace Orbital.Core.TrajectorySystem
 {
-    public class StaticOrbit : IStaticOrbit
+    public struct StaticOrbit : IStaticOrbit
     {
         private const double Deg2Rad = 0.01745329;
         private const double Rad2Deg = 57.29578;
@@ -57,16 +57,6 @@ namespace Orbital.Core.TrajectorySystem
 
         public double Apocenter => (1.0 + Eccentricity) * SemiMajorAxis;
         
-        public StaticOrbit()
-        {
-            _rotationMatrix = DMatrix4x4.Identity;
-        }
-        public StaticOrbit(IMass other)
-        {
-            Nu = other.Mass * MassUtility.G;
-            _rotationMatrix = DMatrix4x4.Identity;
-        }
-
         public void Init()
         {
             _rotationMatrix = GetRotation(Inclination, LongitudeAscendingNode, ArgumentOfPeriapsis);
@@ -349,10 +339,14 @@ namespace Orbital.Core.TrajectorySystem
             Debug.DrawLine(scaledOffset, (Vector3)(this.GetPositionAtT(0.0) * scale) + scaledOffset, Color.magenta);
             Debug.DrawRay(scaledOffset, (Vector3)(H * scale) + scaledOffset, Color.blue);
         }
-        
-        public StaticOrbit Clone()
+
+        public override bool Equals(object obj)
         {
-            return MemberwiseClone() as StaticOrbit;
+            if (obj is StaticOrbit orbit)
+            {
+                return Math.Abs((Eccentricity + SemiMajorAxis + Inclination + LongitudeAscendingNode + Epoch) - (orbit.Eccentricity + orbit.SemiMajorAxis + orbit.Inclination + orbit.LongitudeAscendingNode + orbit.Epoch)) < 1e-15;
+            }
+            return false;
         }
     }
 }

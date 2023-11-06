@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Ara3D;
 using Orbital.Core.Simulation;
@@ -11,6 +12,10 @@ namespace Orbital.Core
     {
         [SerializeField] private TreeContainer tree;
         [Inject] private DiContainer _container;
+
+        public event Action<IDynamicBody> DynamicBodyRegisterHandler;
+        public event Action<IDynamicBody> DynamicBodyUnregisterHandler;
+        
         public void Load()
         {
             if (tree.IsInitialized)
@@ -55,6 +60,7 @@ namespace Orbital.Core
         public void RegisterRigidBody(IDynamicBody value)
         {
             tree.AddRigidbody(value);
+            DynamicBodyRegisterHandler?.Invoke(value);
         }
         
         public DVector3 GetGlobalPosition(IStaticBody staticBody)
@@ -117,6 +123,11 @@ namespace Orbital.Core
             {
                 _container.InjectGameObject(value.gameObject);
             }
+        }
+
+        public IStaticBody GetRootBody()
+        {
+            return tree._componentPerMass[tree.Root].Self;
         }
     }
 }

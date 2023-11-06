@@ -1,6 +1,7 @@
 using System;
 using Orbital.Core;
 using Orbital.Core.Simulation;
+using Orbital.View.Utilities;
 using Unity.Collections;
 using Unity.Jobs;
 using UnityEngine;
@@ -60,7 +61,7 @@ namespace Orbital.View
                 _viewTransform.SetSiblingIndex(transform.GetSiblingIndex() + 1);
             }
 
-            GenerateMesh();
+            _mesh = MeshUtils.GenerateLineMesh("LineMesh", maxVertexCount);
             _viewTransform.GetComponent<MeshFilter>().mesh = _mesh;
             _viewTransform.GetComponent<MeshRenderer>().material = material;
         }
@@ -70,32 +71,7 @@ namespace Orbital.View
             //_body.Orbit.PathChangedHandler -= Refresh;
         }
 
-        private void GenerateMesh()
-        {
-            _mesh = new Mesh {name = "Orbit line"};
-            _mesh.MarkDynamic();
-            _mesh.bounds = new Bounds(Vector3.zero, Vector3.one * 1000);
-            
-            {
-                Vector3[] arr = new Vector3[maxVertexCount];
-                for (int i = 0; i < maxVertexCount; i++)
-                {
-                    arr[i] = Vector3.zero;
-                }
-                _mesh.SetVertices(arr);
-            }
-            {
-                int[] arr = new int[maxVertexCount * 2];
-                for (int i = 0; i < maxVertexCount - 1; i++)
-                {
-                    arr[i * 2] = i;
-                    arr[i * 2 + 1] = i + 1;
-                }
-                arr[maxVertexCount * 2 - 2] = maxVertexCount - 1;
-                arr[maxVertexCount * 2 - 1] = 0;
-                _mesh.SetIndices(arr, MeshTopology.Lines, 0);
-            }
-        }
+        
 
         private void Refresh()
         {

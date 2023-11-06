@@ -49,9 +49,9 @@ namespace Orbital.Navigation
         
         public void Reconstruct(List<PathElement> indexList, int myIndex)
         {
+            indexList[myIndex] = this;
             if(Next == null) return;
             Next.Previous = this;
-            indexList[myIndex] = this;
             Next.Reconstruct(indexList, myIndex + 1);
         }
         public IEnumerable<PathElement> Enumerate()

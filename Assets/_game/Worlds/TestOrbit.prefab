@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 596590026381189936}
   - component: {fileID: 596590026381189943}
+  - component: {fileID: 149123555183571689}
   m_Layer: 0
   m_Name: TestOrbit
   m_TagString: Untagged
@@ -46,34 +47,29 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   tree:
-    serializedValue: "{\r\n   \"Root\":{\r\n      \"$type\":\"Orbital.Core.TrajectorySystem.SingleCenterBranch,
-      Core\",\r\n      \"settings\":{\r\n         \"mass\":0.0,\r\n         \"eccentricity\":0.0,\r\n        
-      \"semiMajorAxis\":0.0,\r\n         \"inclination\":0.0,\r\n         \"argumentOfPeriapsis\":0.0,\r\n        
-      \"longitudeAscendingNode\":0.0,\r\n         \"timeShift\":0.0,\r\n        
-      \"period\":0.0\r\n      },\r\n      \"Central\":{\r\n         \"$type\":\"Orbital.Core.TrajectorySystem.CelestialBody,
-      Core\",\r\n         \"settings\":{\r\n            \"mass\":1.98E+30,\r\n           
-      \"eccentricity\":0.0,\r\n            \"semiMajorAxis\":0.0,\r\n           
-      \"inclination\":0.0,\r\n            \"argumentOfPeriapsis\":0.0,\r\n           
-      \"longitudeAscendingNode\":0.0,\r\n            \"timeShift\":0.0,\r\n           
-      \"period\":0.0\r\n         }\r\n      },\r\n      \"Children\":[\r\n        
-      {\r\n            \"$type\":\"Orbital.Core.TrajectorySystem.SingleCenterBranch,
-      Core\",\r\n            \"settings\":{\r\n               \"mass\":6E+24,\r\n              
-      \"eccentricity\":0.0,\r\n               \"semiMajorAxis\":1.5E+11,\r\n              
-      \"inclination\":0.0,\r\n               \"argumentOfPeriapsis\":0.0,\r\n              
-      \"longitudeAscendingNode\":0.0,\r\n               \"timeShift\":0.0,\r\n              
-      \"period\":0.0\r\n            },\r\n            \"Central\":{\r\n              
-      \"$type\":\"Orbital.Core.TrajectorySystem.CelestialBody, Core\",\r\n              
-      \"settings\":{\r\n                  \"mass\":6E+24,\r\n                  \"eccentricity\":0.0,\r\n                 
-      \"semiMajorAxis\":0.0,\r\n                  \"inclination\":0.0,\r\n                 
-      \"argumentOfPeriapsis\":0.0,\r\n                  \"longitudeAscendingNode\":0.0,\r\n                 
-      \"timeShift\":0.0,\r\n                  \"period\":0.0\r\n               }\r\n           
-      },\r\n            \"Children\":[\r\n               {\r\n                  \"$type\":\"Orbital.Core.TrajectorySystem.CelestialBody,
-      Core\",\r\n                  \"settings\":{\r\n                     \"mass\":7.3E+22,\r\n                    
-      \"eccentricity\":0.05,\r\n                     \"semiMajorAxis\":3.9E+08,\r\n                    
-      \"inclination\":1.0,\r\n                     \"argumentOfPeriapsis\":0.0,\r\n                    
-      \"longitudeAscendingNode\":0.0,\r\n                     \"timeShift\":0.0,\r\n                    
-      \"period\":0.0\r\n                  }\r\n               }\r\n            ]\r\n        
-      }\n      ]\r\n   },\r\n   \"IsInitialized\":true\r\n}"
+    serializedValue: '{"Root":{"$type":"Orbital.Core.TrajectorySystem.SingleCenterBranch,
+      Core","settings":{"mass":0.0,"eccentricity":0.0,"semiMajorAxis":0.0,"inclination":0.0,"argumentOfPeriapsis":0.0,"longitudeAscendingNode":0.0,"timeShift":0.0,"period":0.0},"Central":{"$type":"Orbital.Core.TrajectorySystem.CelestialBody,
+      Core","settings":{"mass":1.98E+30,"eccentricity":0.0,"semiMajorAxis":0.0,"inclination":0.0,"argumentOfPeriapsis":0.0,"longitudeAscendingNode":0.0,"timeShift":0.0,"period":0.0}},"Children":[{"$type":"Orbital.Core.TrajectorySystem.SingleCenterBranch,
+      Core","settings":{"mass":6E+24,"eccentricity":0.0,"semiMajorAxis":1.5E+11,"inclination":0.0,"argumentOfPeriapsis":0.0,"longitudeAscendingNode":0.0,"timeShift":0.0,"period":0.0},"Central":{"$type":"Orbital.Core.TrajectorySystem.CelestialBody,
+      Core","settings":{"mass":6E+24,"eccentricity":0.0,"semiMajorAxis":0.0,"inclination":0.0,"argumentOfPeriapsis":0.0,"longitudeAscendingNode":0.0,"timeShift":0.0,"period":0.0}},"Children":[{"$type":"Orbital.Core.TrajectorySystem.CelestialBody,
+      Core","settings":{"mass":7.3E+22,"eccentricity":0.05,"semiMajorAxis":3.9E+08,"inclination":1.0,"argumentOfPeriapsis":0.0,"longitudeAscendingNode":0.0,"timeShift":0.0,"period":0.0}}]}]},"IsInitialized":true}'
+--- !u!114 &149123555183571689
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 596590026381189942}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0a47b84cb695d99479d03281d2e9aa44, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  viewSettingsContainer: {fileID: 11400000, guid: d582ecc9586cd5b42bb79b772c6aa1b5,
+    type: 2}
+  world: {fileID: 596590026381189943}
+  scaleSettings:
+    scale: 0.000000004456328
 --- !u!1 &949194484788710395
 GameObject:
   m_ObjectHideFlags: 0
@@ -84,8 +80,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1177257839945808196}
   - component: {fileID: 6653972294982843103}
-  - component: {fileID: 5588130609848025350}
-  - component: {fileID: 6020472639645149915}
   m_Layer: 0
   m_Name: Child[0]
   m_TagString: Untagged
@@ -120,32 +114,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 843ed5443cb417d41a77a9c28a6b6ba3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &5588130609848025350
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 949194484788710395}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e89756fa137ca6142960df48232334ec, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  material: {fileID: 2100000, guid: 87188d7fee3303c4bbdbbc2515b7f025, type: 2}
-  mesh: {fileID: 4300000, guid: edc124365cfe5d34e8acd39cbde3964d, type: 2}
---- !u!114 &6020472639645149915
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 949194484788710395}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b693fa442b6f0b941928762364501911, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &6411308781379642944
 GameObject:
   m_ObjectHideFlags: 0
@@ -156,8 +124,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1894655773930585450}
   - component: {fileID: 5544404305899821679}
-  - component: {fileID: 2829771698526197254}
-  - component: {fileID: 5415709737108941240}
   m_Layer: 0
   m_Name: Child[0]
   m_TagString: Untagged
@@ -192,32 +158,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 843ed5443cb417d41a77a9c28a6b6ba3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &2829771698526197254
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6411308781379642944}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e89756fa137ca6142960df48232334ec, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  material: {fileID: 2100000, guid: 87188d7fee3303c4bbdbbc2515b7f025, type: 2}
-  mesh: {fileID: 4300000, guid: edc124365cfe5d34e8acd39cbde3964d, type: 2}
---- !u!114 &5415709737108941240
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6411308781379642944}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b693fa442b6f0b941928762364501911, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &6869555834215298745
 GameObject:
   m_ObjectHideFlags: 0
@@ -228,7 +168,6 @@ GameObject:
   m_Component:
   - component: {fileID: 3018979015593223685}
   - component: {fileID: 4379479794257545861}
-  - component: {fileID: 8080866782236304376}
   m_Layer: 0
   m_Name: Child[1]
   m_TagString: Untagged
@@ -266,20 +205,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 843ed5443cb417d41a77a9c28a6b6ba3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &8080866782236304376
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6869555834215298745}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e89756fa137ca6142960df48232334ec, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  material: {fileID: 2100000, guid: 87188d7fee3303c4bbdbbc2515b7f025, type: 2}
-  mesh: {fileID: 4300000, guid: edc124365cfe5d34e8acd39cbde3964d, type: 2}
 --- !u!1 &7143825406712870206
 GameObject:
   m_ObjectHideFlags: 0
@@ -328,9 +253,9 @@ MonoBehaviour:
     velocity:
       x: 0
       y: 0
-      z: 11000
+      z: 7296
     position:
-      x: 6800000
+      x: 15000000
       y: 0
       z: 0
 --- !u!1 &8212577127405217046
@@ -389,8 +314,6 @@ GameObject:
   m_Component:
   - component: {fileID: 5843884890957562742}
   - component: {fileID: 842932857455788466}
-  - component: {fileID: 5983678189125927498}
-  - component: {fileID: 6100579879764091496}
   m_Layer: 0
   m_Name: Child[1]
   m_TagString: Untagged
@@ -423,31 +346,5 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 843ed5443cb417d41a77a9c28a6b6ba3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &5983678189125927498
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8907344042088145154}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e89756fa137ca6142960df48232334ec, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  material: {fileID: 2100000, guid: 87188d7fee3303c4bbdbbc2515b7f025, type: 2}
-  mesh: {fileID: 4300000, guid: edc124365cfe5d34e8acd39cbde3964d, type: 2}
---- !u!114 &6100579879764091496
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8907344042088145154}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b693fa442b6f0b941928762364501911, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
