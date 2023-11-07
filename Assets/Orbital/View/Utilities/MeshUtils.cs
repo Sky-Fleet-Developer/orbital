@@ -4,7 +4,7 @@ namespace Orbital.View.Utilities
 {
     public static class MeshUtils
     {
-        public static Mesh GenerateLineMesh(string name, int verticesCount)
+        public static Mesh GenerateLineMesh(string name, int verticesCount, bool cycled = true)
         {
             var mesh = new Mesh {name = name};
             mesh.MarkDynamic();
@@ -25,8 +25,13 @@ namespace Orbital.View.Utilities
                     arr[i * 2] = i;
                     arr[i * 2 + 1] = i + 1;
                 }
-                arr[verticesCount * 2 - 2] = verticesCount - 1;
-                arr[verticesCount * 2 - 1] = 0;
+
+                if (cycled)
+                {
+                    arr[verticesCount * 2 - 2] = verticesCount - 1;
+                    arr[verticesCount * 2 - 1] = 0;
+                }
+
                 mesh.SetIndices(arr, MeshTopology.Lines, 0);
             }
             return mesh;

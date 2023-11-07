@@ -7,6 +7,20 @@
       "dependencies": {},
       "hash": "c8205ffcd945cd176f4493a8ab25db093efef779"
     },
+    "com.leopotam.ecs": {
+      "version": "https://github.com/Leopotam/ecs.git",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "1213c31c9ef8325d48e74a52b345c4db242d038b"
+    },
+    "com.leopotam.ecs-unityintegration": {
+      "version": "https://github.com/Leopotam/ecs-unityintegration.git",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "063f130aeecea526beaca172ea56bd046781e378"
+    },
     "com.unity.cinemachine": {
       "version": "2.8.9",
       "depth": 0,

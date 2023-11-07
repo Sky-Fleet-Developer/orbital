@@ -2,12 +2,10 @@ using System;
 using System.Collections.Generic;
 using Ara3D;
 using Newtonsoft.Json;
-using Orbital.Core;
 using Orbital.Core.TrajectorySystem;
 using Sirenix.OdinInspector;
-using UnityEngine;
 
-namespace Orbital.Navigation
+namespace Orbital.Core.Navigation
 {
     [Serializable]
     public class NavigationPath : PathElement
@@ -46,7 +44,8 @@ namespace Orbital.Navigation
             _position = position;
             _velocity = velocity;
             Time = epoch;
-            CallRefresh();
+            SetDirty();
+            RefreshDirty();
         }
 
         private void CacheTimeIntervals()
@@ -133,6 +132,7 @@ namespace Orbital.Navigation
         {
             _orbit.Calculate(_position, _velocity, Time);
             FindEnding();
+            RemoveNextIfInfinity();
         }
         
         

@@ -1,13 +1,10 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Linq;
 using Ara3D;
-using Orbital.Core;
 using Orbital.Core.TrajectorySystem;
 using UnityEngine;
 
-namespace Orbital.Navigation
+namespace Orbital.Core.Navigation
 {
     public static class OrbitTransitionUtility
     {
@@ -19,9 +16,9 @@ namespace Orbital.Navigation
             DVector3 collisionPos = DVector3.Zero;
             if (internalCollision != null)
             {
-                orbit.GetOrbitalStateVectorsAtOrbitTime(collisionTime, out collisionPos, out DVector3 vel);
-                bool isGrowth = DVector3.Dot(collisionPos, vel) > 0;
-                if (isGrowth)
+                //orbit.GetOrbitalStateVectorsAtOrbitTime(collisionTime, out collisionPos, out DVector3 vel);
+                //bool isGrowth = DVector3.Dot(collisionPos, vel) > 0;
+                //if (isGrowth)
                 {
                     return new OrbitEnding(OrbitEndingType.Entry, collisionPos, collisionTime, internalCollision);
                 }
@@ -36,6 +33,7 @@ namespace Orbital.Navigation
                     return new OrbitEnding(OrbitEndingType.Entry, collisionPos, collisionTime, internalCollision);
                 }
                 if(parent.Parent != null) return new OrbitEnding(OrbitEndingType.Leave, leavePoint, leaveTime, parent.Parent);
+                else  return new OrbitEnding(OrbitEndingType.Cycle, DVector3.Zero, leaveTime, parent);
             }
             return new OrbitEnding(OrbitEndingType.Cycle, DVector3.Zero, double.PositiveInfinity, parent);
         }

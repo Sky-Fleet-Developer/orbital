@@ -1,8 +1,6 @@
 using Ara3D;
-using Orbital.Core;
-using UnityEngine;
 
-namespace Orbital.Navigation
+namespace Orbital.Core.Navigation
 {
     public struct OrbitEnding
     {

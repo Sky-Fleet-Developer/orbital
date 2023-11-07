@@ -1,9 +1,9 @@
 using System;
 using Ara3D;
 using Orbital.Core;
+using Orbital.Core.Navigation;
 using Orbital.Core.Serialization;
 using Orbital.Core.TrajectorySystem;
-using Orbital.Navigation;
 using Sirenix.OdinInspector;
 using UnityEditor;
 using UnityEngine;

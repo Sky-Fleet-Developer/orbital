@@ -1,12 +1,11 @@
 ﻿using System;
 using Ara3D;
 using Newtonsoft.Json;
-using Orbital.Core;
 using Orbital.Core.TrajectorySystem;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
-namespace Orbital.Navigation
+namespace Orbital.Core.Navigation
 {
     [Serializable]
     public class PathNode : PathElement
@@ -73,6 +72,7 @@ namespace Orbital.Navigation
             _orbit.Nu = Celestial.GravParameter;
             _orbit.Calculate(position, velocity + _deltaVelocity, Time);
             FindEnding();
+            RemoveNextIfInfinity();
         }
     }
 }

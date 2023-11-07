@@ -7,7 +7,7 @@ namespace Orbital.Core
 {
     public class TimeService : MonoBehaviour, IFixedUpdateHandler
     {
-        [SerializeField] private float timeScale = 1;
+        [ShowInInspector] private static float _timeScale = 1;
         [ShowInInspector] private static double _worldTime;
         
         [Inject]
@@ -19,9 +19,11 @@ namespace Orbital.Core
         int IOrderHolder.Order => -1;
         void IFixedUpdateHandler.FixedUpdate()
         {
-            _worldTime += Time.deltaTime * timeScale;
+            _worldTime += Time.deltaTime * _timeScale;
         }
 
         public static double WorldTime => _worldTime;
+        public static double TimeScale => _timeScale;
+        public static double DeltaTime => Time.deltaTime * _timeScale;
     }
 }

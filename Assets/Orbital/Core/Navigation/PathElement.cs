@@ -1,12 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using Newtonsoft.Json;
-using Orbital.Core;
 using Orbital.Core.TrajectorySystem;
 using Sirenix.OdinInspector;
-using UnityEngine;
 
-namespace Orbital.Navigation
+namespace Orbital.Core.Navigation
 {
     public abstract class PathElement
     {
@@ -118,6 +115,14 @@ namespace Orbital.Navigation
         }
 
         // Lifetime
+        public void RemoveNextIfInfinity()
+        {
+            if (double.IsInfinity(Ending.Time) && Next != null)
+            {
+                Next.Dispose();
+                Next = null;
+            }
+        }
         public void Dispose()
         {
             Previous = null;

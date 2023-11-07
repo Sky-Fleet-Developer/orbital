@@ -215,6 +215,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1851518032248578162}
   - component: {fileID: 5984602119326704305}
+  - component: {fileID: 1518732023555961270}
   m_Layer: 0
   m_Name: TestBody
   m_TagString: Untagged
@@ -258,6 +259,21 @@ MonoBehaviour:
       x: 15000000
       y: 0
       z: 0
+  settings:
+    mass: 1
+--- !u!114 &1518732023555961270
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7143825406712870206}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 827210dc15d30f54ca5ae67089727c17, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  acceleration: 500
 --- !u!1 &8212577127405217046
 GameObject:
   m_ObjectHideFlags: 0

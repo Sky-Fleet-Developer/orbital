@@ -1,4 +1,4 @@
-﻿namespace Orbital.Navigation
+﻿namespace Orbital.Core.Navigation
 {
     public enum OrbitEndingType
     {

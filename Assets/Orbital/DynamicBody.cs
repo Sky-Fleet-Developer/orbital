@@ -1,25 +1,29 @@
 using System;
 using Ara3D;
 using Orbital.Core;
+using Orbital.Core.Navigation;
 using Orbital.Core.Simulation;
 using Orbital.Core.TrajectorySystem;
-using Orbital.Navigation;
 using UnityEngine;
+using UnityEngine.Assertions;
 
 namespace Orbital
 {
-    public partial class DynamicBody : SystemComponent<DynamicBodyVariables, DynamicBodySettings>, IDynamicBody
+    public class DynamicBody : SystemComponent<DynamicBodyVariables, DynamicBodySettings>, IDynamicBody
     {
         [SerializeField] private DynamicBodyVariables variables;
         [SerializeField] private DynamicBodySettings settings;
         private World _world;
         //private Track _trajectoryTrack;
         private NavigationPath _path;
-
+        private double _massInv;
+        
         #region InterfaceImplementation
         public StaticOrbit Orbit => _path.GetOrbitAtTime(TimeService.WorldTime);
         public event Action OrbitChangedHandler;
         public IStaticBody Parent => _path.GetParentAtTime(TimeService.WorldTime);
+        public double Mass => settings.mass;
+        public double MassInv => _massInv;
         #endregion
 
         public override DynamicBodyVariables Variables
@@ -48,11 +52,23 @@ namespace Orbital
                 _world.Load();
             }
             #endif
-            
+            _massInv = 1 / settings.mass;
+            Assert.IsFalse(double.IsNaN(_massInv));
             _path = new NavigationPath();
             _path.Calculate(GetComponentInParent<IStaticBody>(), variables.position, variables.velocity, TimeService.WorldTime);
             _path.BuildTransitions(TimeService.WorldTime);
             _world.RegisterRigidBody(this);
+        }
+
+        public void AddForce(Vector3 force)
+        {
+            var orbit = Orbit;
+            orbit.GetOrbitalStateVectorsAtOrbitTime(TimeService.WorldTime, out DVector3 pos, out DVector3 vel);
+            vel += (DVector3)force * _massInv;
+            _path.Calculate(Parent, pos, vel, TimeService.WorldTime);
+            OrbitChangedHandler?.Invoke();
+            variables.position = pos;
+            variables.velocity = vel;
         }
 
         private void OnValidate()
@@ -77,5 +93,6 @@ namespace Orbital
     [Serializable]
     public struct DynamicBodySettings
     {
+        public double mass;
     }
 }

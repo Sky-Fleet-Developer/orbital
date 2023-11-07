@@ -201,6 +201,10 @@ namespace Orbital.Core.TrajectorySystem
                     num3 -= num1;
                 }
 
+                if (double.IsNaN(num3))
+                {
+                    num3 = tr.SolveEccentricAnomalyExtremeEcc(m, ecc);
+                }
                 return num3;
             }
         }

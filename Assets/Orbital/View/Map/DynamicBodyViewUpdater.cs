@@ -1,15 +1,18 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using Ara3D;
 using Orbital.Core;
+using Orbital.Core.Navigation;
 using Orbital.Core.Simulation;
 using Orbital.Core.TrajectorySystem;
-using Orbital.Navigation;
 using Orbital.View.Utilities;
 using Plugins.LocalPool;
 using ScriptableObjectContainer;
 using Unity.Collections;
 using Unity.Jobs;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace Orbital.View.Map
 {
@@ -39,7 +42,7 @@ namespace Orbital.View.Map
             _self = pool.Get();
             SetupView(_self, _viewSettings.selfMesh, _viewSettings.selfMaterial);
             _self.Transform.localScale = Vector3.one * 0.05f;
-            _orbitMesh = MeshUtils.GenerateLineMesh("LineMesh", _viewSettings.orbitMaxVerticesCount);
+            _orbitMesh = MeshUtils.GenerateLineMesh("LineMesh", _viewSettings.orbitMaxVerticesCount, false);
             _orbit = pool.Get();
             SetupView(_orbit, _orbitMesh, _viewSettings.orbitMaterial);
             _body.OrbitChangedHandler += OnOrbitChanged;
@@ -70,17 +73,26 @@ namespace Orbital.View.Map
             _endNode.Transform.parent = _parent;
             _ending = _body.Orbit.GetEnding(_body.Parent, _body.Orbit.Epoch);
             AlignOrbitVertices();
-            if (_ending.Type != OrbitEndingType.Cycle)
+            switch (_ending.Type)
             {
-                _startNode.Transform.gameObject.SetActive(true);
-                _endNode.Transform.gameObject.SetActive(true);
-                _startNode.Transform.localPosition = _body.Orbit.GetPositionAtT(_body.Orbit.Epoch - (_ending.Time - _body.Orbit.Epoch)) * _scaleSettings.scale;
-                _endNode.Transform.localPosition = _body.Orbit.GetPositionAtT(_ending.Time) * _scaleSettings.scale;
-            }
-            else
-            {
-                _startNode.Transform.gameObject.SetActive(false);
-                _endNode.Transform.gameObject.SetActive(false);
+                case OrbitEndingType.Cycle:
+                    _startNode.Transform.gameObject.SetActive(false);
+                    _endNode.Transform.gameObject.SetActive(false);
+                    break;
+                case OrbitEndingType.Leave:
+                    _startNode.Transform.gameObject.SetActive(true);
+                    _endNode.Transform.gameObject.SetActive(true);
+                    _startNode.Transform.localPosition = _body.Orbit.GetPositionAtT(_body.Orbit.TimeToPe)
+                                                         * _scaleSettings.scale;
+                    _endNode.Transform.localPosition = _body.Orbit.GetPositionAtT(_ending.Time)
+                                                       * _scaleSettings.scale;
+                    break;
+                case OrbitEndingType.Entry:
+                    _startNode.Transform.gameObject.SetActive(false);
+                    _endNode.Transform.gameObject.SetActive(true);
+                    _endNode.Transform.localPosition = _body.Orbit.GetPositionAtT(_ending.Time)
+                                                       * _scaleSettings.scale;
+                    break;
             }
         }
 
@@ -107,16 +119,27 @@ namespace Orbital.View.Map
         private void AlignOrbitVertices()
         {
             double startTime, endTime;
-            if (_ending.Type == OrbitEndingType.Cycle)
+            switch (_ending.Type)
             {
-                startTime = _body.Orbit.Epoch;
-                endTime = startTime + _body.Orbit.Period;
+                case OrbitEndingType.Cycle: case OrbitEndingType.Entry:
+                    startTime = _body.Orbit.Epoch;
+                    if (_body.Orbit.Eccentricity < 1)
+                    {
+                        endTime = startTime + _body.Orbit.Period;
+                    }
+                    else
+                    {
+                        endTime = _ending.Time;
+                    }
+                    break;
+                case OrbitEndingType.Leave:
+                    endTime = _ending.Time;
+                    startTime = _body.Orbit.TimeToPe; //_body.Orbit.Epoch - (endTime - _body.Orbit.Epoch);
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
-            else
-            {
-                endTime = _ending.Time;
-                startTime = _body.Orbit.Epoch - (endTime - _body.Orbit.Epoch);
-            }
+
             double step = (endTime - startTime) / (_viewSettings.orbitMaxVerticesCount - 1);
             //var positions = new NativeArray<Vector3>(_viewSettings.orbitMaxVerticesCount, Allocator.Temp);
             /*for (int i = 0; i < _viewSettings.orbitMaxVerticesCount; i++)
