@@ -51,7 +51,7 @@ namespace Orbital.Core.Simulation
         }
     }
 
-    public class Track : IOrbitSampler
+    public class Track
     {
         private TrajectoryContainer _container;
         private Mark _lastMark;

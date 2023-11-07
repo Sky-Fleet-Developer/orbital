@@ -7,7 +7,7 @@ namespace Orbital.Core
     public interface IDynamicBody
     {
         public IStaticBody Parent { get; }
-        public IStaticOrbit Orbit { get; }
+        public StaticOrbit Orbit { get; }
         public DVector3 Position => Parent.Position + LocalPosition;
         public DVector3 LocalPosition => Orbit.GetPositionAtT(TimeService.WorldTime);
         public DVector3 GetPositionAtT(double t) => Parent.GetPositionAtT(t) + Orbit.GetPositionAtT(t);

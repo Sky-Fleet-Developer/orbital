@@ -15,7 +15,7 @@ namespace Orbital
         [ShowInInspector] private StaticBodyVariables _variables;
         private World _world;
         private IMassSystem _massSystem;
-        private IStaticOrbit _orbit;
+        private StaticOrbit _orbit;
         [ShowInInspector] private IStaticBody _parent;
         [ShowInInspector] private IStaticBody[] _children;
         private bool _isSatellite;
@@ -35,7 +35,7 @@ namespace Orbital
             get => _parent;
             set => _parent = value;
         }
-        IStaticOrbit IStaticBodyAccessor.Orbit
+        StaticOrbit IStaticBodyAccessor.Orbit
         {
             get => _orbit;
             set => _orbit = value;
@@ -58,7 +58,7 @@ namespace Orbital
         public DVector3 LocalPosition => _orbit.GetPositionAtT(TimeService.WorldTime);
 
         public double Mass => _massSystem.Mass;
-        public IStaticOrbit Orbit => _orbit;
+        public StaticOrbit Orbit => _orbit;
 
         public override StaticBodySettings Settings
         {

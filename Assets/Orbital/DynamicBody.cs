@@ -17,7 +17,7 @@ namespace Orbital
         private NavigationPath _path;
 
         #region InterfaceImplementation
-        public IStaticOrbit Orbit => _path.GetOrbitAtTime(TimeService.WorldTime);
+        public StaticOrbit Orbit => _path.GetOrbitAtTime(TimeService.WorldTime);
         public event Action OrbitChangedHandler;
         public IStaticBody Parent => _path.GetParentAtTime(TimeService.WorldTime);
         #endregion

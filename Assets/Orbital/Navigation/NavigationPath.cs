@@ -32,7 +32,7 @@ namespace Orbital.Navigation
             get => null;
             set { }
         }
-        public override IStaticOrbit Orbit => _orbit;
+        public override StaticOrbit Orbit => _orbit;
 
         public NavigationPath()
         {
@@ -164,7 +164,7 @@ namespace Orbital.Navigation
             _allElements[index - 1].Next = null;
         }
 
-        public IStaticOrbit GetOrbitAtTime(double time)
+        public StaticOrbit GetOrbitAtTime(double time)
         {
             return GetElementForTime(time).Orbit;
         }

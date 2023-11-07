@@ -5,7 +5,7 @@ using Zenject;
 
 namespace Orbital.Core.Simulation
 {
-    public class RuntimeOrbit : IFixedUpdateHandler, IOrbitSampler
+    public class RuntimeOrbit : IFixedUpdateHandler
     {
         private IStaticBody _parent;
         private double _nu;

@@ -13,7 +13,7 @@ namespace Orbital.Navigation
         //// Navigation
         public abstract PathElement Next { get; set; }
         public abstract PathElement Previous { get; set; }
-        public abstract IStaticOrbit Orbit { get; }
+        public abstract StaticOrbit Orbit { get; }
         public IStaticBody Celestial;
         [ShowInInspector] public OrbitEnding Ending { get; private set; }
         public void FindEnding()

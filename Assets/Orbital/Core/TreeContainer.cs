@@ -15,7 +15,7 @@ namespace Orbital.Core
     {
         [JsonProperty] public IMassSystem Root;
         [JsonIgnore] public Dictionary<IMassSystem, Transform> _transforms { get; private set; }
-        [JsonIgnore] public Dictionary<IMassSystem, IStaticOrbit> _trajectories { get; private set; }
+        [JsonIgnore] public Dictionary<IMassSystem, StaticOrbit> _trajectories { get; private set; }
         [JsonIgnore] internal Dictionary<IStaticBody, IMassSystem> _massPerComponent { get; private set; }
         [JsonIgnore] internal Dictionary<IMassSystem, IStaticBodyAccessor> _componentPerMass { get; private set; }
         [JsonIgnore] internal Dictionary<IMassSystem, List<IDynamicBody>> _dynamicChildren { get; private set; }
@@ -49,7 +49,7 @@ namespace Orbital.Core
 
         private void CreateCache()
         {
-            _trajectories = new Dictionary<IMassSystem, IStaticOrbit>();
+            _trajectories = new Dictionary<IMassSystem, StaticOrbit>();
             _massPerComponent = new Dictionary<IStaticBody, IMassSystem>();
             _componentPerMass = new Dictionary<IMassSystem, IStaticBodyAccessor>();
             _dynamicChildren = new Dictionary<IMassSystem, List<IDynamicBody>>();
@@ -81,7 +81,7 @@ namespace Orbital.Core
                     {
                         value.Parent = _componentPerMass[_parents[child]].Self;
                     }
-                    if (_trajectories.TryGetValue(child, out IStaticOrbit orbit))
+                    if (_trajectories.TryGetValue(child, out StaticOrbit orbit))
                     {
                         value.Orbit = orbit;
                     }

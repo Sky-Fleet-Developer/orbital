@@ -21,7 +21,7 @@ namespace Orbital.View.Map
         private ViewContainer _endNode;
         private Mesh _orbitMesh;
         private IDynamicBody _body;
-        private IStaticOrbit _oldOrbit;
+        private StaticOrbit _oldOrbit;
         private OrbitEnding _ending;
         
         private ScaleSettings _scaleSettings;
@@ -118,12 +118,12 @@ namespace Orbital.View.Map
                 startTime = _body.Orbit.Epoch - (endTime - _body.Orbit.Epoch);
             }
             double step = (endTime - startTime) / (_viewSettings.orbitMaxVerticesCount - 1);
-            var positions = new NativeArray<Vector3>(_viewSettings.orbitMaxVerticesCount, Allocator.Temp);
-            for (int i = 0; i < _viewSettings.orbitMaxVerticesCount; i++)
+            //var positions = new NativeArray<Vector3>(_viewSettings.orbitMaxVerticesCount, Allocator.Temp);
+            /*for (int i = 0; i < _viewSettings.orbitMaxVerticesCount; i++)
             {
                 positions[i] = _body.Orbit.GetPositionAtT(startTime + step * i) * _scaleSettings.scale;
-            }
-            /*var job = new AlignVerticesJob
+            }*/
+            var job = new AlignVerticesJob
             {
                 Orbit = _body.Orbit,
                 StartTime = startTime,
@@ -131,19 +131,19 @@ namespace Orbital.View.Map
                 Step = step,
                 Scale = _scaleSettings.scale,
                 Positions = new NativeArray<Vector3>(_viewSettings.orbitMaxVerticesCount, Allocator.TempJob)
-            };*/
+            };
 
-            /*var handler = job.Schedule(_viewSettings.orbitMaxVerticesCount, 32);
-            handler.Complete();*/
+            var handler = job.Schedule(_viewSettings.orbitMaxVerticesCount, 32);
+            handler.Complete();
             
-            _orbitMesh.SetVertices(positions);
+            _orbitMesh.SetVertices(job.Positions);
             _orbitMesh.RecalculateBounds();
-            positions.Dispose();
+            job.Positions.Dispose();
         }
         
-        /*private struct AlignVerticesJob : IJobParallelFor
+        private struct AlignVerticesJob : IJobParallelFor
         {
-            public IStaticOrbit Orbit;
+            public StaticOrbit Orbit;
             public double StartTime;
             public double EndTime;
             public double Step;
@@ -153,8 +153,8 @@ namespace Orbital.View.Map
 
             public void Execute(int index)
             {
-                
+                Positions[index] = Orbit.GetPositionAtT(StartTime + Step * index) * Scale;
             }
-        }*/
+        }
     }
 }

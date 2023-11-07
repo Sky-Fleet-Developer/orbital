@@ -62,7 +62,7 @@ namespace Orbital.View
                 _body.Init();
             }
 
-            _body.Orbit.WasChangedHandler += Refresh;
+            //_body.Orbit.WasChangedHandler += Refresh;
         }
         
         private void Refresh()
@@ -121,14 +121,14 @@ namespace Orbital.View
         
         private void OnDisable()
         {
-            _body.Orbit.WasChangedHandler -= Refresh;
+            //_body.Orbit.WasChangedHandler -= Refresh;
             _positions.Dispose();
         }
 
         
         private struct CopyVerticesJob : IJobParallelFor
         {
-            public IStaticOrbit Orbit;
+            public StaticOrbit Orbit;
             [WriteOnly] public NativeArray<Vector3> Positions;
             public float Scale;
             public float IndexMp;

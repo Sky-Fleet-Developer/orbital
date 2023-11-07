@@ -33,7 +33,7 @@ namespace Orbital.Navigation
         }
 
         [JsonIgnore] private StaticOrbit _orbit = new StaticOrbit();
-        [JsonIgnore] public override IStaticOrbit Orbit => _orbit;
+        [JsonIgnore] public override StaticOrbit Orbit => _orbit;
 
         protected override void Refresh()
         {

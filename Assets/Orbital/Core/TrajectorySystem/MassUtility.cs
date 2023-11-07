@@ -58,13 +58,13 @@ namespace Orbital.Core.TrajectorySystem
             return result;
         }*/
 
-        public static void FillTrajectoriesRecursively(this IMassSystem massSystem, Dictionary<IMassSystem, IStaticOrbit> container)
+        public static void FillTrajectoriesRecursively(this IMassSystem massSystem, Dictionary<IMassSystem, StaticOrbit> container)
         {
             void SetupElement(IMassSystem child, IMassSystem other)
             {
                 if (child == null) return;
                 if (other == null) return;
-                if (!container.TryGetValue(child, out IStaticOrbit orbit))
+                if (!container.TryGetValue(child, out StaticOrbit orbit))
                 {
                     orbit = new StaticOrbit();
                     orbit.Nu = other.Mass * G;

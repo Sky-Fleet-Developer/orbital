@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace Orbital.Core.TrajectorySystem
 {
-    public struct StaticOrbit : IStaticOrbit
+    public struct StaticOrbit
     {
         private const double Deg2Rad = 0.01745329;
         private const double Rad2Deg = 57.29578;
@@ -33,7 +33,7 @@ namespace Orbital.Core.TrajectorySystem
         public DVector3 AscendingNode {get; private set;}
         public double MeanAnomalyAtEpoch {get; private set;}
         public double MeanMotion {get; private set;}
-        public event Action WasChangedHandler;
+        //public event Action WasChangedHandler;
         
         private DMatrix4x4 _rotationMatrix;
         public DMatrix4x4 RotationMatrix => _rotationMatrix;
@@ -83,7 +83,7 @@ namespace Orbital.Core.TrajectorySystem
                 Period = double.PositiveInfinity;
                 OrbitPercent = 0.0;
             }
-            WasChangedHandler?.Invoke();
+            //WasChangedHandler?.Invoke();
         }
         
         public void SetOrbit(double inclination,
@@ -224,7 +224,7 @@ namespace Orbital.Core.TrajectorySystem
             Debug.DrawRay(Vector3.zero, up, Color.green, 1);
             Debug.DrawRay(Vector3.zero, fwd, Color.blue, 1);
             Debug.DrawRay(Vector3.zero, right, Color.red, 1);
-            WasChangedHandler?.Invoke();
+            //WasChangedHandler?.Invoke();
         }
 
         public static DMatrix4x4 GetRotation(double inclination, double longitudeAscendingNode, double argumentOfPeriapsis)

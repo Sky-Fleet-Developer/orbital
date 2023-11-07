@@ -13,7 +13,7 @@ namespace Orbital.Navigation
     {
         private const double LowTolerance = 0.995;
         private const double HighTolerance = 1.005;
-        public static OrbitEnding GetEnding(this IStaticOrbit orbit, IStaticBody parent, double fromTime)
+        public static OrbitEnding GetEnding(this StaticOrbit orbit, IStaticBody parent, double fromTime)
         {
             IStaticBody internalCollision = CollideTrajectoryWithChildren(orbit, parent, fromTime, out double collisionTime);
             DVector3 collisionPos = DVector3.Zero;
@@ -40,7 +40,7 @@ namespace Orbital.Navigation
             return new OrbitEnding(OrbitEndingType.Cycle, DVector3.Zero, double.PositiveInfinity, parent);
         }
 
-        public static bool IsLeavesGravityRadius(this IStaticOrbit orbit, double gravityRadius, double fromTime,
+        public static bool IsLeavesGravityRadius(this StaticOrbit orbit, double gravityRadius, double fromTime,
             out DVector3 leavePoint, out double leaveTime)
         {
             bool result = orbit.Eccentricity > 1 || orbit.Apocenter > gravityRadius;
@@ -57,9 +57,9 @@ namespace Orbital.Navigation
             return false;
         }
 
-        public static IStaticBody CollideTrajectoryWithChildren(this IStaticOrbit orbit, IStaticBody body, double time, out double collisionTime)
+        public static IStaticBody CollideTrajectoryWithChildren(this StaticOrbit orbit, IStaticBody body, double time, out double collisionTime)
         {
-            bool IsProjectionCrossing(IStaticOrbit other, double width)
+            bool IsProjectionCrossing(StaticOrbit other, double width)
             {
                 double apo = other.Apocenter + width;
                 double peri = other.Pericenter - width;
@@ -86,7 +86,7 @@ namespace Orbital.Navigation
             return collisions[0].body;
         }
 
-        public static double GetClosestPointTimeForDistance(IStaticOrbit a, IStaticOrbit b, double wantedDistance,
+        public static double GetClosestPointTimeForDistance(StaticOrbit a, StaticOrbit b, double wantedDistance,
             double startTime, out double distance /*, Vector3 drawOffset, float scale*/)
         {
             double rSqr = wantedDistance * wantedDistance;

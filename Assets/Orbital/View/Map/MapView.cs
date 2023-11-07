@@ -65,10 +65,7 @@ namespace Orbital.View.Map
             ConstructHierarchy();
             foreach (IStaticBody body in world.gameObject.GetComponentsInChildren<IStaticBody>())
             {
-                if (body.Orbit != null)
-                {
-                    _views.Add(new CelestialViewUpdater(body, _hierarchy[body], _viewsPool, viewSettingsContainer, scaleSettings));
-                }
+                _views.Add(new CelestialViewUpdater(body, _hierarchy[body], _viewsPool, viewSettingsContainer, scaleSettings));
             }
         }
 

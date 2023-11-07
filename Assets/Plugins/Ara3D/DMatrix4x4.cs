@@ -1,11 +1,12 @@
 using System;
+using Unity.Collections;
 using UnityEngine;
 
 namespace Ara3D.Double
 {
     public struct DMatrix4x4
     {
-        private double[,] _array;
+        private ArrColumns _array;
         /*private double m00;
         private double m01;
         private double m02;
@@ -38,11 +39,11 @@ namespace Ara3D.Double
 
         public DMatrix4x4 GetInverse()
         {
-            var value = new DMatrix4x4() {_array = this._array.Clone() as double[,]};
+            var value = new DMatrix4x4() {_array = this._array};
             value.Inverse();
             return value;
         }
-
+        
         public void Inverse()
         {
             double[][] augmentedMatrix = new double[4][];
@@ -118,15 +119,14 @@ namespace Ara3D.Double
         {
             get
             {
+                var arr = new ArrColumns();
+                arr[0] = new ArrString(1, 0, 0, 0);
+                arr[1] = new ArrString(0, 1, 0, 0);
+                arr[2] = new ArrString(0, 0, 1, 0);
+                arr[3] = new ArrString(0, 0, 0, 1);
                 return new()
                 {
-                    _array = new double[4, 4]
-                    {
-                        {1, 0, 0, 0},
-                        {0, 1, 0, 0},
-                        {0, 0, 1, 0},
-                        {0, 0, 0, 1}
-                    }
+                    _array = arr
                 };
             }
         }
@@ -143,35 +143,27 @@ namespace Ara3D.Double
             double cosYaw = Math.Cos(yaw);
             double sinYaw = Math.Sin(yaw);
 
+            var arr = new ArrColumns();
+            arr[0] = new ArrString(cosYaw * cosPitch,
+                cosYaw * sinPitch * sinRoll - sinYaw * cosRoll,
+                cosYaw * sinPitch * cosRoll + sinYaw * sinRoll,
+                0);
+            arr[1] = new ArrString(sinYaw * cosPitch,
+                sinYaw * sinPitch * sinRoll + cosYaw * cosRoll,
+                sinYaw * sinPitch * cosRoll - cosYaw * sinRoll,
+                0);
+            arr[2] = new ArrString(-sinPitch,
+                cosPitch * sinRoll,
+                cosPitch * cosRoll,
+                0);
+            arr[3] = new ArrString(0,
+                0,
+                0,
+                1);
+
             return new()
             {
-                _array = new double[4, 4]
-                {
-                    {
-                        cosYaw * cosPitch,
-                        cosYaw * sinPitch * sinRoll - sinYaw * cosRoll,
-                        cosYaw * sinPitch * cosRoll + sinYaw * sinRoll,
-                        0,
-                    },
-                    {
-                        sinYaw * cosPitch,
-                        sinYaw * sinPitch * sinRoll + cosYaw * cosRoll,
-                        sinYaw * sinPitch * cosRoll - cosYaw * sinRoll,
-                        0,
-                    },
-                    {
-                        -sinPitch,
-                        cosPitch * sinRoll,
-                        cosPitch * cosRoll,
-                        0,
-                    },
-                    {
-                        0,
-                        0,
-                        0,
-                        1
-                    }
-                }
+                _array = arr
             };
         }
 
@@ -181,16 +173,14 @@ namespace Ara3D.Double
             up = up.Normalize();
             DVector3 right = DVector3.Cross(forward, up);
             up = DVector3.Cross(forward, right);
-
+            var arr = new ArrColumns();
+            arr[0] = new ArrString(right.x, up.x, forward.x, 0); 
+            arr[1] = new ArrString(right.y, up.y, forward.y, 0); 
+            arr[2] = new ArrString(right.z, up.z, forward.z, 0); 
+            arr[3] = new ArrString(0, 0, 0, 1); 
             return new ()
             {
-                _array = new double[4,4]
-                {
-                    {right.x, up.x, forward.x, 0},
-                    {right.y, up.y, forward.y, 0},
-                    {right.z, up.z, forward.z, 0},
-                    {0, 0, 0, 1}
-                }
+                _array = arr
             };
         }
 
@@ -234,6 +224,108 @@ namespace Ara3D.Double
             }
 
             return result;
-        } 
+        }
+
+        private struct ArrString
+        {
+            public double v0;
+            public double v1;
+            public double v2;
+            public double v3;
+
+            public ArrString(double v0, double v1, double v2, double v3)
+            {
+                this.v0 = v0;
+                this.v1 = v1;
+                this.v2 = v2;
+                this.v3 = v3;
+            }
+            
+            public double this[int index]
+            {
+                get
+                {
+                    switch (index)
+                    {
+                        case 0: return v0;
+                        case 1: return v1;
+                        case 2: return v2;
+                        case 3: return v3;
+                        default: throw new IndexOutOfRangeException();
+                    }
+                }
+                set
+                {
+                    switch (index)
+                    {
+                        case 0: v0 = value; return;
+                        case 1: v1 = value; return;
+                        case 2: v2 = value; return;
+                        case 3: v3 = value; return;
+                        default: throw new IndexOutOfRangeException();
+                    }
+                }
+            }
+        }
+        private struct ArrColumns
+        {
+            public ArrString v0;
+            public ArrString v1;
+            public ArrString v2;
+            public ArrString v3;
+
+            public ArrString this[int i]
+            {
+                get
+                {
+                    switch (i)
+                    {
+                        case 0: return v0;
+                        case 1: return v1;
+                        case 2: return v2;
+                        case 3: return v3;
+                        default: throw new IndexOutOfRangeException();
+                    }
+                }
+                set
+                {
+                    switch (i)
+                    {
+                        case 0: v0 = value; return;
+                        case 1: v1 = value; return;
+                        case 2: v2 = value; return;
+                        case 3: v3 = value; return;
+                        default: throw new IndexOutOfRangeException();
+                    }
+                }
+            }
+            
+            public double this[int a, int b]
+            {
+                get
+                {
+                    switch (a)
+                    {
+                        case 0: return v0[b];
+                        case 1: return v1[b];
+                        case 2: return v2[b];
+                        case 3: return v3[b];
+                        default: throw new IndexOutOfRangeException();
+                    }
+                }
+                set
+                {
+                    switch (a)
+                    {
+                        case 0: v0[b] = value; return;
+                        case 1: v1[b] = value; return;
+                        case 2: v2[b] = value; return;
+                        case 3: v3[b] = value; return;
+                        default: throw new IndexOutOfRangeException();
+                    }
+                }
+            }
+        }
     }
+    
 }

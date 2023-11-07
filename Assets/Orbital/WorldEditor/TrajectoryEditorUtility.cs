@@ -11,7 +11,7 @@ namespace Orbital.WorldEditor
     #if UNITY_EDITOR
     public static class TrajectoryEditorUtility
     {
-        public static void DrawTrajectory(IStaticOrbit orbit, double time, float scale, bool drawSphere, DVector3 inputOrigin, out DVector3 outputOrigin)
+        public static void DrawTrajectory(StaticOrbit orbit, double time, float scale, bool drawSphere, DVector3 inputOrigin, out DVector3 outputOrigin)
         {
             var sample = orbit.GetPositionAtT(time);
             outputOrigin = sample + inputOrigin;
@@ -41,10 +41,10 @@ namespace Orbital.WorldEditor
             }
         }
         
-        private static void DrawTrajectoriesRecursively(IMassSystem massSystem, Dictionary<IMassSystem, IStaticOrbit> trajectories, DVector3 origin, double time, float scale)
+        private static void DrawTrajectoriesRecursively(IMassSystem massSystem, Dictionary<IMassSystem, StaticOrbit> trajectories, DVector3 origin, double time, float scale)
         {
             if(massSystem == null) return;
-            if(!trajectories.TryGetValue(massSystem, out IStaticOrbit trajectory)) return;
+            if(!trajectories.TryGetValue(massSystem, out StaticOrbit trajectory)) return;
             
             DrawTrajectory(trajectory, time, scale, massSystem is CelestialBody, origin, out DVector3 output);
             foreach (IMassSystem child in massSystem.GetContent())
@@ -53,7 +53,7 @@ namespace Orbital.WorldEditor
             }
         }
         
-        public static Matrix4x4 GetMatrixForTPreview(this IStaticOrbit orbit, float scale, Vector3 position, double time)
+        public static Matrix4x4 GetMatrixForTPreview(this StaticOrbit orbit, float scale, Vector3 position, double time)
         {
             Quaternion handleRotationCorrection = Quaternion.Euler(-90, 0, 0);
             Matrix4x4 rotationMatrix = orbit.RotationMatrix;
