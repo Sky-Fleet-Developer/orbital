@@ -51,7 +51,7 @@ namespace Orbital
             
             _path = new NavigationPath();
             _path.Calculate(GetComponentInParent<IStaticBody>(), variables.position, variables.velocity, TimeService.WorldTime);
-            _path.BuildTransitions(0);
+            _path.BuildTransitions(TimeService.WorldTime);
             _world.RegisterRigidBody(this);
         }
 
