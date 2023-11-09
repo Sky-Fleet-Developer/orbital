@@ -1,5 +1,6 @@
 using System;
 using Ara3D;
+using Orbital.Core.Navigation;
 using Orbital.Core.TrajectorySystem;
 using UnityEngine;
 
@@ -9,6 +10,7 @@ namespace Orbital.Core
     {
         public IStaticBody Parent { get; }
         public StaticOrbit Orbit { get; }
+        public OrbitEnding Ending { get; }
         public double Mass { get; }
         public double MassInv { get; }
         public DVector3 Position => Parent.Position + LocalPosition;

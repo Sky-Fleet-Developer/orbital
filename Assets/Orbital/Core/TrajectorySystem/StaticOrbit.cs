@@ -333,11 +333,11 @@ namespace Orbital.Core.TrajectorySystem
                 }
             }
 
-            Debug.DrawLine((Vector3)(this.GetPositionAtT(OrbitTime) * scale) + scaledOffset,  scaledOffset, Color.green);
+            //Debug.DrawLine((Vector3)(this.GetPositionAtT(OrbitTime) * scale) + scaledOffset,  scaledOffset, Color.green);
             //Debug.DrawRay(getRelativePositionAtT(orbitTime)), new DVector3(vel.x, vel.z, vel.y) * 0.0099999997764825821, Color.white);
-            Debug.DrawLine(scaledOffset, (Vector3)((AscendingNode * Radius) * scale) + scaledOffset, Color.cyan);
-            Debug.DrawLine(scaledOffset, (Vector3)(this.GetPositionAtT(0.0) * scale) + scaledOffset, Color.magenta);
-            Debug.DrawRay(scaledOffset, (Vector3)(H * scale) + scaledOffset, Color.blue);
+           // Debug.DrawLine(scaledOffset, (Vector3)((AscendingNode * Radius) * scale) + scaledOffset, Color.cyan * 0.5f);
+           // Debug.DrawLine(scaledOffset, (Vector3)(this.GetPositionAtT(0.0) * scale) + scaledOffset, Color.magenta * 0.5f);
+           // Debug.DrawRay(scaledOffset, (Vector3)(H * scale) + scaledOffset, Color.blue * 0.5f);
         }
 
         public override bool Equals(object obj)

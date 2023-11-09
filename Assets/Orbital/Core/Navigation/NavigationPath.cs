@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Ara3D;
+using ModestTree;
 using Newtonsoft.Json;
 using Orbital.Core.TrajectorySystem;
 using Sirenix.OdinInspector;
@@ -15,7 +16,7 @@ namespace Orbital.Core.Navigation
         [JsonIgnore] private PathElement _cachedElement;
         [JsonIgnore] private double _cachedTrueAnomaly;
         private double[] _timeIntervals = new double[0];
-        private List<PathElement> _allElements = new List<PathElement>();
+        [ShowInInspector] private List<PathElement> _allElements = new List<PathElement>();
 
         [NonSerialized] public World World;
         [JsonIgnore] private StaticOrbit _orbit;
@@ -150,6 +151,11 @@ namespace Orbital.Core.Navigation
             }
         }
 
+        protected override void OnNextDisposed(PathElement element)
+        {
+            _allElements.RemoveAt(_allElements.IndexOf(element));
+        }
+
         public void RefreshDirty()
         {
             GetFirstDirty()?.CallRefresh();
@@ -173,7 +179,10 @@ namespace Orbital.Core.Navigation
         {
             return GetElementForTime(time).Celestial;
         }
-
+        public OrbitEnding GetEndingAtTime(double time)
+        {
+            return GetElementForTime(time).Ending;
+        }
         public override void OnDisposed()
         {
             _allElements.Clear();

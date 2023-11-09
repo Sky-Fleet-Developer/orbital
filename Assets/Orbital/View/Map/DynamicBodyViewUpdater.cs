@@ -71,27 +71,32 @@ namespace Orbital.View.Map
             _orbit.Transform.localPosition = Vector3.zero;
             _startNode.Transform.parent = _parent;
             _endNode.Transform.parent = _parent;
-            _ending = _body.Orbit.GetEnding(_body.Parent, _body.Orbit.Epoch);
+            _ending = _body.Ending;
             AlignOrbitVertices();
             switch (_ending.Type)
             {
                 case OrbitEndingType.Cycle:
                     _startNode.Transform.gameObject.SetActive(false);
                     _endNode.Transform.gameObject.SetActive(false);
+                    //_endNode.Transform.SetParent(_startNode.Transform.parent);
                     break;
                 case OrbitEndingType.Leave:
                     _startNode.Transform.gameObject.SetActive(true);
                     _endNode.Transform.gameObject.SetActive(true);
+                    //_endNode.Transform.SetParent(_startNode.Transform.parent);
                     _startNode.Transform.localPosition = _body.Orbit.GetPositionAtT(_body.Orbit.TimeToPe)
                                                          * _scaleSettings.scale;
                     _endNode.Transform.localPosition = _body.Orbit.GetPositionAtT(_ending.Time)
                                                        * _scaleSettings.scale;
                     break;
                 case OrbitEndingType.Entry:
-                    _startNode.Transform.gameObject.SetActive(false);
-                    _endNode.Transform.gameObject.SetActive(true);
-                    _endNode.Transform.localPosition = _body.Orbit.GetPositionAtT(_ending.Time)
-                                                       * _scaleSettings.scale;
+                    _startNode.Transform.gameObject.SetActive(true);
+                    _endNode.Transform.gameObject.SetActive(false);
+                    _startNode.Transform.localPosition = _body.Orbit.GetPositionAtT(_ending.Time)
+                                                         * _scaleSettings.scale;
+                    /*_endNode.Transform.SetParent(_hierarchy[_ending.NextCelestial]);
+                    _endNode.Transform.localPosition = _ending.NextCelestial.Orbit.GetPositionAtT(_ending.Time)
+                                                       * _scaleSettings.scale;*/
                     break;
             }
         }

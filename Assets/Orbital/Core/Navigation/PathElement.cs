@@ -46,7 +46,15 @@ namespace Orbital.Core.Navigation
         
         public void Reconstruct(List<PathElement> indexList, int myIndex)
         {
-            indexList[myIndex] = this;
+            try
+            {
+                indexList[myIndex] = this;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
             if(Next == null) return;
             Next.Previous = this;
             Next.Reconstruct(indexList, myIndex + 1);
@@ -123,8 +131,14 @@ namespace Orbital.Core.Navigation
                 Next = null;
             }
         }
+
+        protected virtual void OnNextDisposed(PathElement element)
+        {
+            Previous?.OnNextDisposed(element);
+        }
         public void Dispose()
         {
+            Previous?.OnNextDisposed(this);
             Previous = null;
             Next?.Dispose();
             Next = null;

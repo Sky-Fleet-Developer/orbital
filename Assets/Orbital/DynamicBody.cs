@@ -4,6 +4,7 @@ using Orbital.Core;
 using Orbital.Core.Navigation;
 using Orbital.Core.Simulation;
 using Orbital.Core.TrajectorySystem;
+using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.Assertions;
 
@@ -15,13 +16,14 @@ namespace Orbital
         [SerializeField] private DynamicBodySettings settings;
         private World _world;
         //private Track _trajectoryTrack;
-        private NavigationPath _path;
+        [ShowInInspector] private NavigationPath _path;
         private double _massInv;
         
         #region InterfaceImplementation
         public StaticOrbit Orbit => _path.GetOrbitAtTime(TimeService.WorldTime);
         public event Action OrbitChangedHandler;
         public IStaticBody Parent => _path.GetParentAtTime(TimeService.WorldTime);
+        public OrbitEnding Ending => _path.GetEndingAtTime(TimeService.WorldTime);
         public double Mass => settings.mass;
         public double MassInv => _massInv;
         #endregion
