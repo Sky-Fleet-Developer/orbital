@@ -143,7 +143,7 @@ namespace Orbital.Core.Navigation
             var last = GetLastElement();
             last.Next = pathElement;
             _allElements.Add(null);
-            Reconstruct(_allElements, count - 1);
+            Reconstruct(_allElements, 0);
             pathElement.SetDirty();
             if (refreshNow)
             {

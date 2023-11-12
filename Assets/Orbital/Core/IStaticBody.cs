@@ -13,7 +13,7 @@ namespace Orbital.Core
         public DVector3 LocalPosition { get; }
         public DVector3 GetPositionAtT(double t) => Parent == null ? DVector3.Zero : Parent.GetPositionAtT(t) + Orbit.GetPositionAtT(t);
         public StaticOrbit Orbit { get; }
-        public double GravParameter => MassSystem.Mass * MassUtility.G;
+        public double GravParameter { get; }
         public bool IsSatellite { get; }
 
         public double Radius

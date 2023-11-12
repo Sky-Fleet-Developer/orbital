@@ -11,7 +11,7 @@ namespace Orbital
     [ExecuteInEditMode]
     public class StaticBody : SystemComponent<StaticBodyVariables, StaticBodySettings>, IStaticBody, IStaticBodyAccessor
     {
-        private StaticBodySettings _settings;
+        [SerializeField] private StaticBodySettings settings;
         [ShowInInspector] private StaticBodyVariables _variables;
         private World _world;
         private IMassSystem _massSystem;
@@ -25,11 +25,17 @@ namespace Orbital
         IEnumerable<IStaticBody> IStaticBody.Children => _children;
         bool IStaticBody.IsSatellite => _isSatellite;
         IStaticBody IStaticBodyAccessor.Self => this;
+        double IStaticBody.GravParameter => settings.mass * MassUtility.G;
         IMassSystem IStaticBodyAccessor.MassSystem
         {
             get => _massSystem;
-            set => _massSystem = value;
+            set
+            {
+                _massSystem = value;
+                settings.mass = value.Mass;
+            }
         }
+
         IStaticBody IStaticBodyAccessor.Parent
         {
             get => _parent;
@@ -38,8 +44,18 @@ namespace Orbital
         StaticOrbit IStaticBodyAccessor.Orbit
         {
             get => _orbit;
-            set => _orbit = value;
+            set
+            {
+                _orbit = value;
+                settings.inclination = _orbit.Inclination;
+                settings.longitudeAscendingNode = _orbit.LongitudeAscendingNode;
+                settings.argumentOfPeriapsis = _orbit.ArgumentOfPeriapsis;
+                settings.eccentricity = _orbit.Eccentricity;
+                settings.semiMajorAxis = _orbit.SemiMajorAxis;
+                settings.epoch = _orbit.Epoch;
+            }
         }
+
         IStaticBody[] IStaticBodyAccessor.Children
         {
             get => _children;
@@ -62,8 +78,8 @@ namespace Orbital
 
         public override StaticBodySettings Settings
         {
-            get => _settings;
-            set => _settings = value;
+            get => settings;
+            set => settings = value;
         }
 
         public override StaticBodyVariables Variables
@@ -81,5 +97,12 @@ namespace Orbital
     [Serializable]
     public struct StaticBodySettings
     {
+        public double inclination;
+        public double longitudeAscendingNode;
+        public double argumentOfPeriapsis;
+        public double eccentricity;
+        public double semiMajorAxis;
+        public double epoch;
+        public double mass;
     }
 }

@@ -12,6 +12,5 @@ namespace Orbital.Core.TrajectorySystem
         public float argumentOfPeriapsis;
         public float longitudeAscendingNode;
         public float timeShift;
-        public float period;
     }
 }

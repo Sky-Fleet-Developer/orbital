@@ -18,7 +18,7 @@ namespace Orbital.Core
         [JsonIgnore] public Dictionary<IMassSystem, StaticOrbit> _trajectories { get; private set; }
         [JsonIgnore] internal Dictionary<IStaticBody, IMassSystem> _massPerComponent { get; private set; }
         [JsonIgnore] internal Dictionary<IMassSystem, IStaticBodyAccessor> _componentPerMass { get; private set; }
-        [JsonIgnore] internal Dictionary<IMassSystem, List<IDynamicBody>> _dynamicChildren { get; private set; }
+        [JsonIgnore] internal List<IDynamicBody> _dynamicChildren { get; private set; }
         [JsonIgnore] internal Dictionary<IMassSystem, IMassSystem[]> _staticChildren { get; private set; }
         [JsonIgnore] public Dictionary<IMassSystem, IMassSystem> _parents { get; private set; }
         private World _world;
@@ -34,17 +34,16 @@ namespace Orbital.Core
             serializer.Populate(this, serializedValue);
         }
 
-        public void CalculateForRoot(Transform tRoot, World world)
+        public void CalculateForRoot(Transform tRoot, World world, bool putOrbitsFromTree = true)
         {
             _world = world;
             CreateCache();
             if (Root == null) return;
-            Root.FillTrajectoriesRecursively(_trajectories);
-            ReconstructHierarchy(Root, tRoot);
-            foreach (IMassSystem massSystem in _transforms.Keys)
+            if (putOrbitsFromTree)
             {
-                _dynamicChildren.Add(massSystem, new List<IDynamicBody>());
+                Root.FillTrajectoriesRecursively(_trajectories);
             }
+            ReconstructHierarchy(Root, tRoot);
         }
 
         private void CreateCache()
@@ -52,7 +51,7 @@ namespace Orbital.Core
             _trajectories = new Dictionary<IMassSystem, StaticOrbit>();
             _massPerComponent = new Dictionary<IStaticBody, IMassSystem>();
             _componentPerMass = new Dictionary<IMassSystem, IStaticBodyAccessor>();
-            _dynamicChildren = new Dictionary<IMassSystem, List<IDynamicBody>>();
+            _dynamicChildren = new List<IDynamicBody>();
             _staticChildren = new Dictionary<IMassSystem, IMassSystem[]>();
             _parents = new Dictionary<IMassSystem, IMassSystem>();
         }
@@ -60,11 +59,7 @@ namespace Orbital.Core
         internal void AddRigidbody(IDynamicBody component)
         {
             var parent = _massPerComponent[component.Parent];
-            List<IDynamicBody> list = _dynamicChildren[parent];
-            if (!list.Contains(component))
-            {
-                list.Add(component);
-            }
+            _dynamicChildren.Add(component);
         }
 
         private void ReconstructHierarchy(IMassSystem mRoot, Transform tRoot)

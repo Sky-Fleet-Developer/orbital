@@ -1,3 +1,5 @@
+using System;
+using JetBrains.Annotations;
 using Newtonsoft.Json;
 using Zenject;
 
@@ -35,7 +37,11 @@ namespace Orbital.Core.Serialization
         {
             return JsonConvert.DeserializeObject<T>(value, _settings);
         }
-        
+        [CanBeNull]
+        public object Deserialize(Type type, string value)
+        {
+            return JsonConvert.DeserializeObject(value, type, _settings);
+        }
         
         /*private class ComponentConverter : JsonConverter<Model.Component>
         {

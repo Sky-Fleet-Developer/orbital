@@ -16,8 +16,12 @@ namespace Orbital.Core
         public event Action<IDynamicBody> DynamicBodyRegisterHandler;
         public event Action<IDynamicBody> DynamicBodyUnregisterHandler;
         
-        public void Load()
+        public void Load(bool putOrbitsFromTree = true)
         {
+            if (tree == null)
+            {
+                tree = new TreeContainer();
+            }
             if (tree.IsInitialized)
             {
                 if (Application.isPlaying)
@@ -26,25 +30,14 @@ namespace Orbital.Core
                 }
                 return;
             }
-            tree.Load();
-            tree.CalculateForRoot(transform, this);
+            if(putOrbitsFromTree) tree.Load();
+            tree.CalculateForRoot(transform, this, putOrbitsFromTree);
             InjectHierarchy();
         }
 
-        public IEnumerable<IDynamicBody> GetChildren(IStaticBody parent)
+        public IEnumerable<IDynamicBody> GetDynamicBodies()
         {
-            foreach (IDynamicBody dynamicBodyAccessor in tree._dynamicChildren[tree._massPerComponent[parent]])
-            {
-                yield return dynamicBodyAccessor;
-            }
-        }
-        
-        public IEnumerable<IDynamicBody> GetChildren(IMassSystem parent)
-        {
-            foreach (IDynamicBody dynamicBodyAccessor in tree._dynamicChildren[parent])
-            {
-                yield return dynamicBodyAccessor;
-            }
+            return tree._dynamicChildren;
         }
 
         public IMassSystem GetParent(IStaticBody mass)
@@ -118,10 +111,9 @@ namespace Orbital.Core
                 return;
             }
             #endif
-            _container.InjectGameObject(gameObject);
-            foreach (Transform value in tree._transforms.Values)
+            foreach (Transform tr in gameObject.GetComponentsInChildren<Transform>())
             {
-                _container.InjectGameObject(value.gameObject);
+                _container.InjectGameObject(tr.gameObject);
             }
         }
 
