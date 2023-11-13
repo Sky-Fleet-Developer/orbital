@@ -1,0 +1,106 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 61c7122399f2364498487733c5c7df04, type: 3}
+  m_Name: Declaration
+  m_EditorClassIdentifier: 
+  modelTypes:
+  - tableName: Worlds
+    members:
+    - name: Id
+      sqlType: INTAGER
+      canBeNull: 0
+      isPrimaryKey: 1
+    - name: Name
+      sqlType: VARCHAR (50)
+      canBeNull: 1
+      isPrimaryKey: 0
+    - name: PlayerPosition
+      sqlType: VARCHAR (100)
+      canBeNull: 1
+      isPrimaryKey: 0
+    - name: PlayerRotation
+      sqlType: VARCHAR (100)
+      canBeNull: 1
+      isPrimaryKey: 0
+    - name: PlayerParentId
+      sqlType: INTAGER
+      canBeNull: 0
+      isPrimaryKey: 0
+    foreignKeys:
+    - originTable: Worlds
+      destinationTable: Objects
+      originMember: PlayerParentId
+      destinationMember: Id
+    modelType: Orbital.Core.Serialization.SqlModel.World, Core, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  - tableName: Objects
+    members:
+    - name: Id
+      sqlType: INTAGER
+      canBeNull: 0
+      isPrimaryKey: 1
+    - name: ParentId
+      sqlType: INTAGER
+      canBeNull: 1
+      isPrimaryKey: 0
+    - name: LocalPosition
+      sqlType: VARCHAR (100)
+      canBeNull: 1
+      isPrimaryKey: 0
+    - name: LocalRotation
+      sqlType: VARCHAR (100)
+      canBeNull: 1
+      isPrimaryKey: 0
+    - name: Tag
+      sqlType: VARCHAR (50)
+      canBeNull: 1
+      isPrimaryKey: 0
+    - name: Layer
+      sqlType: INTAGER
+      canBeNull: 0
+      isPrimaryKey: 0
+    foreignKeys:
+    - originTable: Objects
+      destinationTable: Objects
+      originMember: ParentId
+      destinationMember: Id
+    modelType: Orbital.Core.Serialization.SqlModel.Object, Core, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  - tableName: Components
+    members:
+    - name: Id
+      sqlType: INTAGER
+      canBeNull: 0
+      isPrimaryKey: 1
+    - name: OwnerId
+      sqlType: INTAGER
+      canBeNull: 0
+      isPrimaryKey: 0
+    - name: Type
+      sqlType: VARCHAR (200)
+      canBeNull: 1
+      isPrimaryKey: 0
+    - name: Settings
+      sqlType: TEXT
+      canBeNull: 1
+      isPrimaryKey: 0
+    - name: Variables
+      sqlType: TEXT
+      canBeNull: 1
+      isPrimaryKey: 0
+    foreignKeys:
+    - originTable: Components
+      destinationTable: Objects
+      originMember: OwnerId
+      destinationMember: Id
+    modelType: Orbital.Core.Serialization.SqlModel.Component, Core, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null

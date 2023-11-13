@@ -1,13 +1,19 @@
 using System;
+using System.Collections.Generic;
 using System.Data;
+using System.Data.SqlClient;
 using UnityWinForms.System.Windows.Forms;
 using Mono.Data.Sqlite;
+using Orbital.Core.Serialization.Sqlite;
+using Orbital.Core.Serialization.SqlModel;
 using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityWinForms.Controls;
 using UnityWinForms.Examples;
 using UnityWinForms.Examples.Panels;
 using UnityWinForms.System.Drawing;
+using Component = Orbital.Core.Serialization.SqlModel.Component;
+using Object = Orbital.Core.Serialization.SqlModel.Object;
 
 namespace Orbital.Test
 {
@@ -16,24 +22,30 @@ namespace Orbital.Test
         [FilePath] public string path; 
         public string commandText;
         public string insertCommandText;
+        public List<World> Worlds; 
+        
+        public Declaration declaration;
         
         [Button]
-        void Start() 
+        void Write()
         {
-            DataSet dataSet = new DataSet();
-            using (SqliteConnection connection = new SqliteConnection("Data Source=" + path))
+            using (var connection = new SqliteConnection("Data Source=DB/sqliteDb.db"))
             {
                 connection.Open();
-                using (SqliteCommand command = new SqliteCommand(commandText, connection))
-                {
-                    SqliteDataAdapter adapter = new SqliteDataAdapter(command);
-                    adapter.Fill(dataSet);
-                    adapter.Dispose();
-                }
+                connection.CreateTable<World>("Worlds", declaration);
+                connection.CreateTable<Object>("Objects", declaration);
+                connection.CreateTable<Component>("Components", declaration);
             }
-//dataSet.Tables[0]
-            Form form = new ViewForm(dataSet.Tables[0]);
-            form.Show();
+        }
+
+        [Button]
+        void Read()
+        {
+            using (var connection = new SqliteConnection("Data Source=DB/sqliteDb.db"))
+            {
+                connection.Open();
+                Worlds = connection.GetTable<World>(declaration);
+            }
         }
         
         [Button]
