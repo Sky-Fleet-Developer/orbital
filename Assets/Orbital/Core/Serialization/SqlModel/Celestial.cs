@@ -6,7 +6,6 @@ namespace Orbital.Core.Serialization.SqlModel
     {
         [PrimaryKey]
         public override int Id { get; set; }
-        [DataType("VARCHAR (500)")]
         public double Mass { get; set; }
         public double Eccentricity { get; set; }
         public double SemiMajorAxis { get; set; }
@@ -14,9 +13,9 @@ namespace Orbital.Core.Serialization.SqlModel
         public double ArgumentOfPeriapsis { get; set; }
         public double LongitudeAscendingNode { get; set; }
         public double Epoch { get; set; }
-        public int? ParentId { get; set; }
+        public int OwnerId { get; set; }
         [Reference("Objects", "Id")]
-        public virtual Object Parent { get; set; }
+        public virtual Object Owner { get; set; }
 
     }
 }

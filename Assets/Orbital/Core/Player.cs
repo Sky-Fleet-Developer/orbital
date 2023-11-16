@@ -7,7 +7,7 @@ namespace Orbital.Core
     {
         [SerializeField] private string playerName;
         [SerializeField] private int id;
-        private ILocalSpaceBody _parent;
+        private IHierarchyElement _parent;
 
         public string PlayerName
         {
@@ -21,6 +21,6 @@ namespace Orbital.Core
             set => id = value;
         }
 
-        public ILocalSpaceBody Parent => _parent;
+        public IHierarchyElement Parent => _parent;
     }
 }

@@ -9,7 +9,7 @@ using UnityEngine;
 namespace Orbital
 {
     [ExecuteInEditMode]
-    public class StaticBody : MonoBehaviour, IStaticBody, ILocalSpaceBody, IStaticBodyAccessor
+    public class StaticBody : MonoBehaviour, IStaticBody, IHierarchyElement, IStaticBodyAccessor
     {
         [SerializeField] private TrajectorySettings settings;
         private World _world;
@@ -21,12 +21,12 @@ namespace Orbital
         private int _id;
 
         #region InterfaceImplementation
-        Transform ILocalSpaceBody.Transform => transform;
-        IMassSystem IStaticBody.MassSystem => _massSystem;
-        IStaticBody IStaticBody.ParentCelestial => _parentCelestial;
-        IEnumerable<IStaticBody> IStaticBody.Children => _children;
-        bool IStaticBody.IsSatellite => _isSatellite;
-        double IStaticBody.GravParameter => settings.mass * MassUtility.G;
+        Transform IHierarchyElement.Transform => transform;
+        public IMassSystem MassSystem => _massSystem;
+        public IStaticBody ParentCelestial => _parentCelestial;
+        public IEnumerable<IStaticBody> Children => _children;
+        public bool IsSatellite => _isSatellite;
+        public double GravParameter => settings.mass * MassUtility.G;
         [ShowInInspector, ReadOnly] int IStaticBodyAccessor.Id
         {
             get

@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Orbital.Core
 {
-    public interface ILocalSpaceBody
+    public interface IHierarchyElement
     {
         public int Id => Transform.gameObject.GetInstanceID();
         public Transform Transform { get; }

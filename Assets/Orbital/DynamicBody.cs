@@ -10,7 +10,7 @@ using UnityEngine.Assertions;
 
 namespace Orbital
 {
-    public class DynamicBody : SystemComponent<DynamicBodyVariables, DynamicBodySettings>, IDynamicBody, ILocalSpaceBody
+    public class DynamicBody : SystemComponent<DynamicBodyVariables, DynamicBodySettings>, IDynamicBody, IHierarchyElement
     {
         [SerializeField] private DynamicBodyVariables variables;
         [SerializeField] private DynamicBodySettings settings;
@@ -20,7 +20,7 @@ namespace Orbital
         private double _massInv;
 
         #region InterfaceImplementation
-        Transform ILocalSpaceBody.Transform => transform;
+        Transform IHierarchyElement.Transform => transform;
         public DVector3 LocalPosition => Orbit.GetPositionAtT(TimeService.WorldTime);
         public StaticOrbit Orbit => _path.GetOrbitAtTime(TimeService.WorldTime);
         public event Action OrbitChangedHandler;

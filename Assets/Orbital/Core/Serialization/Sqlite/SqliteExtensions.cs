@@ -106,7 +106,8 @@ namespace Orbital.Core.Serialization.Sqlite
             StringBuilder builder = new StringBuilder();
             foreach (Member modelMember in myType.members)
             {
-                builder.Append(modelMember.GetValueFrom(source, type) ?? "NULL");
+                var value = modelMember.GetValueFrom(source, type);
+                builder.Append(value ?? "NULL");
                 builder.Append(Comma);
             }
             builder.Remove(builder.Length - 2, 1);

@@ -35,45 +35,55 @@ namespace Orbital.Core.Serialization.SqlModel
             using (SqliteConnection connection = new SqliteConnection(_connectionString))
             {
                 connection.Open();
+
+                connection.GetTable(Objects, Declaration);
+                Objects.Clear();
+
+                foreach (IHierarchyElement hierarchyElement in world.GetComponentsInChildren<IHierarchyElement>())
+                {
+                    var model = Convert(hierarchyElement);
+                    Objects.Add(model);
+                }
+
                 connection.GetTable(Celestials, Declaration);
                 Celestials.Clear();
                 foreach (IStaticBodyAccessor staticBodyAccessor in world.GetComponentsInChildren<IStaticBodyAccessor>())
                 {
                     var model = Convert(staticBodyAccessor);
-                    Celestials.Add(model.Id, model);
+                    Celestials.Add(model);
                 }
+
                 connection.Update<Celestial>(Celestials, Declaration);
-                
-                connection.GetTable(Objects, Declaration);
+                connection.Update<Object>(Objects, Declaration);
+
                 connection.GetTable(Components, Declaration);
-                Objects.Clear();
                 Components.Clear();
-                
-                foreach (ILocalSpaceBody systemComponentAccessor in world.GetComponentsInChildren<ILocalSpaceBody>())
+
+                foreach (ISystemComponentAccessor systemComponentAccessor in world
+                    .GetComponentsInChildren<ISystemComponentAccessor>())
                 {
-                    
+                    var model = Convert(systemComponentAccessor);
+                    Components.Add(model);
                 }
+                
+                connection.Update<Component>(Components, Declaration);
             }
         }
 
-        /*public void WriteWorld(IEnumerable<Player> players, IEnumerable<Object> objects, IEnumerable<Component> components)
+        private Object Convert(IHierarchyElement hierarchyElement)
         {
-            Players.Clear();
-            foreach (Player player in players)
+            var g = ((MonoBehaviour) hierarchyElement).gameObject;
+            var p = hierarchyElement.Transform.parent;
+            return new Object
             {
-                Players.Add(player.Id, player);
-            }
-            Objects.Clear();
-            foreach (Object obj in objects)
-            {
-                Objects.Add(obj.Id, obj);
-            }
-            Components.Clear();
-            foreach (Component component in components)
-            {
-                Components.Add(component.Id, component);
-            }
-        }*/
+                Id = hierarchyElement.Id,
+                ParentId = p == null ? null : p.gameObject.GetInstanceID(),
+                LocalPosition = _serializer.Serialize(hierarchyElement.LocalPosition),
+                LocalRotation = "",
+                Tag = g.tag,
+                Layer = g.layer
+            };
+        }
 
         public Component Convert(ISystemComponentAccessor source)
         {
@@ -109,6 +119,7 @@ namespace Orbital.Core.Serialization.SqlModel
 
         public Celestial Convert(IStaticBodyAccessor source)
         {
+            IHierarchyElement hierarchyElement = (IHierarchyElement) source;
             return new Celestial
             {
                 Id = source.Id,
@@ -119,7 +130,7 @@ namespace Orbital.Core.Serialization.SqlModel
                 ArgumentOfPeriapsis = source.Settings.argumentOfPeriapsis,
                 LongitudeAscendingNode = source.Settings.longitudeAscendingNode,
                 Epoch = source.Settings.epoch,
-                ParentId = source.Parent?.Id
+                OwnerId = hierarchyElement.Id
             };
         }
     }

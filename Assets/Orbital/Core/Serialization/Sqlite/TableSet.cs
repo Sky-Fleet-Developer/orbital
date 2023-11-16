@@ -65,18 +65,26 @@ namespace Orbital.Core.Serialization.Sqlite
             Remove(id);
         }
 
-        public void Add(int id, T value)
+        public void Add(T value)
         {
-            _elements.Add(id, value);
-            OverwriteDiff(id, DifferenceType.Add);
+            if (!_elements.ContainsKey(value.Id))
+            {
+                _elements.Add(value.Id, value);
+                OverwriteDiff(value.Id, DifferenceType.Add);
+            }
+            else
+            {
+                _elements[value.Id] = value;
+                OverwriteDiff(value.Id, DifferenceType.Update);
+            }
         }
 
         public void Clear()
         {
-            foreach (KeyValuePair<int, T> pair in _elements)
+            foreach (int key in _elements.Keys.ToArray())
             {
-                _elements[pair.Key] = null;
-                OverwriteDiff(pair.Key, DifferenceType.Remove);
+                _elements[key] = null;
+                OverwriteDiff(key, DifferenceType.Remove);
             }
         }
 

@@ -122,6 +122,10 @@ namespace Orbital.Core.Serialization.Sqlite
         public object GetValueFrom(ModelBase element, Type type)
         {
             PropertyInfo property = type.GetProperty(name);
+            if (property.PropertyType == typeof(string))
+            {
+                return $"'{property.GetValue(element)}'";
+            }
             return property.GetValue(element);
         }
 
@@ -133,7 +137,16 @@ namespace Orbital.Core.Serialization.Sqlite
             {
                 tableValue = (int) l;
             }
-            property.SetValue(element, isNull ? null : tableValue);
+
+            try
+            {
+                property.SetValue(element, isNull ? null : tableValue);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
         }
     }
 
