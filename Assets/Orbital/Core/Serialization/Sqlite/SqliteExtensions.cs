@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -22,21 +23,24 @@ namespace Orbital.Core.Serialization.Sqlite
         private const string ForeignKeyFormat = " CONSTRAINT[FK_{0}_{1}_{2}] FOREIGN KEY ([{2}]) REFERENCES [{1}] ([{3}])";
         private const string CreateTableRoot = "CREATE TABLE IF NOT EXISTS ";
         private const string SelectTableRootFormat = "SELECT {0} FROM ";
+        private const string UpdateTableFormat = "UPDATE {0} SET ({1}) = ({2}) WHERE (Id = {3});";
+        private const string InsertFormat = "INSERT INTO {0} ({1}) VALUES ({2});";
+        private const string DeleteFormat = "DELETE FROM {0} WHERE Id = {1};";
         private const string All = "* ";
-        
+
         public static void CreateTable<T>(this SqliteConnection connection, string tableName, Declaration declaration)
         {
             Type type = typeof(T);
             var model = declaration.SetDeclaration(type, tableName);
-            List<string> members = new List<string>();
-            AppendProperties(model, members, true);
-            AppendForeignKeys(model, members);
+            
             
             StringBuilder sqlBuilder = new StringBuilder();
             sqlBuilder.Append(CreateTableRoot);
             sqlBuilder.Append(model.tableName);
             sqlBuilder.Append(StaplesOpen);
-            AppendBody(members, sqlBuilder);
+            sqlBuilder.Append(BuildProperties(model, true));
+            sqlBuilder.Append(Comma);
+            sqlBuilder.Append(BuildForeignKeys(model));
             sqlBuilder.Append(StaplesClose);
             var sql = sqlBuilder.ToString();
             Debug.Log(sql);
@@ -46,54 +50,88 @@ namespace Orbital.Core.Serialization.Sqlite
             }
         }
 
-
-        private static void AppendBody(List<string> members, StringBuilder sqlBuilder)
+        private static string BuildForeignKeys(ModelType modelType)
         {
-            for (var i = 0; i < members.Count; i++)
+            StringBuilder builder = new StringBuilder();
+            foreach (ForeignKey modelForeignKey in modelType.foreignKeys)
             {
-                sqlBuilder.Append(members[i]);
-                if (i < members.Count - 1)
+                AppendForeignKey(builder, modelForeignKey);
+                builder.Append(Comma);
+            }
+            builder.Remove(builder.Length - 2, 1);
+            return builder.ToString();
+        }
+        private static void AppendForeignKey(StringBuilder memberBuilder, ForeignKey foreignKey)
+        {
+            memberBuilder.Append(string.Format(ForeignKeyFormat, foreignKey.originTable, foreignKey.destinationTable, foreignKey.originMember, foreignKey.destinationMember));
+        }
+
+        private static string BuildProperties(ModelType modelType, bool needAppendDeclaration)
+        {
+            StringBuilder builder = new StringBuilder();
+            if (needAppendDeclaration)
+            {
+                foreach (Member modelMember in modelType.members)
                 {
-                    sqlBuilder.Append(Comma);
+                    AppendPropertyWithDeclaration(builder, modelMember);
+                    builder.Append(Comma);
                 }
             }
+            else
+            {
+                foreach (Member modelMember in modelType.members)
+                {
+                    builder.Append(modelMember.name);
+                    builder.Append(Comma);
+                }
+            }
+            builder.Remove(builder.Length - 2, 1);
+            return builder.ToString();
+        }
+        private static void AppendPropertyWithDeclaration(StringBuilder memberBuilder, Member member)
+        {
+            memberBuilder.Append(member.name);
+            memberBuilder.Append(Space);
+
+            memberBuilder.Append(member.sqlType);
+            if(member.isPrimaryKey) memberBuilder.Append(PrimaryKey);
+
+            memberBuilder.Append(member.canBeNull ? Nullable : NotNullable);
         }
 
-        private static void AppendForeignKeys(Model model, List<string> members)
+        private static string BuildValues<T>(ModelType myType, T source) where  T : ModelBase
         {
-            foreach (ForeignKey modelForeignKey in model.foreignKeys)
+            CultureInfo.CurrentCulture = CultureInfo.InvariantCulture;
+            Type type = typeof(T);
+            StringBuilder builder = new StringBuilder();
+            foreach (Member modelMember in myType.members)
             {
-                StringBuilder memberBuilder = new StringBuilder();
-                AppendForeignKey(memberBuilder, modelForeignKey);
-                members.Add(memberBuilder.ToString());
+                builder.Append(modelMember.GetValueFrom(source, type) ?? "NULL");
+                builder.Append(Comma);
             }
+            builder.Remove(builder.Length - 2, 1);
+            return builder.ToString();
         }
-
-        private static void AppendProperties(Model model, List<string> members, bool needAppendDeclaration)
-        {
-            foreach (Member modelMember in model.members)
-            {
-                StringBuilder memberBuilder = new StringBuilder();
-                AppendProperty(memberBuilder, modelMember, needAppendDeclaration);
-                members.Add(memberBuilder.ToString());
-            }
-        }
-        
-        /*private static void AppendValues(Model model, List<string> members)
-        {
-            foreach (Member modelMember in model.members)
-            {
-                StringBuilder memberBuilder = new StringBuilder();
-                AppendProperty(memberBuilder, modelMember, false);
-                members.Add(memberBuilder.ToString());
-            }
-        }*/
 
         // SELECT * FROM TableName
         public static List<T> GetTable<T>(this SqliteConnection connection, Declaration declaration)
         {
             var model = declaration.GetModel(typeof(T));
             
+            DataSet dataSet = RequestTable(connection, model);
+
+            List<T> result = new List<T>();
+            var rows = dataSet.Tables[0].Rows;
+            for (int i = 0; i < rows.Count; i++)
+            {
+                result.Add((T)model.CreateModelByRow(rows[i]));
+            }
+
+            return result;
+        }
+
+        private static DataSet RequestTable(SqliteConnection connection, ModelType model)
+        {
             StringBuilder sqlBuilder = new StringBuilder();
             sqlBuilder.Append(string.Format(SelectTableRootFormat, All));
             sqlBuilder.Append(model.tableName);
@@ -108,32 +146,50 @@ namespace Orbital.Core.Serialization.Sqlite
                 }
             }
 
-            List<T> result = new List<T>();
-            var rows = dataSet.Tables[0].Rows;
-            for (int i = 0; i < rows.Count; i++)
+            return dataSet;
+        }
+
+        // SELECT * FROM TableName
+        public static void GetTable<T>(this SqliteConnection connection, TableSet<T> tableSet, Declaration declaration) where T : ModelBase
+        {
+            ModelType model = declaration.GetModel(typeof(T));
+            DataSet dataSet = RequestTable(connection, model);
+            tableSet.Fill(dataSet.Tables[0], model);
+        }
+
+
+        //UPDATE TestTable SET (Name, Email) = ('ooo', 'op') WHERE (Id = 1) 
+        public static void Update<T>(this SqliteConnection connection, TableSet<T> tableSet, Declaration declaration) where T : ModelBase
+        {
+            if (!tableSet.HasChanges())
             {
-                result.Add((T)model.CreateModelByRow(rows[i]));
+                Debug.Log($"{tableSet.TableName} has no changes and will not to be updated");
+                return;
             }
-
-            return result;
-        }
-
-        private static void AppendForeignKey(StringBuilder memberBuilder, ForeignKey foreignKey)
-        {
-            memberBuilder.Append(string.Format(ForeignKeyFormat, foreignKey.originTable, foreignKey.destinationTable, foreignKey.originMember,
-                foreignKey.destinationMember));
-        }
-
-        private static void AppendProperty(StringBuilder memberBuilder, Member member, bool needAppendDeclaration)
-        {
-            memberBuilder.Append(member.name);
-            if(!needAppendDeclaration) return;
-            memberBuilder.Append(Space);
-
-            memberBuilder.Append(member.sqlType);
-            if(member.isPrimaryKey) memberBuilder.Append(PrimaryKey);
-
-            memberBuilder.Append(member.canBeNull ? Nullable : NotNullable);
+            ModelType model = declaration.GetModel(typeof(T));
+            StringBuilder builder = new StringBuilder();
+            foreach ((DifferenceType differenceType, T element, int id) in tableSet.GetDifference(model))
+            {
+                switch (differenceType)
+                {
+                    case DifferenceType.Update:
+                        builder.AppendLine(string.Format(UpdateTableFormat, tableSet.TableName, BuildProperties(model, false), BuildValues(model, element), id));
+                        break;
+                    case DifferenceType.Add:
+                        builder.AppendLine(string.Format(InsertFormat, tableSet.TableName, BuildProperties(model, false), BuildValues(model, element)));
+                        break;
+                    case DifferenceType.Remove:
+                        builder.AppendLine(string.Format(DeleteFormat, tableSet.TableName, id));
+                        break;
+                }
+            }
+            
+            var sql = builder.ToString();
+            Debug.Log(sql);
+            using (SqliteCommand command = new SqliteCommand(sql, connection))
+            {
+                command.ExecuteNonQuery();
+            }
         }
     }
 }

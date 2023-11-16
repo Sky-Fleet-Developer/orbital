@@ -9,18 +9,18 @@ namespace Orbital.Core.Serialization.Sqlite
 {
     
     [Serializable]
-    public class Model
+    public class ModelType
     {
         public string tableName;
         public Member[] members;
         public ForeignKey[] foreignKeys;
-        public string modelType;
+        public string myType;
         private Type _realType;
         
-        public Model(Type modelType, string tableName)
+        public ModelType(Type modelType, string tableName)
         {
             this.tableName = tableName;
-            this.modelType = modelType.AssemblyQualifiedName;
+            this.myType = modelType.AssemblyQualifiedName;
             _realType = modelType;
             List<Member> membersList = new List<Member>();
             List<ForeignKey> foreignKeysList = new List<ForeignKey>();
@@ -49,24 +49,17 @@ namespace Orbital.Core.Serialization.Sqlite
         
         public Type GetMemberType()
         {
-            if (_realType == null) _realType = Type.GetType(modelType);
+            if (_realType == null) _realType = Type.GetType(myType);
             return _realType;
         }
 
         public object CreateModelByRow(DataRow dataRow)
         {
             var type = GetMemberType();
-            object instance = System.Activator.CreateInstance(type);
+            ModelBase instance = (ModelBase)System.Activator.CreateInstance(type);
             for (int i = 0; i < members.Length; i++)
             {
-                PropertyInfo property = type.GetProperty(members[i].name);
-                var value = dataRow[i];
-                var isNull = value is DBNull;
-                if (value is long l)
-                {
-                    value = (int) l;
-                }
-                property.SetValue(instance, isNull ? null : value);
+                members[i].SetValueTo(instance, type, dataRow[i]);
             }
 
             return instance;
@@ -80,6 +73,7 @@ namespace Orbital.Core.Serialization.Sqlite
         {
             {typeof(int), "INTAGER"},
             {typeof(float), "FLOAT"},
+            {typeof(double), "DOUBLE"},
             {typeof(string), "TEXT"},
         };
         
@@ -105,8 +99,7 @@ namespace Orbital.Core.Serialization.Sqlite
                 }   
             }
 
-            bool isNullable = propertyType.IsGenericType &&
-                              propertyType.GetGenericTypeDefinition() == typeof(Nullable<>);
+            bool isNullable = propertyType.IsGenericType && propertyType.GetGenericTypeDefinition() == typeof(Nullable<>);
             
             if(string.IsNullOrEmpty(sqlType))
             {
@@ -125,6 +118,23 @@ namespace Orbital.Core.Serialization.Sqlite
         }
 
         private static bool IsNullableType(Type type) => !type.IsPrimitive && !type.IsValueType && !type.IsEnum;
+
+        public object GetValueFrom(ModelBase element, Type type)
+        {
+            PropertyInfo property = type.GetProperty(name);
+            return property.GetValue(element);
+        }
+
+        public void SetValueTo(ModelBase element, Type type, object tableValue)
+        {
+            PropertyInfo property = type.GetProperty(name);
+            var isNull = tableValue is DBNull;
+            if (tableValue is long l)
+            {
+                tableValue = (int) l;
+            }
+            property.SetValue(element, isNull ? null : tableValue);
+        }
     }
 
     [Serializable]

@@ -20,13 +20,13 @@ namespace Orbital.Core.Serialization.SqlModel
             base.OnConfiguring(optionsBuilder);
         }
 
-        public virtual DbSet<World> Worlds { get; set; }
+        public virtual DbSet<Player> Worlds { get; set; }
         public virtual DbSet<Object> Objects { get; set; }
         public virtual DbSet<Component> Components { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<World>();
+            modelBuilder.Entity<Player>();
             modelBuilder.Entity<Object>();
             modelBuilder.Entity<Component>();
         }

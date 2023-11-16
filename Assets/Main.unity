@@ -392,10 +392,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 32e34e0aafa8d67429cef08bdd9b1fa2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  targetWorld: {fileID: 1046472109}
   path: 
   commandText: 
   insertCommandText: 
-  Worlds: []
   declaration: {fileID: 11400000, guid: b09bd3c15de9d8446ab0e3f211fe428f, type: 2}
 --- !u!4 &897670531
 Transform:
@@ -412,6 +412,122 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1001 &1046472108
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 596590026381189936, guid: 15415cd96a5341d44add3b3643770ebe,
+        type: 3}
+      propertyPath: m_RootOrder
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 596590026381189936, guid: 15415cd96a5341d44add3b3643770ebe,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 596590026381189936, guid: 15415cd96a5341d44add3b3643770ebe,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 596590026381189936, guid: 15415cd96a5341d44add3b3643770ebe,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 596590026381189936, guid: 15415cd96a5341d44add3b3643770ebe,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 596590026381189936, guid: 15415cd96a5341d44add3b3643770ebe,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 596590026381189936, guid: 15415cd96a5341d44add3b3643770ebe,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 596590026381189936, guid: 15415cd96a5341d44add3b3643770ebe,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 596590026381189936, guid: 15415cd96a5341d44add3b3643770ebe,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 596590026381189936, guid: 15415cd96a5341d44add3b3643770ebe,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 596590026381189936, guid: 15415cd96a5341d44add3b3643770ebe,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 596590026381189942, guid: 15415cd96a5341d44add3b3643770ebe,
+        type: 3}
+      propertyPath: m_Name
+      value: TestOrbit (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 842932857455788466, guid: 15415cd96a5341d44add3b3643770ebe,
+        type: 3}
+      propertyPath: settings.mass
+      value: 7.3e+22
+      objectReference: {fileID: 0}
+    - target: {fileID: 842932857455788466, guid: 15415cd96a5341d44add3b3643770ebe,
+        type: 3}
+      propertyPath: settings.eccentricity
+      value: 0.05
+      objectReference: {fileID: 0}
+    - target: {fileID: 3060668902643922971, guid: 15415cd96a5341d44add3b3643770ebe,
+        type: 3}
+      propertyPath: settings.mass
+      value: 1.98e+30
+      objectReference: {fileID: 0}
+    - target: {fileID: 4379479794257545861, guid: 15415cd96a5341d44add3b3643770ebe,
+        type: 3}
+      propertyPath: settings.mass
+      value: 6e+24
+      objectReference: {fileID: 0}
+    - target: {fileID: 4379479794257545861, guid: 15415cd96a5341d44add3b3643770ebe,
+        type: 3}
+      propertyPath: settings.semiMajorAxis
+      value: 150000000000
+      objectReference: {fileID: 0}
+    - target: {fileID: 5544404305899821679, guid: 15415cd96a5341d44add3b3643770ebe,
+        type: 3}
+      propertyPath: settings.mass
+      value: 6e+24
+      objectReference: {fileID: 0}
+    - target: {fileID: 6653972294982843103, guid: 15415cd96a5341d44add3b3643770ebe,
+        type: 3}
+      propertyPath: settings.mass
+      value: 1.98e+30
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 15415cd96a5341d44add3b3643770ebe, type: 3}
+--- !u!114 &1046472109 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 596590026381189943, guid: 15415cd96a5341d44add3b3643770ebe,
+    type: 3}
+  m_PrefabInstance: {fileID: 1046472108}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7163c704b9b5ddb4598fb39737923137, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1823688464
 GameObject:
   m_ObjectHideFlags: 0
@@ -648,15 +764,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 843ed5443cb417d41a77a9c28a6b6ba3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  id: -1
   settings:
-    inclination: 0
-    longitudeAscendingNode: 0
-    argumentOfPeriapsis: 0
+    mass: 1.98e+30
     eccentricity: 0
     semiMajorAxis: 0
+    inclination: 0
+    argumentOfPeriapsis: 0
+    longitudeAscendingNode: 0
     epoch: 0
-    mass: 1.9800000146824104e+30
 --- !u!1 &3361730889727701039
 GameObject:
   m_ObjectHideFlags: 0
@@ -865,15 +980,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 843ed5443cb417d41a77a9c28a6b6ba3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  id: -1
   settings:
-    inclination: 0
-    longitudeAscendingNode: 0
-    argumentOfPeriapsis: 0
-    eccentricity: 0.20000000298023224
+    mass: 6e+24
+    eccentricity: 0.2
     semiMajorAxis: 5000000000
+    inclination: 0
+    argumentOfPeriapsis: 0
+    longitudeAscendingNode: 0
     epoch: 0
-    mass: 6.000000083090567e+24
 --- !u!114 &8441440233341185314
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -886,15 +1000,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 843ed5443cb417d41a77a9c28a6b6ba3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  id: -1
   settings:
-    inclination: 0
-    longitudeAscendingNode: 0
-    argumentOfPeriapsis: 0
+    mass: 1.98e+30
     eccentricity: 0
     semiMajorAxis: 0
+    inclination: 0
+    argumentOfPeriapsis: 0
+    longitudeAscendingNode: 0
     epoch: 0
-    mass: 1.9800000146824104e+30
 --- !u!4 &8555214656620983100
 Transform:
   m_ObjectHideFlags: 0

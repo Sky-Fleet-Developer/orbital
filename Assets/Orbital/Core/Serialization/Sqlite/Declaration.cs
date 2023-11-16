@@ -9,15 +9,15 @@ namespace Orbital.Core.Serialization.Sqlite
     [CreateAssetMenu(menuName = "DB/Declaration")]
     public class Declaration : ScriptableObject
     {
-        [SerializeField] private List<Model> modelTypes;
+        [SerializeField] private List<ModelType> modelTypes;
 
         
-        public Model SetDeclaration(System.Type modelType, string tableName)
+        public ModelType SetDeclaration(System.Type modelType, string tableName)
         {
             #if UNITY_EDITOR
             Undo.RecordObject(this, "modify sql declaration");
             #endif
-            var model = new Model(modelType, tableName);
+            var model = new ModelType(modelType, tableName);
             int lastIdx = modelTypes.FindIndex(x => x.tableName == tableName);
             if (lastIdx != -1)
             {
@@ -33,10 +33,10 @@ namespace Orbital.Core.Serialization.Sqlite
             return model;
         }
 
-        public Model GetModel(System.Type modelType)
+        public ModelType GetModel(System.Type modelType)
         {
             string typeName = modelType.AssemblyQualifiedName;
-            return modelTypes.Find(x => x.modelType == typeName);
+            return modelTypes.Find(x => x.myType == typeName);
         }
     }
 }

@@ -13,41 +13,20 @@ MonoBehaviour:
   m_Name: Declaration
   m_EditorClassIdentifier: 
   modelTypes:
-  - tableName: Worlds
-    members:
-    - name: Id
-      sqlType: INTAGER
-      canBeNull: 0
-      isPrimaryKey: 1
-    - name: Name
-      sqlType: VARCHAR (50)
-      canBeNull: 1
-      isPrimaryKey: 0
-    - name: PlayerPosition
-      sqlType: VARCHAR (100)
-      canBeNull: 1
-      isPrimaryKey: 0
-    - name: PlayerRotation
-      sqlType: VARCHAR (100)
-      canBeNull: 1
-      isPrimaryKey: 0
-    - name: PlayerParentId
-      sqlType: INTAGER
-      canBeNull: 0
-      isPrimaryKey: 0
-    foreignKeys:
-    - originTable: Worlds
-      destinationTable: Objects
-      originMember: PlayerParentId
-      destinationMember: Id
-    modelType: Orbital.Core.Serialization.SqlModel.World, Core, Version=0.0.0.0,
-      Culture=neutral, PublicKeyToken=null
   - tableName: Objects
     members:
     - name: Id
       sqlType: INTAGER
       canBeNull: 0
       isPrimaryKey: 1
+    - name: CelestialId
+      sqlType: INTAGER
+      canBeNull: 0
+      isPrimaryKey: 0
+    - name: ClusterId
+      sqlType: INTAGER
+      canBeNull: 0
+      isPrimaryKey: 0
     - name: ParentId
       sqlType: INTAGER
       canBeNull: 1
@@ -73,8 +52,12 @@ MonoBehaviour:
       destinationTable: Objects
       originMember: ParentId
       destinationMember: Id
-    modelType: Orbital.Core.Serialization.SqlModel.Object, Core, Version=0.0.0.0,
-      Culture=neutral, PublicKeyToken=null
+    - originTable: Objects
+      destinationTable: Celestials
+      originMember: CelestialId
+      destinationMember: Id
+    myType: Orbital.Core.Serialization.SqlModel.Object, Core, Version=0.0.0.0, Culture=neutral,
+      PublicKeyToken=null
   - tableName: Components
     members:
     - name: Id
@@ -102,5 +85,79 @@ MonoBehaviour:
       destinationTable: Objects
       originMember: OwnerId
       destinationMember: Id
-    modelType: Orbital.Core.Serialization.SqlModel.Component, Core, Version=0.0.0.0,
+    myType: Orbital.Core.Serialization.SqlModel.Component, Core, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  - tableName: Players
+    members:
+    - name: Id
+      sqlType: INTAGER
+      canBeNull: 0
+      isPrimaryKey: 1
+    - name: Name
+      sqlType: VARCHAR (50)
+      canBeNull: 1
+      isPrimaryKey: 0
+    - name: Position
+      sqlType: VARCHAR (100)
+      canBeNull: 1
+      isPrimaryKey: 0
+    - name: Rotation
+      sqlType: VARCHAR (100)
+      canBeNull: 1
+      isPrimaryKey: 0
+    - name: ParentId
+      sqlType: INTAGER
+      canBeNull: 0
+      isPrimaryKey: 0
+    foreignKeys:
+    - originTable: Players
+      destinationTable: Objects
+      originMember: ParentId
+      destinationMember: Id
+    myType: Orbital.Core.Serialization.SqlModel.Player, Core, Version=0.0.0.0, Culture=neutral,
+      PublicKeyToken=null
+  - tableName: Celestials
+    members:
+    - name: Id
+      sqlType: INTAGER
+      canBeNull: 0
+      isPrimaryKey: 1
+    - name: Mass
+      sqlType: VARCHAR (500)
+      canBeNull: 0
+      isPrimaryKey: 0
+    - name: Eccentricity
+      sqlType: DOUBLE
+      canBeNull: 0
+      isPrimaryKey: 0
+    - name: SemiMajorAxis
+      sqlType: DOUBLE
+      canBeNull: 0
+      isPrimaryKey: 0
+    - name: Inclination
+      sqlType: DOUBLE
+      canBeNull: 0
+      isPrimaryKey: 0
+    - name: ArgumentOfPeriapsis
+      sqlType: DOUBLE
+      canBeNull: 0
+      isPrimaryKey: 0
+    - name: LongitudeAscendingNode
+      sqlType: DOUBLE
+      canBeNull: 0
+      isPrimaryKey: 0
+    - name: Epoch
+      sqlType: DOUBLE
+      canBeNull: 0
+      isPrimaryKey: 0
+    - name: ParentId
+      sqlType: INTAGER
+      canBeNull: 1
+      isPrimaryKey: 0
+    foreignKeys:
+    - originTable: Celestials
+      destinationTable: Celestials
+      originMember: ParentId
+      destinationMember: Id
+    myType: Orbital.Core.Serialization.SqlModel.Celestial, Core, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null

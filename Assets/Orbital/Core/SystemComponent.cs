@@ -8,6 +8,7 @@ namespace Orbital.Core
     public interface ISystemComponentAccessor
     {
         int Id { get; set; }
+        GameObject Owner { get; }
         object Settings { get; set; }
         object Variables { get; set; }
     }
@@ -32,7 +33,7 @@ namespace Orbital.Core
                 id = value;
             }
         }
-
+        GameObject ISystemComponentAccessor.Owner => gameObject;
         object ISystemComponentAccessor.Settings
         {
             get => Settings;

@@ -36,8 +36,8 @@ namespace Orbital.Core.Navigation
                     return new OrbitEnding(OrbitEndingType.Entry, collisionPos, collisionTime, internalCollision);
                 }
 
-                if (parent.Parent != null)
-                    return new OrbitEnding(OrbitEndingType.Leave, leavePoint, leaveTime, parent.Parent);
+                if (parent.ParentCelestial != null)
+                    return new OrbitEnding(OrbitEndingType.Leave, leavePoint, leaveTime, parent.ParentCelestial);
                 else return new OrbitEnding(OrbitEndingType.Cycle, DVector3.Zero, leaveTime, parent);
             }
 

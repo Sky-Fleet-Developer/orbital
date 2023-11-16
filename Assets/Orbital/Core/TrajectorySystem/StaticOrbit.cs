@@ -106,7 +106,7 @@ namespace Orbital.Core.TrajectorySystem
         
         public void Calculate(TrajectorySettings settings, double epoch)
         {
-            SetOrbit(settings.inclination * Deg2Rad, settings.eccentricity, settings.semiMajorAxis, settings.longitudeAscendingNode * Deg2Rad, settings.argumentOfPeriapsis * Deg2Rad, 0, epoch + settings.timeShift);
+            SetOrbit(settings.inclination * Deg2Rad, settings.eccentricity, settings.semiMajorAxis, settings.longitudeAscendingNode * Deg2Rad, settings.argumentOfPeriapsis * Deg2Rad, 0, epoch + settings.epoch);
         }
         
         public void Calculate(DVector3 position, DVector3 velocity, double epoch)

@@ -38,7 +38,7 @@ namespace Orbital.View.Map
             _hierarchy = hierarchy;
             _scaleSettings = scaleSettings;
             _viewSettings = settingsContainer.GetAssetsAtType<DynamicBodyViewSettings>().First();
-            _parent = _hierarchy[_body.Parent];
+            _parent = _hierarchy[_body.ParentCelestial];
             _self = pool.Get();
             SetupView(_self, _viewSettings.selfMesh, _viewSettings.selfMaterial);
             _self.Transform.localScale = Vector3.one * 0.05f;
@@ -65,7 +65,7 @@ namespace Orbital.View.Map
         private void OnOrbitChanged()
         {
             _oldOrbit = _body.Orbit;
-            _parent = _hierarchy[_body.Parent];
+            _parent = _hierarchy[_body.ParentCelestial];
             _self.Transform.parent = _parent;
             _orbit.Transform.parent = _parent;
             _orbit.Transform.localPosition = Vector3.zero;

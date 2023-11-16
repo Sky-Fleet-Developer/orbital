@@ -31,7 +31,7 @@ namespace Orbital.Core.TrajectorySystem
                     aSettings.longitudeAscendingNode = value.longitudeAscendingNode;
                     aSettings.inclination = value.inclination;
                     aSettings.semiMajorAxis = value.aPericenterRadius;
-                    aSettings.timeShift = value.timeShift;
+                    aSettings.epoch = value.timeShift;
                     ChildA.Settings = aSettings;
                 }
                 {
@@ -42,7 +42,7 @@ namespace Orbital.Core.TrajectorySystem
                     bSettings.longitudeAscendingNode = value.longitudeAscendingNode + 180;
                     bSettings.inclination = value.inclination;
                     bSettings.semiMajorAxis = value.aPericenterRadius * Mathf.Pow(value.aMass / value.bMass, 1.0f / 3.0f);
-                    bSettings.timeShift = value.timeShift;
+                    bSettings.epoch = value.timeShift;
                     ChildB.Settings = bSettings;
                 }
             } 

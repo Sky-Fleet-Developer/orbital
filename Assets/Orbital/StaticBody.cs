@@ -9,23 +9,45 @@ using UnityEngine;
 namespace Orbital
 {
     [ExecuteInEditMode]
-    public class StaticBody : SystemComponent<StaticBodyVariables, StaticBodySettings>, IStaticBody, IStaticBodyAccessor
+    public class StaticBody : MonoBehaviour, IStaticBody, ILocalSpaceBody, IStaticBodyAccessor
     {
-        [SerializeField] private StaticBodySettings settings;
-        [ShowInInspector] private StaticBodyVariables _variables;
+        [SerializeField] private TrajectorySettings settings;
         private World _world;
         private IMassSystem _massSystem;
         private StaticOrbit _orbit;
-        [ShowInInspector] private IStaticBody _parent;
+        [ShowInInspector] private IStaticBody _parentCelestial;
         [ShowInInspector] private IStaticBody[] _children;
         private bool _isSatellite;
-        IMassSystem IStaticBody.MassSystem => _massSystem;
+        private int _id;
 
-        IStaticBody IStaticBody.Parent => _parent;
+        #region InterfaceImplementation
+        Transform ILocalSpaceBody.Transform => transform;
+        IMassSystem IStaticBody.MassSystem => _massSystem;
+        IStaticBody IStaticBody.ParentCelestial => _parentCelestial;
         IEnumerable<IStaticBody> IStaticBody.Children => _children;
         bool IStaticBody.IsSatellite => _isSatellite;
-        IStaticBody IStaticBodyAccessor.Self => this;
         double IStaticBody.GravParameter => settings.mass * MassUtility.G;
+        [ShowInInspector, ReadOnly] int IStaticBodyAccessor.Id
+        {
+            get
+            {
+                if (_id == 0)
+                {
+                    _id = GetInstanceID();
+                }
+                return _id;
+            }
+            set
+            {
+                if (_id != -1)
+                {
+                    throw new Exception("Can't write Id twice");
+                }
+                _id = value;
+            }
+        }
+
+        IStaticBody IStaticBodyAccessor.Self => this;
         IMassSystem IStaticBodyAccessor.MassSystem
         {
             get => _massSystem;
@@ -38,8 +60,8 @@ namespace Orbital
 
         IStaticBody IStaticBodyAccessor.Parent
         {
-            get => _parent;
-            set => _parent = value;
+            get => _parentCelestial;
+            set => _parentCelestial = value;
         }
         StaticOrbit IStaticBodyAccessor.Orbit
         {
@@ -66,43 +88,23 @@ namespace Orbital
             get => _isSatellite;
             set => _isSatellite = value;
         }
+
+        TrajectorySettings IStaticBodyAccessor.Settings
+        {
+            get => settings;
+            set => settings = value;
+        }
         World IStaticBodyAccessor.World
         {
             set => _world = value;
         }
+        #endregion
+
 
         public DVector3 LocalPosition => _orbit.GetPositionAtT(TimeService.WorldTime);
 
         public double Mass => _massSystem.Mass;
         public StaticOrbit Orbit => _orbit;
-
-        public override StaticBodySettings Settings
-        {
-            get => settings;
-            set => settings = value;
-        }
-
-        public override StaticBodyVariables Variables
-        {
-            get => _variables;
-            set => _variables = value;
-        }
     }
 
-    [Serializable]
-    public struct StaticBodyVariables
-    {
-    }
-
-    [Serializable]
-    public struct StaticBodySettings
-    {
-        public double inclination;
-        public double longitudeAscendingNode;
-        public double argumentOfPeriapsis;
-        public double eccentricity;
-        public double semiMajorAxis;
-        public double epoch;
-        public double mass;
-    }
 }

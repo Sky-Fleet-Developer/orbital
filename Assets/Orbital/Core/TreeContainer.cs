@@ -58,7 +58,7 @@ namespace Orbital.Core
 
         internal void AddRigidbody(IDynamicBody component)
         {
-            var parent = _massPerComponent[component.Parent];
+            var parent = _massPerComponent[component.ParentCelestial];
             _dynamicChildren.Add(component);
         }
 

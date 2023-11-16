@@ -10,7 +10,7 @@ using UnityEngine.Assertions;
 
 namespace Orbital
 {
-    public class DynamicBody : SystemComponent<DynamicBodyVariables, DynamicBodySettings>, IDynamicBody
+    public class DynamicBody : SystemComponent<DynamicBodyVariables, DynamicBodySettings>, IDynamicBody, ILocalSpaceBody
     {
         [SerializeField] private DynamicBodyVariables variables;
         [SerializeField] private DynamicBodySettings settings;
@@ -18,11 +18,13 @@ namespace Orbital
         //private Track _trajectoryTrack;
         [ShowInInspector] private NavigationPath _path;
         private double _massInv;
-        
+
         #region InterfaceImplementation
+        Transform ILocalSpaceBody.Transform => transform;
+        public DVector3 LocalPosition => Orbit.GetPositionAtT(TimeService.WorldTime);
         public StaticOrbit Orbit => _path.GetOrbitAtTime(TimeService.WorldTime);
         public event Action OrbitChangedHandler;
-        public IStaticBody Parent => _path.GetParentAtTime(TimeService.WorldTime);
+        public IStaticBody ParentCelestial => _path.GetParentAtTime(TimeService.WorldTime);
         public OrbitEnding Ending => _path.GetEndingAtTime(TimeService.WorldTime);
         public double Mass => settings.mass;
         public double MassInv => _massInv;
@@ -67,7 +69,7 @@ namespace Orbital
             var orbit = Orbit;
             orbit.GetOrbitalStateVectorsAtOrbitTime(TimeService.WorldTime, out DVector3 pos, out DVector3 vel);
             vel += (DVector3)force * _massInv;
-            _path.Calculate(Parent, pos, vel, TimeService.WorldTime);
+            _path.Calculate(ParentCelestial, pos, vel, TimeService.WorldTime);
             OrbitChangedHandler?.Invoke();
             variables.position = pos;
             variables.velocity = vel;

@@ -4,6 +4,7 @@ using System.Data;
 using System.Data.SqlClient;
 using UnityWinForms.System.Windows.Forms;
 using Mono.Data.Sqlite;
+using Orbital.Core;
 using Orbital.Core.Serialization.Sqlite;
 using Orbital.Core.Serialization.SqlModel;
 using Sirenix.OdinInspector;
@@ -19,12 +20,17 @@ namespace Orbital.Test
 {
     public class DatabaseTest : MonoBehaviour
     {
+        public World targetWorld;
         [FilePath] public string path; 
         public string commandText;
         public string insertCommandText;
-        public List<World> Worlds; 
+        public WorldSet worldSet; 
         
         public Declaration declaration;
+        [Button]
+        private void Test()
+        {
+        }
         
         [Button]
         void Write()
@@ -32,20 +38,23 @@ namespace Orbital.Test
             using (var connection = new SqliteConnection("Data Source=DB/sqliteDb.db"))
             {
                 connection.Open();
-                connection.CreateTable<World>("Worlds", declaration);
+                connection.CreateTable<Core.Serialization.SqlModel.Player>("Players", declaration);
                 connection.CreateTable<Object>("Objects", declaration);
                 connection.CreateTable<Component>("Components", declaration);
+                connection.CreateTable<Celestial>("Celestials", declaration);
             }
         }
 
         [Button]
-        void Read()
+        void TestCelestials()
         {
-            using (var connection = new SqliteConnection("Data Source=DB/sqliteDb.db"))
+            /*using (var connection = new SqliteConnection("Data Source=DB/sqliteDb.db"))
             {
                 connection.Open();
-                Worlds = connection.GetTable<World>(declaration);
-            }
+                Worlds = connection.GetTable<Core.Serialization.SqlModel.Player>(declaration);
+            }*/
+            worldSet = new WorldSet(declaration, "Data Source=DB/sqliteDb.db");
+            worldSet.WriteWorld(targetWorld);
         }
         
         [Button]

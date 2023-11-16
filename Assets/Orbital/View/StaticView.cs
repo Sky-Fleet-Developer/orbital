@@ -4,15 +4,10 @@ using UnityEngine;
 
 namespace Orbital.View
 {
-    public class StaticView : SystemComponent<ViewVariables, ViewSettings>
+    public class StaticView : MonoBehaviour
     {
         [SerializeField] private ViewSettings settings;
-        public override ViewSettings Settings
-        {
-            get => settings;
-            set => settings = value;
-        }
-        
+
         
     }
 
@@ -22,10 +17,5 @@ namespace Orbital.View
         public GameObject prefab;
         public Vector3 localPosition;
         public Vector3 localEulerAngles;
-    }
-    [Serializable]
-    public struct ViewVariables
-    {
-        
     }
 }

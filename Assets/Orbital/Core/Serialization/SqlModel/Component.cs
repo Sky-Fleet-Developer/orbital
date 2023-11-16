@@ -1,11 +1,12 @@
 ﻿using Orbital.Core.Serialization.Sqlite;
+using UnityEngine;
 
 namespace Orbital.Core.Serialization.SqlModel
 {
-    public class Component
+    public class Component : ModelBase
     {
         [PrimaryKey]
-        public int Id { get; set; }
+        public override int Id { get; set; }
         public int OwnerId { get; set; }
         [DataType("VARCHAR (200)")]
         public string Type { get; set; }

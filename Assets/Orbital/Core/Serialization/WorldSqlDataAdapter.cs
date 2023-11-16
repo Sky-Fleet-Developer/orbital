@@ -47,7 +47,7 @@ namespace Orbital.Core.Serialization
         public IEnumerable<string> GetObjectTableKeys()
         {
             yield return "Id INTAGER PRIMARY KEY NOT NULL,";
-            yield return "ParentId INTAGER NULL,";
+            yield return "OwnerId INTAGER NULL,";
             yield return "LocalPosition VARCHAR (100) NOT NULL,";
             yield return "LocalRotation VARCHAR (10) NOT NULL,";
             yield return "Tag VARCHAR (50) NOT NULL,";
@@ -56,7 +56,7 @@ namespace Orbital.Core.Serialization
         
         public (string keys, string values) BuildParametersForObject(Transform transform)
         {
-            string keys = "Id, ParentId, LocalPosition, LocalRotation, Tag, Layer";
+            string keys = "Id, OwnerId, LocalPosition, LocalRotation, Tag, Layer";
             string parentId = transform.parent ? transform.parent.gameObject.GetInstanceID().ToString() : "NULL";
             string values =
                 $"{transform.gameObject.GetInstanceID()}, {parentId}, '{_serializer.Serialize(transform.localPosition)}', '{_serializer.Serialize(transform.localEulerAngles)}', '{transform.gameObject.tag}', {transform.gameObject.layer}";
@@ -153,7 +153,7 @@ namespace Orbital.Core.Serialization
                     dataAdapter.Fill(dataSet);
                     if (dataSet.Tables[0].Rows.Count == 0) return null;
 
-                    //World world = new GameObject(worldName).AddComponent<World>();
+                    //Player world = new GameObject(worldName).AddComponent<Player>();
 
                     for (int i = 0; i < dataSet.Tables[0].Rows.Count; i++)
                     {
@@ -185,7 +185,6 @@ namespace Orbital.Core.Serialization
                 using (SqliteDataAdapter dataAdapter = new SqliteDataAdapter(string.Format(ReadTableFormat, worldName + "Components"), connection))
                 {
                     DataSet dataSet = new DataSet();
-                    dataAdapter.Fill(dataSet);
                     dataAdapter.Fill(dataSet);
                     for (int i = 0; i < dataSet.Tables[0].Rows.Count; i++)
                     {

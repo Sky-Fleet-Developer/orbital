@@ -37,4 +37,14 @@ namespace Orbital.Core.Serialization.Sqlite
             DataConverter = dataConverter;
         }
     }
+
+    public class ObjectModelConverterAttribute : Attribute
+    {
+        public Type ConverterType;
+
+        public ObjectModelConverterAttribute(Type converterType)
+        {
+            ConverterType = converterType;
+        }
+    }
 }

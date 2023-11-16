@@ -26,7 +26,7 @@ namespace Orbital.Core
             {
                 if (Application.isPlaying)
                 {
-                    Debug.LogError("World has been already loaded!");
+                    Debug.LogError("Player has been already loaded!");
                 }
                 return;
             }
@@ -107,7 +107,7 @@ namespace Orbital.Core
             #if UNITY_EDITOR
             if (_container == null)
             {
-                if(Application.isPlaying) Debug.LogError("Has no DI container in World component");
+                if(Application.isPlaying) Debug.LogError("Has no DI container in Player component");
                 return;
             }
             #endif

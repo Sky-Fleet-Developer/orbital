@@ -43,7 +43,7 @@ namespace Orbital.Core.Serialization
             return JsonConvert.DeserializeObject(value, type, _settings);
         }
         
-        /*private class ComponentConverter : JsonConverter<Model.Component>
+        /*private class ComponentConverter : JsonConverter<ModelType.Component>
         {
             private DiContainer _container;
 
@@ -52,16 +52,16 @@ namespace Orbital.Core.Serialization
                 _container = container;
             }
             
-            public override void WriteJson(JsonWriter writer, Model.Component? value, JsonSerializer serializer)
+            public override void WriteJson(JsonWriter writer, ModelType.Component? value, JsonSerializer serializer)
             {
                 serializer.Serialize(writer, value);
                 //writer.WriteValue(value?.Id ?? -1);
             }
 
-            public override Model.Component? ReadJson(JsonReader reader, Type objectType, Model.Component? existingValue, bool hasExistingValue,
+            public override ModelType.Component? ReadJson(JsonReader reader, Type objectType, ModelType.Component? existingValue, bool hasExistingValue,
                 JsonSerializer serializer)
             {
-                return _container.ResolveId<Model.Component>(reader.ReadAsInt32());
+                return _container.ResolveId<ModelType.Component>(reader.ReadAsInt32());
             }
         }*/
     }

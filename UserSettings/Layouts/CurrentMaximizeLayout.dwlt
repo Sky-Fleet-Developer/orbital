@@ -14,19 +14,100 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Children:
   - {fileID: 3}
-  - {fileID: 13}
-  - {fileID: 19}
+  - {fileID: 11}
+  - {fileID: 17}
   m_Position:
     serializedVersion: 2
     x: 0
     y: 30
     width: 1920
     height: 947
-  m_MinSize: {x: 400, y: 200}
-  m_MaxSize: {x: 32384, y: 16192}
+  m_MinSize: {x: 300, y: 200}
+  m_MaxSize: {x: 24288, y: 16192}
   vertical: 0
-  controlID: 26708
+  controlID: 3930
 --- !u!114 &2
+MonoBehaviour:
+  m_ObjectHideFlags: 52
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 12003, guid: 0000000000000000e000000000000000, type: 0}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_MinSize: {x: 100, y: 100}
+  m_MaxSize: {x: 4000, y: 4000}
+  m_TitleContent:
+    m_Text: Console
+    m_Image: {fileID: -4327648978806127646, guid: 0000000000000000d000000000000000,
+      type: 0}
+    m_Tooltip: 
+  m_Pos:
+    serializedVersion: 2
+    x: 0
+    y: 680
+    width: 976
+    height: 319
+  m_ViewDataDictionary: {fileID: 0}
+  m_OverlayCanvas:
+    m_LastAppliedPresetName: Default
+    m_SaveData: []
+--- !u!114 &3
+MonoBehaviour:
+  m_ObjectHideFlags: 52
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 1
+  m_Script: {fileID: 12010, guid: 0000000000000000e000000000000000, type: 0}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Children:
+  - {fileID: 4}
+  - {fileID: 7}
+  m_Position:
+    serializedVersion: 2
+    x: 0
+    y: 0
+    width: 977
+    height: 947
+  m_MinSize: {x: 100, y: 200}
+  m_MaxSize: {x: 8096, y: 16192}
+  vertical: 1
+  controlID: 3931
+--- !u!114 &4
+MonoBehaviour:
+  m_ObjectHideFlags: 52
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 1
+  m_Script: {fileID: 12006, guid: 0000000000000000e000000000000000, type: 0}
+  m_Name: SceneView
+  m_EditorClassIdentifier: 
+  m_Children: []
+  m_Position:
+    serializedVersion: 2
+    x: 0
+    y: 0
+    width: 977
+    height: 607
+  m_MinSize: {x: 101, y: 121}
+  m_MaxSize: {x: 4001, y: 4021}
+  m_ActualView: {fileID: 5}
+  m_Panes:
+  - {fileID: 5}
+  - {fileID: 6}
+  m_Selected: 0
+  m_LastSelected: 1
+--- !u!114 &5
 MonoBehaviour:
   m_ObjectHideFlags: 52
   m_CorrespondingSourceObject: {fileID: 0}
@@ -47,9 +128,9 @@ MonoBehaviour:
     m_Tooltip: 
   m_Pos:
     serializedVersion: 2
-    x: 2162
-    y: 86
-    width: 572
+    x: 0
+    y: 73
+    width: 976
     height: 586
   m_ViewDataDictionary: {fileID: 0}
   m_OverlayCanvas:
@@ -252,9 +333,9 @@ MonoBehaviour:
   m_PlayAudio: 0
   m_AudioPlay: 0
   m_Position:
-    m_Target: {x: -0.90762675, y: 0, z: 668.4492}
+    m_Target: {x: 78.09863, y: -144.24133, z: -15.000549}
     speed: 2
-    m_Value: {x: -0.90762675, y: 0, z: 668.4492}
+    m_Value: {x: 78.09863, y: -144.24133, z: -15.000549}
   m_RenderMode: 0
   m_CameraMode:
     drawMode: 0
@@ -288,7 +369,7 @@ MonoBehaviour:
         m_Value: 1
       m_Color: {r: 0.5, g: 0.5, b: 0.5, a: 0.4}
       m_Pivot: {x: 0, y: 0, z: 0}
-      m_Size: {x: 1, y: 1}
+      m_Size: {x: 0.33333334, y: 0.33333334}
     zGrid:
       m_Fade:
         m_Target: 0
@@ -301,20 +382,20 @@ MonoBehaviour:
     m_GridAxis: 1
     m_gridOpacity: 0.153
   m_Rotation:
-    m_Target: {x: 0.12965938, y: -0.85714906, z: 0.26498312, w: 0.4227063}
+    m_Target: {x: -0.0063447473, y: -0.9919626, z: 0.11357623, w: -0.055414304}
     speed: 2
-    m_Value: {x: 0.12963264, y: -0.8569722, z: 0.26492846, w: 0.4226191}
+    m_Value: {x: 0.0063447473, y: 0.99196255, z: -0.11357623, w: 0.0554143}
   m_Size:
-    m_Target: 1.0792253
+    m_Target: 369.76553
     speed: 2
-    m_Value: 1.0327514
+    m_Value: 369.76553
   m_Ortho:
     m_Target: 0
     speed: 2
     m_Value: 0
   m_CameraSettings:
-    m_Speed: 1
-    m_SpeedNormalized: 0.5
+    m_Speed: 1.0005
+    m_SpeedNormalized: 0.49999997
     m_SpeedMin: 0.001
     m_SpeedMax: 2
     m_EasingEnabled: 1
@@ -331,83 +412,7 @@ MonoBehaviour:
   m_ReplacementString: 
   m_SceneVisActive: 1
   m_LastLockedObject: {fileID: 0}
-  m_ViewIsLockedToObject: 1
---- !u!114 &3
-MonoBehaviour:
-  m_ObjectHideFlags: 52
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 1
-  m_Script: {fileID: 12010, guid: 0000000000000000e000000000000000, type: 0}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Children:
-  - {fileID: 4}
-  - {fileID: 8}
-  m_Position:
-    serializedVersion: 2
-    x: 0
-    y: 0
-    width: 816
-    height: 947
-  m_MinSize: {x: 200, y: 200}
-  m_MaxSize: {x: 16192, y: 16192}
-  vertical: 1
-  controlID: 26709
---- !u!114 &4
-MonoBehaviour:
-  m_ObjectHideFlags: 52
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 12010, guid: 0000000000000000e000000000000000, type: 0}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Children:
-  - {fileID: 5}
-  - {fileID: 7}
-  m_Position:
-    serializedVersion: 2
-    x: 0
-    y: 0
-    width: 816
-    height: 607
-  m_MinSize: {x: 200, y: 100}
-  m_MaxSize: {x: 16192, y: 8096}
-  vertical: 0
-  controlID: 26710
---- !u!114 &5
-MonoBehaviour:
-  m_ObjectHideFlags: 52
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 1
-  m_Script: {fileID: 12006, guid: 0000000000000000e000000000000000, type: 0}
-  m_Name: GameView
-  m_EditorClassIdentifier: 
-  m_Children: []
-  m_Position:
-    serializedVersion: 2
-    x: 0
-    y: 0
-    width: 242
-    height: 607
-  m_MinSize: {x: 101, y: 121}
-  m_MaxSize: {x: 4001, y: 4021}
-  m_ActualView: {fileID: 6}
-  m_Panes:
-  - {fileID: 6}
-  m_Selected: 0
-  m_LastSelected: 0
+  m_ViewIsLockedToObject: 0
 --- !u!114 &6
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -429,9 +434,9 @@ MonoBehaviour:
     m_Tooltip: 
   m_Pos:
     serializedVersion: 2
-    x: 1920
-    y: 86
-    width: 241
+    x: 0
+    y: 73
+    width: 1026
     height: 586
   m_ViewDataDictionary: {fileID: 0}
   m_OverlayCanvas:
@@ -481,55 +486,29 @@ MonoBehaviour:
       serializedVersion: 2
       x: 0
       y: 21
-      width: 241
+      width: 1026
       height: 565
-    m_Scale: {x: 0.12552084, y: 0.12552084}
-    m_Translation: {x: 120.49999, y: 282.5}
+    m_Scale: {x: 0.5231481, y: 0.5231481}
+    m_Translation: {x: 513, y: 282.49997}
     m_MarginLeft: 0
     m_MarginRight: 0
     m_MarginTop: 0
     m_MarginBottom: 0
     m_LastShownAreaInsideMargins:
       serializedVersion: 2
-      x: -959.9999
-      y: -2250.6223
-      width: 1919.9999
-      height: 4501.2446
+      x: -980.6018
+      y: -540
+      width: 1961.2036
+      height: 1080
     m_MinimalGUI: 1
-  m_defaultScale: 0.12552084
-  m_LastWindowPixelSize: {x: 241, y: 586}
+  m_defaultScale: 0.5231481
+  m_LastWindowPixelSize: {x: 1026, y: 586}
   m_ClearInEditMode: 1
   m_NoCameraWarning: 1
   m_LowResolutionForAspectRatios: 01000000000000000000
   m_XRRenderMode: 0
   m_RenderTexture: {fileID: 0}
 --- !u!114 &7
-MonoBehaviour:
-  m_ObjectHideFlags: 52
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 12006, guid: 0000000000000000e000000000000000, type: 0}
-  m_Name: SceneView
-  m_EditorClassIdentifier: 
-  m_Children: []
-  m_Position:
-    serializedVersion: 2
-    x: 242
-    y: 0
-    width: 574
-    height: 607
-  m_MinSize: {x: 102, y: 121}
-  m_MaxSize: {x: 4002, y: 4021}
-  m_ActualView: {fileID: 2}
-  m_Panes:
-  - {fileID: 2}
-  m_Selected: 0
-  m_LastSelected: 0
---- !u!114 &8
 MonoBehaviour:
   m_ObjectHideFlags: 52
   m_CorrespondingSourceObject: {fileID: 0}
@@ -546,48 +525,19 @@ MonoBehaviour:
     serializedVersion: 2
     x: 0
     y: 607
-    width: 816
+    width: 977
     height: 340
   m_MinSize: {x: 101, y: 121}
   m_MaxSize: {x: 4001, y: 4021}
-  m_ActualView: {fileID: 9}
+  m_ActualView: {fileID: 2}
   m_Panes:
+  - {fileID: 2}
+  - {fileID: 8}
   - {fileID: 9}
   - {fileID: 10}
-  - {fileID: 11}
-  - {fileID: 12}
   m_Selected: 0
-  m_LastSelected: 1
---- !u!114 &9
-MonoBehaviour:
-  m_ObjectHideFlags: 52
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 12003, guid: 0000000000000000e000000000000000, type: 0}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_MinSize: {x: 100, y: 100}
-  m_MaxSize: {x: 4000, y: 4000}
-  m_TitleContent:
-    m_Text: Console
-    m_Image: {fileID: -4327648978806127646, guid: 0000000000000000d000000000000000,
-      type: 0}
-    m_Tooltip: 
-  m_Pos:
-    serializedVersion: 2
-    x: 1920
-    y: 693
-    width: 815
-    height: 319
-  m_ViewDataDictionary: {fileID: 0}
-  m_OverlayCanvas:
-    m_LastAppliedPresetName: Default
-    m_SaveData: []
---- !u!114 &10
+  m_LastSelected: 3
+--- !u!114 &8
 MonoBehaviour:
   m_ObjectHideFlags: 52
   m_CorrespondingSourceObject: {fileID: 0}
@@ -654,7 +604,7 @@ MonoBehaviour:
   m_CurrentEditor: 1
   m_LayerEditor:
     m_SelectedLayerIndex: 0
---- !u!114 &11
+--- !u!114 &9
 MonoBehaviour:
   m_ObjectHideFlags: 52
   m_CorrespondingSourceObject: {fileID: 0}
@@ -685,8 +635,8 @@ MonoBehaviour:
     m_SaveData: []
   m_LockTracker:
     m_IsLocked: 0
-  m_LastSelectedObjectID: 26428
---- !u!114 &12
+  m_LastSelectedObjectID: 26510
+--- !u!114 &10
 MonoBehaviour:
   m_ObjectHideFlags: 52
   m_CorrespondingSourceObject: {fileID: 0}
@@ -735,7 +685,7 @@ MonoBehaviour:
       m_IsRenaming: 0
       m_OriginalEventType: 11
       m_IsRenamingFilename: 0
-      m_ClientGUIView: {fileID: 8}
+      m_ClientGUIView: {fileID: 7}
     m_SearchString: 
     m_CreateAssetUtility:
       m_EndAction: {fileID: 0}
@@ -863,7 +813,7 @@ MonoBehaviour:
   m_ShowReferencedBuses: 1
   m_ShowBusConnections: 0
   m_ShowBusConnectionsOfSelection: 0
---- !u!114 &13
+--- !u!114 &11
 MonoBehaviour:
   m_ObjectHideFlags: 52
   m_CorrespondingSourceObject: {fileID: 0}
@@ -876,19 +826,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Children:
+  - {fileID: 12}
   - {fileID: 14}
-  - {fileID: 16}
   m_Position:
     serializedVersion: 2
-    x: 816
+    x: 977
     y: 0
-    width: 445
+    width: 381
     height: 947
   m_MinSize: {x: 100, y: 200}
   m_MaxSize: {x: 8096, y: 16192}
   vertical: 1
-  controlID: 26751
---- !u!114 &14
+  controlID: 4025
+--- !u!114 &12
 MonoBehaviour:
   m_ObjectHideFlags: 52
   m_CorrespondingSourceObject: {fileID: 0}
@@ -905,16 +855,16 @@ MonoBehaviour:
     serializedVersion: 2
     x: 0
     y: 0
-    width: 445
+    width: 381
     height: 595
-  m_MinSize: {x: 102, y: 121}
-  m_MaxSize: {x: 4002, y: 4021}
-  m_ActualView: {fileID: 15}
+  m_MinSize: {x: 101, y: 121}
+  m_MaxSize: {x: 4001, y: 4021}
+  m_ActualView: {fileID: 13}
   m_Panes:
-  - {fileID: 15}
+  - {fileID: 13}
   m_Selected: 0
   m_LastSelected: 0
---- !u!114 &15
+--- !u!114 &13
 MonoBehaviour:
   m_ObjectHideFlags: 52
   m_CorrespondingSourceObject: {fileID: 0}
@@ -935,9 +885,9 @@ MonoBehaviour:
     m_Tooltip: 
   m_Pos:
     serializedVersion: 2
-    x: 2736
-    y: 86
-    width: 443
+    x: 977
+    y: 73
+    width: 379
     height: 574
   m_ViewDataDictionary: {fileID: 0}
   m_OverlayCanvas:
@@ -946,9 +896,9 @@ MonoBehaviour:
   m_SceneHierarchy:
     m_TreeViewState:
       scrollPos: {x: 0, y: 0}
-      m_SelectedIDs: 3418ffff
-      m_LastClickedID: -59340
-      m_ExpandedIDs: 7a18ffff7e18ffff8218ffff8618ffff8a18ffffa418ffffb018ffffb818ffff7622ffffb022fffff646fffffe46ffff2c47ffff1e4bffff264bffff544bffffaa51ffffb251ffffe051fffff659ffff065affff345affff1a5cffff2a5cffff645cffffb05fffffc05fffffee5fffff2664ffff3664ffff6464ffffd26affffe26affff086bffff146bffff1c6bfffff677ffff0678ffff3478ffff207fffff307fffff487fffff547fffff5c7fffff208dffff308dffff488dffff548dffff5c8dffff1292ffff2292ffff3a92ffff4692ffff4e92ffff30a1ffff40a1ffff58a1ffff64a1ffff6ca1ffffcea3ffffdaa3ffffe2a3ffff94a6ffffa0a6ffffa8a6fffff8aaffff08abffff20abffff2cabffff34abffff36bcffff46bcffff5ebcffff6abcffff72bcffff8ed6ffff96d6ffff66e3ffff72e3ffff7ae3ffff4ceaffff58eaffff60eaffff16fbffff08670000
+      m_SelectedIDs: 8e670000
+      m_LastClickedID: 26510
+      m_ExpandedIDs: c6eeffffcaeeffffceeeffffd2eeffffd6eeffff04efffff10efffff1aefffff58efffff66efffff6cefffff72efffff7eefffff84efffff16fbffff
       m_RenameOverlay:
         m_UserAcceptedRename: 0
         m_Name: 
@@ -964,7 +914,7 @@ MonoBehaviour:
         m_IsRenaming: 0
         m_OriginalEventType: 11
         m_IsRenamingFilename: 0
-        m_ClientGUIView: {fileID: 14}
+        m_ClientGUIView: {fileID: 12}
       m_SearchString: 
     m_ExpandedScenes: []
     m_CurrenRootInstanceID: 0
@@ -972,7 +922,7 @@ MonoBehaviour:
       m_IsLocked: 0
     m_CurrentSortingName: TransformSorting
   m_WindowGUID: d1e29c3ba4df14944b20f1a7bc8fef37
---- !u!114 &16
+--- !u!114 &14
 MonoBehaviour:
   m_ObjectHideFlags: 52
   m_CorrespondingSourceObject: {fileID: 0}
@@ -989,17 +939,17 @@ MonoBehaviour:
     serializedVersion: 2
     x: 0
     y: 595
-    width: 445
+    width: 381
     height: 352
   m_MinSize: {x: 232, y: 271}
   m_MaxSize: {x: 10002, y: 10021}
-  m_ActualView: {fileID: 17}
+  m_ActualView: {fileID: 15}
   m_Panes:
-  - {fileID: 17}
-  - {fileID: 18}
+  - {fileID: 15}
+  - {fileID: 16}
   m_Selected: 0
   m_LastSelected: 1
---- !u!114 &17
+--- !u!114 &15
 MonoBehaviour:
   m_ObjectHideFlags: 52
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1020,9 +970,9 @@ MonoBehaviour:
     m_Tooltip: 
   m_Pos:
     serializedVersion: 2
-    x: 2736
-    y: 681
-    width: 443
+    x: 977
+    y: 668
+    width: 379
     height: 331
   m_ViewDataDictionary: {fileID: 0}
   m_OverlayCanvas:
@@ -1041,7 +991,7 @@ MonoBehaviour:
     m_SkipHidden: 0
     m_SearchArea: 1
     m_Folders:
-    - Assets/_game/ViewSettings
+    - Assets/_game/Data
     m_Globs: []
     m_OriginalText: 
   m_ViewMode: 0
@@ -1055,7 +1005,7 @@ MonoBehaviour:
     scrollPos: {x: 0, y: 180}
     m_SelectedIDs: b0470000
     m_LastClickedID: 18352
-    m_ExpandedIDs: 56b9ffffffffffff00000000fa670000fc670000fe67000000680000026800000468000006680000086800000a6800000c6800000e68000010680000126800001468000016680000186800001a6800001c6800005a6800005e680000606800006a68000032690000ba6e0000
+    m_ExpandedIDs: ffffffff000000002468000026680000286800002a6800002c6800002e68000030680000326800003468000036680000386800003a6800003c6800003e68000040680000426800004468000046680000486800004a6800004c6800004e68000050680000526800005468000056680000586800005a6800005c6800005e68000060680000626800006468000066680000686800006a6800006c6800006e68000070680000726800007468000076680000aa680000
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -1080,10 +1030,10 @@ MonoBehaviour:
       m_Icon: {fileID: 0}
       m_ResourceFile: 
   m_AssetTreeState:
-    scrollPos: {x: 0, y: 0}
-    m_SelectedIDs: 3418ffff
+    scrollPos: {x: 0, y: 579}
+    m_SelectedIDs: 8e670000
     m_LastClickedID: 0
-    m_ExpandedIDs: 56b9ffffffffffff00000000fa670000fc670000fe67000000680000026800000468000006680000086800000a6800000c6800000e68000010680000126800001468000016680000186800001a6800001c6800005a6800005e680000606800006a68000032690000ba6e0000
+    m_ExpandedIDs: ffffffff000000002468000026680000286800002a6800002c6800002e68000030680000326800003468000036680000386800003a6800003c6800003e68000040680000426800004468000046680000486800004a6800004c6800004e68000050680000526800005468000056680000586800005a6800005c6800005e68000060680000626800006468000066680000686800006a6800006c6800006e68000070680000726800007468000076680000aa680000
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -1099,7 +1049,7 @@ MonoBehaviour:
       m_IsRenaming: 0
       m_OriginalEventType: 11
       m_IsRenamingFilename: 1
-      m_ClientGUIView: {fileID: 16}
+      m_ClientGUIView: {fileID: 14}
     m_SearchString: 
     m_CreateAssetUtility:
       m_EndAction: {fileID: 0}
@@ -1108,8 +1058,8 @@ MonoBehaviour:
       m_Icon: {fileID: 0}
       m_ResourceFile: 
   m_ListAreaState:
-    m_SelectedInstanceIDs: 3418ffff
-    m_LastClickedInstanceID: -59340
+    m_SelectedInstanceIDs: 8e670000
+    m_LastClickedInstanceID: 26510
     m_HadKeyboardFocusLastEvent: 0
     m_ExpandedInstanceIDs: c6230000
     m_RenameOverlay:
@@ -1139,7 +1089,7 @@ MonoBehaviour:
     m_GridSize: 64
   m_SkipHiddenPackages: 0
   m_DirectoriesAreaWidth: 201
---- !u!114 &18
+--- !u!114 &16
 MonoBehaviour:
   m_ObjectHideFlags: 52
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1174,14 +1124,14 @@ MonoBehaviour:
     m_CachedPref: 183
     m_ControlHash: 1412526313
     m_PrefName: Preview_InspectorPreview
-  m_LastInspectedObjectInstanceID: -1
+  m_LastInspectedObjectInstanceID: -4368
   m_LastVerticalScrollValue: 0
   m_GlobalObjectId: 
   m_InspectorMode: 0
   m_LockTracker:
     m_IsLocked: 0
   m_PreviewWindow: {fileID: 0}
---- !u!114 &19
+--- !u!114 &17
 MonoBehaviour:
   m_ObjectHideFlags: 52
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1196,22 +1146,23 @@ MonoBehaviour:
   m_Children: []
   m_Position:
     serializedVersion: 2
-    x: 1261
+    x: 1358
     y: 0
-    width: 659
+    width: 562
     height: 947
   m_MinSize: {x: 276, y: 121}
   m_MaxSize: {x: 4001, y: 4021}
-  m_ActualView: {fileID: 20}
+  m_ActualView: {fileID: 18}
   m_Panes:
+  - {fileID: 18}
+  - {fileID: 19}
   - {fileID: 20}
   - {fileID: 21}
   - {fileID: 22}
   - {fileID: 23}
-  - {fileID: 24}
   m_Selected: 0
   m_LastSelected: 1
---- !u!114 &20
+--- !u!114 &18
 MonoBehaviour:
   m_ObjectHideFlags: 52
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1232,9 +1183,9 @@ MonoBehaviour:
     m_Tooltip: 
   m_Pos:
     serializedVersion: 2
-    x: 3181
-    y: 86
-    width: 658
+    x: 1358
+    y: 73
+    width: 561
     height: 926
   m_ViewDataDictionary: {fileID: 0}
   m_OverlayCanvas:
@@ -1243,7 +1194,7 @@ MonoBehaviour:
   m_ObjectsLockedBeforeSerialization: []
   m_InstanceIDsLockedBeforeSerialization: 
   m_PreviewResizer:
-    m_CachedPref: 355
+    m_CachedPref: 274
     m_ControlHash: 1412526313
     m_PrefName: Preview_InspectorPreview
   m_LastInspectedObjectInstanceID: -1
@@ -1253,7 +1204,1690 @@ MonoBehaviour:
   m_LockTracker:
     m_IsLocked: 0
   m_PreviewWindow: {fileID: 0}
---- !u!114 &21
+--- !u!114 &19
+MonoBehaviour:
+  m_ObjectHideFlags: 52
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1f5cd2e0ccf7a56478ad918ff9829c5c, type: 3}
+  m_Name: NuGetForUnity
+  m_EditorClassIdentifier: 
+  m_MinSize: {x: 100, y: 100}
+  m_MaxSize: {x: 4000, y: 4000}
+  m_TitleContent:
+    m_Text: NuGet For Unity
+    m_Image: {fileID: 0}
+    m_Tooltip: 
+  m_Pos:
+    serializedVersion: 2
+    x: 3278
+    y: 86
+    width: 561
+    height: 926
+  m_ViewDataDictionary: {fileID: 0}
+  m_OverlayCanvas:
+    m_LastAppliedPresetName: Default
+    m_SaveData: []
+  defaultIcon: {fileID: 2800000, guid: 0efa0a38ec1ce484896502259d7ee8f7, type: 3}
+  hasRefreshed: 1
+  numberToSkip: 0
+  serializableAvailablePackages:
+  - packageLocal:
+      <Id>k__BackingField: 
+      <PackageVersion>k__BackingField:
+        <FullVersion>k__BackingField: 
+      <IsManuallyInstalled>k__BackingField: 0
+      icon: {fileID: 0}
+      <DownloadUrl>k__BackingField: 
+      <IconUrl>k__BackingField: 
+      <RepositoryBranch>k__BackingField: 
+      <Dependencies>k__BackingField: []
+      <Authors>k__BackingField: []
+      <Description>k__BackingField: 
+      <TotalDownloads>k__BackingField: 0
+      <LicenseUrl>k__BackingField: 
+      <ProjectUrl>k__BackingField: 
+      <ReleaseNotes>k__BackingField: 
+      <RepositoryCommit>k__BackingField: 
+      <RepositoryType>k__BackingField: 0
+      <RepositoryUrl>k__BackingField: 
+      <Summary>k__BackingField: 
+      <Title>k__BackingField: 
+      packageSource:
+        <Name>k__BackingField: 
+        <SavedPath>k__BackingField: 
+        <IsEnabled>k__BackingField: 0
+      versions: []
+    packageType: 2
+    packageV2:
+      <Id>k__BackingField: 
+      <PackageVersion>k__BackingField:
+        <FullVersion>k__BackingField: 
+      <IsManuallyInstalled>k__BackingField: 0
+      icon: {fileID: 0}
+      <DownloadUrl>k__BackingField: 
+      <IconUrl>k__BackingField: 
+      <RepositoryBranch>k__BackingField: 
+      <Dependencies>k__BackingField: []
+      <Authors>k__BackingField: []
+      <Description>k__BackingField: 
+      <TotalDownloads>k__BackingField: 0
+      <LicenseUrl>k__BackingField: 
+      <ProjectUrl>k__BackingField: 
+      <ReleaseNotes>k__BackingField: 
+      <RepositoryCommit>k__BackingField: 
+      <RepositoryType>k__BackingField: 0
+      <RepositoryUrl>k__BackingField: 
+      <Summary>k__BackingField: 
+      <Title>k__BackingField: 
+      packageSourceV2:
+        <Name>k__BackingField: 
+        <SavedPath>k__BackingField: 
+        <SavedProtocolVersion>k__BackingField: 
+        <UserName>k__BackingField: 
+        <SavedPassword>k__BackingField: 
+        <IsEnabled>k__BackingField: 0
+      versions: []
+    packageV3:
+      <Id>k__BackingField: SQLitePCLRaw.lib.e_sqlite3
+      <PackageVersion>k__BackingField:
+        <FullVersion>k__BackingField: 2.1.6
+      <IsManuallyInstalled>k__BackingField: 0
+      dependencies: []
+      dependenciesFetched: 0
+      icon: {fileID: 0}
+      iconUrl: 
+      packageSource:
+        <Name>k__BackingField: nuget.org
+        <SavedPath>k__BackingField: https://api.nuget.org/v3/index.json
+        <SavedProtocolVersion>k__BackingField: 
+        <UpdateSearchBatchSize>k__BackingField: 20
+        <UserName>k__BackingField: 
+        <SavedPassword>k__BackingField: 
+        <IsEnabled>k__BackingField: 1
+      <Versions>k__BackingField:
+      - <FullVersion>k__BackingField: 2.1.6
+      - <FullVersion>k__BackingField: 2.1.5
+      - <FullVersion>k__BackingField: 2.1.4
+      - <FullVersion>k__BackingField: 2.1.3
+      - <FullVersion>k__BackingField: 2.1.2
+      - <FullVersion>k__BackingField: 2.1.1
+      - <FullVersion>k__BackingField: 2.1.0
+      - <FullVersion>k__BackingField: 2.0.7
+      - <FullVersion>k__BackingField: 2.0.6
+      - <FullVersion>k__BackingField: 2.0.5
+      - <FullVersion>k__BackingField: 2.0.4
+      - <FullVersion>k__BackingField: 2.0.3
+      - <FullVersion>k__BackingField: 2.0.2
+      - <FullVersion>k__BackingField: 2.0.1
+      - <FullVersion>k__BackingField: 2.0.0
+      <Authors>k__BackingField:
+      - Eric Sink
+      <Description>k__BackingField: This package contains platform-specific native
+        code builds of SQLite for use with SQLitePCLRaw.  To use this, you need SQLitePCLRaw.core
+        as well as one of the SQLitePCLRaw.provider.* packages.  Convenience packages
+        are named SQLitePCLRaw.bundle_*.
+      <TotalDownloads>k__BackingField: 111291255
+      <LicenseUrl>k__BackingField: https://www.nuget.org/packages/SQLitePCLRaw.lib.e_sqlite3/2.1.6/license
+      <ProjectUrl>k__BackingField: 
+      <Summary>k__BackingField: SQLitePCLRaw is a Portable Class Library (PCL) for
+        low-level (raw) access to SQLite
+      <Title>k__BackingField: SQLitePCLRaw.lib.e_sqlite3
+  - packageLocal:
+      <Id>k__BackingField: 
+      <PackageVersion>k__BackingField:
+        <FullVersion>k__BackingField: 
+      <IsManuallyInstalled>k__BackingField: 0
+      icon: {fileID: 0}
+      <DownloadUrl>k__BackingField: 
+      <IconUrl>k__BackingField: 
+      <RepositoryBranch>k__BackingField: 
+      <Dependencies>k__BackingField: []
+      <Authors>k__BackingField: []
+      <Description>k__BackingField: 
+      <TotalDownloads>k__BackingField: 0
+      <LicenseUrl>k__BackingField: 
+      <ProjectUrl>k__BackingField: 
+      <ReleaseNotes>k__BackingField: 
+      <RepositoryCommit>k__BackingField: 
+      <RepositoryType>k__BackingField: 0
+      <RepositoryUrl>k__BackingField: 
+      <Summary>k__BackingField: 
+      <Title>k__BackingField: 
+      packageSource:
+        <Name>k__BackingField: 
+        <SavedPath>k__BackingField: 
+        <IsEnabled>k__BackingField: 0
+      versions: []
+    packageType: 2
+    packageV2:
+      <Id>k__BackingField: 
+      <PackageVersion>k__BackingField:
+        <FullVersion>k__BackingField: 
+      <IsManuallyInstalled>k__BackingField: 0
+      icon: {fileID: 0}
+      <DownloadUrl>k__BackingField: 
+      <IconUrl>k__BackingField: 
+      <RepositoryBranch>k__BackingField: 
+      <Dependencies>k__BackingField: []
+      <Authors>k__BackingField: []
+      <Description>k__BackingField: 
+      <TotalDownloads>k__BackingField: 0
+      <LicenseUrl>k__BackingField: 
+      <ProjectUrl>k__BackingField: 
+      <ReleaseNotes>k__BackingField: 
+      <RepositoryCommit>k__BackingField: 
+      <RepositoryType>k__BackingField: 0
+      <RepositoryUrl>k__BackingField: 
+      <Summary>k__BackingField: 
+      <Title>k__BackingField: 
+      packageSourceV2:
+        <Name>k__BackingField: 
+        <SavedPath>k__BackingField: 
+        <SavedProtocolVersion>k__BackingField: 
+        <UserName>k__BackingField: 
+        <SavedPassword>k__BackingField: 
+        <IsEnabled>k__BackingField: 0
+      versions: []
+    packageV3:
+      <Id>k__BackingField: SQLitePCLRaw.bundle_e_sqlite3
+      <PackageVersion>k__BackingField:
+        <FullVersion>k__BackingField: 2.1.6
+      <IsManuallyInstalled>k__BackingField: 0
+      dependencies: []
+      dependenciesFetched: 0
+      icon: {fileID: 0}
+      iconUrl: 
+      packageSource:
+        <Name>k__BackingField: nuget.org
+        <SavedPath>k__BackingField: https://api.nuget.org/v3/index.json
+        <SavedProtocolVersion>k__BackingField: 
+        <UpdateSearchBatchSize>k__BackingField: 20
+        <UserName>k__BackingField: 
+        <SavedPassword>k__BackingField: 
+        <IsEnabled>k__BackingField: 1
+      <Versions>k__BackingField:
+      - <FullVersion>k__BackingField: 2.1.6
+      - <FullVersion>k__BackingField: 2.1.5
+      - <FullVersion>k__BackingField: 2.1.4
+      - <FullVersion>k__BackingField: 2.1.3
+      - <FullVersion>k__BackingField: 2.1.2
+      - <FullVersion>k__BackingField: 2.1.1
+      - <FullVersion>k__BackingField: 2.1.0
+      - <FullVersion>k__BackingField: 2.0.7
+      - <FullVersion>k__BackingField: 2.0.6
+      - <FullVersion>k__BackingField: 2.0.5
+      - <FullVersion>k__BackingField: 2.0.4
+      - <FullVersion>k__BackingField: 2.0.3
+      - <FullVersion>k__BackingField: 2.0.2
+      - <FullVersion>k__BackingField: 2.0.1
+      - <FullVersion>k__BackingField: 2.0.0
+      - <FullVersion>k__BackingField: 1.1.14
+      - <FullVersion>k__BackingField: 1.1.13
+      - <FullVersion>k__BackingField: 1.1.12
+      - <FullVersion>k__BackingField: 1.1.11
+      - <FullVersion>k__BackingField: 1.1.10
+      - <FullVersion>k__BackingField: 1.1.9
+      - <FullVersion>k__BackingField: 1.1.8
+      - <FullVersion>k__BackingField: 1.1.7
+      - <FullVersion>k__BackingField: 1.1.6
+      - <FullVersion>k__BackingField: 1.1.5
+      - <FullVersion>k__BackingField: 1.1.4
+      - <FullVersion>k__BackingField: 1.1.3
+      - <FullVersion>k__BackingField: 1.1.2
+      - <FullVersion>k__BackingField: 1.1.1
+      - <FullVersion>k__BackingField: 1.1.0
+      - <FullVersion>k__BackingField: 1.0.1
+      - <FullVersion>k__BackingField: 1.0.0
+      <Authors>k__BackingField:
+      - Eric Sink
+      <Description>k__BackingField: 'This ''batteries-included'' bundle brings in
+        SQLitePCLRaw.core and the necessary stuff for certain common use cases. 
+        Call SQLitePCL.Batteries.Init().  Policy of this bundle: e_sqlite3 included'
+      <TotalDownloads>k__BackingField: 102576808
+      <LicenseUrl>k__BackingField: https://www.nuget.org/packages/SQLitePCLRaw.bundle_e_sqlite3/2.1.6/license
+      <ProjectUrl>k__BackingField: 
+      <Summary>k__BackingField: 
+      <Title>k__BackingField: SQLitePCLRaw.bundle_e_sqlite3
+  - packageLocal:
+      <Id>k__BackingField: 
+      <PackageVersion>k__BackingField:
+        <FullVersion>k__BackingField: 
+      <IsManuallyInstalled>k__BackingField: 0
+      icon: {fileID: 0}
+      <DownloadUrl>k__BackingField: 
+      <IconUrl>k__BackingField: 
+      <RepositoryBranch>k__BackingField: 
+      <Dependencies>k__BackingField: []
+      <Authors>k__BackingField: []
+      <Description>k__BackingField: 
+      <TotalDownloads>k__BackingField: 0
+      <LicenseUrl>k__BackingField: 
+      <ProjectUrl>k__BackingField: 
+      <ReleaseNotes>k__BackingField: 
+      <RepositoryCommit>k__BackingField: 
+      <RepositoryType>k__BackingField: 0
+      <RepositoryUrl>k__BackingField: 
+      <Summary>k__BackingField: 
+      <Title>k__BackingField: 
+      packageSource:
+        <Name>k__BackingField: 
+        <SavedPath>k__BackingField: 
+        <IsEnabled>k__BackingField: 0
+      versions: []
+    packageType: 2
+    packageV2:
+      <Id>k__BackingField: 
+      <PackageVersion>k__BackingField:
+        <FullVersion>k__BackingField: 
+      <IsManuallyInstalled>k__BackingField: 0
+      icon: {fileID: 0}
+      <DownloadUrl>k__BackingField: 
+      <IconUrl>k__BackingField: 
+      <RepositoryBranch>k__BackingField: 
+      <Dependencies>k__BackingField: []
+      <Authors>k__BackingField: []
+      <Description>k__BackingField: 
+      <TotalDownloads>k__BackingField: 0
+      <LicenseUrl>k__BackingField: 
+      <ProjectUrl>k__BackingField: 
+      <ReleaseNotes>k__BackingField: 
+      <RepositoryCommit>k__BackingField: 
+      <RepositoryType>k__BackingField: 0
+      <RepositoryUrl>k__BackingField: 
+      <Summary>k__BackingField: 
+      <Title>k__BackingField: 
+      packageSourceV2:
+        <Name>k__BackingField: 
+        <SavedPath>k__BackingField: 
+        <SavedProtocolVersion>k__BackingField: 
+        <UserName>k__BackingField: 
+        <SavedPassword>k__BackingField: 
+        <IsEnabled>k__BackingField: 0
+      versions: []
+    packageV3:
+      <Id>k__BackingField: SQLitePCLRaw.provider.e_sqlite3
+      <PackageVersion>k__BackingField:
+        <FullVersion>k__BackingField: 2.1.6
+      <IsManuallyInstalled>k__BackingField: 0
+      dependencies: []
+      dependenciesFetched: 0
+      icon: {fileID: 0}
+      iconUrl: 
+      packageSource:
+        <Name>k__BackingField: nuget.org
+        <SavedPath>k__BackingField: https://api.nuget.org/v3/index.json
+        <SavedProtocolVersion>k__BackingField: 
+        <UpdateSearchBatchSize>k__BackingField: 20
+        <UserName>k__BackingField: 
+        <SavedPassword>k__BackingField: 
+        <IsEnabled>k__BackingField: 1
+      <Versions>k__BackingField:
+      - <FullVersion>k__BackingField: 2.1.6
+      - <FullVersion>k__BackingField: 2.1.5
+      - <FullVersion>k__BackingField: 2.1.4
+      - <FullVersion>k__BackingField: 2.1.3
+      - <FullVersion>k__BackingField: 2.1.2
+      - <FullVersion>k__BackingField: 2.1.1
+      - <FullVersion>k__BackingField: 2.1.0
+      - <FullVersion>k__BackingField: 2.0.7
+      - <FullVersion>k__BackingField: 2.0.6
+      - <FullVersion>k__BackingField: 2.0.5
+      - <FullVersion>k__BackingField: 2.0.4
+      - <FullVersion>k__BackingField: 2.0.3
+      - <FullVersion>k__BackingField: 2.0.2
+      - <FullVersion>k__BackingField: 2.0.1
+      - <FullVersion>k__BackingField: 2.0.0
+      <Authors>k__BackingField:
+      - Eric Sink
+      <Description>k__BackingField: SQLitePCLRaw is a Portable Class Library (PCL)
+        for low-level (raw) access to SQLite.  Packages named 'SQLitePCLRaw.provider.*'
+        (like this one) are 'plugins' that allow SQLitePCLRaw.core to access the
+        native SQLite library.  This provider does DllImport of 'e_sqlite3', the
+        SQLite builds provided with SQLitePCLRaw.
+      <TotalDownloads>k__BackingField: 56530834
+      <LicenseUrl>k__BackingField: https://www.nuget.org/packages/SQLitePCLRaw.provider.e_sqlite3/2.1.6/license
+      <ProjectUrl>k__BackingField: 
+      <Summary>k__BackingField: 
+      <Title>k__BackingField: SQLitePCLRaw.provider.e_sqlite3
+  - packageLocal:
+      <Id>k__BackingField: 
+      <PackageVersion>k__BackingField:
+        <FullVersion>k__BackingField: 
+      <IsManuallyInstalled>k__BackingField: 0
+      icon: {fileID: 0}
+      <DownloadUrl>k__BackingField: 
+      <IconUrl>k__BackingField: 
+      <RepositoryBranch>k__BackingField: 
+      <Dependencies>k__BackingField: []
+      <Authors>k__BackingField: []
+      <Description>k__BackingField: 
+      <TotalDownloads>k__BackingField: 0
+      <LicenseUrl>k__BackingField: 
+      <ProjectUrl>k__BackingField: 
+      <ReleaseNotes>k__BackingField: 
+      <RepositoryCommit>k__BackingField: 
+      <RepositoryType>k__BackingField: 0
+      <RepositoryUrl>k__BackingField: 
+      <Summary>k__BackingField: 
+      <Title>k__BackingField: 
+      packageSource:
+        <Name>k__BackingField: 
+        <SavedPath>k__BackingField: 
+        <IsEnabled>k__BackingField: 0
+      versions: []
+    packageType: 2
+    packageV2:
+      <Id>k__BackingField: 
+      <PackageVersion>k__BackingField:
+        <FullVersion>k__BackingField: 
+      <IsManuallyInstalled>k__BackingField: 0
+      icon: {fileID: 0}
+      <DownloadUrl>k__BackingField: 
+      <IconUrl>k__BackingField: 
+      <RepositoryBranch>k__BackingField: 
+      <Dependencies>k__BackingField: []
+      <Authors>k__BackingField: []
+      <Description>k__BackingField: 
+      <TotalDownloads>k__BackingField: 0
+      <LicenseUrl>k__BackingField: 
+      <ProjectUrl>k__BackingField: 
+      <ReleaseNotes>k__BackingField: 
+      <RepositoryCommit>k__BackingField: 
+      <RepositoryType>k__BackingField: 0
+      <RepositoryUrl>k__BackingField: 
+      <Summary>k__BackingField: 
+      <Title>k__BackingField: 
+      packageSourceV2:
+        <Name>k__BackingField: 
+        <SavedPath>k__BackingField: 
+        <SavedProtocolVersion>k__BackingField: 
+        <UserName>k__BackingField: 
+        <SavedPassword>k__BackingField: 
+        <IsEnabled>k__BackingField: 0
+      versions: []
+    packageV3:
+      <Id>k__BackingField: SQLitePCLRaw.lib.e_sqlite3.linux
+      <PackageVersion>k__BackingField:
+        <FullVersion>k__BackingField: 1.1.14
+      <IsManuallyInstalled>k__BackingField: 0
+      dependencies: []
+      dependenciesFetched: 0
+      icon: {fileID: 0}
+      iconUrl: 
+      packageSource:
+        <Name>k__BackingField: nuget.org
+        <SavedPath>k__BackingField: https://api.nuget.org/v3/index.json
+        <SavedProtocolVersion>k__BackingField: 
+        <UpdateSearchBatchSize>k__BackingField: 20
+        <UserName>k__BackingField: 
+        <SavedPassword>k__BackingField: 
+        <IsEnabled>k__BackingField: 1
+      <Versions>k__BackingField:
+      - <FullVersion>k__BackingField: 1.1.14
+      - <FullVersion>k__BackingField: 1.1.13
+      - <FullVersion>k__BackingField: 1.1.12
+      - <FullVersion>k__BackingField: 1.1.11
+      - <FullVersion>k__BackingField: 1.1.10
+      - <FullVersion>k__BackingField: 1.1.9
+      - <FullVersion>k__BackingField: 1.1.8
+      - <FullVersion>k__BackingField: 1.1.7
+      - <FullVersion>k__BackingField: 1.1.6
+      - <FullVersion>k__BackingField: 1.1.5
+      - <FullVersion>k__BackingField: 1.1.4
+      - <FullVersion>k__BackingField: 1.1.3
+      - <FullVersion>k__BackingField: 1.1.2
+      - <FullVersion>k__BackingField: 1.1.1
+      - <FullVersion>k__BackingField: 1.1.0
+      - <FullVersion>k__BackingField: 1.0.1
+      - <FullVersion>k__BackingField: 1.0.0
+      <Authors>k__BackingField:
+      - Eric Sink, D. Richard Hipp, et al
+      <Description>k__BackingField: This package contains a platform-specific native
+        code build of SQLite for use with SQLitePCL.raw.  To use this, you need SQLitePCLRaw.core
+        as well as SQLitePCLRaw.provider.e_sqlite3.net45 or similar.  Convenience
+        packages are named SQLitePCLRaw.bundle_*.
+      <TotalDownloads>k__BackingField: 42088754
+      <LicenseUrl>k__BackingField: https://www.nuget.org/packages/SQLitePCLRaw.lib.e_sqlite3.linux/1.1.14/license
+      <ProjectUrl>k__BackingField: https://github.com/ericsink/SQLitePCL.raw
+      <Summary>k__BackingField: A Portable Class Library (PCL) for low-level (raw)
+        access to SQLite
+      <Title>k__BackingField: Native code only (e_sqlite3, linux) for SQLitePCLRaw
+  - packageLocal:
+      <Id>k__BackingField: 
+      <PackageVersion>k__BackingField:
+        <FullVersion>k__BackingField: 
+      <IsManuallyInstalled>k__BackingField: 0
+      icon: {fileID: 0}
+      <DownloadUrl>k__BackingField: 
+      <IconUrl>k__BackingField: 
+      <RepositoryBranch>k__BackingField: 
+      <Dependencies>k__BackingField: []
+      <Authors>k__BackingField: []
+      <Description>k__BackingField: 
+      <TotalDownloads>k__BackingField: 0
+      <LicenseUrl>k__BackingField: 
+      <ProjectUrl>k__BackingField: 
+      <ReleaseNotes>k__BackingField: 
+      <RepositoryCommit>k__BackingField: 
+      <RepositoryType>k__BackingField: 0
+      <RepositoryUrl>k__BackingField: 
+      <Summary>k__BackingField: 
+      <Title>k__BackingField: 
+      packageSource:
+        <Name>k__BackingField: 
+        <SavedPath>k__BackingField: 
+        <IsEnabled>k__BackingField: 0
+      versions: []
+    packageType: 2
+    packageV2:
+      <Id>k__BackingField: 
+      <PackageVersion>k__BackingField:
+        <FullVersion>k__BackingField: 
+      <IsManuallyInstalled>k__BackingField: 0
+      icon: {fileID: 0}
+      <DownloadUrl>k__BackingField: 
+      <IconUrl>k__BackingField: 
+      <RepositoryBranch>k__BackingField: 
+      <Dependencies>k__BackingField: []
+      <Authors>k__BackingField: []
+      <Description>k__BackingField: 
+      <TotalDownloads>k__BackingField: 0
+      <LicenseUrl>k__BackingField: 
+      <ProjectUrl>k__BackingField: 
+      <ReleaseNotes>k__BackingField: 
+      <RepositoryCommit>k__BackingField: 
+      <RepositoryType>k__BackingField: 0
+      <RepositoryUrl>k__BackingField: 
+      <Summary>k__BackingField: 
+      <Title>k__BackingField: 
+      packageSourceV2:
+        <Name>k__BackingField: 
+        <SavedPath>k__BackingField: 
+        <SavedProtocolVersion>k__BackingField: 
+        <UserName>k__BackingField: 
+        <SavedPassword>k__BackingField: 
+        <IsEnabled>k__BackingField: 0
+      versions: []
+    packageV3:
+      <Id>k__BackingField: SQLitePCLRaw.lib.e_sqlite3.osx
+      <PackageVersion>k__BackingField:
+        <FullVersion>k__BackingField: 1.1.14
+      <IsManuallyInstalled>k__BackingField: 0
+      dependencies: []
+      dependenciesFetched: 0
+      icon: {fileID: 0}
+      iconUrl: 
+      packageSource:
+        <Name>k__BackingField: nuget.org
+        <SavedPath>k__BackingField: https://api.nuget.org/v3/index.json
+        <SavedProtocolVersion>k__BackingField: 
+        <UpdateSearchBatchSize>k__BackingField: 20
+        <UserName>k__BackingField: 
+        <SavedPassword>k__BackingField: 
+        <IsEnabled>k__BackingField: 1
+      <Versions>k__BackingField:
+      - <FullVersion>k__BackingField: 1.1.14
+      - <FullVersion>k__BackingField: 1.1.13
+      - <FullVersion>k__BackingField: 1.1.12
+      - <FullVersion>k__BackingField: 1.1.11
+      - <FullVersion>k__BackingField: 1.1.10
+      - <FullVersion>k__BackingField: 1.1.9
+      - <FullVersion>k__BackingField: 1.1.8
+      - <FullVersion>k__BackingField: 1.1.7
+      - <FullVersion>k__BackingField: 1.1.6
+      - <FullVersion>k__BackingField: 1.1.5
+      - <FullVersion>k__BackingField: 1.1.4
+      - <FullVersion>k__BackingField: 1.1.3
+      - <FullVersion>k__BackingField: 1.1.2
+      - <FullVersion>k__BackingField: 1.1.1
+      - <FullVersion>k__BackingField: 1.1.0
+      - <FullVersion>k__BackingField: 1.0.1
+      - <FullVersion>k__BackingField: 1.0.0
+      <Authors>k__BackingField:
+      - Eric Sink, D. Richard Hipp, et al
+      <Description>k__BackingField: This package contains a platform-specific native
+        code build of SQLite for use with SQLitePCL.raw.  To use this, you need SQLitePCLRaw.core
+        as well as SQLitePCLRaw.provider.e_sqlite3.net45 or similar.  Convenience
+        packages are named SQLitePCLRaw.bundle_*.
+      <TotalDownloads>k__BackingField: 42052649
+      <LicenseUrl>k__BackingField: https://www.nuget.org/packages/SQLitePCLRaw.lib.e_sqlite3.osx/1.1.14/license
+      <ProjectUrl>k__BackingField: https://github.com/ericsink/SQLitePCL.raw
+      <Summary>k__BackingField: A Portable Class Library (PCL) for low-level (raw)
+        access to SQLite
+      <Title>k__BackingField: Native code only (e_sqlite3, osx) for SQLitePCLRaw
+  - packageLocal:
+      <Id>k__BackingField: 
+      <PackageVersion>k__BackingField:
+        <FullVersion>k__BackingField: 
+      <IsManuallyInstalled>k__BackingField: 0
+      icon: {fileID: 0}
+      <DownloadUrl>k__BackingField: 
+      <IconUrl>k__BackingField: 
+      <RepositoryBranch>k__BackingField: 
+      <Dependencies>k__BackingField: []
+      <Authors>k__BackingField: []
+      <Description>k__BackingField: 
+      <TotalDownloads>k__BackingField: 0
+      <LicenseUrl>k__BackingField: 
+      <ProjectUrl>k__BackingField: 
+      <ReleaseNotes>k__BackingField: 
+      <RepositoryCommit>k__BackingField: 
+      <RepositoryType>k__BackingField: 0
+      <RepositoryUrl>k__BackingField: 
+      <Summary>k__BackingField: 
+      <Title>k__BackingField: 
+      packageSource:
+        <Name>k__BackingField: 
+        <SavedPath>k__BackingField: 
+        <IsEnabled>k__BackingField: 0
+      versions: []
+    packageType: 2
+    packageV2:
+      <Id>k__BackingField: 
+      <PackageVersion>k__BackingField:
+        <FullVersion>k__BackingField: 
+      <IsManuallyInstalled>k__BackingField: 0
+      icon: {fileID: 0}
+      <DownloadUrl>k__BackingField: 
+      <IconUrl>k__BackingField: 
+      <RepositoryBranch>k__BackingField: 
+      <Dependencies>k__BackingField: []
+      <Authors>k__BackingField: []
+      <Description>k__BackingField: 
+      <TotalDownloads>k__BackingField: 0
+      <LicenseUrl>k__BackingField: 
+      <ProjectUrl>k__BackingField: 
+      <ReleaseNotes>k__BackingField: 
+      <RepositoryCommit>k__BackingField: 
+      <RepositoryType>k__BackingField: 0
+      <RepositoryUrl>k__BackingField: 
+      <Summary>k__BackingField: 
+      <Title>k__BackingField: 
+      packageSourceV2:
+        <Name>k__BackingField: 
+        <SavedPath>k__BackingField: 
+        <SavedProtocolVersion>k__BackingField: 
+        <UserName>k__BackingField: 
+        <SavedPassword>k__BackingField: 
+        <IsEnabled>k__BackingField: 0
+      versions: []
+    packageV3:
+      <Id>k__BackingField: SQLitePCLRaw.lib.e_sqlite3.v110_xp
+      <PackageVersion>k__BackingField:
+        <FullVersion>k__BackingField: 1.1.15
+      <IsManuallyInstalled>k__BackingField: 0
+      dependencies: []
+      dependenciesFetched: 0
+      icon: {fileID: 0}
+      iconUrl: 
+      packageSource:
+        <Name>k__BackingField: nuget.org
+        <SavedPath>k__BackingField: https://api.nuget.org/v3/index.json
+        <SavedProtocolVersion>k__BackingField: 
+        <UpdateSearchBatchSize>k__BackingField: 20
+        <UserName>k__BackingField: 
+        <SavedPassword>k__BackingField: 
+        <IsEnabled>k__BackingField: 1
+      <Versions>k__BackingField:
+      - <FullVersion>k__BackingField: 1.1.15
+      - <FullVersion>k__BackingField: 1.1.14
+      - <FullVersion>k__BackingField: 1.1.13
+      - <FullVersion>k__BackingField: 1.1.12
+      - <FullVersion>k__BackingField: 1.1.11
+      - <FullVersion>k__BackingField: 1.1.10
+      - <FullVersion>k__BackingField: 1.1.9
+      - <FullVersion>k__BackingField: 1.1.8
+      - <FullVersion>k__BackingField: 1.1.7
+      - <FullVersion>k__BackingField: 1.1.6
+      - <FullVersion>k__BackingField: 1.1.5
+      - <FullVersion>k__BackingField: 1.1.4
+      - <FullVersion>k__BackingField: 1.1.3
+      - <FullVersion>k__BackingField: 1.1.2
+      - <FullVersion>k__BackingField: 1.1.1
+      - <FullVersion>k__BackingField: 1.1.0
+      - <FullVersion>k__BackingField: 1.0.1
+      - <FullVersion>k__BackingField: 1.0.0
+      <Authors>k__BackingField:
+      - Eric Sink, D. Richard Hipp, et al
+      <Description>k__BackingField: This package contains a platform-specific native
+        code build of SQLite for use with SQLitePCL.raw.  To use this, you need SQLitePCLRaw.core
+        as well as SQLitePCLRaw.provider.e_sqlite3.net45 or similar.  Convenience
+        packages are named SQLitePCLRaw.bundle_*.
+      <TotalDownloads>k__BackingField: 42096788
+      <LicenseUrl>k__BackingField: https://www.nuget.org/packages/SQLitePCLRaw.lib.e_sqlite3.v110_xp/1.1.15/license
+      <ProjectUrl>k__BackingField: https://github.com/ericsink/SQLitePCL.raw
+      <Summary>k__BackingField: A Portable Class Library (PCL) for low-level (raw)
+        access to SQLite
+      <Title>k__BackingField: SQLitePCLRaw.lib.e_sqlite3.v110_xp
+  - packageLocal:
+      <Id>k__BackingField: 
+      <PackageVersion>k__BackingField:
+        <FullVersion>k__BackingField: 
+      <IsManuallyInstalled>k__BackingField: 0
+      icon: {fileID: 0}
+      <DownloadUrl>k__BackingField: 
+      <IconUrl>k__BackingField: 
+      <RepositoryBranch>k__BackingField: 
+      <Dependencies>k__BackingField: []
+      <Authors>k__BackingField: []
+      <Description>k__BackingField: 
+      <TotalDownloads>k__BackingField: 0
+      <LicenseUrl>k__BackingField: 
+      <ProjectUrl>k__BackingField: 
+      <ReleaseNotes>k__BackingField: 
+      <RepositoryCommit>k__BackingField: 
+      <RepositoryType>k__BackingField: 0
+      <RepositoryUrl>k__BackingField: 
+      <Summary>k__BackingField: 
+      <Title>k__BackingField: 
+      packageSource:
+        <Name>k__BackingField: 
+        <SavedPath>k__BackingField: 
+        <IsEnabled>k__BackingField: 0
+      versions: []
+    packageType: 2
+    packageV2:
+      <Id>k__BackingField: 
+      <PackageVersion>k__BackingField:
+        <FullVersion>k__BackingField: 
+      <IsManuallyInstalled>k__BackingField: 0
+      icon: {fileID: 0}
+      <DownloadUrl>k__BackingField: 
+      <IconUrl>k__BackingField: 
+      <RepositoryBranch>k__BackingField: 
+      <Dependencies>k__BackingField: []
+      <Authors>k__BackingField: []
+      <Description>k__BackingField: 
+      <TotalDownloads>k__BackingField: 0
+      <LicenseUrl>k__BackingField: 
+      <ProjectUrl>k__BackingField: 
+      <ReleaseNotes>k__BackingField: 
+      <RepositoryCommit>k__BackingField: 
+      <RepositoryType>k__BackingField: 0
+      <RepositoryUrl>k__BackingField: 
+      <Summary>k__BackingField: 
+      <Title>k__BackingField: 
+      packageSourceV2:
+        <Name>k__BackingField: 
+        <SavedPath>k__BackingField: 
+        <SavedProtocolVersion>k__BackingField: 
+        <UserName>k__BackingField: 
+        <SavedPassword>k__BackingField: 
+        <IsEnabled>k__BackingField: 0
+      versions: []
+    packageV3:
+      <Id>k__BackingField: SQLitePCLRaw.provider.e_sqlite3.netstandard11
+      <PackageVersion>k__BackingField:
+        <FullVersion>k__BackingField: 1.1.14
+      <IsManuallyInstalled>k__BackingField: 0
+      dependencies: []
+      dependenciesFetched: 0
+      icon: {fileID: 0}
+      iconUrl: 
+      packageSource:
+        <Name>k__BackingField: nuget.org
+        <SavedPath>k__BackingField: https://api.nuget.org/v3/index.json
+        <SavedProtocolVersion>k__BackingField: 
+        <UpdateSearchBatchSize>k__BackingField: 20
+        <UserName>k__BackingField: 
+        <SavedPassword>k__BackingField: 
+        <IsEnabled>k__BackingField: 1
+      <Versions>k__BackingField:
+      - <FullVersion>k__BackingField: 1.1.14
+      - <FullVersion>k__BackingField: 1.1.13
+      - <FullVersion>k__BackingField: 1.1.12
+      - <FullVersion>k__BackingField: 1.1.11
+      - <FullVersion>k__BackingField: 1.1.10
+      - <FullVersion>k__BackingField: 1.1.9
+      - <FullVersion>k__BackingField: 1.1.8
+      - <FullVersion>k__BackingField: 1.1.7
+      - <FullVersion>k__BackingField: 1.1.6
+      - <FullVersion>k__BackingField: 1.1.5
+      - <FullVersion>k__BackingField: 1.1.4
+      - <FullVersion>k__BackingField: 1.1.3
+      - <FullVersion>k__BackingField: 1.1.2
+      - <FullVersion>k__BackingField: 1.1.1
+      - <FullVersion>k__BackingField: 1.1.0
+      - <FullVersion>k__BackingField: 1.0.1
+      - <FullVersion>k__BackingField: 1.0.0
+      <Authors>k__BackingField:
+      - Eric Sink, et al
+      <Description>k__BackingField: A SQLitePCL.raw 'provider' bridges the gap between
+        SQLitePCLRaw.core and a particular instance of the native SQLite library. 
+        Install this package in your app project and call SQLitePCL.raw.SetProvider(new
+        SQLitePCL.SQLite3Provider_e_sqlite3());  Depending on the platform, you may
+        also need to add one of the SQLitePCLRaw.lib.* packages.  Convenience packages
+        are named SQLitePCLRaw.bundle_*.
+      <TotalDownloads>k__BackingField: 36298618
+      <LicenseUrl>k__BackingField: https://www.nuget.org/packages/SQLitePCLRaw.provider.e_sqlite3.netstandard11/1.1.14/license
+      <ProjectUrl>k__BackingField: https://github.com/ericsink/SQLitePCL.raw
+      <Summary>k__BackingField: A Portable Class Library (PCL) for low-level (raw)
+        access to SQLite
+      <Title>k__BackingField: SQLitePCLRaw.provider.e_sqlite3.netstandard11
+  - packageLocal:
+      <Id>k__BackingField: 
+      <PackageVersion>k__BackingField:
+        <FullVersion>k__BackingField: 
+      <IsManuallyInstalled>k__BackingField: 0
+      icon: {fileID: 0}
+      <DownloadUrl>k__BackingField: 
+      <IconUrl>k__BackingField: 
+      <RepositoryBranch>k__BackingField: 
+      <Dependencies>k__BackingField: []
+      <Authors>k__BackingField: []
+      <Description>k__BackingField: 
+      <TotalDownloads>k__BackingField: 0
+      <LicenseUrl>k__BackingField: 
+      <ProjectUrl>k__BackingField: 
+      <ReleaseNotes>k__BackingField: 
+      <RepositoryCommit>k__BackingField: 
+      <RepositoryType>k__BackingField: 0
+      <RepositoryUrl>k__BackingField: 
+      <Summary>k__BackingField: 
+      <Title>k__BackingField: 
+      packageSource:
+        <Name>k__BackingField: 
+        <SavedPath>k__BackingField: 
+        <IsEnabled>k__BackingField: 0
+      versions: []
+    packageType: 2
+    packageV2:
+      <Id>k__BackingField: 
+      <PackageVersion>k__BackingField:
+        <FullVersion>k__BackingField: 
+      <IsManuallyInstalled>k__BackingField: 0
+      icon: {fileID: 0}
+      <DownloadUrl>k__BackingField: 
+      <IconUrl>k__BackingField: 
+      <RepositoryBranch>k__BackingField: 
+      <Dependencies>k__BackingField: []
+      <Authors>k__BackingField: []
+      <Description>k__BackingField: 
+      <TotalDownloads>k__BackingField: 0
+      <LicenseUrl>k__BackingField: 
+      <ProjectUrl>k__BackingField: 
+      <ReleaseNotes>k__BackingField: 
+      <RepositoryCommit>k__BackingField: 
+      <RepositoryType>k__BackingField: 0
+      <RepositoryUrl>k__BackingField: 
+      <Summary>k__BackingField: 
+      <Title>k__BackingField: 
+      packageSourceV2:
+        <Name>k__BackingField: 
+        <SavedPath>k__BackingField: 
+        <SavedProtocolVersion>k__BackingField: 
+        <UserName>k__BackingField: 
+        <SavedPassword>k__BackingField: 
+        <IsEnabled>k__BackingField: 0
+      versions: []
+    packageV3:
+      <Id>k__BackingField: SQLitePCLRaw.bundle_green
+      <PackageVersion>k__BackingField:
+        <FullVersion>k__BackingField: 2.1.6
+      <IsManuallyInstalled>k__BackingField: 0
+      dependencies: []
+      dependenciesFetched: 0
+      icon: {fileID: 0}
+      iconUrl: 
+      packageSource:
+        <Name>k__BackingField: nuget.org
+        <SavedPath>k__BackingField: https://api.nuget.org/v3/index.json
+        <SavedProtocolVersion>k__BackingField: 
+        <UpdateSearchBatchSize>k__BackingField: 20
+        <UserName>k__BackingField: 
+        <SavedPassword>k__BackingField: 
+        <IsEnabled>k__BackingField: 1
+      <Versions>k__BackingField:
+      - <FullVersion>k__BackingField: 2.1.6
+      - <FullVersion>k__BackingField: 2.1.5
+      - <FullVersion>k__BackingField: 2.1.4
+      - <FullVersion>k__BackingField: 2.1.3
+      - <FullVersion>k__BackingField: 2.1.2
+      - <FullVersion>k__BackingField: 2.1.1
+      - <FullVersion>k__BackingField: 2.1.0
+      - <FullVersion>k__BackingField: 2.0.7
+      - <FullVersion>k__BackingField: 2.0.6
+      - <FullVersion>k__BackingField: 2.0.5
+      - <FullVersion>k__BackingField: 2.0.4
+      - <FullVersion>k__BackingField: 2.0.3
+      - <FullVersion>k__BackingField: 2.0.2
+      - <FullVersion>k__BackingField: 2.0.1
+      - <FullVersion>k__BackingField: 2.0.0
+      - <FullVersion>k__BackingField: 1.1.15
+      - <FullVersion>k__BackingField: 1.1.14
+      - <FullVersion>k__BackingField: 1.1.13
+      - <FullVersion>k__BackingField: 1.1.12
+      - <FullVersion>k__BackingField: 1.1.11
+      - <FullVersion>k__BackingField: 1.1.10
+      - <FullVersion>k__BackingField: 1.1.9
+      - <FullVersion>k__BackingField: 1.1.8
+      - <FullVersion>k__BackingField: 1.1.7
+      - <FullVersion>k__BackingField: 1.1.6
+      - <FullVersion>k__BackingField: 1.1.5
+      - <FullVersion>k__BackingField: 1.1.4
+      - <FullVersion>k__BackingField: 1.1.3
+      - <FullVersion>k__BackingField: 1.1.2
+      - <FullVersion>k__BackingField: 1.1.1
+      - <FullVersion>k__BackingField: 1.1.0
+      - <FullVersion>k__BackingField: 1.0.1
+      - <FullVersion>k__BackingField: 1.0.0
+      <Authors>k__BackingField:
+      - Eric Sink
+      <Description>k__BackingField: 'This ''batteries-included'' bundle brings in
+        SQLitePCLRaw.core and the necessary stuff for certain common use cases. 
+        Call SQLitePCL.Batteries.Init().  Policy of this bundle: iOS=system SQLite,
+        others=e_sqlite3 included.  Note that this bundle is identical to bundle_e_sqlite3,
+        except on iOS where it uses the system SQLite library instead of e_sqlite3. 
+        In other words, when you use this bundle in a cross-platform app, your app
+        is not using the same SQLite build configuration on all platforms.'
+      <TotalDownloads>k__BackingField: 58734246
+      <LicenseUrl>k__BackingField: https://www.nuget.org/packages/SQLitePCLRaw.bundle_green/2.1.6/license
+      <ProjectUrl>k__BackingField: 
+      <Summary>k__BackingField: 
+      <Title>k__BackingField: SQLitePCLRaw.bundle_green
+  - packageLocal:
+      <Id>k__BackingField: 
+      <PackageVersion>k__BackingField:
+        <FullVersion>k__BackingField: 
+      <IsManuallyInstalled>k__BackingField: 0
+      icon: {fileID: 0}
+      <DownloadUrl>k__BackingField: 
+      <IconUrl>k__BackingField: 
+      <RepositoryBranch>k__BackingField: 
+      <Dependencies>k__BackingField: []
+      <Authors>k__BackingField: []
+      <Description>k__BackingField: 
+      <TotalDownloads>k__BackingField: 0
+      <LicenseUrl>k__BackingField: 
+      <ProjectUrl>k__BackingField: 
+      <ReleaseNotes>k__BackingField: 
+      <RepositoryCommit>k__BackingField: 
+      <RepositoryType>k__BackingField: 0
+      <RepositoryUrl>k__BackingField: 
+      <Summary>k__BackingField: 
+      <Title>k__BackingField: 
+      packageSource:
+        <Name>k__BackingField: 
+        <SavedPath>k__BackingField: 
+        <IsEnabled>k__BackingField: 0
+      versions: []
+    packageType: 2
+    packageV2:
+      <Id>k__BackingField: 
+      <PackageVersion>k__BackingField:
+        <FullVersion>k__BackingField: 
+      <IsManuallyInstalled>k__BackingField: 0
+      icon: {fileID: 0}
+      <DownloadUrl>k__BackingField: 
+      <IconUrl>k__BackingField: 
+      <RepositoryBranch>k__BackingField: 
+      <Dependencies>k__BackingField: []
+      <Authors>k__BackingField: []
+      <Description>k__BackingField: 
+      <TotalDownloads>k__BackingField: 0
+      <LicenseUrl>k__BackingField: 
+      <ProjectUrl>k__BackingField: 
+      <ReleaseNotes>k__BackingField: 
+      <RepositoryCommit>k__BackingField: 
+      <RepositoryType>k__BackingField: 0
+      <RepositoryUrl>k__BackingField: 
+      <Summary>k__BackingField: 
+      <Title>k__BackingField: 
+      packageSourceV2:
+        <Name>k__BackingField: 
+        <SavedPath>k__BackingField: 
+        <SavedProtocolVersion>k__BackingField: 
+        <UserName>k__BackingField: 
+        <SavedPassword>k__BackingField: 
+        <IsEnabled>k__BackingField: 0
+      versions: []
+    packageV3:
+      <Id>k__BackingField: akavache.sqlite3
+      <PackageVersion>k__BackingField:
+        <FullVersion>k__BackingField: 9.1.20
+      <IsManuallyInstalled>k__BackingField: 0
+      dependencies: []
+      dependenciesFetched: 0
+      icon: {fileID: 0}
+      iconUrl: https://api.nuget.org/v3-flatcontainer/akavache.sqlite3/9.1.20/icon
+      packageSource:
+        <Name>k__BackingField: nuget.org
+        <SavedPath>k__BackingField: https://api.nuget.org/v3/index.json
+        <SavedProtocolVersion>k__BackingField: 
+        <UpdateSearchBatchSize>k__BackingField: 20
+        <UserName>k__BackingField: 
+        <SavedPassword>k__BackingField: 
+        <IsEnabled>k__BackingField: 1
+      <Versions>k__BackingField:
+      - <FullVersion>k__BackingField: 9.1.20
+      - <FullVersion>k__BackingField: 9.1.7
+      - <FullVersion>k__BackingField: 9.0.1
+      - <FullVersion>k__BackingField: 8.1.1
+      - <FullVersion>k__BackingField: 7.3.47
+      - <FullVersion>k__BackingField: 7.3.1
+      - <FullVersion>k__BackingField: 7.2.1
+      - <FullVersion>k__BackingField: 7.1.1
+      - <FullVersion>k__BackingField: 6.10.20
+      - <FullVersion>k__BackingField: 6.10.17
+      - <FullVersion>k__BackingField: 6.10.11
+      - <FullVersion>k__BackingField: 6.10.6
+      - <FullVersion>k__BackingField: 6.10.4
+      - <FullVersion>k__BackingField: 6.10.3
+      - <FullVersion>k__BackingField: 6.10.2
+      - <FullVersion>k__BackingField: 6.10.1
+      - <FullVersion>k__BackingField: 6.9.10
+      - <FullVersion>k__BackingField: 6.9.1
+      - <FullVersion>k__BackingField: 6.8.1
+      - <FullVersion>k__BackingField: 6.7.1
+      - <FullVersion>k__BackingField: 6.6.1
+      - <FullVersion>k__BackingField: 6.5.20
+      - <FullVersion>k__BackingField: 6.5.9
+      - <FullVersion>k__BackingField: 6.5.1
+      - <FullVersion>k__BackingField: 6.4.1
+      - <FullVersion>k__BackingField: 6.3.6
+      - <FullVersion>k__BackingField: 6.3.2
+      - <FullVersion>k__BackingField: 6.3.1
+      - <FullVersion>k__BackingField: 6.2.3
+      - <FullVersion>k__BackingField: 6.2.1
+      - <FullVersion>k__BackingField: 6.1.3
+      - <FullVersion>k__BackingField: 6.1.2
+      - <FullVersion>k__BackingField: 6.1.1
+      - <FullVersion>k__BackingField: 6.0.31
+      - <FullVersion>k__BackingField: 6.0.30
+      - <FullVersion>k__BackingField: 6.0.27
+      - <FullVersion>k__BackingField: 6.0.20
+      - <FullVersion>k__BackingField: 5.0.0
+      - <FullVersion>k__BackingField: 4.1.2
+      - <FullVersion>k__BackingField: 4.1.1
+      - <FullVersion>k__BackingField: 4.1.0
+      - <FullVersion>k__BackingField: 4.0.4
+      - <FullVersion>k__BackingField: 4.0.3.2
+      - <FullVersion>k__BackingField: 4.0.3.1
+      - <FullVersion>k__BackingField: 4.0.3
+      - <FullVersion>k__BackingField: 4.0.2.1
+      - <FullVersion>k__BackingField: 4.0.2
+      - <FullVersion>k__BackingField: 4.0.1
+      - <FullVersion>k__BackingField: 4.0.0
+      - <FullVersion>k__BackingField: 3.2.0
+      - <FullVersion>k__BackingField: 3.1.2
+      - <FullVersion>k__BackingField: 3.1.1
+      - <FullVersion>k__BackingField: 3.1.0
+      - <FullVersion>k__BackingField: 3.0.2
+      - <FullVersion>k__BackingField: 3.0.1
+      - <FullVersion>k__BackingField: 2.6.12
+      - <FullVersion>k__BackingField: 2.6.11
+      - <FullVersion>k__BackingField: 2.6.10
+      - <FullVersion>k__BackingField: 2.6.9
+      - <FullVersion>k__BackingField: 2.6.8
+      - <FullVersion>k__BackingField: 2.6.7
+      - <FullVersion>k__BackingField: 2.6.6
+      - <FullVersion>k__BackingField: 2.6.5
+      - <FullVersion>k__BackingField: 2.6.4
+      - <FullVersion>k__BackingField: 2.6.3
+      - <FullVersion>k__BackingField: 2.6.2
+      - <FullVersion>k__BackingField: 2.6.1
+      - <FullVersion>k__BackingField: 2.6.0
+      - <FullVersion>k__BackingField: 2.5.1
+      - <FullVersion>k__BackingField: 2.5.0
+      - <FullVersion>k__BackingField: 2.4.3
+      - <FullVersion>k__BackingField: 2.4.1
+      - <FullVersion>k__BackingField: 2.4.0
+      - <FullVersion>k__BackingField: 2.3.1
+      <Authors>k__BackingField:
+      - .NET Foundation and Contributors
+      <Description>k__BackingField: Akavache Sqlite3
+      <TotalDownloads>k__BackingField: 9172206
+      <LicenseUrl>k__BackingField: https://www.nuget.org/packages/akavache.sqlite3/9.1.20/license
+      <ProjectUrl>k__BackingField: https://github.com/reactiveui/akavache/
+      <Summary>k__BackingField: 
+      <Title>k__BackingField: akavache.sqlite3
+  - packageLocal:
+      <Id>k__BackingField: 
+      <PackageVersion>k__BackingField:
+        <FullVersion>k__BackingField: 
+      <IsManuallyInstalled>k__BackingField: 0
+      icon: {fileID: 0}
+      <DownloadUrl>k__BackingField: 
+      <IconUrl>k__BackingField: 
+      <RepositoryBranch>k__BackingField: 
+      <Dependencies>k__BackingField: []
+      <Authors>k__BackingField: []
+      <Description>k__BackingField: 
+      <TotalDownloads>k__BackingField: 0
+      <LicenseUrl>k__BackingField: 
+      <ProjectUrl>k__BackingField: 
+      <ReleaseNotes>k__BackingField: 
+      <RepositoryCommit>k__BackingField: 
+      <RepositoryType>k__BackingField: 0
+      <RepositoryUrl>k__BackingField: 
+      <Summary>k__BackingField: 
+      <Title>k__BackingField: 
+      packageSource:
+        <Name>k__BackingField: 
+        <SavedPath>k__BackingField: 
+        <IsEnabled>k__BackingField: 0
+      versions: []
+    packageType: 2
+    packageV2:
+      <Id>k__BackingField: 
+      <PackageVersion>k__BackingField:
+        <FullVersion>k__BackingField: 
+      <IsManuallyInstalled>k__BackingField: 0
+      icon: {fileID: 0}
+      <DownloadUrl>k__BackingField: 
+      <IconUrl>k__BackingField: 
+      <RepositoryBranch>k__BackingField: 
+      <Dependencies>k__BackingField: []
+      <Authors>k__BackingField: []
+      <Description>k__BackingField: 
+      <TotalDownloads>k__BackingField: 0
+      <LicenseUrl>k__BackingField: 
+      <ProjectUrl>k__BackingField: 
+      <ReleaseNotes>k__BackingField: 
+      <RepositoryCommit>k__BackingField: 
+      <RepositoryType>k__BackingField: 0
+      <RepositoryUrl>k__BackingField: 
+      <Summary>k__BackingField: 
+      <Title>k__BackingField: 
+      packageSourceV2:
+        <Name>k__BackingField: 
+        <SavedPath>k__BackingField: 
+        <SavedProtocolVersion>k__BackingField: 
+        <UserName>k__BackingField: 
+        <SavedPassword>k__BackingField: 
+        <IsEnabled>k__BackingField: 0
+      versions: []
+    packageV3:
+      <Id>k__BackingField: SQLitePCLRaw.lib.e_sqlite3.android
+      <PackageVersion>k__BackingField:
+        <FullVersion>k__BackingField: 2.1.6
+      <IsManuallyInstalled>k__BackingField: 0
+      dependencies: []
+      dependenciesFetched: 0
+      icon: {fileID: 0}
+      iconUrl: 
+      packageSource:
+        <Name>k__BackingField: nuget.org
+        <SavedPath>k__BackingField: https://api.nuget.org/v3/index.json
+        <SavedProtocolVersion>k__BackingField: 
+        <UpdateSearchBatchSize>k__BackingField: 20
+        <UserName>k__BackingField: 
+        <SavedPassword>k__BackingField: 
+        <IsEnabled>k__BackingField: 1
+      <Versions>k__BackingField:
+      - <FullVersion>k__BackingField: 2.1.6
+      - <FullVersion>k__BackingField: 2.1.5
+      - <FullVersion>k__BackingField: 2.1.4
+      - <FullVersion>k__BackingField: 2.1.3
+      - <FullVersion>k__BackingField: 2.1.2
+      - <FullVersion>k__BackingField: 2.1.1
+      - <FullVersion>k__BackingField: 2.1.0
+      - <FullVersion>k__BackingField: 2.0.7
+      - <FullVersion>k__BackingField: 2.0.6
+      - <FullVersion>k__BackingField: 2.0.5
+      - <FullVersion>k__BackingField: 2.0.4
+      - <FullVersion>k__BackingField: 2.0.3
+      - <FullVersion>k__BackingField: 2.0.2
+      - <FullVersion>k__BackingField: 2.0.1
+      - <FullVersion>k__BackingField: 2.0.0
+      - <FullVersion>k__BackingField: 1.1.14
+      - <FullVersion>k__BackingField: 1.1.13
+      - <FullVersion>k__BackingField: 1.1.12
+      - <FullVersion>k__BackingField: 1.1.11
+      - <FullVersion>k__BackingField: 1.1.10
+      - <FullVersion>k__BackingField: 1.1.9
+      - <FullVersion>k__BackingField: 1.1.8
+      - <FullVersion>k__BackingField: 1.1.7
+      - <FullVersion>k__BackingField: 1.1.6
+      - <FullVersion>k__BackingField: 1.1.5
+      - <FullVersion>k__BackingField: 1.1.4
+      - <FullVersion>k__BackingField: 1.1.3
+      - <FullVersion>k__BackingField: 1.1.2
+      - <FullVersion>k__BackingField: 1.1.1
+      - <FullVersion>k__BackingField: 1.1.0
+      - <FullVersion>k__BackingField: 1.0.1
+      - <FullVersion>k__BackingField: 1.0.0
+      <Authors>k__BackingField:
+      - Eric Sink
+      <Description>k__BackingField: This package contains platform-specific native
+        code builds of SQLite for use with SQLitePCLRaw.  To use this, you need SQLitePCLRaw.core
+        as well as one of the SQLitePCLRaw.provider.* packages.  Convenience packages
+        are named SQLitePCLRaw.bundle_*.
+      <TotalDownloads>k__BackingField: 9015092
+      <LicenseUrl>k__BackingField: https://www.nuget.org/packages/SQLitePCLRaw.lib.e_sqlite3.android/2.1.6/license
+      <ProjectUrl>k__BackingField: 
+      <Summary>k__BackingField: 
+      <Title>k__BackingField: SQLitePCLRaw.lib.e_sqlite3.android
+  - packageLocal:
+      <Id>k__BackingField: 
+      <PackageVersion>k__BackingField:
+        <FullVersion>k__BackingField: 
+      <IsManuallyInstalled>k__BackingField: 0
+      icon: {fileID: 0}
+      <DownloadUrl>k__BackingField: 
+      <IconUrl>k__BackingField: 
+      <RepositoryBranch>k__BackingField: 
+      <Dependencies>k__BackingField: []
+      <Authors>k__BackingField: []
+      <Description>k__BackingField: 
+      <TotalDownloads>k__BackingField: 0
+      <LicenseUrl>k__BackingField: 
+      <ProjectUrl>k__BackingField: 
+      <ReleaseNotes>k__BackingField: 
+      <RepositoryCommit>k__BackingField: 
+      <RepositoryType>k__BackingField: 0
+      <RepositoryUrl>k__BackingField: 
+      <Summary>k__BackingField: 
+      <Title>k__BackingField: 
+      packageSource:
+        <Name>k__BackingField: 
+        <SavedPath>k__BackingField: 
+        <IsEnabled>k__BackingField: 0
+      versions: []
+    packageType: 2
+    packageV2:
+      <Id>k__BackingField: 
+      <PackageVersion>k__BackingField:
+        <FullVersion>k__BackingField: 
+      <IsManuallyInstalled>k__BackingField: 0
+      icon: {fileID: 0}
+      <DownloadUrl>k__BackingField: 
+      <IconUrl>k__BackingField: 
+      <RepositoryBranch>k__BackingField: 
+      <Dependencies>k__BackingField: []
+      <Authors>k__BackingField: []
+      <Description>k__BackingField: 
+      <TotalDownloads>k__BackingField: 0
+      <LicenseUrl>k__BackingField: 
+      <ProjectUrl>k__BackingField: 
+      <ReleaseNotes>k__BackingField: 
+      <RepositoryCommit>k__BackingField: 
+      <RepositoryType>k__BackingField: 0
+      <RepositoryUrl>k__BackingField: 
+      <Summary>k__BackingField: 
+      <Title>k__BackingField: 
+      packageSourceV2:
+        <Name>k__BackingField: 
+        <SavedPath>k__BackingField: 
+        <SavedProtocolVersion>k__BackingField: 
+        <UserName>k__BackingField: 
+        <SavedPassword>k__BackingField: 
+        <IsEnabled>k__BackingField: 0
+      versions: []
+    packageV3:
+      <Id>k__BackingField: SQLitePCLRaw.provider.e_sqlite3.net45
+      <PackageVersion>k__BackingField:
+        <FullVersion>k__BackingField: 1.1.14
+      <IsManuallyInstalled>k__BackingField: 0
+      dependencies: []
+      dependenciesFetched: 0
+      icon: {fileID: 0}
+      iconUrl: 
+      packageSource:
+        <Name>k__BackingField: nuget.org
+        <SavedPath>k__BackingField: https://api.nuget.org/v3/index.json
+        <SavedProtocolVersion>k__BackingField: 
+        <UpdateSearchBatchSize>k__BackingField: 20
+        <UserName>k__BackingField: 
+        <SavedPassword>k__BackingField: 
+        <IsEnabled>k__BackingField: 1
+      <Versions>k__BackingField:
+      - <FullVersion>k__BackingField: 1.1.14
+      - <FullVersion>k__BackingField: 1.1.13
+      - <FullVersion>k__BackingField: 1.1.12
+      - <FullVersion>k__BackingField: 1.1.11
+      - <FullVersion>k__BackingField: 1.1.10
+      - <FullVersion>k__BackingField: 1.1.9
+      - <FullVersion>k__BackingField: 1.1.8
+      - <FullVersion>k__BackingField: 1.1.7
+      - <FullVersion>k__BackingField: 1.1.6
+      - <FullVersion>k__BackingField: 1.1.5
+      - <FullVersion>k__BackingField: 1.1.4
+      - <FullVersion>k__BackingField: 1.1.3
+      - <FullVersion>k__BackingField: 1.1.2
+      - <FullVersion>k__BackingField: 1.1.1
+      - <FullVersion>k__BackingField: 1.1.0
+      - <FullVersion>k__BackingField: 1.0.1
+      - <FullVersion>k__BackingField: 1.0.0
+      <Authors>k__BackingField:
+      - Eric Sink, et al
+      <Description>k__BackingField: A SQLitePCL.raw 'provider' bridges the gap between
+        SQLitePCLRaw.core and a particular instance of the native SQLite library. 
+        Install this package in your app project and call SQLitePCL.raw.SetProvider(new
+        SQLitePCL.SQLite3Provider_e_sqlite3());  Depending on the platform, you may
+        also need to add one of the SQLitePCLRaw.lib.* packages.  Convenience packages
+        are named SQLitePCLRaw.bundle_*.
+      <TotalDownloads>k__BackingField: 6970433
+      <LicenseUrl>k__BackingField: https://www.nuget.org/packages/SQLitePCLRaw.provider.e_sqlite3.net45/1.1.14/license
+      <ProjectUrl>k__BackingField: https://github.com/ericsink/SQLitePCL.raw
+      <Summary>k__BackingField: A Portable Class Library (PCL) for low-level (raw)
+        access to SQLite
+      <Title>k__BackingField: SQLitePCLRaw.provider.e_sqlite3.net45
+  - packageLocal:
+      <Id>k__BackingField: 
+      <PackageVersion>k__BackingField:
+        <FullVersion>k__BackingField: 
+      <IsManuallyInstalled>k__BackingField: 0
+      icon: {fileID: 0}
+      <DownloadUrl>k__BackingField: 
+      <IconUrl>k__BackingField: 
+      <RepositoryBranch>k__BackingField: 
+      <Dependencies>k__BackingField: []
+      <Authors>k__BackingField: []
+      <Description>k__BackingField: 
+      <TotalDownloads>k__BackingField: 0
+      <LicenseUrl>k__BackingField: 
+      <ProjectUrl>k__BackingField: 
+      <ReleaseNotes>k__BackingField: 
+      <RepositoryCommit>k__BackingField: 
+      <RepositoryType>k__BackingField: 0
+      <RepositoryUrl>k__BackingField: 
+      <Summary>k__BackingField: 
+      <Title>k__BackingField: 
+      packageSource:
+        <Name>k__BackingField: 
+        <SavedPath>k__BackingField: 
+        <IsEnabled>k__BackingField: 0
+      versions: []
+    packageType: 2
+    packageV2:
+      <Id>k__BackingField: 
+      <PackageVersion>k__BackingField:
+        <FullVersion>k__BackingField: 
+      <IsManuallyInstalled>k__BackingField: 0
+      icon: {fileID: 0}
+      <DownloadUrl>k__BackingField: 
+      <IconUrl>k__BackingField: 
+      <RepositoryBranch>k__BackingField: 
+      <Dependencies>k__BackingField: []
+      <Authors>k__BackingField: []
+      <Description>k__BackingField: 
+      <TotalDownloads>k__BackingField: 0
+      <LicenseUrl>k__BackingField: 
+      <ProjectUrl>k__BackingField: 
+      <ReleaseNotes>k__BackingField: 
+      <RepositoryCommit>k__BackingField: 
+      <RepositoryType>k__BackingField: 0
+      <RepositoryUrl>k__BackingField: 
+      <Summary>k__BackingField: 
+      <Title>k__BackingField: 
+      packageSourceV2:
+        <Name>k__BackingField: 
+        <SavedPath>k__BackingField: 
+        <SavedProtocolVersion>k__BackingField: 
+        <UserName>k__BackingField: 
+        <SavedPassword>k__BackingField: 
+        <IsEnabled>k__BackingField: 0
+      versions: []
+    packageV3:
+      <Id>k__BackingField: SQLitePCLRaw.provider.e_sqlite3.android
+      <PackageVersion>k__BackingField:
+        <FullVersion>k__BackingField: 1.1.14
+      <IsManuallyInstalled>k__BackingField: 0
+      dependencies: []
+      dependenciesFetched: 0
+      icon: {fileID: 0}
+      iconUrl: 
+      packageSource:
+        <Name>k__BackingField: nuget.org
+        <SavedPath>k__BackingField: https://api.nuget.org/v3/index.json
+        <SavedProtocolVersion>k__BackingField: 
+        <UpdateSearchBatchSize>k__BackingField: 20
+        <UserName>k__BackingField: 
+        <SavedPassword>k__BackingField: 
+        <IsEnabled>k__BackingField: 1
+      <Versions>k__BackingField:
+      - <FullVersion>k__BackingField: 1.1.14
+      - <FullVersion>k__BackingField: 1.1.13
+      - <FullVersion>k__BackingField: 1.1.12
+      - <FullVersion>k__BackingField: 1.1.11
+      - <FullVersion>k__BackingField: 1.1.10
+      - <FullVersion>k__BackingField: 1.1.9
+      - <FullVersion>k__BackingField: 1.1.8
+      - <FullVersion>k__BackingField: 1.1.7
+      - <FullVersion>k__BackingField: 1.1.6
+      - <FullVersion>k__BackingField: 1.1.5
+      - <FullVersion>k__BackingField: 1.1.4
+      - <FullVersion>k__BackingField: 1.1.3
+      - <FullVersion>k__BackingField: 1.1.2
+      - <FullVersion>k__BackingField: 1.1.1
+      - <FullVersion>k__BackingField: 1.1.0
+      - <FullVersion>k__BackingField: 1.0.1
+      - <FullVersion>k__BackingField: 1.0.0
+      <Authors>k__BackingField:
+      - Eric Sink, et al
+      <Description>k__BackingField: A SQLitePCL.raw 'provider' bridges the gap between
+        SQLitePCLRaw.core and a particular instance of the native SQLite library. 
+        Install this package in your app project and call SQLitePCL.raw.SetProvider(new
+        SQLitePCL.SQLite3Provider_e_sqlite3());  Depending on the platform, you may
+        also need to add one of the SQLitePCLRaw.lib.* packages.  Convenience packages
+        are named SQLitePCLRaw.bundle_*.
+      <TotalDownloads>k__BackingField: 4995310
+      <LicenseUrl>k__BackingField: https://www.nuget.org/packages/SQLitePCLRaw.provider.e_sqlite3.android/1.1.14/license
+      <ProjectUrl>k__BackingField: https://github.com/ericsink/SQLitePCL.raw
+      <Summary>k__BackingField: A Portable Class Library (PCL) for low-level (raw)
+        access to SQLite
+      <Title>k__BackingField: SQLitePCLRaw.provider.e_sqlite3.android
+  - packageLocal:
+      <Id>k__BackingField: 
+      <PackageVersion>k__BackingField:
+        <FullVersion>k__BackingField: 
+      <IsManuallyInstalled>k__BackingField: 0
+      icon: {fileID: 0}
+      <DownloadUrl>k__BackingField: 
+      <IconUrl>k__BackingField: 
+      <RepositoryBranch>k__BackingField: 
+      <Dependencies>k__BackingField: []
+      <Authors>k__BackingField: []
+      <Description>k__BackingField: 
+      <TotalDownloads>k__BackingField: 0
+      <LicenseUrl>k__BackingField: 
+      <ProjectUrl>k__BackingField: 
+      <ReleaseNotes>k__BackingField: 
+      <RepositoryCommit>k__BackingField: 
+      <RepositoryType>k__BackingField: 0
+      <RepositoryUrl>k__BackingField: 
+      <Summary>k__BackingField: 
+      <Title>k__BackingField: 
+      packageSource:
+        <Name>k__BackingField: 
+        <SavedPath>k__BackingField: 
+        <IsEnabled>k__BackingField: 0
+      versions: []
+    packageType: 2
+    packageV2:
+      <Id>k__BackingField: 
+      <PackageVersion>k__BackingField:
+        <FullVersion>k__BackingField: 
+      <IsManuallyInstalled>k__BackingField: 0
+      icon: {fileID: 0}
+      <DownloadUrl>k__BackingField: 
+      <IconUrl>k__BackingField: 
+      <RepositoryBranch>k__BackingField: 
+      <Dependencies>k__BackingField: []
+      <Authors>k__BackingField: []
+      <Description>k__BackingField: 
+      <TotalDownloads>k__BackingField: 0
+      <LicenseUrl>k__BackingField: 
+      <ProjectUrl>k__BackingField: 
+      <ReleaseNotes>k__BackingField: 
+      <RepositoryCommit>k__BackingField: 
+      <RepositoryType>k__BackingField: 0
+      <RepositoryUrl>k__BackingField: 
+      <Summary>k__BackingField: 
+      <Title>k__BackingField: 
+      packageSourceV2:
+        <Name>k__BackingField: 
+        <SavedPath>k__BackingField: 
+        <SavedProtocolVersion>k__BackingField: 
+        <UserName>k__BackingField: 
+        <SavedPassword>k__BackingField: 
+        <IsEnabled>k__BackingField: 0
+      versions: []
+    packageV3:
+      <Id>k__BackingField: SQLitePCLRaw.provider.sqlite3.ios_unified
+      <PackageVersion>k__BackingField:
+        <FullVersion>k__BackingField: 1.1.14
+      <IsManuallyInstalled>k__BackingField: 0
+      dependencies: []
+      dependenciesFetched: 0
+      icon: {fileID: 0}
+      iconUrl: 
+      packageSource:
+        <Name>k__BackingField: nuget.org
+        <SavedPath>k__BackingField: https://api.nuget.org/v3/index.json
+        <SavedProtocolVersion>k__BackingField: 
+        <UpdateSearchBatchSize>k__BackingField: 20
+        <UserName>k__BackingField: 
+        <SavedPassword>k__BackingField: 
+        <IsEnabled>k__BackingField: 1
+      <Versions>k__BackingField:
+      - <FullVersion>k__BackingField: 1.1.14
+      - <FullVersion>k__BackingField: 1.1.13
+      - <FullVersion>k__BackingField: 1.1.12
+      - <FullVersion>k__BackingField: 1.1.11
+      - <FullVersion>k__BackingField: 1.1.10
+      - <FullVersion>k__BackingField: 1.1.9
+      - <FullVersion>k__BackingField: 1.1.8
+      - <FullVersion>k__BackingField: 1.1.7
+      - <FullVersion>k__BackingField: 1.1.6
+      - <FullVersion>k__BackingField: 1.1.5
+      - <FullVersion>k__BackingField: 1.1.4
+      - <FullVersion>k__BackingField: 1.1.3
+      - <FullVersion>k__BackingField: 1.1.2
+      - <FullVersion>k__BackingField: 1.1.1
+      - <FullVersion>k__BackingField: 1.1.0
+      - <FullVersion>k__BackingField: 1.0.1
+      - <FullVersion>k__BackingField: 1.0.0
+      <Authors>k__BackingField:
+      - Eric Sink, et al
+      <Description>k__BackingField: A SQLitePCL.raw 'provider' bridges the gap between
+        SQLitePCLRaw.core and a particular instance of the native SQLite library. 
+        Install this package in your app project and call SQLitePCL.raw.SetProvider(new
+        SQLitePCL.SQLite3Provider_sqlite3());  Depending on the platform, you may
+        also need to add one of the SQLitePCLRaw.lib.* packages.  Convenience packages
+        are named SQLitePCLRaw.bundle_*.
+      <TotalDownloads>k__BackingField: 4004189
+      <LicenseUrl>k__BackingField: https://www.nuget.org/packages/SQLitePCLRaw.provider.sqlite3.ios_unified/1.1.14/license
+      <ProjectUrl>k__BackingField: https://github.com/ericsink/SQLitePCL.raw
+      <Summary>k__BackingField: A Portable Class Library (PCL) for low-level (raw)
+        access to SQLite
+      <Title>k__BackingField: SQLitePCLRaw.provider.sqlite3.ios_unified
+  - packageLocal:
+      <Id>k__BackingField: 
+      <PackageVersion>k__BackingField:
+        <FullVersion>k__BackingField: 
+      <IsManuallyInstalled>k__BackingField: 0
+      icon: {fileID: 0}
+      <DownloadUrl>k__BackingField: 
+      <IconUrl>k__BackingField: 
+      <RepositoryBranch>k__BackingField: 
+      <Dependencies>k__BackingField: []
+      <Authors>k__BackingField: []
+      <Description>k__BackingField: 
+      <TotalDownloads>k__BackingField: 0
+      <LicenseUrl>k__BackingField: 
+      <ProjectUrl>k__BackingField: 
+      <ReleaseNotes>k__BackingField: 
+      <RepositoryCommit>k__BackingField: 
+      <RepositoryType>k__BackingField: 0
+      <RepositoryUrl>k__BackingField: 
+      <Summary>k__BackingField: 
+      <Title>k__BackingField: 
+      packageSource:
+        <Name>k__BackingField: 
+        <SavedPath>k__BackingField: 
+        <IsEnabled>k__BackingField: 0
+      versions: []
+    packageType: 2
+    packageV2:
+      <Id>k__BackingField: 
+      <PackageVersion>k__BackingField:
+        <FullVersion>k__BackingField: 
+      <IsManuallyInstalled>k__BackingField: 0
+      icon: {fileID: 0}
+      <DownloadUrl>k__BackingField: 
+      <IconUrl>k__BackingField: 
+      <RepositoryBranch>k__BackingField: 
+      <Dependencies>k__BackingField: []
+      <Authors>k__BackingField: []
+      <Description>k__BackingField: 
+      <TotalDownloads>k__BackingField: 0
+      <LicenseUrl>k__BackingField: 
+      <ProjectUrl>k__BackingField: 
+      <ReleaseNotes>k__BackingField: 
+      <RepositoryCommit>k__BackingField: 
+      <RepositoryType>k__BackingField: 0
+      <RepositoryUrl>k__BackingField: 
+      <Summary>k__BackingField: 
+      <Title>k__BackingField: 
+      packageSourceV2:
+        <Name>k__BackingField: 
+        <SavedPath>k__BackingField: 
+        <SavedProtocolVersion>k__BackingField: 
+        <UserName>k__BackingField: 
+        <SavedPassword>k__BackingField: 
+        <IsEnabled>k__BackingField: 0
+      versions: []
+    packageV3:
+      <Id>k__BackingField: SQLitePCLRaw.lib.e_sqlite3.v140
+      <PackageVersion>k__BackingField:
+        <FullVersion>k__BackingField: 1.1.14
+      <IsManuallyInstalled>k__BackingField: 0
+      dependencies: []
+      dependenciesFetched: 0
+      icon: {fileID: 0}
+      iconUrl: 
+      packageSource:
+        <Name>k__BackingField: nuget.org
+        <SavedPath>k__BackingField: https://api.nuget.org/v3/index.json
+        <SavedProtocolVersion>k__BackingField: 
+        <UpdateSearchBatchSize>k__BackingField: 20
+        <UserName>k__BackingField: 
+        <SavedPassword>k__BackingField: 
+        <IsEnabled>k__BackingField: 1
+      <Versions>k__BackingField:
+      - <FullVersion>k__BackingField: 1.1.14
+      - <FullVersion>k__BackingField: 1.1.13
+      - <FullVersion>k__BackingField: 1.1.12
+      - <FullVersion>k__BackingField: 1.1.11
+      - <FullVersion>k__BackingField: 1.1.10
+      - <FullVersion>k__BackingField: 1.1.9
+      - <FullVersion>k__BackingField: 1.1.8
+      - <FullVersion>k__BackingField: 1.1.7
+      - <FullVersion>k__BackingField: 1.1.6
+      - <FullVersion>k__BackingField: 1.1.5
+      - <FullVersion>k__BackingField: 1.1.4
+      - <FullVersion>k__BackingField: 1.1.3
+      - <FullVersion>k__BackingField: 1.1.2
+      - <FullVersion>k__BackingField: 1.1.1
+      - <FullVersion>k__BackingField: 1.1.0
+      - <FullVersion>k__BackingField: 1.0.1
+      - <FullVersion>k__BackingField: 1.0.0
+      <Authors>k__BackingField:
+      - Eric Sink, D. Richard Hipp, et al
+      <Description>k__BackingField: This package contains a platform-specific native
+        code build of SQLite for use with SQLitePCL.raw.  To use this, you need SQLitePCLRaw.core
+        as well as SQLitePCLRaw.provider.e_sqlite3.net45 or similar.  Convenience
+        packages are named SQLitePCLRaw.bundle_*.
+      <TotalDownloads>k__BackingField: 2449719
+      <LicenseUrl>k__BackingField: https://www.nuget.org/packages/SQLitePCLRaw.lib.e_sqlite3.v140/1.1.14/license
+      <ProjectUrl>k__BackingField: https://github.com/ericsink/SQLitePCL.raw
+      <Summary>k__BackingField: A Portable Class Library (PCL) for low-level (raw)
+        access to SQLite
+      <Title>k__BackingField: SQLitePCLRaw.lib.e_sqlite3.v140
+  - packageLocal:
+      <Id>k__BackingField: 
+      <PackageVersion>k__BackingField:
+        <FullVersion>k__BackingField: 
+      <IsManuallyInstalled>k__BackingField: 0
+      icon: {fileID: 0}
+      <DownloadUrl>k__BackingField: 
+      <IconUrl>k__BackingField: 
+      <RepositoryBranch>k__BackingField: 
+      <Dependencies>k__BackingField: []
+      <Authors>k__BackingField: []
+      <Description>k__BackingField: 
+      <TotalDownloads>k__BackingField: 0
+      <LicenseUrl>k__BackingField: 
+      <ProjectUrl>k__BackingField: 
+      <ReleaseNotes>k__BackingField: 
+      <RepositoryCommit>k__BackingField: 
+      <RepositoryType>k__BackingField: 0
+      <RepositoryUrl>k__BackingField: 
+      <Summary>k__BackingField: 
+      <Title>k__BackingField: 
+      packageSource:
+        <Name>k__BackingField: 
+        <SavedPath>k__BackingField: 
+        <IsEnabled>k__BackingField: 0
+      versions: []
+    packageType: 2
+    packageV2:
+      <Id>k__BackingField: 
+      <PackageVersion>k__BackingField:
+        <FullVersion>k__BackingField: 
+      <IsManuallyInstalled>k__BackingField: 0
+      icon: {fileID: 0}
+      <DownloadUrl>k__BackingField: 
+      <IconUrl>k__BackingField: 
+      <RepositoryBranch>k__BackingField: 
+      <Dependencies>k__BackingField: []
+      <Authors>k__BackingField: []
+      <Description>k__BackingField: 
+      <TotalDownloads>k__BackingField: 0
+      <LicenseUrl>k__BackingField: 
+      <ProjectUrl>k__BackingField: 
+      <ReleaseNotes>k__BackingField: 
+      <RepositoryCommit>k__BackingField: 
+      <RepositoryType>k__BackingField: 0
+      <RepositoryUrl>k__BackingField: 
+      <Summary>k__BackingField: 
+      <Title>k__BackingField: 
+      packageSourceV2:
+        <Name>k__BackingField: 
+        <SavedPath>k__BackingField: 
+        <SavedProtocolVersion>k__BackingField: 
+        <UserName>k__BackingField: 
+        <SavedPassword>k__BackingField: 
+        <IsEnabled>k__BackingField: 0
+      versions: []
+    packageV3:
+      <Id>k__BackingField: SQLitePCLRaw.provider.e_sqlite3.uwp10
+      <PackageVersion>k__BackingField:
+        <FullVersion>k__BackingField: 1.1.14
+      <IsManuallyInstalled>k__BackingField: 0
+      dependencies: []
+      dependenciesFetched: 0
+      icon: {fileID: 0}
+      iconUrl: 
+      packageSource:
+        <Name>k__BackingField: nuget.org
+        <SavedPath>k__BackingField: https://api.nuget.org/v3/index.json
+        <SavedProtocolVersion>k__BackingField: 
+        <UpdateSearchBatchSize>k__BackingField: 20
+        <UserName>k__BackingField: 
+        <SavedPassword>k__BackingField: 
+        <IsEnabled>k__BackingField: 1
+      <Versions>k__BackingField:
+      - <FullVersion>k__BackingField: 1.1.14
+      - <FullVersion>k__BackingField: 1.1.13
+      - <FullVersion>k__BackingField: 1.1.12
+      - <FullVersion>k__BackingField: 1.1.11
+      - <FullVersion>k__BackingField: 1.1.10
+      - <FullVersion>k__BackingField: 1.1.9
+      - <FullVersion>k__BackingField: 1.1.8
+      - <FullVersion>k__BackingField: 1.1.7
+      - <FullVersion>k__BackingField: 1.1.6
+      - <FullVersion>k__BackingField: 1.1.5
+      - <FullVersion>k__BackingField: 1.1.4
+      - <FullVersion>k__BackingField: 1.1.3
+      - <FullVersion>k__BackingField: 1.1.2
+      - <FullVersion>k__BackingField: 1.1.1
+      - <FullVersion>k__BackingField: 1.1.0
+      - <FullVersion>k__BackingField: 1.0.1
+      - <FullVersion>k__BackingField: 1.0.0
+      <Authors>k__BackingField:
+      - Eric Sink, et al
+      <Description>k__BackingField: A SQLitePCL.raw 'provider' bridges the gap between
+        SQLitePCLRaw.core and a particular instance of the native SQLite library. 
+        Install this package in your app project and call SQLitePCL.raw.SetProvider(new
+        SQLitePCL.SQLite3Provider_e_sqlite3());  Depending on the platform, you may
+        also need to add one of the SQLitePCLRaw.lib.* packages.  Convenience packages
+        are named SQLitePCLRaw.bundle_*.
+      <TotalDownloads>k__BackingField: 2437404
+      <LicenseUrl>k__BackingField: https://www.nuget.org/packages/SQLitePCLRaw.provider.e_sqlite3.uwp10/1.1.14/license
+      <ProjectUrl>k__BackingField: https://github.com/ericsink/SQLitePCL.raw
+      <Summary>k__BackingField: A Portable Class Library (PCL) for low-level (raw)
+        access to SQLite
+      <Title>k__BackingField: SQLitePCLRaw.provider.e_sqlite3.uwp10
+  serializableUpdatePackages: []
+--- !u!114 &20
 MonoBehaviour:
   m_ObjectHideFlags: 52
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1274,16 +2908,16 @@ MonoBehaviour:
     m_Tooltip: 
   m_Pos:
     serializedVersion: 2
-    x: 3181
+    x: 3278
     y: 86
-    width: 658
+    width: 561
     height: 926
   m_ViewDataDictionary: {fileID: 0}
   m_OverlayCanvas:
     m_LastAppliedPresetName: Default
     m_SaveData: []
   m_PosLeft: {x: 0, y: 0}
-  m_PosRight: {x: 0, y: 1049}
+  m_PosRight: {x: 0, y: 1169}
   m_Scope: 1
   m_SplitterFlex: 0.17964073
   m_SearchText: 
@@ -1309,7 +2943,7 @@ MonoBehaviour:
       m_IsRenamingFilename: 0
       m_ClientGUIView: {fileID: 0}
     m_SearchString: 
---- !u!114 &22
+--- !u!114 &21
 MonoBehaviour:
   m_ObjectHideFlags: 52
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1330,15 +2964,15 @@ MonoBehaviour:
     m_Tooltip: 
   m_Pos:
     serializedVersion: 2
-    x: 3241
-    y: 86
-    width: 598
+    x: 1201
+    y: 73
+    width: 718
     height: 926
   m_ViewDataDictionary: {fileID: 0}
   m_OverlayCanvas:
     m_LastAppliedPresetName: Default
     m_SaveData: []
---- !u!114 &23
+--- !u!114 &22
 MonoBehaviour:
   m_ObjectHideFlags: 52
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1367,7 +3001,7 @@ MonoBehaviour:
   m_OverlayCanvas:
     m_LastAppliedPresetName: Default
     m_SaveData: []
---- !u!114 &24
+--- !u!114 &23
 MonoBehaviour:
   m_ObjectHideFlags: 52
   m_CorrespondingSourceObject: {fileID: 0}

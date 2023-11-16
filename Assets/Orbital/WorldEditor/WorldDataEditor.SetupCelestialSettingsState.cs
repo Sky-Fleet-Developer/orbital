@@ -31,15 +31,15 @@ namespace Orbital.WorldEditor
                 EditorGUI.BeginChangeCheck();
                 if (Master._currentEdit is CelestialBody)
                 {
-                    _settingsA.mass = EditorGUILayout.FloatField("Mass", _settingsB.mass);
+                    _settingsA.mass = EditorGUILayout.DoubleField("Mass", _settingsB.mass);
                 }
                 
-                _settingsA.semiMajorAxis = EditorGUILayout.FloatField("Semi Major Axis", _settingsB.semiMajorAxis);
-                _settingsA.eccentricity = EditorGUILayout.FloatField("Eccentricity", _settingsB.eccentricity);
-                _settingsA.argumentOfPeriapsis = EditorGUILayout.FloatField("Argument Of Periapsis", _settingsB.argumentOfPeriapsis);
-                _settingsA.longitudeAscendingNode = EditorGUILayout.FloatField("Longitude Ascending Node", _settingsB.longitudeAscendingNode);
-                _settingsA.inclination = EditorGUILayout.FloatField("Inclination", _settingsB.inclination);
-                _settingsA.timeShift = EditorGUILayout.FloatField("Time", _settingsB.timeShift);
+                _settingsA.semiMajorAxis = EditorGUILayout.DoubleField("Semi Major Axis", _settingsB.semiMajorAxis);
+                _settingsA.eccentricity = EditorGUILayout.DoubleField("Eccentricity", _settingsB.eccentricity);
+                _settingsA.argumentOfPeriapsis = EditorGUILayout.DoubleField("Argument Of Periapsis", _settingsB.argumentOfPeriapsis);
+                _settingsA.longitudeAscendingNode = EditorGUILayout.DoubleField("Longitude Ascending Node", _settingsB.longitudeAscendingNode);
+                _settingsA.inclination = EditorGUILayout.DoubleField("Inclination", _settingsB.inclination);
+                _settingsA.epoch = EditorGUILayout.DoubleField("Epoch", _settingsB.epoch);
                 /*double m = Master._currentParent.Mass;
                 double e = StaticOrbit.GetEccentricity(_settingsA.eccentricity, _settingsA.semiMajorAxis,
                     m, MassUtility.G);
