@@ -27,7 +27,20 @@ namespace Orbital.Core.Serialization.Sqlite
         private const string InsertFormat = "INSERT INTO {0} ({1}) VALUES ({2});";
         private const string DeleteFormat = "DELETE FROM {0} WHERE Id = {1};";
         private const string All = "* ";
+        private const string WhereInFormat = " WHERE {0} IN ()";
 
+        private static Dictionary<SqliteConnection, RequestBuilder> _requestBuilders = new Dictionary<SqliteConnection, RequestBuilder>();
+
+        private static RequestBuilder GetOrCreateBuilder(SqliteConnection connection)
+        {
+            if (!_requestBuilders.TryGetValue(connection, out var requestBuilder))
+            {
+                requestBuilder = new RequestBuilder();
+                _requestBuilders.Add(connection, requestBuilder);
+            }
+            return requestBuilder;
+        }
+        
         public static void CreateTable<T>(this SqliteConnection connection, string tableName, Declaration declaration)
         {
             Type type = typeof(T);
@@ -115,11 +128,11 @@ namespace Orbital.Core.Serialization.Sqlite
         }
 
         // SELECT * FROM TableName
-        public static List<T> GetTable<T>(this SqliteConnection connection, Declaration declaration)
+        /*public static List<T> GetTable<T>(this SqliteConnection connection, Declaration declaration)
         {
             var model = declaration.GetModel(typeof(T));
-            
-            DataSet dataSet = RequestTable(connection, model);
+            string sql = Select(model);
+            DataSet dataSet = Request(connection, sql);
 
             List<T> result = new List<T>();
             var rows = dataSet.Tables[0].Rows;
@@ -129,14 +142,10 @@ namespace Orbital.Core.Serialization.Sqlite
             }
 
             return result;
-        }
+        }*/
 
-        private static DataSet RequestTable(SqliteConnection connection, ModelType model)
+        private static DataSet Request(SqliteConnection connection, string sql)
         {
-            StringBuilder sqlBuilder = new StringBuilder();
-            sqlBuilder.Append(string.Format(SelectTableRootFormat, All));
-            sqlBuilder.Append(model.tableName);
-            var sql = sqlBuilder.ToString();
             Debug.Log(sql);
             DataSet dataSet = new DataSet();
             using (SqliteCommand command = new SqliteCommand(sql, connection))
@@ -150,14 +159,56 @@ namespace Orbital.Core.Serialization.Sqlite
             return dataSet;
         }
 
-        // SELECT * FROM TableName
-        public static void GetTable<T>(this SqliteConnection connection, TableSet<T> tableSet, Declaration declaration) where T : ModelBase
+        public static SqliteConnection Select(this SqliteConnection connection, string tableName, string whatToSelect = All)
         {
-            ModelType model = declaration.GetModel(typeof(T));
-            DataSet dataSet = RequestTable(connection, model);
-            tableSet.Fill(dataSet.Tables[0], model);
+            var builder = GetOrCreateBuilder(connection);
+            builder.Parts.Add((sqlBuilder, pointer) =>
+            {
+                sqlBuilder.Insert(ref pointer, string.Format(SelectTableRootFormat, whatToSelect));
+                sqlBuilder.Insert(ref pointer, tableName);
+                return 1;
+            });
+            return connection;
         }
 
+        public static SqliteConnection WhereIn(this SqliteConnection connection, string fieldName)
+        {
+            var builder = GetOrCreateBuilder(connection);
+            builder.Parts.Add((sqlBuilder, pointer) =>
+            {
+                sqlBuilder.Insert(ref pointer, string.Format(WhereInFormat, fieldName));
+                return -1;
+            });
+            return connection;
+        }
+
+        // SELECT * FROM TableName
+        public static SqliteConnection GetTable<T>(this SqliteConnection connection, TableSet<T> tableSet, Declaration declaration) where T : ModelBase
+        {
+            ModelType model = declaration.GetModel(typeof(T));
+            var builder = GetOrCreateBuilder(connection);
+
+            builder.Request = sql =>
+            {
+                DataSet dataSet = Request(connection, sql);
+                tableSet.Fill(dataSet.Tables[0], model);
+            };
+            return connection;
+        }
+
+        /*public static SqlConnection Where(this SqliteConnection connection, )
+        {
+            var builder = GetOrCreateBuilder(connection);
+            builder.Additional.Add(sql =>
+            {
+                return sql + 
+            });
+        }*/
+
+        public static void Run(this SqliteConnection connection)
+        {
+            GetOrCreateBuilder(connection).Run();
+        }
 
         //UPDATE TestTable SET (Name, Email) = ('ooo', 'op') WHERE (Id = 1) 
         public static void Update<T>(this SqliteConnection connection, TableSet<T> tableSet, Declaration declaration) where T : ModelBase
@@ -192,5 +243,36 @@ namespace Orbital.Core.Serialization.Sqlite
                 command.ExecuteNonQuery();
             }
         }
+
+        private static void Insert(this StringBuilder stringBuilder, ref int pointer, string value)
+        {
+            stringBuilder.Insert(pointer, value);
+            pointer += value.Length;
+        }
+        
+        private class RequestBuilder
+        {
+            public Action<string> Request;
+
+            public List<Func<StringBuilder, int, int>> Parts = new ();
+            public void Run()
+            {
+                StringBuilder sqlBuilder = new StringBuilder();
+                int pointer = 0;
+                foreach (Func<StringBuilder, int, int> part in Parts)
+                {
+                    int oldLength = sqlBuilder.Length;
+                    if (pointer > oldLength) pointer = oldLength;
+                    if (pointer < 0) pointer = 0;
+                    int offset = part(sqlBuilder, pointer);
+                    pointer += offset + sqlBuilder.Length - oldLength;
+                }
+                Request(sqlBuilder.ToString());
+                
+                Parts.Clear();
+            }
+        }
     }
+
+    
 }

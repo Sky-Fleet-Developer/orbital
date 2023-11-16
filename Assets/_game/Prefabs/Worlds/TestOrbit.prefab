@@ -49,11 +49,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tree:
     serializedValue: '{"Root":{"$type":"Orbital.Core.TrajectorySystem.SingleCenterBranch,
-      Core","settings":{"mass":0.0,"eccentricity":0.0,"semiMajorAxis":0.0,"inclination":0.0,"argumentOfPeriapsis":0.0,"longitudeAscendingNode":0.0,"timeShift":0.0,"period":0.0},"Central":{"$type":"Orbital.Core.TrajectorySystem.CelestialBody,
-      Core","settings":{"mass":1.98E+30,"eccentricity":0.0,"semiMajorAxis":0.0,"inclination":0.0,"argumentOfPeriapsis":0.0,"longitudeAscendingNode":0.0,"timeShift":0.0,"period":0.0}},"Children":[{"$type":"Orbital.Core.TrajectorySystem.SingleCenterBranch,
-      Core","settings":{"mass":6E+24,"eccentricity":0.0,"semiMajorAxis":1.5E+11,"inclination":0.0,"argumentOfPeriapsis":0.0,"longitudeAscendingNode":0.0,"timeShift":0.0,"period":0.0},"Central":{"$type":"Orbital.Core.TrajectorySystem.CelestialBody,
-      Core","settings":{"mass":6E+24,"eccentricity":0.0,"semiMajorAxis":0.0,"inclination":0.0,"argumentOfPeriapsis":0.0,"longitudeAscendingNode":0.0,"timeShift":0.0,"period":0.0}},"Children":[{"$type":"Orbital.Core.TrajectorySystem.CelestialBody,
-      Core","settings":{"mass":7.3E+22,"eccentricity":0.05,"semiMajorAxis":3.9E+08,"inclination":1.0,"argumentOfPeriapsis":0.0,"longitudeAscendingNode":0.0,"timeShift":0.0,"period":0.0}}]}]},"IsInitialized":true}'
+      Core","settings":{"mass":0.0,"eccentricity":0.0,"semiMajorAxis":0.0,"inclination":0.0,"argumentOfPeriapsis":0.0,"longitudeAscendingNode":0.0,"epoch":0.0},"Central":{"$type":"Orbital.Core.TrajectorySystem.CelestialBody,
+      Core","settings":{"mass":1.98E+30,"eccentricity":0.0,"semiMajorAxis":0.0,"inclination":0.0,"argumentOfPeriapsis":0.0,"longitudeAscendingNode":0.0,"epoch":0.0}},"Children":[{"$type":"Orbital.Core.TrajectorySystem.SingleCenterBranch,
+      Core","settings":{"mass":6E+24,"eccentricity":0.0,"semiMajorAxis":150000000000.0,"inclination":0.0,"argumentOfPeriapsis":0.0,"longitudeAscendingNode":0.0,"epoch":0.0},"Central":{"$type":"Orbital.Core.TrajectorySystem.CelestialBody,
+      Core","settings":{"mass":6E+24,"eccentricity":0.0,"semiMajorAxis":0.0,"inclination":0.0,"argumentOfPeriapsis":0.0,"longitudeAscendingNode":0.0,"epoch":0.0}},"Children":[{"$type":"Orbital.Core.TrajectorySystem.CelestialBody,
+      Core","settings":{"mass":7.3E+22,"eccentricity":0.05,"semiMajorAxis":390000000.0,"inclination":1.0,"argumentOfPeriapsis":0.0,"longitudeAscendingNode":0.0,"epoch":0.0}}]}]},"IsInitialized":true}'
 --- !u!114 &149123555183571689
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -128,15 +128,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 843ed5443cb417d41a77a9c28a6b6ba3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  id: 32820
   settings:
-    inclination: 0
-    longitudeAscendingNode: 0
-    argumentOfPeriapsis: 0
+    mass: 1.98e+30
     eccentricity: 0
     semiMajorAxis: 0
+    inclination: 0
+    argumentOfPeriapsis: 0
+    longitudeAscendingNode: 0
     epoch: 0
-    mass: 1.9800000146824104e+30
 --- !u!1 &6411308781379642944
 GameObject:
   m_ObjectHideFlags: 0
@@ -181,15 +180,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 843ed5443cb417d41a77a9c28a6b6ba3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  id: 32812
   settings:
-    inclination: 0
-    longitudeAscendingNode: 0
-    argumentOfPeriapsis: 0
+    mass: 6e+24
     eccentricity: 0
     semiMajorAxis: 0
+    inclination: 0
+    argumentOfPeriapsis: 0
+    longitudeAscendingNode: 0
     epoch: 0
-    mass: 6.000000083090567e+24
 --- !u!1 &6869555834215298745
 GameObject:
   m_ObjectHideFlags: 0
@@ -237,15 +235,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 843ed5443cb417d41a77a9c28a6b6ba3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  id: 32810
   settings:
-    inclination: 0
-    longitudeAscendingNode: 0
-    argumentOfPeriapsis: 0
+    mass: 6e+24
     eccentricity: 0
-    semiMajorAxis: 149999992832
+    semiMajorAxis: 150000000000
+    inclination: 0
+    argumentOfPeriapsis: 0
+    longitudeAscendingNode: 0
     epoch: 0
-    mass: 6.000000083090567e+24
 --- !u!1 &7143825406712870206
 GameObject:
   m_ObjectHideFlags: 0
@@ -362,15 +359,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 843ed5443cb417d41a77a9c28a6b6ba3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  id: 32808
   settings:
-    inclination: 0
-    longitudeAscendingNode: 0
-    argumentOfPeriapsis: 0
+    mass: 1.98e+30
     eccentricity: 0
     semiMajorAxis: 0
+    inclination: 0
+    argumentOfPeriapsis: 0
+    longitudeAscendingNode: 0
     epoch: 0
-    mass: 1.9800000146824104e+30
 --- !u!1 &8907344042088145154
 GameObject:
   m_ObjectHideFlags: 0
@@ -415,12 +411,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 843ed5443cb417d41a77a9c28a6b6ba3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  id: 32792
   settings:
-    inclination: 0.01745329
-    longitudeAscendingNode: 0
-    argumentOfPeriapsis: 0
-    eccentricity: 0.05000000074505806
+    mass: 7.3e+22
+    eccentricity: 0.05
     semiMajorAxis: 390000000
+    inclination: 0.01745329
+    argumentOfPeriapsis: 0
+    longitudeAscendingNode: 0
     epoch: 0
-    mass: 7.299999928155298e+22

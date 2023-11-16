@@ -58,6 +58,18 @@ namespace Orbital.Test
         }
         
         [Button]
+        void TestWorldLoad()
+        {
+            /*using (var connection = new SqliteConnection("Data Source=DB/sqliteDb.db"))
+            {
+                connection.Open();
+                Worlds = connection.GetTable<Core.Serialization.SqlModel.Player>(declaration);
+            }*/
+            worldSet = new WorldSet(declaration, "Data Source=DB/sqliteDb.db");
+            worldSet.LoadWorld();
+        }
+        
+        [Button]
         private void InsertCommand()
         {
             using (SqliteConnection connection = new SqliteConnection("Data Source=" + path))
