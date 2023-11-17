@@ -1,10 +1,9 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using Mono.Data.Sqlite;
+﻿using Mono.Data.Sqlite;
+using Orbital.Core;
 using Orbital.Core.Serialization.Sqlite;
-using UnityEngine;
+using Zenject;
 
-namespace Orbital.Core.Serialization.SqlModel
+namespace Orbital.Serialization.SqlModel
 {
     public class WorldSet : DbSet
     {
@@ -13,6 +12,7 @@ namespace Orbital.Core.Serialization.SqlModel
         public TableSet<Component> Components = new ("Components");
         public TableSet<Celestial> Celestials = new ("Celestials");
         private string _connectionString;
+        [Inject] private DiContainer _container;
 
         public WorldSet(Declaration declaration, string connectionString) : base(declaration)
         {
@@ -59,9 +59,10 @@ namespace Orbital.Core.Serialization.SqlModel
             }
         }
 
-        public void LoadWorld()
+        public WorldContext LoadWorld()
         {
             WorldContext context = new WorldContext();
+            _container.Inject(context);
             using (SqliteConnection connection = new SqliteConnection(_connectionString))
             {
                 connection.Open();
@@ -76,7 +77,21 @@ namespace Orbital.Core.Serialization.SqlModel
 
             context.InstallObjects(Objects);
             context.InstallCelestials(Celestials);
+            _container.Inject(context.World);
             context.InitWorld();
+            return context;
+        }
+
+        public Core.PlayerCharacter InstantiatePlayer(WorldContext context, int playerId)
+        {
+            using (SqliteConnection connection = new SqliteConnection(_connectionString))
+            {
+                connection.Open();
+                connection.GetTable(Players, Declaration).Select(Players.TableName).Where($"Id == {playerId}").Run();
+                connection.GetTable(Objects, Declaration).Select(Objects.TableName).Where($"Id == {Players[0].ParentId}");
+            }
+
+            context.InstallPlayers(Players, Declaration);
         }
     }
 }

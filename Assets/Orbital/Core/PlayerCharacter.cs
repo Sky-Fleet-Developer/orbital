@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Orbital.Core
 {
-    public class Player : MonoBehaviour
+    public class PlayerCharacter : MonoBehaviour
     {
         [SerializeField] private string playerName;
         [SerializeField] private int id;

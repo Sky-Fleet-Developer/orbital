@@ -1,9 +1,8 @@
-﻿
-using System;
+﻿using System;
 using Orbital.Core.Serialization.Sqlite;
 using Sirenix.OdinInspector;
 
-namespace Orbital.Core.Serialization.SqlModel
+namespace Orbital.Serialization.SqlModel
 {
     [Serializable]
     public class Player : ModelBase

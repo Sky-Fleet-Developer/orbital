@@ -21,7 +21,8 @@
         "Sirenix.OdinInspector.Attributes.dll",
         "Sirenix.OdinInspector.Editor.dll",
         "Mono.Data.Sqlite.dll",
-        "Zenject-usage.dll"
+        "Zenject-usage.dll",
+        "Newtonsoft.Json.dll"
     ],
     "autoReferenced": true,
     "defineConstraints": [],

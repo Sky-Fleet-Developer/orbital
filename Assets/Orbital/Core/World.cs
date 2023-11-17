@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Ara3D;
 using Orbital.Core.Simulation;
 using Orbital.Core.TrajectorySystem;
@@ -18,96 +19,53 @@ namespace Orbital.Core
         
         public void Load(bool putOrbitsFromTree = true)
         {
-            if (tree == null)
+            if (tree != null)
             {
-                tree = new TreeContainer();
-            }
-            if (tree.IsInitialized)
-            {
-                if (Application.isPlaying)
+                if (tree.IsInitialized)
                 {
-                    Debug.LogError("Player has been already loaded!");
+                    if (Application.isPlaying)
+                    {
+                        Debug.LogError("PlayerCharacter has been already loaded!");
+                    }
+                    return;
                 }
-                return;
+
+                if (putOrbitsFromTree) tree.Load();
+                tree.CalculateForRoot(transform, this);
             }
-            if(putOrbitsFromTree) tree.Load();
-            tree.CalculateForRoot(transform, this, putOrbitsFromTree);
+
+            IStaticBodyAccessor root = GetComponentInChildren<IStaticBodyAccessor>();
+            InitHierarchyRecursively(root, ((MonoBehaviour) root).transform);
             InjectHierarchy();
         }
 
-        public IEnumerable<IDynamicBody> GetDynamicBodies()
+        public void InitHierarchyRecursively(IStaticBodyAccessor bRoot, Transform tRoot)
         {
-            return tree._dynamicChildren;
-        }
+            List<IStaticBody> children = new List<IStaticBody>();
+            foreach (Transform child in tRoot)
+            {
+                IStaticBodyAccessor staticBodyAccessor = child.GetComponent<IStaticBodyAccessor>();
+                if(staticBodyAccessor == null) continue;
+                children.Add(staticBodyAccessor.Self);
+                staticBodyAccessor.Parent = bRoot.Self;
+                InitHierarchyRecursively(staticBodyAccessor, child);
+            }
 
-        public IMassSystem GetParent(IStaticBody mass)
-        {
-            return tree._parents.TryGetValue(tree._massPerComponent[mass], out IMassSystem value) ? value : null;
-        }
-        
-        public IMassSystem GetParent(IMassSystem mass)
-        {
-            return tree._parents.TryGetValue(mass, out IMassSystem value) ? value : null;
+            bRoot.Children = children.ToArray();
         }
 
         public void RegisterRigidBody(IDynamicBody value)
         {
-            tree.AddRigidbody(value);
+           // tree.AddRigidbody(value);
             DynamicBodyRegisterHandler?.Invoke(value);
         }
         
-        public DVector3 GetGlobalPosition(IStaticBody staticBody)
-        {
-            return tree.GetGlobalPosition(staticBody, TimeService.WorldTime);
-        }
-
-        public DVector3 GetGlobalPosition(IMassSystem massSystem)
-        {
-            return tree.GetGlobalPosition(massSystem, TimeService.WorldTime);
-        }
-
-        public IStaticBody GetParentByWorldPosition(DVector3 worldPosition, double time)
-        {
-            bool Check(IStaticBodyAccessor body, DVector3 relativePosition)
-            {
-                return relativePosition.Length() < MassUtility.GetGravityRadius(body.Self.GravParameter);
-            }
-            
-            IEnumerable<IMassSystem> array = tree.Root.GetContent();
-            IMassSystem selected = tree.Root;
-            DVector3 position = worldPosition;
-            while (true)
-            {
-                IMassSystem next = null;
-                foreach (IMassSystem massSystem in array)
-                {
-                    var body = tree._componentPerMass[massSystem];
-                    DVector3 relativePosition = position - body.Orbit.GetPositionAtT(time);
-                    if (Check(body, relativePosition))
-                    {
-                        position = relativePosition;
-                        next = massSystem;
-                        break;
-                    }
-                }
-
-                if (next == null)
-                {
-                    return tree._componentPerMass[selected].Self;
-                }
-                else
-                {
-                    array = next.GetContent();
-                }
-            }
-        }
-
         private void InjectHierarchy()
         {
             #if UNITY_EDITOR
             if (_container == null)
             {
-                if(Application.isPlaying) Debug.LogError("Has no DI container in Player component");
+                if(Application.isPlaying) Debug.LogError("Has no DI container in PlayerCharacter component");
                 return;
             }
             #endif

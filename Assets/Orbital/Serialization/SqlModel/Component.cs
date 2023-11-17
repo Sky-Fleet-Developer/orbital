@@ -1,7 +1,6 @@
 ﻿using Orbital.Core.Serialization.Sqlite;
-using UnityEngine;
 
-namespace Orbital.Core.Serialization.SqlModel
+namespace Orbital.Serialization.SqlModel
 {
     public class Component : ModelBase
     {

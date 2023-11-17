@@ -153,7 +153,7 @@ namespace Orbital.Core.Serialization
                     dataAdapter.Fill(dataSet);
                     if (dataSet.Tables[0].Rows.Count == 0) return null;
 
-                    //Player world = new GameObject(worldName).AddComponent<Player>();
+                    //PlayerCharacter world = new GameObject(worldName).AddComponent<PlayerCharacter>();
 
                     for (int i = 0; i < dataSet.Tables[0].Rows.Count; i++)
                     {

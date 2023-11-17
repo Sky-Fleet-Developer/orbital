@@ -28,6 +28,9 @@ namespace Orbital.Core.Serialization.Sqlite
         private const string DeleteFormat = "DELETE FROM {0} WHERE Id = {1};";
         private const string All = "* ";
         private const string WhereInFormat = " WHERE {0} IN ()";
+        private const string WhereFormat = " WHERE {0}";
+        //0 - fields, 1 - table name, 
+        private const string RecursiveFormat = " WHERE {0}";
 
         private static Dictionary<SqliteConnection, RequestBuilder> _requestBuilders = new Dictionary<SqliteConnection, RequestBuilder>();
 
@@ -178,6 +181,28 @@ namespace Orbital.Core.Serialization.Sqlite
             {
                 sqlBuilder.Insert(ref pointer, string.Format(WhereInFormat, fieldName));
                 return -1;
+            });
+            return connection;
+        }
+        
+        public static SqliteConnection Where(this SqliteConnection connection, string expression)
+        {
+            var builder = GetOrCreateBuilder(connection);
+            builder.Parts.Add((sqlBuilder, pointer) =>
+            {
+                sqlBuilder.Insert(ref pointer, string.Format(WhereFormat, expression));
+                return 0;
+            });
+            return connection;
+        }
+        
+        public static SqliteConnection Recursive(this SqliteConnection connection, string expression)
+        {
+            var builder = GetOrCreateBuilder(connection);
+            builder.Parts.Add((sqlBuilder, pointer) =>
+            {
+                sqlBuilder.Insert(ref pointer, string.Format(WhereFormat, expression));
+                return 0;
             });
             return connection;
         }

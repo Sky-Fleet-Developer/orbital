@@ -34,16 +34,15 @@ namespace Orbital.Core
             serializer.Populate(this, serializedValue);
         }
 
-        public void CalculateForRoot(Transform tRoot, World world, bool putOrbitsFromTree = true)
+        public void CalculateForRoot(Transform tRoot, World world)
         {
             _world = world;
             CreateCache();
-            if (Root == null) return;
-            if (putOrbitsFromTree)
+            if (Root != null)
             {
                 Root.FillTrajectoriesRecursively(_trajectories);
+                ReconstructHierarchy(Root, tRoot);
             }
-            ReconstructHierarchy(Root, tRoot);
         }
 
         private void CreateCache()

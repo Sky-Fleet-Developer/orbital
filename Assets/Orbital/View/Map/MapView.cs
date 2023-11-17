@@ -51,7 +51,7 @@ namespace Orbital.View.Map
         
         private void Init()
         {
-            //_world = GetComponentInChildren<Player>();
+            //_world = GetComponentInChildren<PlayerCharacter>();
             #if UNITY_EDITOR
             if (!Application.isPlaying)
             {

@@ -1,9 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using Orbital.Core;
+using Orbital.Core.Serialization;
 using Orbital.Core.Serialization.Sqlite;
 using UnityEngine;
+using Zenject;
+using Component = Orbital.Serialization.SqlModel.Component;
+using Object = Orbital.Serialization.SqlModel.Object;
 
-namespace Orbital.Core.Serialization.SqlModel
+namespace Orbital.Serialization.SqlModel
 {
     public class WorldContext
     {
@@ -11,6 +15,11 @@ namespace Orbital.Core.Serialization.SqlModel
         private World _world;
         private Dictionary<int, Transform> _objects = new();
         private Dictionary<int, IStaticBodyAccessor> _celestials = new();
+        private Dictionary<int, Core.PlayerCharacter> _players = new();
+        [Inject] private IFactory<GameObject, IStaticBodyAccessor> _staticBodyFactory;
+        [Inject] private IFactory<Core.PlayerCharacter> _playerFactory;
+
+        public World World => _world;
 
         public WorldContext()
         {
@@ -74,7 +83,7 @@ namespace Orbital.Core.Serialization.SqlModel
             };
         }
 
-        public Player Convert(Core.Player source)
+        public Player Convert(Core.PlayerCharacter source)
         {
             return new Player
             {
@@ -133,7 +142,7 @@ namespace Orbital.Core.Serialization.SqlModel
                 
                 Transform transform = _objects[celestial.OwnerId];
 
-                IStaticBodyAccessor instance = transform.gameObject.AddComponent(Type.GetType(celestial.MyType)) as IStaticBodyAccessor;
+                IStaticBodyAccessor instance = _staticBodyFactory.Create(transform.gameObject);//transform.gameObject.AddComponent(Type.GetType(celestial.MyType)) as IStaticBodyAccessor;
                 instance.Id = celestial.Id;
                 IHierarchyElement hierarchyElement = (IHierarchyElement) instance;
                 hierarchyElement.Id = celestial.OwnerId;
@@ -152,6 +161,18 @@ namespace Orbital.Core.Serialization.SqlModel
         public void InitWorld()
         {
             _world.Load(false);
+        }
+
+        public void InstallPlayers(TableSet<Player> table, Declaration declaration)
+        {
+            foreach (Player player in table)
+            {
+                if (_players.ContainsKey(player.Id)) continue;
+                
+                Transform transform = _objects[player.ParentId];
+
+                var instance = _playerFactory.Create();
+            }
         }
     }
 }

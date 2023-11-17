@@ -32,7 +32,14 @@ namespace Orbital.Core.Serialization.Sqlite
             for (int i = 0; i < rows.Count; i++)
             {
                 T element = (T) model.CreateModelByRow(rows[i]);
-                _elements.Add(element.Id, element);
+                if (_elements.ContainsKey(element.Id))
+                {
+                    _elements[element.Id] = element;
+                }
+                else
+                {
+                    _elements.Add(element.Id, element);
+                }
             }
         }
 

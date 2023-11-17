@@ -48,6 +48,10 @@ MonoBehaviour:
       sqlType: INTAGER
       canBeNull: 0
       isPrimaryKey: 1
+    - name: Name
+      sqlType: VARCHAR (100)
+      canBeNull: 1
+      isPrimaryKey: 0
     - name: ParentId
       sqlType: INTAGER
       canBeNull: 1
@@ -110,6 +114,10 @@ MonoBehaviour:
       sqlType: INTAGER
       canBeNull: 0
       isPrimaryKey: 1
+    - name: MyType
+      sqlType: VARCHAR (150)
+      canBeNull: 1
+      isPrimaryKey: 0
     - name: Mass
       sqlType: DOUBLE
       canBeNull: 0

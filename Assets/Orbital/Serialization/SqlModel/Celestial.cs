@@ -1,6 +1,6 @@
 ﻿using Orbital.Core.Serialization.Sqlite;
 
-namespace Orbital.Core.Serialization.SqlModel
+namespace Orbital.Serialization.SqlModel
 {
     public class Celestial : ModelBase
     {

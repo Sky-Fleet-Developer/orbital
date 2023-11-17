@@ -6,15 +6,17 @@ using UnityWinForms.System.Windows.Forms;
 using Mono.Data.Sqlite;
 using Orbital.Core;
 using Orbital.Core.Serialization.Sqlite;
-using Orbital.Core.Serialization.SqlModel;
+using Orbital.Factories;
+using Orbital.Serialization.SqlModel;
 using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityWinForms.Controls;
 using UnityWinForms.Examples;
 using UnityWinForms.Examples.Panels;
 using UnityWinForms.System.Drawing;
-using Component = Orbital.Core.Serialization.SqlModel.Component;
-using Object = Orbital.Core.Serialization.SqlModel.Object;
+using Zenject;
+using Component = Orbital.Serialization.SqlModel.Component;
+using Object = Orbital.Serialization.SqlModel.Object;
 
 namespace Orbital.Test
 {
@@ -38,7 +40,7 @@ namespace Orbital.Test
             using (var connection = new SqliteConnection("Data Source=DB/sqliteDb.db"))
             {
                 connection.Open();
-                connection.CreateTable<Core.Serialization.SqlModel.Player>("Players", declaration);
+                connection.CreateTable<Serialization.SqlModel.Player>("Players", declaration);
                 connection.CreateTable<Object>("Objects", declaration);
                 connection.CreateTable<Component>("Components", declaration);
                 connection.CreateTable<Celestial>("Celestials", declaration);
@@ -51,7 +53,7 @@ namespace Orbital.Test
             /*using (var connection = new SqliteConnection("Data Source=DB/sqliteDb.db"))
             {
                 connection.Open();
-                Worlds = connection.GetTable<Core.Serialization.SqlModel.Player>(declaration);
+                Worlds = connection.GetTable<Core.Serialization.SqlModel.PlayerCharacter>(declaration);
             }*/
             worldSet = new WorldSet(declaration, "Data Source=DB/sqliteDb.db");
             worldSet.WriteWorld(targetWorld);
@@ -63,9 +65,12 @@ namespace Orbital.Test
             /*using (var connection = new SqliteConnection("Data Source=DB/sqliteDb.db"))
             {
                 connection.Open();
-                Worlds = connection.GetTable<Core.Serialization.SqlModel.Player>(declaration);
+                Worlds = connection.GetTable<Core.Serialization.SqlModel.PlayerCharacter>(declaration);
             }*/
+            DiContainer container = new DiContainer();
+            container.BindInterfacesTo<StaticBodyFactory>().FromInstance(new StaticBodyFactory());
             worldSet = new WorldSet(declaration, "Data Source=DB/sqliteDb.db");
+            container.Inject(worldSet);
             worldSet.LoadWorld();
         }
         
