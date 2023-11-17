@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using Orbital.Core.Serialization.Sqlite;
 using UnityEngine;
 
 namespace Orbital.Core.Serialization.SqlModel
@@ -7,6 +9,8 @@ namespace Orbital.Core.Serialization.SqlModel
     {
         private static ISerializer _serializer = new JsonPerformance();
         private World _world;
+        private Dictionary<int, Transform> _objects = new();
+        private Dictionary<int, IStaticBodyAccessor> _celestials = new();
 
         public WorldContext()
         {
@@ -16,6 +20,14 @@ namespace Orbital.Core.Serialization.SqlModel
         public WorldContext(World world)
         {
             _world = world;
+            foreach (IHierarchyElement hierarchyElement in GetHierarchyElements())
+            {
+                _objects.Add(hierarchyElement.Id, hierarchyElement.Transform);
+            }
+            foreach (IStaticBodyAccessor staticBodyAccessor in GetStaticBodies())
+            {
+                _celestials.Add(staticBodyAccessor.Id, staticBodyAccessor);
+            }
         }
 
         public IEnumerable<IHierarchyElement> GetHierarchyElements()
@@ -37,12 +49,14 @@ namespace Orbital.Core.Serialization.SqlModel
         {
             var g = ((MonoBehaviour) hierarchyElement).gameObject;
             var p = hierarchyElement.Transform.parent;
+            if (p == _world.transform) p = null;
             return new Object
             {
                 Id = hierarchyElement.Id,
+                Name = hierarchyElement.Transform.name,
                 ParentId = p == null ? null : p.gameObject.GetInstanceID(),
-                LocalPosition = _serializer.Serialize(hierarchyElement.LocalPosition),
-                LocalRotation = "",
+                LocalPosition = _serializer.Serialize(hierarchyElement.Transform.localPosition),
+                LocalRotation = _serializer.Serialize(hierarchyElement.Transform.localEulerAngles),
                 Tag = g.tag,
                 Layer = g.layer
             };
@@ -78,6 +92,7 @@ namespace Orbital.Core.Serialization.SqlModel
             return new Celestial
             {
                 Id = source.Id,
+                MyType = source.GetType().AssemblyQualifiedName,
                 Mass = source.Settings.mass,
                 Eccentricity = source.Settings.eccentricity,
                 SemiMajorAxis = source.Settings.semiMajorAxis,
@@ -87,6 +102,56 @@ namespace Orbital.Core.Serialization.SqlModel
                 Epoch = source.Settings.epoch,
                 OwnerId = hierarchyElement.Id
             };
+        }
+
+        public void InstallObjects(TableSet<Object> table)
+        {
+            foreach (Object o in table)
+            {
+                if (_objects.ContainsKey(o.Id)) continue;
+                
+                Transform instance = new GameObject(o.Name).transform;
+                instance.gameObject.layer = o.Layer;
+                instance.gameObject.tag = o.Tag;
+                instance.localPosition = _serializer.Deserialize<Vector3>(o.LocalPosition);
+                instance.localEulerAngles = _serializer.Deserialize<Vector3>(o.LocalRotation);
+                _objects.Add(o.Id, instance);
+            }
+
+            foreach (Object o in table)
+            {
+                Transform parent = o.ParentId.HasValue ? _objects[o.ParentId.Value] : _world.transform;
+                _objects[o.Id].SetParent(parent, false);
+            }
+        }
+
+        public void InstallCelestials(TableSet<Celestial> table)
+        {
+            foreach (Celestial celestial in table)
+            {
+                if (_celestials.ContainsKey(celestial.Id)) continue;
+                
+                Transform transform = _objects[celestial.OwnerId];
+
+                IStaticBodyAccessor instance = transform.gameObject.AddComponent(Type.GetType(celestial.MyType)) as IStaticBodyAccessor;
+                instance.Id = celestial.Id;
+                IHierarchyElement hierarchyElement = (IHierarchyElement) instance;
+                hierarchyElement.Id = celestial.OwnerId;
+                var s = instance.Settings;
+                s.mass = celestial.Mass;
+                s.eccentricity = celestial.Eccentricity;
+                s.semiMajorAxis = celestial.SemiMajorAxis;
+                s.inclination = celestial.Inclination;
+                s.argumentOfPeriapsis = celestial.ArgumentOfPeriapsis;
+                s.longitudeAscendingNode = celestial.LongitudeAscendingNode;
+                s.epoch = celestial.Epoch;
+                instance.Settings = s;
+            }
+        }
+
+        public void InitWorld()
+        {
+            _world.Load(false);
         }
     }
 }

@@ -18,7 +18,7 @@ namespace Orbital.Core
         {
             get
             {
-                if (id == -1)
+                if (id == 0)
                 {
                     id = GetInstanceID();
                 }
@@ -26,7 +26,7 @@ namespace Orbital.Core
             }
             set
             {
-                if (id != -1)
+                if (id != 0)
                 {
                     throw new Exception("Can't write Id twice");
                 }
@@ -46,7 +46,7 @@ namespace Orbital.Core
             set => Variables = (TRuntimeVariables)value;
         }
 
-        [SerializeField, HideInInspector] private int id = -1;
+        [SerializeField, HideInInspector] private int id = 0;
         public virtual TRuntimeVariables Variables { get; set; } 
         public virtual TSettings Settings { get; set; } 
         [Inject] private ComponentsRegistrationService _componentsRegistrationService;

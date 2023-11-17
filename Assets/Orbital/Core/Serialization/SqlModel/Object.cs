@@ -9,6 +9,8 @@ namespace Orbital.Core.Serialization.SqlModel
         public override int Id { get; set; }
         //public int CelestialId { get; set; }
         //public int ClusterId { get; set; }
+        [DataType("VARCHAR (100)")]
+        public string Name { get; set; }
         public int? ParentId { get; set; }
         [DataType("VARCHAR (100)")]
         public string LocalPosition { get; set; }

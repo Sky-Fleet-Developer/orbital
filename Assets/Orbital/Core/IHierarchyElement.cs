@@ -5,8 +5,8 @@ namespace Orbital.Core
 {
     public interface IHierarchyElement
     {
-        public int Id => Transform.gameObject.GetInstanceID();
+        public int Id { get; set; }
         public Transform Transform { get; }
-        public DVector3 LocalPosition { get; }
+        //public DVector3 LocalPosition { get; }
     }
 }

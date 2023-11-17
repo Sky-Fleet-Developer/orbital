@@ -19,6 +19,7 @@ namespace Orbital
         [ShowInInspector] private IStaticBody[] _children;
         private bool _isSatellite;
         private int _id;
+        private int _ownerId;
 
         #region InterfaceImplementation
         Transform IHierarchyElement.Transform => transform;
@@ -27,6 +28,26 @@ namespace Orbital
         public IEnumerable<IStaticBody> Children => _children;
         public bool IsSatellite => _isSatellite;
         public double GravParameter => settings.mass * MassUtility.G;
+
+        int IHierarchyElement.Id
+        {
+            get
+            {
+                if (_ownerId == 0)
+                {
+                    _ownerId = gameObject.GetInstanceID();
+                }
+                return _ownerId;
+            }
+            set
+            {
+                if (_ownerId != 0)
+                {
+                    throw new Exception("Can't write Id twice");
+                }
+                _ownerId = value;
+            }
+        }
         [ShowInInspector, ReadOnly] int IStaticBodyAccessor.Id
         {
             get
@@ -39,7 +60,7 @@ namespace Orbital
             }
             set
             {
-                if (_id != -1)
+                if (_id != 0)
                 {
                     throw new Exception("Can't write Id twice");
                 }

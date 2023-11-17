@@ -6,6 +6,8 @@ namespace Orbital.Core.Serialization.SqlModel
     {
         [PrimaryKey]
         public override int Id { get; set; }
+        [DataType("VARCHAR (150)")]
+        public string MyType { get; set; }
         public double Mass { get; set; }
         public double Eccentricity { get; set; }
         public double SemiMajorAxis { get; set; }

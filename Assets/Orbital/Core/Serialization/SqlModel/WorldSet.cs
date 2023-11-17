@@ -61,17 +61,22 @@ namespace Orbital.Core.Serialization.SqlModel
 
         public void LoadWorld()
         {
-            //WorldContext context = new WorldContext();
+            WorldContext context = new WorldContext();
             using (SqliteConnection connection = new SqliteConnection(_connectionString))
             {
                 connection.Open();
-                connection.GetTable(Objects, Declaration).Select(Objects.TableName).WhereIn("Id").Select(Celestials.TableName, "OwnerId").Run();
+                connection.GetTable(Objects, Declaration)
+                    .Select(Objects.TableName)
+                    .WhereIn("Id").Select(Celestials.TableName, "OwnerId")
+                    .Run();
+                connection.GetTable(Celestials, Declaration)
+                    .Select(Celestials.TableName)
+                    .Run();
             }
 
-            foreach (Object o in Objects)
-            {
-                Debug.Log(o.Id);
-            }
+            context.InstallObjects(Objects);
+            context.InstallCelestials(Celestials);
+            context.InitWorld();
         }
     }
 }
