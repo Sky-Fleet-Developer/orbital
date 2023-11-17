@@ -21,7 +21,10 @@ namespace Orbital
 
         #region InterfaceImplementation
         Transform IHierarchyElement.Transform => transform;
+        string IHierarchyElement.Name => name;
+        int IHierarchyElement.ParentId => transform.parent.gameObject.GetInstanceID();
         public DVector3 LocalPosition => Orbit.GetPositionAtT(TimeService.WorldTime);
+        public Vector3 LocalEulerAngles => Vector3.zero;
         public StaticOrbit Orbit => _path.GetOrbitAtTime(TimeService.WorldTime);
         public event Action OrbitChangedHandler;
         public IStaticBody ParentCelestial => _path.GetParentAtTime(TimeService.WorldTime);

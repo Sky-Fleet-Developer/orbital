@@ -11,7 +11,7 @@ using UnityEngine;
 
 namespace Orbital.Core.Serialization.Sqlite
 {
-    public static class SqliteExtensions
+    public static class Sql
     {
         private const char Space = ' ';
         private const string Comma = ", ";
@@ -22,27 +22,15 @@ namespace Orbital.Core.Serialization.Sqlite
         private const string PrimaryKey = " PRIMARY KEY";
         private const string ForeignKeyFormat = " CONSTRAINT[FK_{0}_{1}_{2}] FOREIGN KEY ([{2}]) REFERENCES [{1}] ([{3}])";
         private const string CreateTableRoot = "CREATE TABLE IF NOT EXISTS ";
-        private const string SelectTableRootFormat = "SELECT {0} FROM ";
+        private const string SelectTableRootFormat = "SELECT {0} FROM {1}";
         private const string UpdateTableFormat = "UPDATE {0} SET ({1}) = ({2}) WHERE (Id = {3});";
         private const string InsertFormat = "INSERT INTO {0} ({1}) VALUES ({2});";
         private const string DeleteFormat = "DELETE FROM {0} WHERE Id = {1};";
-        private const string All = "* ";
-        private const string WhereInFormat = " WHERE {0} IN ()";
+        private const string AllStar = "*";
+        private const string WhereInFormat = " WHERE {0} IN ({1})";
         private const string WhereFormat = " WHERE {0}";
         //0 - fields, 1 - table name, 
-        private const string RecursiveFormat = " WHERE {0}";
-
-        private static Dictionary<SqliteConnection, RequestBuilder> _requestBuilders = new Dictionary<SqliteConnection, RequestBuilder>();
-
-        private static RequestBuilder GetOrCreateBuilder(SqliteConnection connection)
-        {
-            if (!_requestBuilders.TryGetValue(connection, out var requestBuilder))
-            {
-                requestBuilder = new RequestBuilder();
-                _requestBuilders.Add(connection, requestBuilder);
-            }
-            return requestBuilder;
-        }
+        private const string WithRecursiveFormat = "WITH RECURSIVE {0} ({1}) AS ({2} UNION ALL {3})";
         
         public static void CreateTable<T>(this SqliteConnection connection, string tableName, Declaration declaration)
         {
@@ -162,63 +150,39 @@ namespace Orbital.Core.Serialization.Sqlite
             return dataSet;
         }
 
-        public static SqliteConnection Select(this SqliteConnection connection, string tableName, string whatToSelect = All)
-        {
-            var builder = GetOrCreateBuilder(connection);
-            builder.Parts.Add((sqlBuilder, pointer) =>
-            {
-                sqlBuilder.Insert(ref pointer, string.Format(SelectTableRootFormat, whatToSelect));
-                sqlBuilder.Insert(ref pointer, tableName);
-                return 1;
-            });
-            return connection;
-        }
+        public static SqlString All() => AllStar;
 
-        public static SqliteConnection WhereIn(this SqliteConnection connection, string fieldName)
+        public static SqlString AllFields<T>(TableSet<T> tableSet, Declaration declaration) where T : ModelBase
         {
-            var builder = GetOrCreateBuilder(connection);
-            builder.Parts.Add((sqlBuilder, pointer) =>
-            {
-                sqlBuilder.Insert(ref pointer, string.Format(WhereInFormat, fieldName));
-                return -1;
-            });
-            return connection;
+            return BuildProperties(declaration.GetModel(typeof(T)), false);
         }
         
-        public static SqliteConnection Where(this SqliteConnection connection, string expression)
+        public static SqlString Select(SqlString tableName, SqlString propertiesToSelect)
         {
-            var builder = GetOrCreateBuilder(connection);
-            builder.Parts.Add((sqlBuilder, pointer) =>
-            {
-                sqlBuilder.Insert(ref pointer, string.Format(WhereFormat, expression));
-                return 0;
-            });
-            return connection;
-        }
-        
-        public static SqliteConnection Recursive(this SqliteConnection connection, string expression)
-        {
-            var builder = GetOrCreateBuilder(connection);
-            builder.Parts.Add((sqlBuilder, pointer) =>
-            {
-                sqlBuilder.Insert(ref pointer, string.Format(WhereFormat, expression));
-                return 0;
-            });
-            return connection;
+            return string.Format(SelectTableRootFormat, propertiesToSelect.Value, tableName.Value);
         }
 
+        public static SqlString WhereIn(string fieldName, Func<string> internalExpression)
+        {
+            return string.Format(WhereInFormat, fieldName, internalExpression());
+        }
+        
+        public static SqlString Where(SqlString expression)
+        {
+            return string.Format(WhereFormat, expression.Value);
+        }
+        
+        public static SqlString WithRecursive(string returnName, SqlString properties, SqlString initialExpression, SqlString recursiveExpression)
+        {
+            return string.Format(WithRecursiveFormat, returnName, properties.Value, initialExpression.Value, recursiveExpression.Value);
+        }
+        
         // SELECT * FROM TableName
-        public static SqliteConnection GetTable<T>(this SqliteConnection connection, TableSet<T> tableSet, Declaration declaration) where T : ModelBase
+        public static void GetTable<T>(this SqliteConnection connection, TableSet<T> tableSet, Declaration declaration, SqlString expression) where T : ModelBase
         {
             ModelType model = declaration.GetModel(typeof(T));
-            var builder = GetOrCreateBuilder(connection);
-
-            builder.Request = sql =>
-            {
-                DataSet dataSet = Request(connection, sql);
-                tableSet.Fill(dataSet.Tables[0], model);
-            };
-            return connection;
+            DataSet dataSet = Request(connection, expression.Value);
+            tableSet.Fill(dataSet.Tables[0], model);
         }
 
         /*public static SqlConnection Where(this SqliteConnection connection, )
@@ -229,11 +193,6 @@ namespace Orbital.Core.Serialization.Sqlite
                 return sql + 
             });
         }*/
-
-        public static void Run(this SqliteConnection connection)
-        {
-            GetOrCreateBuilder(connection).Run();
-        }
 
         //UPDATE TestTable SET (Name, Email) = ('ooo', 'op') WHERE (Id = 1) 
         public static void Update<T>(this SqliteConnection connection, TableSet<T> tableSet, Declaration declaration) where T : ModelBase
@@ -274,30 +233,17 @@ namespace Orbital.Core.Serialization.Sqlite
             stringBuilder.Insert(pointer, value);
             pointer += value.Length;
         }
-        
-        private class RequestBuilder
-        {
-            public Action<string> Request;
-
-            public List<Func<StringBuilder, int, int>> Parts = new ();
-            public void Run()
-            {
-                StringBuilder sqlBuilder = new StringBuilder();
-                int pointer = 0;
-                foreach (Func<StringBuilder, int, int> part in Parts)
-                {
-                    int oldLength = sqlBuilder.Length;
-                    if (pointer > oldLength) pointer = oldLength;
-                    if (pointer < 0) pointer = 0;
-                    int offset = part(sqlBuilder, pointer);
-                    pointer += offset + sqlBuilder.Length - oldLength;
-                }
-                Request(sqlBuilder.ToString());
-                
-                Parts.Clear();
-            }
-        }
     }
 
+    public struct SqlString
+    {
+        public string Value;
+        public static implicit operator SqlString(string value) => new SqlString {Value = value};
+        public static implicit operator SqlString(Func<string> value) => new SqlString {Value = value()};
+        public static implicit operator Func<string>(SqlString value) => () => value.Value;
+        public static implicit operator string(SqlString value) => value.Value;
+
+        public static SqlString operator +(SqlString a, SqlString b) => new SqlString {Value = a.Value + b.Value};
+    }
     
 }

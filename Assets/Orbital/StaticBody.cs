@@ -22,7 +22,10 @@ namespace Orbital
         private int _ownerId;
 
         #region InterfaceImplementation
+        string IHierarchyElement.Name => name;
+        int IHierarchyElement.ParentId => transform.parent.gameObject.GetInstanceID();
         Transform IHierarchyElement.Transform => transform;
+        public Vector3 LocalEulerAngles => Vector3.zero;
         public IMassSystem MassSystem => _massSystem;
         public IStaticBody ParentCelestial => _parentCelestial;
         public IEnumerable<IStaticBody> Children => _children;

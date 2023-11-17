@@ -15,10 +15,15 @@ namespace Orbital.Serialization.SqlModel
         private World _world;
         private Dictionary<int, Transform> _objects = new();
         private Dictionary<int, IStaticBodyAccessor> _celestials = new();
-        private Dictionary<int, Core.PlayerCharacter> _players = new();
+        private Dictionary<int, PlayerCharacter> _players = new();
         [Inject] private IFactory<GameObject, IStaticBodyAccessor> _staticBodyFactory;
-        [Inject] private IFactory<Core.PlayerCharacter> _playerFactory;
+        [Inject] private IFactory<PlayerCharacter> _playerFactory;
 
+        public PlayerCharacter GetPlayer(int id)
+        {
+            return _players[id];
+        }
+        
         public World World => _world;
 
         public WorldContext()
@@ -57,18 +62,19 @@ namespace Orbital.Serialization.SqlModel
         public Object Convert(IHierarchyElement hierarchyElement)
         {
             var g = ((MonoBehaviour) hierarchyElement).gameObject;
-            var p = hierarchyElement.Transform.parent;
-            if (p == _world.transform) p = null;
-            return new Object
+            int? p = hierarchyElement.ParentId;
+            if (p == _world.gameObject.GetInstanceID()) p = null;
+            var o = new Object
             {
                 Id = hierarchyElement.Id,
-                Name = hierarchyElement.Transform.name,
-                ParentId = p == null ? null : p.gameObject.GetInstanceID(),
-                LocalPosition = _serializer.Serialize(hierarchyElement.Transform.localPosition),
-                LocalRotation = _serializer.Serialize(hierarchyElement.Transform.localEulerAngles),
+                Name = hierarchyElement.Name,
+                ParentId = p == null ? null : p,
                 Tag = g.tag,
                 Layer = g.layer
             };
+            o.SetPosition(hierarchyElement.LocalPosition);
+            o.SetRotation(hierarchyElement.LocalEulerAngles);
+            return o;
         }
 
         public Component Convert(ISystemComponentAccessor source)
@@ -122,8 +128,8 @@ namespace Orbital.Serialization.SqlModel
                 Transform instance = new GameObject(o.Name).transform;
                 instance.gameObject.layer = o.Layer;
                 instance.gameObject.tag = o.Tag;
-                instance.localPosition = _serializer.Deserialize<Vector3>(o.LocalPosition);
-                instance.localEulerAngles = _serializer.Deserialize<Vector3>(o.LocalRotation);
+                instance.localPosition = o.GetPosition();
+                instance.localEulerAngles = o.GetRotation();
                 _objects.Add(o.Id, instance);
             }
 
@@ -169,9 +175,13 @@ namespace Orbital.Serialization.SqlModel
             {
                 if (_players.ContainsKey(player.Id)) continue;
                 
-                Transform transform = _objects[player.ParentId];
-
-                var instance = _playerFactory.Create();
+                PlayerCharacter instance = _playerFactory.Create();
+                instance.Id = player.Id;
+                instance.PlayerName = player.Name;
+                instance.transform.SetParent(_objects[player.ParentId]);
+                instance.transform.localPosition = _serializer.Deserialize<Vector3>(player.Position);
+                instance.transform.localEulerAngles = _serializer.Deserialize<Vector3>(player.Rotation);
+                _players.Add(player.Id, instance);
             }
         }
     }

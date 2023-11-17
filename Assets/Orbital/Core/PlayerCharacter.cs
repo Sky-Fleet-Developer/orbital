@@ -12,7 +12,11 @@ namespace Orbital.Core
         public string PlayerName
         {
             get => playerName;
-            set => playerName = value;
+            set
+            {
+                playerName = value;
+                name = value + "_Player";
+            }
         }
 
         public int Id

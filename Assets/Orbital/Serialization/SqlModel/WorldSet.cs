@@ -25,8 +25,7 @@ namespace Orbital.Serialization.SqlModel
             using (SqliteConnection connection = new SqliteConnection(_connectionString))
             {
                 connection.Open();
-
-                connection.GetTable(Objects, Declaration).Select(Objects.TableName).Run();
+                connection.GetTable(Objects, Declaration, Sql.Select(Objects.TableName, Sql.All()));
                 Objects.Clear();
 
                 foreach (IHierarchyElement hierarchyElement in context.GetHierarchyElements())
@@ -35,7 +34,7 @@ namespace Orbital.Serialization.SqlModel
                     Objects.Add(model);
                 }
 
-                connection.GetTable(Celestials, Declaration).Select(Celestials.TableName).Run();
+                connection.GetTable(Celestials, Declaration, Sql.Select(Celestials.TableName, Sql.All()));
                 Celestials.Clear();
                 foreach (IStaticBodyAccessor staticBodyAccessor in context.GetStaticBodies())
                 {
@@ -46,7 +45,7 @@ namespace Orbital.Serialization.SqlModel
                 connection.Update<Celestial>(Celestials, Declaration);
                 connection.Update<Object>(Objects, Declaration);
 
-                connection.GetTable(Components, Declaration).Select(Components.TableName).Run();
+                connection.GetTable(Components, Declaration, Sql.Select(Components.TableName, Sql.All()));
                 Components.Clear();
 
                 foreach (ISystemComponentAccessor systemComponentAccessor in context.GetComponents())
@@ -66,13 +65,8 @@ namespace Orbital.Serialization.SqlModel
             using (SqliteConnection connection = new SqliteConnection(_connectionString))
             {
                 connection.Open();
-                connection.GetTable(Objects, Declaration)
-                    .Select(Objects.TableName)
-                    .WhereIn("Id").Select(Celestials.TableName, "OwnerId")
-                    .Run();
-                connection.GetTable(Celestials, Declaration)
-                    .Select(Celestials.TableName)
-                    .Run();
+                connection.GetTable(Objects, Declaration, Sql.Select(Objects.TableName, Sql.All()).Value + Sql.WhereIn("Id", Sql.Select(Celestials.TableName, "OwnerId")));
+                connection.GetTable(Celestials, Declaration, Sql.Select(Celestials.TableName, Sql.All()));
             }
 
             context.InstallObjects(Objects);
@@ -82,16 +76,24 @@ namespace Orbital.Serialization.SqlModel
             return context;
         }
 
-        public Core.PlayerCharacter InstantiatePlayer(WorldContext context, int playerId)
+        public void InstantiatePlayer(WorldContext context, int playerId)
         {
             using (SqliteConnection connection = new SqliteConnection(_connectionString))
             {
                 connection.Open();
-                connection.GetTable(Players, Declaration).Select(Players.TableName).Where($"Id == {playerId}").Run();
-                connection.GetTable(Objects, Declaration).Select(Objects.TableName).Where($"Id == {Players[0].ParentId}");
+                connection.GetTable(Players, Declaration, Sql.Select(Players.TableName, Sql.Where($"Id == {playerId}")));
+                var recursiveExp = Sql.WithRecursive("h", Sql.AllFields(Objects, Declaration),
+                    Sql.Select(Objects.TableName, Sql.All()),
+                    Sql.Select(Objects.TableName, "e.*") + "JOIN h eh ON e.Id = eh.ParentId");
+                connection.GetTable(Objects, Declaration,  recursiveExp + Sql.Select("h", Sql.All()));
             }
 
             context.InstallPlayers(Players, Declaration);
+        }
+        
+        public void InstantiateComponentsNearToPlayer(WorldContext context, int playerId)
+        {
+            
         }
     }
 }
