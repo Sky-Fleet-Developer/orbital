@@ -75,3 +75,8 @@ Mods/
 OutputData/
 Landscapes/
 DepStream.txt
+
+# Standalone test harness build output
+/Tools/**/bin/
+/Tools/**/obj/
+/Tools/**/TestResults/

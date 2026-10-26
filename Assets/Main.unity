@@ -599,7 +599,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 843ed5443cb417d41a77a9c28a6b6ba3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  id: -1
+  id: 27338
   settings:
     inclination: 0
     longitudeAscendingNode: 0
@@ -607,7 +607,7 @@ MonoBehaviour:
     eccentricity: 0
     semiMajorAxis: 0
     epoch: 0
-    mass: 0
+    mass: 1.9800000146824104e+30
 --- !u!1 &3361730889727701039
 GameObject:
   m_ObjectHideFlags: 0
@@ -786,7 +786,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &6723416954998958032
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -816,15 +816,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 843ed5443cb417d41a77a9c28a6b6ba3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  id: -1
+  id: 27362
   settings:
     inclination: 0
     longitudeAscendingNode: 0
     argumentOfPeriapsis: 0
-    eccentricity: 0
-    semiMajorAxis: 0
+    eccentricity: 0.20000000298023224
+    semiMajorAxis: 5000000000
     epoch: 0
-    mass: 0
+    mass: 6.000000083090567e+24
 --- !u!114 &8441440233341185314
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -837,7 +837,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 843ed5443cb417d41a77a9c28a6b6ba3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  id: -1
+  id: 27364
   settings:
     inclination: 0
     longitudeAscendingNode: 0
@@ -845,7 +845,7 @@ MonoBehaviour:
     eccentricity: 0
     semiMajorAxis: 0
     epoch: 0
-    mass: 0
+    mass: 1.9800000146824104e+30
 --- !u!4 &8555214656620983100
 Transform:
   m_ObjectHideFlags: 0

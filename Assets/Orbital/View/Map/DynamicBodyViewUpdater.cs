@@ -84,7 +84,7 @@ namespace Orbital.View.Map
                     _startNode.Transform.gameObject.SetActive(true);
                     _endNode.Transform.gameObject.SetActive(true);
                     //_endNode.Transform.SetParent(_startNode.Transform.parent);
-                    _startNode.Transform.localPosition = _body.Orbit.GetPositionAtT(_body.Orbit.TimeToPe)
+                    _startNode.Transform.localPosition = _body.Orbit.GetPositionAtT(_body.Orbit.Epoch + _body.Orbit.TimeToPe)
                                                          * _scaleSettings.scale;
                     _endNode.Transform.localPosition = _body.Orbit.GetPositionAtT(_ending.Time)
                                                        * _scaleSettings.scale;
@@ -139,7 +139,7 @@ namespace Orbital.View.Map
                     break;
                 case OrbitEndingType.Leave:
                     endTime = _ending.Time;
-                    startTime = _body.Orbit.TimeToPe; //_body.Orbit.Epoch - (endTime - _body.Orbit.Epoch);
+                    startTime = _body.Orbit.Epoch + _body.Orbit.TimeToPe; //_body.Orbit.Epoch - (endTime - _body.Orbit.Epoch);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();

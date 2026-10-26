@@ -5,27 +5,8 @@ using Orbital.Core.Utilities;
 
 namespace Orbital.Core.TrajectorySystem
 {
-    public static class TrajectoryUtility
+    public static partial class TrajectoryUtility
     {
-        public static DVector3 GetGlobalPosition(this TreeContainer tree, IMassSystem massSystem, double time)
-        {
-            DVector3 result = DVector3.Zero;
-            IMassSystem cache = massSystem;
-            while (cache != tree.Root)
-            {
-                result += tree._trajectories[cache].GetPositionAtT(time);
-                tree._parents.TryGetValue(cache, out cache);
-            }
-
-            return result;
-        }
-
-        public static DVector3 GetGlobalPosition(this TreeContainer tree, IStaticBody staticBody, double time)
-        {
-            return tree.GetGlobalPosition(tree._massPerComponent[staticBody], time);
-        }
-
-
         public static double RadiusAtTrueAnomaly(this StaticOrbit tr, double tA) =>
             tr.SemiLatusRectum * (1.0 / (1.0 + tr.Eccentricity * Math.Cos(tA)));
 
@@ -68,7 +49,7 @@ namespace Orbital.Core.TrajectorySystem
         #region MeanAnomaly
         public static double GetMeanAnomalyAtTime(this StaticOrbit tr, double time)
         {
-            double angle = tr.GetMeanMotion(tr.SemiMajorAxis) * (time - tr.Epoch) - tr.MeanAnomalyAtEpoch;
+            double angle = tr.GetMeanMotion(tr.SemiMajorAxis) * (time - tr.Epoch) + tr.MeanAnomalyAtEpoch;
             if (tr.Eccentricity < 1.0)
             {
                 angle = MathUtilities.ClampRadiansTwoPI(angle);
@@ -147,7 +128,7 @@ namespace Orbital.Core.TrajectorySystem
 
         public static double TrueAnomalyAtT(this StaticOrbit tr, double T)
         {
-            double num = tr.SolveEccentricAnomaly((T - tr.Epoch) * tr.MeanMotion - tr.MeanAnomalyAtEpoch, tr.Eccentricity);
+            double num = tr.SolveEccentricAnomaly((T - tr.Epoch) * tr.MeanMotion + tr.MeanAnomalyAtEpoch, tr.Eccentricity);
             if (!double.IsNaN(num)) return tr.GetTrueAnomaly(num);
 
             return double.NaN;
@@ -183,88 +164,77 @@ namespace Orbital.Core.TrajectorySystem
 
             return eccentricAnomaly;
         }
-        private static double SolveEccentricAnomalyHyp(this StaticOrbit tr, double m, double ecc,
-            double maxError = 1E-07)
+        /// <summary>
+        /// Solves e*sinh(H) - H = m with Newton's method. Parabolic and hyperbolic orbits only (ecc &gt;= 1).
+        /// </summary>
+        private static double SolveEccentricAnomalyHyp(double m, double ecc, double maxError, int maxIterations)
         {
-            if (double.IsInfinity(m))
+            if (double.IsInfinity(m) || double.IsNaN(m))
             {
                 return m;
             }
-            else
-            {
-                double num1 = 1.0;
-                double num2 = 2.0 * m / ecc;
-                double num3 = Math.Log(Math.Sqrt(num2 * num2 + 1.0) + num2);
-                while (Math.Abs(num1) > maxError)
-                {
-                    num1 = (tr.Eccentricity * Math.Sinh(num3) - num3 - m) / (tr.Eccentricity * Math.Cosh(num3) - 1.0);
-                    num3 -= num1;
-                }
 
-                if (double.IsNaN(num3))
-                {
-                    num3 = tr.SolveEccentricAnomalyExtremeEcc(m, ecc);
-                }
-                return num3;
+            double h = Math.Asinh(2.0 * m / ecc);
+            for (int i = 0; i < maxIterations; i++)
+            {
+                double step = (ecc * Math.Sinh(h) - h - m) / (ecc * Math.Cosh(h) - 1.0);
+                h -= step;
+                if (!(Math.Abs(step) > maxError * Math.Max(1.0, Math.Abs(h)))) break;
             }
+
+            return h;
         }
 
+        /// <summary>
+        /// Solves Kepler's equation for the eccentric (elliptic) or hyperbolic anomaly.
+        /// <paramref name="m"/> is the mean anomaly and may be any number of revolutions away from zero.
+        /// Never loops more than <paramref name="maxIterations"/> times.
+        /// </summary>
         public static double SolveEccentricAnomaly(this StaticOrbit tr, double m, double ecc,
-            double maxError = 1E-07, int maxIterations = 8)
+            double maxError = 1E-13, int maxIterations = 50)
         {
-            if (tr.Eccentricity >= 1.0)
+            if (ecc >= 1.0)
             {
-                return tr.SolveEccentricAnomalyHyp(m, tr.Eccentricity, maxError);
+                return SolveEccentricAnomalyHyp(m, ecc, maxError, maxIterations);
             }
-            else
-            {
-                if (tr.Eccentricity < 0.8) return SolveEccentricAnomalyStd(m, tr.Eccentricity, maxError);
-                return tr.SolveEccentricAnomalyExtremeEcc(m, tr.Eccentricity, maxIterations);
-            }
+
+            // Kepler's equation is invariant under a shift of both M and E by 2*pi: solve inside one revolution.
+            double revolutions = Math.Round(m / MathUtilities.TwoPI);
+            double reduced = m - revolutions * MathUtilities.TwoPI;
+            double solution = ecc < 0.8
+                ? SolveEccentricAnomalyStd(reduced, ecc, maxError, maxIterations)
+                : SolveEccentricAnomalyExtremeEcc(reduced, ecc, maxError, maxIterations);
+            return solution + revolutions * MathUtilities.TwoPI;
         }
 
-        private static double SolveEccentricAnomalyStd(double m, double ecc, double maxError = 1E-07)
+        private static double SolveEccentricAnomalyStd(double m, double ecc, double maxError, int maxIterations)
         {
-            double num1 = 1.0;
-            double num2 = m + ecc * Math.Sin(m) + 0.5 * ecc * ecc * Math.Sin(2.0 * m);
-            while (Math.Abs(num1) > maxError)
+            double ea = m + ecc * Math.Sin(m) + 0.5 * ecc * ecc * Math.Sin(2.0 * m);
+            for (int i = 0; i < maxIterations; i++)
             {
-                double num3 = num2 - ecc * Math.Sin(num2);
-                num1 = (m - num3) / (1.0 - ecc * Math.Cos(num2));
-                num2 += num1;
+                double step = (m - (ea - ecc * Math.Sin(ea))) / (1.0 - ecc * Math.Cos(ea));
+                ea += step;
+                if (!(Math.Abs(step) > maxError * Math.Max(1.0, Math.Abs(ea)))) break;
             }
 
-            return num2;
+            return ea;
         }
 
-        private static double SolveEccentricAnomalyExtremeEcc(this StaticOrbit tr, double m, double ecc,
-            int iterations = 8)
+        private static double SolveEccentricAnomalyExtremeEcc(double m, double ecc, double maxError, int maxIterations)
         {
-            try
+            double ea = m + 0.85 * ecc * Math.Sign(Math.Sin(m));
+            for (int i = 0; i < maxIterations; i++)
             {
-                double num1 = m + 0.85 * tr.Eccentricity * Math.Sign(Math.Sin(m));
-                for (int index = 0; index < iterations; ++index)
-                {
-                    double num2 = ecc * Math.Sin(num1);
-                    double num3 = ecc * Math.Cos(num1);
-                    double num4 = num1 - num2 - m;
-                    double num5 = 1.0 - num3;
-                    double num6 = num2;
-                    num1 += -5.0 * num4 /
-                            (num5 + Math.Sign(num5) * Math.Sqrt(Math.Abs(16.0 * num5 * num5 - 20.0 * num4 * num6)));
-                }
-
-                return num1;
+                double eSin = ecc * Math.Sin(ea);
+                double eCos = ecc * Math.Cos(ea);
+                double f = ea - eSin - m;
+                double f1 = 1.0 - eCos;
+                double step = 5.0 * f / (f1 + Math.Sign(f1) * Math.Sqrt(Math.Abs(16.0 * f1 * f1 - 20.0 * f * eSin)));
+                ea -= step;
+                if (!(Math.Abs(step) > maxError * Math.Max(1.0, Math.Abs(ea)))) break;
             }
-            catch (Exception ex)
-            {
-                if (!Thread.CurrentThread.IsBackground)
-                {
-                    Console.WriteLine(ex);
-                }
 
-                return double.NaN;
-            }
+            return ea;
         }
 
         #endregion
@@ -284,7 +254,7 @@ namespace Orbital.Core.TrajectorySystem
         public static DVector3 GetPositionAtT(this StaticOrbit tr, double T)
         {
             if (double.IsInfinity(tr.MeanMotion) || tr.Period == 0) return DVector3.Zero;
-            return tr.GetPositionFromTrueAnomaly(tr.GetTrueAnomaly(tr.SolveEccentricAnomaly((T - tr.Epoch) * tr.MeanMotion - tr.MeanAnomalyAtEpoch, tr.Eccentricity)));
+            return tr.GetPositionFromTrueAnomaly(tr.GetTrueAnomaly(tr.SolveEccentricAnomaly((T - tr.Epoch) * tr.MeanMotion + tr.MeanAnomalyAtEpoch, tr.Eccentricity)));
         }
 
         public static DVector3 GetPositionFromMeanAnomaly(this StaticOrbit tr, double m) =>

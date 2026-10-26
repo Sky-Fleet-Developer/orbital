@@ -6,10 +6,17 @@ using UnityEngine;
 
 namespace Orbital.Core.TrajectorySystem
 {
-    public struct StaticOrbit
+    /// <summary>
+    /// Keplerian orbit around a parent with gravitational parameter <see cref="Nu"/>.
+    /// Orbit frame (<see cref="RotationMatrix"/> columns): Forward = periapsis, Up = orbit normal (position x velocity),
+    /// Right = in-plane direction 90 degrees ahead of periapsis. Motion goes from Forward to Right.
+    /// Angles are in radians; the semi-major axis is negative for hyperbolic orbits.
+    /// Derived fields (anomalies, radius, timings) describe the state at <see cref="Epoch"/>.
+    /// </summary>
+    public struct StaticOrbit : IEquatable<StaticOrbit>
     {
-        private const double Deg2Rad = 0.01745329;
-        private const double Rad2Deg = 57.29578;
+        private const double Deg2Rad = Math.PI / 180.0;
+        private const double Rad2Deg = 180.0 / Math.PI;
         
         public double Inclination {get; private set;}
         public double LongitudeAscendingNode {get; private set;}
@@ -55,7 +62,8 @@ namespace Orbital.Core.TrajectorySystem
         public double SemiLatusRectum => H.LengthSquared() / Nu;
         public double Pericenter => (1.0 - Eccentricity) * SemiMajorAxis;
 
-        public double Apocenter => (1.0 + Eccentricity) * SemiMajorAxis;
+        /// <summary>Infinite for open (parabolic and hyperbolic) orbits.</summary>
+        public double Apocenter => Eccentricity < 1.0 ? (1.0 + Eccentricity) * SemiMajorAxis : double.PositiveInfinity;
         
         public void Init()
         {
@@ -70,20 +78,40 @@ namespace Orbital.Core.TrajectorySystem
             double d = Nu * SemiMajorAxis * (1.0 - Eccentricity * Eccentricity);
             H = _rotationMatrix.Up() * Math.Sqrt(d);
             MeanMotion = this.GetMeanMotion(SemiMajorAxis);
-            MeanAnomaly = MeanAnomalyAtEpoch;
+            MeanAnomaly = Eccentricity < 1.0
+                ? MathUtilities.ClampRadiansTwoPI(MeanAnomalyAtEpoch)
+                : MeanAnomalyAtEpoch;
+            EccentricAnomaly = this.SolveEccentricAnomaly(MeanAnomaly, Eccentricity);
+            TrueAnomaly = this.GetTrueAnomaly(EccentricAnomaly);
+            Radius = this.RadiusAtTrueAnomaly(TrueAnomaly);
+            OrbitalEnergy = -Nu / (2.0 * SemiMajorAxis);
+            UpdateTimings();
+            //WasChangedHandler?.Invoke();
+        }
+
+        /// <summary>Fills the time-related fields from <see cref="MeanAnomaly"/> and <see cref="MeanMotion"/>.</summary>
+        private void UpdateTimings()
+        {
             OrbitTime = MeanAnomaly / MeanMotion;
             OrbitTimeAtEpoch = OrbitTime;
             if (Eccentricity < 1.0)
             {
                 Period = 2.0 * Math.PI / MeanMotion;
-                OrbitPercent = MeanAnomaly / (2.0 * Math.PI);
+                OrbitPercent = (MeanAnomaly / (2.0 * Math.PI) + 1.0) % 1.0;
+                TimeToPe = (Period - OrbitTime) % Period;
+                TimeToAp = TimeToPe - Period / 2.0;
+                if (TimeToAp < 0.0)
+                {
+                    TimeToAp += Period;
+                }
             }
             else
             {
                 Period = double.PositiveInfinity;
                 OrbitPercent = 0.0;
+                TimeToPe = -OrbitTime;
+                TimeToAp = double.PositiveInfinity;
             }
-            //WasChangedHandler?.Invoke();
         }
         
         public void SetOrbit(double inclination,
@@ -113,30 +141,13 @@ namespace Orbital.Core.TrajectorySystem
         {
             Epoch = epoch;
             UpdateFromFixedVectors(position, velocity);
-            if (!double.IsNaN(ArgumentOfPeriapsis))
-                return;
-            
-            DVector3 lhs = Quaternion.AngleAxis(-(float) LongitudeAscendingNode, Vector3.up) * Vector3.right;
-            double d = DVector3.Dot(lhs, EccVec) / (lhs.Length() * EccVec.Length());
-            if (d > 1.0)
-            {
-                ArgumentOfPeriapsis = 0.0;
-            }
-            else if (d < -1.0)
-            {
-                ArgumentOfPeriapsis = 180.0;
-            }
-            else
-            {
-                ArgumentOfPeriapsis = Math.Acos(d);
-            }
         }
 
 
         public void UpdateFromFixedVectors(DVector3 position, DVector3 velocity)
         {
             DVector3 right, up = DVector3.up, fwd;
-            H = DVector3.Cross(velocity, position);
+            H = DVector3.Cross(position, velocity);
             if (H.LengthSquared().Equals(0.0))
             {
                 Inclination = Math.Acos(position.y / position.Length());
@@ -197,43 +208,26 @@ namespace Orbital.Core.TrajectorySystem
             EccentricAnomaly = this.GetEccentricAnomaly(TrueAnomaly);
             MeanAnomaly = this.GetMeanAnomaly(EccentricAnomaly);
             MeanAnomalyAtEpoch = MeanAnomaly;
-            OrbitTime = MeanAnomaly / MeanMotion;
-            OrbitTimeAtEpoch = OrbitTime;
-            if (Eccentricity < 1.0)
-            {
-                Period = 2.0 * Math.PI / MeanMotion;
-                OrbitPercent = MeanAnomaly / (2.0 * Math.PI);
-                OrbitPercent = (OrbitPercent + 1.0) % 1.0;
-                TimeToPe = (Period - OrbitTime) % Period;
-                TimeToAp = TimeToPe - Period / 2.0;
-                if (TimeToAp < 0.0)
-                {
-                    TimeToAp += Period;
-                }
-            }
-            else
-            {
-                Period = double.PositiveInfinity;
-                OrbitPercent = 0.0;
-                TimeToPe = -OrbitTime;
-                TimeToAp = double.PositiveInfinity;
-            }
+            UpdateTimings();
 
             Radius = position.Length();
-            _rotationMatrix = DMatrix4x4.LookRotation(fwd, up);
-            Debug.DrawRay(Vector3.zero, up, Color.green, 1);
-            Debug.DrawRay(Vector3.zero, fwd, Color.blue, 1);
-            Debug.DrawRay(Vector3.zero, right, Color.red, 1);
+            // LookRotation derives Right as Cross(forward, up), so passing -up yields Right = Cross(up, forward)
+            // and keeps the frame's Up equal to the orbit normal.
+            _rotationMatrix = DMatrix4x4.LookRotation(fwd, -up);
             //WasChangedHandler?.Invoke();
         }
 
+        /// <summary>
+        /// Orbit frame from classical angles: argument of periapsis rotates inside the orbit plane (around the normal),
+        /// inclination tilts the plane around the node line, longitude of the ascending node turns the node line around world up.
+        /// </summary>
         public static DMatrix4x4 GetRotation(double inclination, double longitudeAscendingNode, double argumentOfPeriapsis)
         {
             DMatrix4x4 lan = DMatrix4x4.CreateRotation(0, longitudeAscendingNode, 0);
             DMatrix4x4 inc = DMatrix4x4.CreateRotation(0, 0, inclination);
             DMatrix4x4 aop = DMatrix4x4.CreateRotation(0, argumentOfPeriapsis, 0);
 
-            return aop * inc * lan;
+            return lan * inc * aop;
         }
 
         public (DVector3 position, DVector3 velocity) GetSample(double time, bool positionRequired = true, bool velocityRequired = true)
@@ -340,13 +334,32 @@ namespace Orbital.Core.TrajectorySystem
            // Debug.DrawRay(scaledOffset, (Vector3)(H * scale) + scaledOffset, Color.blue * 0.5f);
         }
 
-        public override bool Equals(object obj)
+        public bool Equals(StaticOrbit other)
         {
-            if (obj is StaticOrbit orbit)
-            {
-                return Math.Abs((Eccentricity + SemiMajorAxis + Inclination + LongitudeAscendingNode + Epoch) - (orbit.Eccentricity + orbit.SemiMajorAxis + orbit.Inclination + orbit.LongitudeAscendingNode + orbit.Epoch)) < 1e-15;
-            }
-            return false;
+            return Nu == other.Nu
+                   && Inclination == other.Inclination
+                   && LongitudeAscendingNode == other.LongitudeAscendingNode
+                   && ArgumentOfPeriapsis == other.ArgumentOfPeriapsis
+                   && Eccentricity == other.Eccentricity
+                   && SemiMajorAxis == other.SemiMajorAxis
+                   && MeanAnomalyAtEpoch == other.MeanAnomalyAtEpoch
+                   && Epoch == other.Epoch;
+        }
+
+        public override bool Equals(object obj) => obj is StaticOrbit orbit && Equals(orbit);
+
+        public override int GetHashCode()
+        {
+            HashCode hash = new HashCode();
+            hash.Add(Nu);
+            hash.Add(Inclination);
+            hash.Add(LongitudeAscendingNode);
+            hash.Add(ArgumentOfPeriapsis);
+            hash.Add(Eccentricity);
+            hash.Add(SemiMajorAxis);
+            hash.Add(MeanAnomalyAtEpoch);
+            hash.Add(Epoch);
+            return hash.ToHashCode();
         }
     }
 }
