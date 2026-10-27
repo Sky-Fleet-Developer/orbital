@@ -73,7 +73,7 @@ namespace Orbital.Test
         {
             Vector3 h = Vector3.Cross(position, velocity).normalized;
             Quaternion quaternion = Quaternion.AngleAxis(rotation, h);
-            _navigationPath.Calculate(GetComponentInParent<IStaticBody>(), quaternion * position, quaternion * velocity, TimeService.WorldTime);
+            _navigationPath.Calculate(GetComponentInParent<IStaticBody>(), quaternion * position, quaternion * velocity, TimeProvider.WorldTime);
             //_navigationPath.Reconstruct();
         }
 

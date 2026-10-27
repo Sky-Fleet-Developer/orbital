@@ -14,7 +14,7 @@ namespace Orbital.Core
         public double Mass { get; }
         public double MassInv { get; }
         public DVector3 Position => Parent.Position + LocalPosition;
-        public DVector3 LocalPosition => Orbit.GetPositionAtT(TimeService.WorldTime);
+        public DVector3 LocalPosition => Orbit.GetPositionAtT(TimeProvider.WorldTime);
         public DVector3 GetPositionAtT(double t) => Parent.GetPositionAtT(t) + Orbit.GetPositionAtT(t);
         public event Action OrbitChangedHandler;
         public void Init();

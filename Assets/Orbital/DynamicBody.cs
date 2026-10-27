@@ -20,10 +20,10 @@ namespace Orbital
         private double _massInv;
         
         #region InterfaceImplementation
-        public StaticOrbit Orbit => _path.GetOrbitAtTime(TimeService.WorldTime);
+        public StaticOrbit Orbit => _path.GetOrbitAtTime(TimeProvider.WorldTime);
         public event Action OrbitChangedHandler;
-        public IStaticBody Parent => _path.GetParentAtTime(TimeService.WorldTime);
-        public OrbitEnding Ending => _path.GetEndingAtTime(TimeService.WorldTime);
+        public IStaticBody Parent => _path.GetParentAtTime(TimeProvider.WorldTime);
+        public OrbitEnding Ending => _path.GetEndingAtTime(TimeProvider.WorldTime);
         public double Mass => settings.mass;
         public double MassInv => _massInv;
         #endregion
@@ -54,20 +54,21 @@ namespace Orbital
                 _world.Load();
             }
             #endif
+            if (!_world.IsLoaded) return;
             _massInv = 1 / settings.mass;
             Assert.IsFalse(double.IsNaN(_massInv));
             _path = new NavigationPath();
-            _path.Calculate(GetComponentInParent<IStaticBody>(), variables.position, variables.velocity, TimeService.WorldTime);
-            _path.BuildTransitions(TimeService.WorldTime);
-            _world.RegisterRigidBody(this);
+            _path.Calculate(GetComponentInParent<IStaticBody>(), variables.position, variables.velocity, TimeProvider.WorldTime);
+            _path.BuildTransitions(TimeProvider.WorldTime);
+            _world.Model.RegisterDynamicBody(this);
         }
 
         public void AddForce(Vector3 force)
         {
             var orbit = Orbit;
-            orbit.GetOrbitalStateVectorsAtOrbitTime(TimeService.WorldTime, out DVector3 pos, out DVector3 vel);
+            orbit.GetOrbitalStateVectorsAtOrbitTime(TimeProvider.WorldTime, out DVector3 pos, out DVector3 vel);
             vel += (DVector3)force * _massInv;
-            _path.Calculate(Parent, pos, vel, TimeService.WorldTime);
+            _path.Calculate(Parent, pos, vel, TimeProvider.WorldTime);
             OrbitChangedHandler?.Invoke();
             variables.position = pos;
             variables.velocity = vel;
@@ -81,7 +82,7 @@ namespace Orbital
         protected override void OnDestroy()
         {
             base.OnDestroy();
-            _path.Dispose();
+            _path?.Dispose();
         }
     }
 

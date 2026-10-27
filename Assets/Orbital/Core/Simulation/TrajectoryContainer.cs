@@ -74,7 +74,7 @@ namespace Orbital.Core.Simulation
 
         public void ResetProgress()
         {
-            _currentIdx = _container.GetLastIndexForTime(TimeService.WorldTime);
+            _currentIdx = _container.GetLastIndexForTime(TimeProvider.WorldTime);
             AssignMarks();
         }
         

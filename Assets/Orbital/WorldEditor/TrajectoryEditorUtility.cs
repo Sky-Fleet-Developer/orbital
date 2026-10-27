@@ -30,18 +30,18 @@ namespace Orbital.WorldEditor
             if(drawSphere) Handles.SphereHandleCap(-1, sOutput, Quaternion.identity, 0.1f * HandleUtility.GetHandleSize(sOutput), EventType.Repaint);
         }
 
-        public static void DrawTrajectories(this TreeContainer container, double time, float scale)
+        public static void DrawTrajectories(this WorldModel model, double time, float scale)
         {
-            if(container.Root == null) return;
-            
-            foreach (IMassSystem mass in container.Root.GetContent())
+            if(model == null) return;
+
+            foreach (IMassSystem mass in model.Root.GetContent())
             {
                 if(mass == null) continue;
-                DrawTrajectoriesRecursively(mass, container._trajectories, DVector3.Zero, time, scale);
+                DrawTrajectoriesRecursively(mass, model.Trajectories, DVector3.Zero, time, scale);
             }
         }
-        
-        private static void DrawTrajectoriesRecursively(IMassSystem massSystem, Dictionary<IMassSystem, StaticOrbit> trajectories, DVector3 origin, double time, float scale)
+
+        private static void DrawTrajectoriesRecursively(IMassSystem massSystem, IReadOnlyDictionary<IMassSystem, StaticOrbit> trajectories, DVector3 origin, double time, float scale)
         {
             if(massSystem == null) return;
             if(!trajectories.TryGetValue(massSystem, out StaticOrbit trajectory)) return;

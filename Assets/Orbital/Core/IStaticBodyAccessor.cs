@@ -10,6 +10,5 @@ namespace Orbital.Core
         public IStaticBody[] Children { get; set; }
         public StaticOrbit Orbit { get; set; }
         public bool IsSatellite { get; set; }
-        public World World { set; }
     }
 }

@@ -22,6 +22,7 @@ namespace Orbital.WorldEditor
         // ReSharper disable once InconsistentNaming
         private SerializedProperty serializedTree;
         private TreeContainer _tree;
+        private WorldModel _model;
         private Transform _tRoot;
         private readonly ISerializer _serializer = new JsonPerformance();
 
@@ -69,7 +70,7 @@ namespace Orbital.WorldEditor
             {
                 _tree = new TreeContainer();
             }
-            _tree.CalculateForRoot(_tRoot, target as World);
+            RefreshHierarchy();
             PreviewScaleValue = PlayerPrefs.GetFloat(PreviewScaleKey, 0);
             if (_tree == null)
             {
@@ -90,16 +91,17 @@ namespace Orbital.WorldEditor
             }
         }
         
+        // The preview only needs orbits, so the model is rebuilt without touching the scene.
         private void RefreshTrajectories()
         {
-            _tree.FillTrajectories();
+            _model = _tree.Root == null ? null : new WorldModel(_tree.Root, TimeProvider.WorldTime);
         }
 
         private void OnSceneGUI()
         {
             if(_currentState == null) return;
             _currentState.OnSceneGui();
-            _tree.DrawTrajectories(TimeService.WorldTime, (float)PreviewScaleTransform(PreviewScaleValue));
+            _model.DrawTrajectories(TimeProvider.WorldTime, (float)PreviewScaleTransform(PreviewScaleValue));
         }
 
         public override void OnInspectorGUI()
@@ -123,7 +125,11 @@ namespace Orbital.WorldEditor
 
         private void RefreshHierarchy()
         {
-            _tree.CalculateForRoot(_tRoot, target as World);
+            RefreshTrajectories();
+            if (_model != null)
+            {
+                new WorldSceneBinder().Bind(_tRoot, _model);
+            }
         }
 
         private static void BeginTab()

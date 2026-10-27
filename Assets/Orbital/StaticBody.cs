@@ -13,7 +13,6 @@ namespace Orbital
     {
         [SerializeField] private StaticBodySettings settings;
         [ShowInInspector] private StaticBodyVariables _variables;
-        private World _world;
         private IMassSystem _massSystem;
         private StaticOrbit _orbit;
         [ShowInInspector] private IStaticBody _parent;
@@ -66,12 +65,8 @@ namespace Orbital
             get => _isSatellite;
             set => _isSatellite = value;
         }
-        World IStaticBodyAccessor.World
-        {
-            set => _world = value;
-        }
 
-        public DVector3 LocalPosition => _orbit.GetPositionAtT(TimeService.WorldTime);
+        public DVector3 LocalPosition => _orbit.GetPositionAtT(TimeProvider.WorldTime);
 
         public double Mass => _massSystem.Mass;
         public StaticOrbit Orbit => _orbit;

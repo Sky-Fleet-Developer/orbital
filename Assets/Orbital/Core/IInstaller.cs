@@ -14,10 +14,19 @@ namespace Orbital.Core
     {
     }
 
-    /// <summary>Called once per scene after all bindings are installed and all root objects are injected, before any Start.</summary>
+    /// <summary>
+    /// Data phase. Called once per scene after all bindings are installed and all root objects are injected, before any Start.
+    /// The model is deserialized and built here.
+    /// </summary>
     public interface ISceneReady
     {
         void OnSceneReady();
+    }
+
+    /// <summary>View phase. Called once per scene after every <see cref="ISceneReady"/> has run, so the model is ready to be shown.</summary>
+    public interface IViewInitializer
+    {
+        void InitializeView();
     }
 
     public static class BindMeExtensions

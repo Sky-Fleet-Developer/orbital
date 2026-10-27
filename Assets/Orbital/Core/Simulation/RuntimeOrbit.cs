@@ -48,8 +48,8 @@ namespace Orbital.Core.Simulation
 
         void IFixedUpdateHandler.FixedUpdate()
         {
-            (_position, _velocity) = GetSample(TimeService.WorldTime);
-            _lastUpdateTime = TimeService.WorldTime;
+            (_position, _velocity) = GetSample(TimeProvider.WorldTime);
+            _lastUpdateTime = TimeProvider.WorldTime;
         }
 
         public (DVector3 position, DVector3 velocity) GetSample(double time, bool positionRequired = true, bool velocityRequired = true)

@@ -1,7 +1,5 @@
 using System;
 using System.Collections.Generic;
-using Orbital.Core.Utilities;
-using UnityEngine;
 
 namespace Orbital.Core.TrajectorySystem
 {
@@ -14,30 +12,6 @@ namespace Orbital.Core.TrajectorySystem
             return Math.Sqrt(Nu * GravityEdgeInv);
         }
         
-        public static Dictionary<IMassSystem, Transform> GetMap(this IMassSystem mRoot, Transform tRoot)
-        {
-            Dictionary<IMassSystem, Transform> result = new();
-            result.Add(mRoot, tRoot);
-            AddMapRecursively(result, mRoot, tRoot);
-            return result;
-        }
-
-        private static void AddMapRecursively(Dictionary<IMassSystem, Transform> dictionary, IMassSystem mRoot, Transform tRoot)
-        {
-            int i = -1;
-            foreach (IMassSystem mass in mRoot.GetContent())
-            {
-                i++;
-                if (mass == null) continue;
-                Transform tChild = tRoot.FindRegex($".*\\[{i}\\]$");
-                if (tChild)
-                {
-                    dictionary.Add(mass, tChild);
-                    AddMapRecursively(dictionary, mass, tChild);
-                }
-            }
-        }
-
         public static IEnumerable<IMassSystem> GetRecursively(this IMassSystem value)
         {
             foreach (IMassSystem content in value.GetContent())
@@ -58,7 +32,7 @@ namespace Orbital.Core.TrajectorySystem
             return result;
         }*/
 
-        public static void FillTrajectoriesRecursively(this IMassSystem massSystem, Dictionary<IMassSystem, StaticOrbit> container)
+        public static void FillTrajectoriesRecursively(this IMassSystem massSystem, Dictionary<IMassSystem, StaticOrbit> container, double time)
         {
             void SetupElement(IMassSystem child, IMassSystem other)
             {
@@ -71,9 +45,9 @@ namespace Orbital.Core.TrajectorySystem
                     container.Add(child, orbit);
                 }
 
-                orbit.Calculate(child.Settings, TimeService.WorldTime);
+                orbit.Calculate(child.Settings, time);
                 container[child] = orbit;
-                FillTrajectoriesRecursively(child, container);
+                FillTrajectoriesRecursively(child, container, time);
             }
 
             if (massSystem is DoubleSystemBranch doubleSystemBranch)

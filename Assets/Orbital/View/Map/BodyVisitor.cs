@@ -100,7 +100,7 @@ namespace Orbital.View.Map
 
         private bool Activate()
         {
-            IStaticBody root = _world != null ? _world.GetRootBody() : null;
+            IStaticBody root = _world != null && _world.IsLoaded ? _world.Model.GetRootBody() : null;
             if (root == null)
             {
                 Debug.LogWarning("BodyVisitor: world is not loaded yet");

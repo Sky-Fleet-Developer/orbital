@@ -99,6 +99,10 @@ namespace Orbital.Core
                 }
                 foreach (var monoBehaviour in entry.GetComponents<MonoBehaviour>())
                 {
+                    if (!monoBehaviour)
+                    {
+                        continue;
+                    }
                     container.Inject(monoBehaviour);
                 }
             }
@@ -108,6 +112,14 @@ namespace Orbital.Core
                 foreach (var ready in entry.GetComponentsInChildren<ISceneReady>(true))
                 {
                     ready.OnSceneReady();
+                }
+            }
+
+            foreach (var entry in scene.GetRootGameObjects())
+            {
+                foreach (var view in entry.GetComponentsInChildren<IViewInitializer>(true))
+                {
+                    view.InitializeView();
                 }
             }
         }
@@ -121,6 +133,10 @@ namespace Orbital.Core
             }
             foreach (var monoBehaviour in obj.GetComponents<MonoBehaviour>())
             {
+                if (!monoBehaviour)
+                {
+                    continue;
+                }
                 container.Inject(monoBehaviour);
             }
         }

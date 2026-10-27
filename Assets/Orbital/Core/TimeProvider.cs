@@ -5,7 +5,7 @@ using Zenject;
 
 namespace Orbital.Core
 {
-    public class TimeService : MonoBehaviour, IFixedUpdateHandler
+    public class TimeProvider : MonoBehaviour, IFixedUpdateHandler, IBindMe
     {
         [ShowInInspector] private static float _timeScale = 1;
         [ShowInInspector] private static double _worldTime;

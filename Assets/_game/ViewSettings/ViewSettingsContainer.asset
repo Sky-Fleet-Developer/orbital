@@ -16,6 +16,9 @@ MonoBehaviour:
   orbitMesh: {fileID: 4300000, guid: edc124365cfe5d34e8acd39cbde3964d, type: 2}
   celestialMaterial: {fileID: 2100000, guid: 87188d7fee3303c4bbdbbc2515b7f025, type: 2}
   celestialMesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
+  atmosphereMaterial: {fileID: 0}
+  bodyTable: {fileID: 11400000, guid: 71e89183342df5b44967b6cd903e3434, type: 2}
+  fallbackDiameter: 0.08
 --- !u!114 &-4000122974023388819
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -4,7 +4,7 @@ using Zenject;
 
 namespace Orbital.Core
 {
-    public class ComponentsRegistrationService : MonoBehaviour
+    public class ComponentsRegistrationService : MonoBehaviour, IBindMe
     {
         [Inject] private DiContainer _container;
 

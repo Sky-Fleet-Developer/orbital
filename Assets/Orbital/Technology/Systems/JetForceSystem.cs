@@ -18,7 +18,7 @@ namespace Orbital.Technology.Systems
                 
                 if (ValidateAcceleration(component.acceleration))
                 {
-                    _adapter.AddForce(component.acceleration * (float)TimeService.DeltaTime);
+                    _adapter.AddForce(component.acceleration * (float)TimeProvider.DeltaTime);
                     component.acceleration = Vector3.zero;
                 }
             }

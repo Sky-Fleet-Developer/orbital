@@ -1,0 +1,599 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1bd255c964742974ca7b2534899df5a4, type: 3}
+  m_Name: BodiesTable
+  m_EditorClassIdentifier: Orbital::Orbital.View.Map.BodyViewTable
+  bodies:
+  - name: Sun
+    facets:
+    - rid: 1001
+  - name: Mercury
+    facets:
+    - rid: 1002
+    - rid: 1003
+  - name: Venus
+    facets:
+    - rid: 1004
+    - rid: 1005
+    - rid: 1006
+  - name: Earth
+    facets:
+    - rid: 1007
+    - rid: 1008
+    - rid: 1009
+  - name: Moon
+    facets:
+    - rid: 1010
+    - rid: 1011
+  - name: Mars
+    facets:
+    - rid: 1012
+    - rid: 1013
+    - rid: 1014
+  - name: Phobos
+    facets:
+    - rid: 1015
+    - rid: 1016
+  - name: Deimos
+    facets:
+    - rid: 1017
+    - rid: 1018
+  - name: Jupiter
+    facets:
+    - rid: 1019
+  - name: Io
+    facets:
+    - rid: 1020
+    - rid: 1021
+  - name: Europa
+    facets:
+    - rid: 1022
+    - rid: 1023
+  - name: Ganymede
+    facets:
+    - rid: 1024
+    - rid: 1025
+  - name: Callisto
+    facets:
+    - rid: 1026
+    - rid: 1027
+  - name: Saturn
+    facets:
+    - rid: 1028
+  - name: Mimas
+    facets:
+    - rid: 1029
+    - rid: 1030
+  - name: Enceladus
+    facets:
+    - rid: 1031
+    - rid: 1032
+  - name: Tethys
+    facets:
+    - rid: 1033
+    - rid: 1034
+  - name: Dione
+    facets:
+    - rid: 1035
+    - rid: 1036
+  - name: Rhea
+    facets:
+    - rid: 1037
+    - rid: 1038
+  - name: Titan
+    facets:
+    - rid: 1039
+    - rid: 1040
+    - rid: 1041
+  - name: Iapetus
+    facets:
+    - rid: 1042
+    - rid: 1043
+  - name: Uranus
+    facets:
+    - rid: 1044
+  - name: Miranda
+    facets:
+    - rid: 1045
+    - rid: 1046
+  - name: Ariel
+    facets:
+    - rid: 1047
+    - rid: 1048
+  - name: Umbriel
+    facets:
+    - rid: 1049
+    - rid: 1050
+  - name: Titania
+    facets:
+    - rid: 1051
+    - rid: 1052
+  - name: Oberon
+    facets:
+    - rid: 1053
+    - rid: 1054
+  - name: Neptune
+    facets:
+    - rid: 1055
+  - name: Triton
+    facets:
+    - rid: 1056
+    - rid: 1057
+  - name: Pluto
+    facets:
+    - rid: 1058
+    - rid: 1059
+  - name: Charon
+    facets:
+    - rid: 1060
+    - rid: 1061
+  references:
+    version: 2
+    RefIds:
+    - rid: 1001
+      type: {class: AppearanceFacet, ns: Orbital.View.Map, asm: Orbital}
+      data:
+        radiusMeters: 695700000.0
+        sizeMultiplier: 1
+        tint: {r: 1, g: 0.85, b: 0.5, a: 1}
+        brightness: 1
+        emission: 2
+    - rid: 1002
+      type: {class: AppearanceFacet, ns: Orbital.View.Map, asm: Orbital}
+      data:
+        radiusMeters: 2439700.0
+        sizeMultiplier: 1
+        tint: {r: 0.6, g: 0.58, b: 0.55, a: 1}
+        brightness: 1
+        emission: 0
+    - rid: 1003
+      type: {class: SurfaceFacet, ns: Orbital.View.Map, asm: Orbital}
+      data:
+        material: {fileID: 0}
+        color: {r: 1, g: 1, b: 1, a: 1}
+        smoothness: 0.2
+        metallic: 0
+    - rid: 1004
+      type: {class: AppearanceFacet, ns: Orbital.View.Map, asm: Orbital}
+      data:
+        radiusMeters: 6051800.0
+        sizeMultiplier: 1
+        tint: {r: 0.9, g: 0.8, b: 0.55, a: 1}
+        brightness: 1
+        emission: 0
+    - rid: 1005
+      type: {class: SurfaceFacet, ns: Orbital.View.Map, asm: Orbital}
+      data:
+        material: {fileID: 0}
+        color: {r: 1, g: 1, b: 1, a: 1}
+        smoothness: 0.2
+        metallic: 0
+    - rid: 1006
+      type: {class: AtmosphereFacet, ns: Orbital.View.Map, asm: Orbital}
+      data:
+        material: {fileID: 0}
+        color: {r: 0.4, g: 0.6, b: 1, a: 1}
+        thickness: 0.05
+        opacity: 0.35
+    - rid: 1007
+      type: {class: AppearanceFacet, ns: Orbital.View.Map, asm: Orbital}
+      data:
+        radiusMeters: 6371000.0
+        sizeMultiplier: 1
+        tint: {r: 0.35, g: 0.55, b: 0.85, a: 1}
+        brightness: 1
+        emission: 0
+    - rid: 1008
+      type: {class: SurfaceFacet, ns: Orbital.View.Map, asm: Orbital}
+      data:
+        material: {fileID: 0}
+        color: {r: 1, g: 1, b: 1, a: 1}
+        smoothness: 0.2
+        metallic: 0
+    - rid: 1009
+      type: {class: AtmosphereFacet, ns: Orbital.View.Map, asm: Orbital}
+      data:
+        material: {fileID: 0}
+        color: {r: 0.4, g: 0.6, b: 1, a: 1}
+        thickness: 0.05
+        opacity: 0.35
+    - rid: 1010
+      type: {class: AppearanceFacet, ns: Orbital.View.Map, asm: Orbital}
+      data:
+        radiusMeters: 1737400.0
+        sizeMultiplier: 1
+        tint: {r: 0.7, g: 0.7, b: 0.7, a: 1}
+        brightness: 1
+        emission: 0
+    - rid: 1011
+      type: {class: SurfaceFacet, ns: Orbital.View.Map, asm: Orbital}
+      data:
+        material: {fileID: 0}
+        color: {r: 1, g: 1, b: 1, a: 1}
+        smoothness: 0.2
+        metallic: 0
+    - rid: 1012
+      type: {class: AppearanceFacet, ns: Orbital.View.Map, asm: Orbital}
+      data:
+        radiusMeters: 3389500.0
+        sizeMultiplier: 1
+        tint: {r: 0.8, g: 0.45, b: 0.3, a: 1}
+        brightness: 1
+        emission: 0
+    - rid: 1013
+      type: {class: SurfaceFacet, ns: Orbital.View.Map, asm: Orbital}
+      data:
+        material: {fileID: 0}
+        color: {r: 1, g: 1, b: 1, a: 1}
+        smoothness: 0.2
+        metallic: 0
+    - rid: 1014
+      type: {class: AtmosphereFacet, ns: Orbital.View.Map, asm: Orbital}
+      data:
+        material: {fileID: 0}
+        color: {r: 0.4, g: 0.6, b: 1, a: 1}
+        thickness: 0.05
+        opacity: 0.35
+    - rid: 1015
+      type: {class: AppearanceFacet, ns: Orbital.View.Map, asm: Orbital}
+      data:
+        radiusMeters: 11267.0
+        sizeMultiplier: 1
+        tint: {r: 0.5, g: 0.47, b: 0.45, a: 1}
+        brightness: 1
+        emission: 0
+    - rid: 1016
+      type: {class: SurfaceFacet, ns: Orbital.View.Map, asm: Orbital}
+      data:
+        material: {fileID: 0}
+        color: {r: 1, g: 1, b: 1, a: 1}
+        smoothness: 0.2
+        metallic: 0
+    - rid: 1017
+      type: {class: AppearanceFacet, ns: Orbital.View.Map, asm: Orbital}
+      data:
+        radiusMeters: 6200.0
+        sizeMultiplier: 1
+        tint: {r: 0.55, g: 0.5, b: 0.47, a: 1}
+        brightness: 1
+        emission: 0
+    - rid: 1018
+      type: {class: SurfaceFacet, ns: Orbital.View.Map, asm: Orbital}
+      data:
+        material: {fileID: 0}
+        color: {r: 1, g: 1, b: 1, a: 1}
+        smoothness: 0.2
+        metallic: 0
+    - rid: 1019
+      type: {class: AppearanceFacet, ns: Orbital.View.Map, asm: Orbital}
+      data:
+        radiusMeters: 69911000.0
+        sizeMultiplier: 1
+        tint: {r: 0.85, g: 0.7, b: 0.55, a: 1}
+        brightness: 1
+        emission: 0
+    - rid: 1020
+      type: {class: AppearanceFacet, ns: Orbital.View.Map, asm: Orbital}
+      data:
+        radiusMeters: 1821600.0
+        sizeMultiplier: 1
+        tint: {r: 0.9, g: 0.8, b: 0.4, a: 1}
+        brightness: 1
+        emission: 0
+    - rid: 1021
+      type: {class: SurfaceFacet, ns: Orbital.View.Map, asm: Orbital}
+      data:
+        material: {fileID: 0}
+        color: {r: 1, g: 1, b: 1, a: 1}
+        smoothness: 0.2
+        metallic: 0
+    - rid: 1022
+      type: {class: AppearanceFacet, ns: Orbital.View.Map, asm: Orbital}
+      data:
+        radiusMeters: 1560800.0
+        sizeMultiplier: 1
+        tint: {r: 0.85, g: 0.8, b: 0.7, a: 1}
+        brightness: 1
+        emission: 0
+    - rid: 1023
+      type: {class: SurfaceFacet, ns: Orbital.View.Map, asm: Orbital}
+      data:
+        material: {fileID: 0}
+        color: {r: 1, g: 1, b: 1, a: 1}
+        smoothness: 0.2
+        metallic: 0
+    - rid: 1024
+      type: {class: AppearanceFacet, ns: Orbital.View.Map, asm: Orbital}
+      data:
+        radiusMeters: 2634100.0
+        sizeMultiplier: 1
+        tint: {r: 0.6, g: 0.55, b: 0.5, a: 1}
+        brightness: 1
+        emission: 0
+    - rid: 1025
+      type: {class: SurfaceFacet, ns: Orbital.View.Map, asm: Orbital}
+      data:
+        material: {fileID: 0}
+        color: {r: 1, g: 1, b: 1, a: 1}
+        smoothness: 0.2
+        metallic: 0
+    - rid: 1026
+      type: {class: AppearanceFacet, ns: Orbital.View.Map, asm: Orbital}
+      data:
+        radiusMeters: 2410300.0
+        sizeMultiplier: 1
+        tint: {r: 0.4, g: 0.37, b: 0.33, a: 1}
+        brightness: 1
+        emission: 0
+    - rid: 1027
+      type: {class: SurfaceFacet, ns: Orbital.View.Map, asm: Orbital}
+      data:
+        material: {fileID: 0}
+        color: {r: 1, g: 1, b: 1, a: 1}
+        smoothness: 0.2
+        metallic: 0
+    - rid: 1028
+      type: {class: AppearanceFacet, ns: Orbital.View.Map, asm: Orbital}
+      data:
+        radiusMeters: 58232000.0
+        sizeMultiplier: 1
+        tint: {r: 0.9, g: 0.8, b: 0.6, a: 1}
+        brightness: 1
+        emission: 0
+    - rid: 1029
+      type: {class: AppearanceFacet, ns: Orbital.View.Map, asm: Orbital}
+      data:
+        radiusMeters: 198200.0
+        sizeMultiplier: 1
+        tint: {r: 0.75, g: 0.75, b: 0.75, a: 1}
+        brightness: 1
+        emission: 0
+    - rid: 1030
+      type: {class: SurfaceFacet, ns: Orbital.View.Map, asm: Orbital}
+      data:
+        material: {fileID: 0}
+        color: {r: 1, g: 1, b: 1, a: 1}
+        smoothness: 0.2
+        metallic: 0
+    - rid: 1031
+      type: {class: AppearanceFacet, ns: Orbital.View.Map, asm: Orbital}
+      data:
+        radiusMeters: 252100.0
+        sizeMultiplier: 1
+        tint: {r: 0.95, g: 0.95, b: 0.95, a: 1}
+        brightness: 1
+        emission: 0
+    - rid: 1032
+      type: {class: SurfaceFacet, ns: Orbital.View.Map, asm: Orbital}
+      data:
+        material: {fileID: 0}
+        color: {r: 1, g: 1, b: 1, a: 1}
+        smoothness: 0.2
+        metallic: 0
+    - rid: 1033
+      type: {class: AppearanceFacet, ns: Orbital.View.Map, asm: Orbital}
+      data:
+        radiusMeters: 531100.0
+        sizeMultiplier: 1
+        tint: {r: 0.85, g: 0.85, b: 0.85, a: 1}
+        brightness: 1
+        emission: 0
+    - rid: 1034
+      type: {class: SurfaceFacet, ns: Orbital.View.Map, asm: Orbital}
+      data:
+        material: {fileID: 0}
+        color: {r: 1, g: 1, b: 1, a: 1}
+        smoothness: 0.2
+        metallic: 0
+    - rid: 1035
+      type: {class: AppearanceFacet, ns: Orbital.View.Map, asm: Orbital}
+      data:
+        radiusMeters: 561500.0
+        sizeMultiplier: 1
+        tint: {r: 0.8, g: 0.8, b: 0.8, a: 1}
+        brightness: 1
+        emission: 0
+    - rid: 1036
+      type: {class: SurfaceFacet, ns: Orbital.View.Map, asm: Orbital}
+      data:
+        material: {fileID: 0}
+        color: {r: 1, g: 1, b: 1, a: 1}
+        smoothness: 0.2
+        metallic: 0
+    - rid: 1037
+      type: {class: AppearanceFacet, ns: Orbital.View.Map, asm: Orbital}
+      data:
+        radiusMeters: 763800.0
+        sizeMultiplier: 1
+        tint: {r: 0.8, g: 0.8, b: 0.78, a: 1}
+        brightness: 1
+        emission: 0
+    - rid: 1038
+      type: {class: SurfaceFacet, ns: Orbital.View.Map, asm: Orbital}
+      data:
+        material: {fileID: 0}
+        color: {r: 1, g: 1, b: 1, a: 1}
+        smoothness: 0.2
+        metallic: 0
+    - rid: 1039
+      type: {class: AppearanceFacet, ns: Orbital.View.Map, asm: Orbital}
+      data:
+        radiusMeters: 2574700.0
+        sizeMultiplier: 1
+        tint: {r: 0.85, g: 0.65, b: 0.3, a: 1}
+        brightness: 1
+        emission: 0
+    - rid: 1040
+      type: {class: SurfaceFacet, ns: Orbital.View.Map, asm: Orbital}
+      data:
+        material: {fileID: 0}
+        color: {r: 1, g: 1, b: 1, a: 1}
+        smoothness: 0.2
+        metallic: 0
+    - rid: 1041
+      type: {class: AtmosphereFacet, ns: Orbital.View.Map, asm: Orbital}
+      data:
+        material: {fileID: 0}
+        color: {r: 0.4, g: 0.6, b: 1, a: 1}
+        thickness: 0.05
+        opacity: 0.35
+    - rid: 1042
+      type: {class: AppearanceFacet, ns: Orbital.View.Map, asm: Orbital}
+      data:
+        radiusMeters: 734600.0
+        sizeMultiplier: 1
+        tint: {r: 0.55, g: 0.5, b: 0.45, a: 1}
+        brightness: 1
+        emission: 0
+    - rid: 1043
+      type: {class: SurfaceFacet, ns: Orbital.View.Map, asm: Orbital}
+      data:
+        material: {fileID: 0}
+        color: {r: 1, g: 1, b: 1, a: 1}
+        smoothness: 0.2
+        metallic: 0
+    - rid: 1044
+      type: {class: AppearanceFacet, ns: Orbital.View.Map, asm: Orbital}
+      data:
+        radiusMeters: 25362000.0
+        sizeMultiplier: 1
+        tint: {r: 0.6, g: 0.85, b: 0.9, a: 1}
+        brightness: 1
+        emission: 0
+    - rid: 1045
+      type: {class: AppearanceFacet, ns: Orbital.View.Map, asm: Orbital}
+      data:
+        radiusMeters: 235800.0
+        sizeMultiplier: 1
+        tint: {r: 0.7, g: 0.7, b: 0.72, a: 1}
+        brightness: 1
+        emission: 0
+    - rid: 1046
+      type: {class: SurfaceFacet, ns: Orbital.View.Map, asm: Orbital}
+      data:
+        material: {fileID: 0}
+        color: {r: 1, g: 1, b: 1, a: 1}
+        smoothness: 0.2
+        metallic: 0
+    - rid: 1047
+      type: {class: AppearanceFacet, ns: Orbital.View.Map, asm: Orbital}
+      data:
+        radiusMeters: 578900.0
+        sizeMultiplier: 1
+        tint: {r: 0.7, g: 0.7, b: 0.7, a: 1}
+        brightness: 1
+        emission: 0
+    - rid: 1048
+      type: {class: SurfaceFacet, ns: Orbital.View.Map, asm: Orbital}
+      data:
+        material: {fileID: 0}
+        color: {r: 1, g: 1, b: 1, a: 1}
+        smoothness: 0.2
+        metallic: 0
+    - rid: 1049
+      type: {class: AppearanceFacet, ns: Orbital.View.Map, asm: Orbital}
+      data:
+        radiusMeters: 584700.0
+        sizeMultiplier: 1
+        tint: {r: 0.45, g: 0.45, b: 0.45, a: 1}
+        brightness: 1
+        emission: 0
+    - rid: 1050
+      type: {class: SurfaceFacet, ns: Orbital.View.Map, asm: Orbital}
+      data:
+        material: {fileID: 0}
+        color: {r: 1, g: 1, b: 1, a: 1}
+        smoothness: 0.2
+        metallic: 0
+    - rid: 1051
+      type: {class: AppearanceFacet, ns: Orbital.View.Map, asm: Orbital}
+      data:
+        radiusMeters: 788400.0
+        sizeMultiplier: 1
+        tint: {r: 0.6, g: 0.58, b: 0.56, a: 1}
+        brightness: 1
+        emission: 0
+    - rid: 1052
+      type: {class: SurfaceFacet, ns: Orbital.View.Map, asm: Orbital}
+      data:
+        material: {fileID: 0}
+        color: {r: 1, g: 1, b: 1, a: 1}
+        smoothness: 0.2
+        metallic: 0
+    - rid: 1053
+      type: {class: AppearanceFacet, ns: Orbital.View.Map, asm: Orbital}
+      data:
+        radiusMeters: 761400.0
+        sizeMultiplier: 1
+        tint: {r: 0.55, g: 0.52, b: 0.5, a: 1}
+        brightness: 1
+        emission: 0
+    - rid: 1054
+      type: {class: SurfaceFacet, ns: Orbital.View.Map, asm: Orbital}
+      data:
+        material: {fileID: 0}
+        color: {r: 1, g: 1, b: 1, a: 1}
+        smoothness: 0.2
+        metallic: 0
+    - rid: 1055
+      type: {class: AppearanceFacet, ns: Orbital.View.Map, asm: Orbital}
+      data:
+        radiusMeters: 24622000.0
+        sizeMultiplier: 1
+        tint: {r: 0.3, g: 0.45, b: 0.9, a: 1}
+        brightness: 1
+        emission: 0
+    - rid: 1056
+      type: {class: AppearanceFacet, ns: Orbital.View.Map, asm: Orbital}
+      data:
+        radiusMeters: 1353400.0
+        sizeMultiplier: 1
+        tint: {r: 0.8, g: 0.78, b: 0.78, a: 1}
+        brightness: 1
+        emission: 0
+    - rid: 1057
+      type: {class: SurfaceFacet, ns: Orbital.View.Map, asm: Orbital}
+      data:
+        material: {fileID: 0}
+        color: {r: 1, g: 1, b: 1, a: 1}
+        smoothness: 0.2
+        metallic: 0
+    - rid: 1058
+      type: {class: AppearanceFacet, ns: Orbital.View.Map, asm: Orbital}
+      data:
+        radiusMeters: 1188300.0
+        sizeMultiplier: 1
+        tint: {r: 0.75, g: 0.65, b: 0.55, a: 1}
+        brightness: 1
+        emission: 0
+    - rid: 1059
+      type: {class: SurfaceFacet, ns: Orbital.View.Map, asm: Orbital}
+      data:
+        material: {fileID: 0}
+        color: {r: 1, g: 1, b: 1, a: 1}
+        smoothness: 0.2
+        metallic: 0
+    - rid: 1060
+      type: {class: AppearanceFacet, ns: Orbital.View.Map, asm: Orbital}
+      data:
+        radiusMeters: 606000.0
+        sizeMultiplier: 1
+        tint: {r: 0.6, g: 0.58, b: 0.57, a: 1}
+        brightness: 1
+        emission: 0
+    - rid: 1061
+      type: {class: SurfaceFacet, ns: Orbital.View.Map, asm: Orbital}
+      data:
+        material: {fileID: 0}
+        color: {r: 1, g: 1, b: 1, a: 1}
+        smoothness: 0.2
+        metallic: 0
