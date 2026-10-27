@@ -2,7 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Leopotam.Ecs;
+#if UNITY_EDITOR
 using Leopotam.Ecs.UnityIntegration;
+#endif
 using Orbital.Technology.Systems;
 using UnityEngine;
 

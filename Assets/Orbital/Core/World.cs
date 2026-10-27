@@ -8,7 +8,7 @@ using Zenject;
 
 namespace Orbital.Core
 {
-    public class World : MonoBehaviour
+    public class World : MonoBehaviour, ISceneReady
     {
         [SerializeField] private TreeContainer tree;
         [Inject] private DiContainer _container;
@@ -16,6 +16,11 @@ namespace Orbital.Core
         public event Action<IDynamicBody> DynamicBodyRegisterHandler;
         public event Action<IDynamicBody> DynamicBodyUnregisterHandler;
         
+        void ISceneReady.OnSceneReady()
+        {
+            Load(false);
+        }
+
         public void Load(bool putOrbitsFromTree = true)
         {
             if (tree == null)

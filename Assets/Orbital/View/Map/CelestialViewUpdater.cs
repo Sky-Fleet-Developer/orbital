@@ -32,6 +32,12 @@ namespace Orbital.View.Map
                 _planetContainer.Value.MeshRenderer.material = _settings.celestialMaterial;
                 _planetContainer.Value.Transform.localScale = Vector3.one * 0.08f;
             }
+            // The root of the tree has no orbit: its orbit is a default struct, and positions from it are NaN.
+            if (_body.Orbit.SemiMajorAxis == 0.0 || double.IsNaN(_body.Orbit.SemiMajorAxis))
+            {
+                _orbitContainer.Transform.gameObject.SetActive(false);
+                return;
+            }
             DVector3 pos = _body.Orbit.GetPositionFromTrueAnomaly(0);
             Vector3 up = _body.Orbit.RotationMatrix.Up();
             Vector3 fwd = _body.Orbit.RotationMatrix.Forward();

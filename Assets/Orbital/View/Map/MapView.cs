@@ -5,14 +5,15 @@ using Orbital.Core.Simulation;
 using Orbital.Core.TrajectorySystem;
 using Plugins.LocalPool;
 using UnityEngine;
+using Zenject;
 
 namespace Orbital.View.Map
 {
     [ExecuteAlways]
-    public class MapView : MonoBehaviour
+    public class MapView : MonoBehaviour, IBindMe
     {
         [SerializeField] private ScriptableObjectContainer.Container viewSettingsContainer;
-        [SerializeField] private World world;
+        [Inject] private World world;
         [SerializeField] private ScaleSettings scaleSettings;
         private Pool<ViewContainer> _viewsPool;
         private readonly List<ViewUpdater> _views = new ();
@@ -26,10 +27,12 @@ namespace Orbital.View.Map
         }
 
 #if UNITY_EDITOR
+        // In edit mode nothing is injected: the view lives on the same object as the world.
         private void OnEnable()
         {
-            if (world == null)
+            if (!Application.isPlaying && world == null)
             {
+                world = GetComponent<World>();
                 Init();
             }
         }
@@ -51,7 +54,6 @@ namespace Orbital.View.Map
         
         private void Init()
         {
-            //_world = GetComponentInChildren<World>();
             #if UNITY_EDITOR
             if (!Application.isPlaying)
             {
@@ -71,7 +73,12 @@ namespace Orbital.View.Map
 
         private void OnDisable()
         {
-            world.DynamicBodyRegisterHandler -= OnDynamicBodyRegister;
+            if (world != null) world.DynamicBodyRegisterHandler -= OnDynamicBodyRegister;
+        }
+
+        public bool TryGetBodyTransform(IStaticBody body, out Transform bodyTransform)
+        {
+            return _hierarchy.TryGetValue(body, out bodyTransform);
         }
 
         private void OnDynamicBodyRegister(IDynamicBody body)
