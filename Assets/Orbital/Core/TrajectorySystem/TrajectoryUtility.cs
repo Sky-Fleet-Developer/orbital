@@ -7,6 +7,26 @@ namespace Orbital.Core.TrajectorySystem
 {
     public static partial class TrajectoryUtility
     {
+        /// <summary>Default factor of the minimum sphere of influence: at least this many body radii (1 &lt; k &lt; 2).</summary>
+        public const double DefaultMinRadiusFactor = 1.5;
+
+        /// <summary>
+        /// Sphere of influence radius of a body with gravitational parameter <paramref name="bodyNu"/> whose orbit around a parent with
+        /// <paramref name="parentNu"/> has semi-major axis <paramref name="semiMajorAxis"/>: the Laplace sphere r = a * (m / M)^(2/5),
+        /// but never less than <paramref name="bodyRadius"/> * <paramref name="minRadiusFactor"/> so that small bodies can be entered before touching them.
+        /// Engine-free, the only implementation (Core and the authoritative server). Returns +infinity when there is no parent (parentNu &lt;= 0).
+        /// Pass bodyRadius = 0 when the radius is unknown or the body has no surface (barycenter): no minimum is applied.
+        /// </summary>
+        public static double GetSphereOfInfluenceRadius(double semiMajorAxis, double bodyNu, double parentNu,
+            double bodyRadius = 0.0, double minRadiusFactor = DefaultMinRadiusFactor)
+        {
+            if (!(minRadiusFactor > 1.0 && minRadiusFactor < 2.0))
+                throw new ArgumentOutOfRangeException(nameof(minRadiusFactor), "must be strictly between 1 and 2");
+            if (!(parentNu > 0.0)) return double.PositiveInfinity;
+            double laplace = Math.Abs(semiMajorAxis) * Math.Pow(bodyNu / parentNu, 0.4);
+            return Math.Max(laplace, bodyRadius > 0.0 ? bodyRadius * minRadiusFactor : 0.0);
+        }
+
         public static double RadiusAtTrueAnomaly(this StaticOrbit tr, double tA) =>
             tr.SemiLatusRectum * (1.0 / (1.0 + tr.Eccentricity * Math.Cos(tA)));
 

@@ -105,7 +105,7 @@ namespace Orbital.Test
                     //DVector3 relativePosition = 
                     //node.Orbit.DrawGizmos(node.Celestial.Position);
                     Handles.color = Color.green * 0.7f;
-                    Handles.CircleHandleCap(-1, node.Celestial.Position * scale, Quaternion.Euler(-90, 0, 0), (float) MassUtility.GetGravityRadius(node.Celestial.GravParameter) * scale, EventType.Repaint);
+                    Handles.CircleHandleCap(-1, node.Celestial.Position * scale, Quaternion.Euler(-90, 0, 0), (float) MassUtility.GetSphereOfInfluenceRadius(node.Celestial) * scale, EventType.Repaint);
                     if (node.Next == null || node.Ending.Type == OrbitEndingType.Cycle)
                     {
                         node.Orbit.DrawGizmos(node.Celestial.Position);

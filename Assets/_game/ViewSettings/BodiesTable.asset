@@ -147,6 +147,11 @@ MonoBehaviour:
         tint: {r: 1, g: 0.85, b: 0.5, a: 1}
         brightness: 1
         emission: 2
+        rotationPeriodSeconds: 2192832.0
+        axialTiltDegrees: 7.25
+        axisAzimuthDegrees: 0.0
+        initialAngleDegrees: 0.0
+        tidallyLocked: 0
     - rid: 1002
       type: {class: AppearanceFacet, ns: Orbital.View.Map, asm: Orbital}
       data:
@@ -155,6 +160,11 @@ MonoBehaviour:
         tint: {r: 0.6, g: 0.58, b: 0.55, a: 1}
         brightness: 1
         emission: 0
+        rotationPeriodSeconds: 5067014.4
+        axialTiltDegrees: 0.034
+        axisAzimuthDegrees: 0.0
+        initialAngleDegrees: 0.0
+        tidallyLocked: 0
     - rid: 1003
       type: {class: SurfaceFacet, ns: Orbital.View.Map, asm: Orbital}
       data:
@@ -170,6 +180,11 @@ MonoBehaviour:
         tint: {r: 0.9, g: 0.8, b: 0.55, a: 1}
         brightness: 1
         emission: 0
+        rotationPeriodSeconds: 20996798.4
+        axialTiltDegrees: 177.36
+        axisAzimuthDegrees: 0.0
+        initialAngleDegrees: 0.0
+        tidallyLocked: 0
     - rid: 1005
       type: {class: SurfaceFacet, ns: Orbital.View.Map, asm: Orbital}
       data:
@@ -192,6 +207,11 @@ MonoBehaviour:
         tint: {r: 0.35, g: 0.55, b: 0.85, a: 1}
         brightness: 1
         emission: 0
+        rotationPeriodSeconds: 86164.0905
+        axialTiltDegrees: 23.4393
+        axisAzimuthDegrees: 0.0
+        initialAngleDegrees: 0.0
+        tidallyLocked: 0
     - rid: 1008
       type: {class: SurfaceFacet, ns: Orbital.View.Map, asm: Orbital}
       data:
@@ -214,6 +234,11 @@ MonoBehaviour:
         tint: {r: 0.7, g: 0.7, b: 0.7, a: 1}
         brightness: 1
         emission: 0
+        rotationPeriodSeconds: 0.0
+        axialTiltDegrees: 6.68
+        axisAzimuthDegrees: 0.0
+        initialAngleDegrees: 0.0
+        tidallyLocked: 1
     - rid: 1011
       type: {class: SurfaceFacet, ns: Orbital.View.Map, asm: Orbital}
       data:
@@ -229,6 +254,11 @@ MonoBehaviour:
         tint: {r: 0.8, g: 0.45, b: 0.3, a: 1}
         brightness: 1
         emission: 0
+        rotationPeriodSeconds: 88642.6848
+        axialTiltDegrees: 25.19
+        axisAzimuthDegrees: 0.0
+        initialAngleDegrees: 0.0
+        tidallyLocked: 0
     - rid: 1013
       type: {class: SurfaceFacet, ns: Orbital.View.Map, asm: Orbital}
       data:
@@ -251,6 +281,11 @@ MonoBehaviour:
         tint: {r: 0.5, g: 0.47, b: 0.45, a: 1}
         brightness: 1
         emission: 0
+        rotationPeriodSeconds: 0.0
+        axialTiltDegrees: 0.0
+        axisAzimuthDegrees: 0.0
+        initialAngleDegrees: 0.0
+        tidallyLocked: 1
     - rid: 1016
       type: {class: SurfaceFacet, ns: Orbital.View.Map, asm: Orbital}
       data:
@@ -266,6 +301,11 @@ MonoBehaviour:
         tint: {r: 0.55, g: 0.5, b: 0.47, a: 1}
         brightness: 1
         emission: 0
+        rotationPeriodSeconds: 0.0
+        axialTiltDegrees: 0.0
+        axisAzimuthDegrees: 0.0
+        initialAngleDegrees: 0.0
+        tidallyLocked: 1
     - rid: 1018
       type: {class: SurfaceFacet, ns: Orbital.View.Map, asm: Orbital}
       data:
@@ -281,6 +321,11 @@ MonoBehaviour:
         tint: {r: 0.85, g: 0.7, b: 0.55, a: 1}
         brightness: 1
         emission: 0
+        rotationPeriodSeconds: 35729.7
+        axialTiltDegrees: 3.13
+        axisAzimuthDegrees: 0.0
+        initialAngleDegrees: 0.0
+        tidallyLocked: 0
     - rid: 1020
       type: {class: AppearanceFacet, ns: Orbital.View.Map, asm: Orbital}
       data:
@@ -289,6 +334,11 @@ MonoBehaviour:
         tint: {r: 0.9, g: 0.8, b: 0.4, a: 1}
         brightness: 1
         emission: 0
+        rotationPeriodSeconds: 0.0
+        axialTiltDegrees: 0.0
+        axisAzimuthDegrees: 0.0
+        initialAngleDegrees: 0.0
+        tidallyLocked: 1
     - rid: 1021
       type: {class: SurfaceFacet, ns: Orbital.View.Map, asm: Orbital}
       data:
@@ -304,6 +354,11 @@ MonoBehaviour:
         tint: {r: 0.85, g: 0.8, b: 0.7, a: 1}
         brightness: 1
         emission: 0
+        rotationPeriodSeconds: 0.0
+        axialTiltDegrees: 0.0
+        axisAzimuthDegrees: 0.0
+        initialAngleDegrees: 0.0
+        tidallyLocked: 1
     - rid: 1023
       type: {class: SurfaceFacet, ns: Orbital.View.Map, asm: Orbital}
       data:
@@ -319,6 +374,11 @@ MonoBehaviour:
         tint: {r: 0.6, g: 0.55, b: 0.5, a: 1}
         brightness: 1
         emission: 0
+        rotationPeriodSeconds: 0.0
+        axialTiltDegrees: 0.0
+        axisAzimuthDegrees: 0.0
+        initialAngleDegrees: 0.0
+        tidallyLocked: 1
     - rid: 1025
       type: {class: SurfaceFacet, ns: Orbital.View.Map, asm: Orbital}
       data:
@@ -334,6 +394,11 @@ MonoBehaviour:
         tint: {r: 0.4, g: 0.37, b: 0.33, a: 1}
         brightness: 1
         emission: 0
+        rotationPeriodSeconds: 0.0
+        axialTiltDegrees: 0.0
+        axisAzimuthDegrees: 0.0
+        initialAngleDegrees: 0.0
+        tidallyLocked: 1
     - rid: 1027
       type: {class: SurfaceFacet, ns: Orbital.View.Map, asm: Orbital}
       data:
@@ -349,6 +414,11 @@ MonoBehaviour:
         tint: {r: 0.9, g: 0.8, b: 0.6, a: 1}
         brightness: 1
         emission: 0
+        rotationPeriodSeconds: 38361.0
+        axialTiltDegrees: 26.73
+        axisAzimuthDegrees: 0.0
+        initialAngleDegrees: 0.0
+        tidallyLocked: 0
     - rid: 1029
       type: {class: AppearanceFacet, ns: Orbital.View.Map, asm: Orbital}
       data:
@@ -357,6 +427,11 @@ MonoBehaviour:
         tint: {r: 0.75, g: 0.75, b: 0.75, a: 1}
         brightness: 1
         emission: 0
+        rotationPeriodSeconds: 0.0
+        axialTiltDegrees: 0.0
+        axisAzimuthDegrees: 0.0
+        initialAngleDegrees: 0.0
+        tidallyLocked: 1
     - rid: 1030
       type: {class: SurfaceFacet, ns: Orbital.View.Map, asm: Orbital}
       data:
@@ -372,6 +447,11 @@ MonoBehaviour:
         tint: {r: 0.95, g: 0.95, b: 0.95, a: 1}
         brightness: 1
         emission: 0
+        rotationPeriodSeconds: 0.0
+        axialTiltDegrees: 0.0
+        axisAzimuthDegrees: 0.0
+        initialAngleDegrees: 0.0
+        tidallyLocked: 1
     - rid: 1032
       type: {class: SurfaceFacet, ns: Orbital.View.Map, asm: Orbital}
       data:
@@ -387,6 +467,11 @@ MonoBehaviour:
         tint: {r: 0.85, g: 0.85, b: 0.85, a: 1}
         brightness: 1
         emission: 0
+        rotationPeriodSeconds: 0.0
+        axialTiltDegrees: 0.0
+        axisAzimuthDegrees: 0.0
+        initialAngleDegrees: 0.0
+        tidallyLocked: 1
     - rid: 1034
       type: {class: SurfaceFacet, ns: Orbital.View.Map, asm: Orbital}
       data:
@@ -402,6 +487,11 @@ MonoBehaviour:
         tint: {r: 0.8, g: 0.8, b: 0.8, a: 1}
         brightness: 1
         emission: 0
+        rotationPeriodSeconds: 0.0
+        axialTiltDegrees: 0.0
+        axisAzimuthDegrees: 0.0
+        initialAngleDegrees: 0.0
+        tidallyLocked: 1
     - rid: 1036
       type: {class: SurfaceFacet, ns: Orbital.View.Map, asm: Orbital}
       data:
@@ -417,6 +507,11 @@ MonoBehaviour:
         tint: {r: 0.8, g: 0.8, b: 0.78, a: 1}
         brightness: 1
         emission: 0
+        rotationPeriodSeconds: 0.0
+        axialTiltDegrees: 0.0
+        axisAzimuthDegrees: 0.0
+        initialAngleDegrees: 0.0
+        tidallyLocked: 1
     - rid: 1038
       type: {class: SurfaceFacet, ns: Orbital.View.Map, asm: Orbital}
       data:
@@ -432,6 +527,11 @@ MonoBehaviour:
         tint: {r: 0.85, g: 0.65, b: 0.3, a: 1}
         brightness: 1
         emission: 0
+        rotationPeriodSeconds: 0.0
+        axialTiltDegrees: 0.0
+        axisAzimuthDegrees: 0.0
+        initialAngleDegrees: 0.0
+        tidallyLocked: 1
     - rid: 1040
       type: {class: SurfaceFacet, ns: Orbital.View.Map, asm: Orbital}
       data:
@@ -454,6 +554,11 @@ MonoBehaviour:
         tint: {r: 0.55, g: 0.5, b: 0.45, a: 1}
         brightness: 1
         emission: 0
+        rotationPeriodSeconds: 0.0
+        axialTiltDegrees: 0.0
+        axisAzimuthDegrees: 0.0
+        initialAngleDegrees: 0.0
+        tidallyLocked: 1
     - rid: 1043
       type: {class: SurfaceFacet, ns: Orbital.View.Map, asm: Orbital}
       data:
@@ -469,6 +574,11 @@ MonoBehaviour:
         tint: {r: 0.6, g: 0.85, b: 0.9, a: 1}
         brightness: 1
         emission: 0
+        rotationPeriodSeconds: 62064.0
+        axialTiltDegrees: 97.77
+        axisAzimuthDegrees: 0.0
+        initialAngleDegrees: 0.0
+        tidallyLocked: 0
     - rid: 1045
       type: {class: AppearanceFacet, ns: Orbital.View.Map, asm: Orbital}
       data:
@@ -477,6 +587,11 @@ MonoBehaviour:
         tint: {r: 0.7, g: 0.7, b: 0.72, a: 1}
         brightness: 1
         emission: 0
+        rotationPeriodSeconds: 0.0
+        axialTiltDegrees: 0.0
+        axisAzimuthDegrees: 0.0
+        initialAngleDegrees: 0.0
+        tidallyLocked: 1
     - rid: 1046
       type: {class: SurfaceFacet, ns: Orbital.View.Map, asm: Orbital}
       data:
@@ -492,6 +607,11 @@ MonoBehaviour:
         tint: {r: 0.7, g: 0.7, b: 0.7, a: 1}
         brightness: 1
         emission: 0
+        rotationPeriodSeconds: 0.0
+        axialTiltDegrees: 0.0
+        axisAzimuthDegrees: 0.0
+        initialAngleDegrees: 0.0
+        tidallyLocked: 1
     - rid: 1048
       type: {class: SurfaceFacet, ns: Orbital.View.Map, asm: Orbital}
       data:
@@ -507,6 +627,11 @@ MonoBehaviour:
         tint: {r: 0.45, g: 0.45, b: 0.45, a: 1}
         brightness: 1
         emission: 0
+        rotationPeriodSeconds: 0.0
+        axialTiltDegrees: 0.0
+        axisAzimuthDegrees: 0.0
+        initialAngleDegrees: 0.0
+        tidallyLocked: 1
     - rid: 1050
       type: {class: SurfaceFacet, ns: Orbital.View.Map, asm: Orbital}
       data:
@@ -522,6 +647,11 @@ MonoBehaviour:
         tint: {r: 0.6, g: 0.58, b: 0.56, a: 1}
         brightness: 1
         emission: 0
+        rotationPeriodSeconds: 0.0
+        axialTiltDegrees: 0.0
+        axisAzimuthDegrees: 0.0
+        initialAngleDegrees: 0.0
+        tidallyLocked: 1
     - rid: 1052
       type: {class: SurfaceFacet, ns: Orbital.View.Map, asm: Orbital}
       data:
@@ -537,6 +667,11 @@ MonoBehaviour:
         tint: {r: 0.55, g: 0.52, b: 0.5, a: 1}
         brightness: 1
         emission: 0
+        rotationPeriodSeconds: 0.0
+        axialTiltDegrees: 0.0
+        axisAzimuthDegrees: 0.0
+        initialAngleDegrees: 0.0
+        tidallyLocked: 1
     - rid: 1054
       type: {class: SurfaceFacet, ns: Orbital.View.Map, asm: Orbital}
       data:
@@ -552,6 +687,11 @@ MonoBehaviour:
         tint: {r: 0.3, g: 0.45, b: 0.9, a: 1}
         brightness: 1
         emission: 0
+        rotationPeriodSeconds: 57996.0
+        axialTiltDegrees: 28.32
+        axisAzimuthDegrees: 0.0
+        initialAngleDegrees: 0.0
+        tidallyLocked: 0
     - rid: 1056
       type: {class: AppearanceFacet, ns: Orbital.View.Map, asm: Orbital}
       data:
@@ -560,6 +700,11 @@ MonoBehaviour:
         tint: {r: 0.8, g: 0.78, b: 0.78, a: 1}
         brightness: 1
         emission: 0
+        rotationPeriodSeconds: 0.0
+        axialTiltDegrees: 0.0
+        axisAzimuthDegrees: 0.0
+        initialAngleDegrees: 0.0
+        tidallyLocked: 1
     - rid: 1057
       type: {class: SurfaceFacet, ns: Orbital.View.Map, asm: Orbital}
       data:
@@ -575,6 +720,11 @@ MonoBehaviour:
         tint: {r: 0.75, g: 0.65, b: 0.55, a: 1}
         brightness: 1
         emission: 0
+        rotationPeriodSeconds: 551856.7
+        axialTiltDegrees: 122.53
+        axisAzimuthDegrees: 0.0
+        initialAngleDegrees: 0.0
+        tidallyLocked: 0
     - rid: 1059
       type: {class: SurfaceFacet, ns: Orbital.View.Map, asm: Orbital}
       data:
@@ -590,6 +740,11 @@ MonoBehaviour:
         tint: {r: 0.6, g: 0.58, b: 0.57, a: 1}
         brightness: 1
         emission: 0
+        rotationPeriodSeconds: 0.0
+        axialTiltDegrees: 0.0
+        axisAzimuthDegrees: 0.0
+        initialAngleDegrees: 0.0
+        tidallyLocked: 1
     - rid: 1061
       type: {class: SurfaceFacet, ns: Orbital.View.Map, asm: Orbital}
       data:

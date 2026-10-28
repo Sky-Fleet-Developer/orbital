@@ -122,7 +122,7 @@ namespace Orbital.Core
                 {
                     if (mass == null || !_bodyPerMass.TryGetValue(mass, out IStaticBodyAccessor body)) continue;
                     DVector3 relativePosition = position - body.Orbit.GetPositionAtT(time);
-                    if (relativePosition.Length() < MassUtility.GetGravityRadius(body.Self.GravParameter))
+                    if (relativePosition.Length() < MassUtility.GetSphereOfInfluenceRadius(body.Self))
                     {
                         position = relativePosition;
                         next = mass;

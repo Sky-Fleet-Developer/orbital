@@ -1,17 +1,23 @@
 using System;
 using System.Collections.Generic;
+using Orbital.Core;
 
 namespace Orbital.Core.TrajectorySystem
 {
     public static partial class MassUtility
     {
         public const double G = 6.67430e-11;
-        private const double GravityEdgeInv = 500;
-        public static double GetGravityRadius(double Nu)
+        /// <summary>
+        /// Sphere of influence of a body around its parent: Laplace r = a * (m / M)^(2/5), not less than Radius * k. Infinite for the root body.
+        /// The only implementation is <see cref="TrajectoryUtility.GetSphereOfInfluenceRadius"/>; masses enter as gravitational parameters (ratio is the same).
+        /// </summary>
+        public static double GetSphereOfInfluenceRadius(IStaticBody body, double minRadiusFactor = TrajectoryUtility.DefaultMinRadiusFactor)
         {
-            return Math.Sqrt(Nu * GravityEdgeInv);
+            if (body.Parent == null) return double.PositiveInfinity;
+            // body.Radius is a stub (1) until a real radius reaches Core; see Docs/GameplayPrototype.md, stage 1.3.
+            return TrajectoryUtility.GetSphereOfInfluenceRadius(body.Orbit.SemiMajorAxis, body.GravParameter, body.Parent.GravParameter, body.Radius, minRadiusFactor);
         }
-        
+
         public static IEnumerable<IMassSystem> GetRecursively(this IMassSystem value)
         {
             foreach (IMassSystem content in value.GetContent())

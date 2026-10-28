@@ -15,7 +15,7 @@ namespace Orbital.Core.Navigation
         public static OrbitEnding GetEnding(this StaticOrbit orbit, IStaticBody parent, double fromTime)
         {
             bool isLeaves = IsLeavesGravityRadius(orbit,
-                MassUtility.GetGravityRadius(parent.GravParameter) * HighTolerance, fromTime,
+                MassUtility.GetSphereOfInfluenceRadius(parent) * HighTolerance, fromTime,
                 out DVector3 leavePoint, out double leaveTime);
 
             double horizon = isLeaves ? leaveTime - fromTime : orbit.Period * EncounterSearchPeriods;
@@ -71,7 +71,7 @@ namespace Orbital.Core.Navigation
 
             (double time, IStaticBody body)[] collisions = body.Children
                 .Where(x => x.IsSatellite)
-                .Select(x => (radius: MassUtility.GetGravityRadius(x.GravParameter) * LowTolerance, body: x))
+                .Select(x => (radius: MassUtility.GetSphereOfInfluenceRadius(x) * LowTolerance, body: x))
                 .Where(x => IsProjectionCrossing(x.body.Orbit, x.radius))
                 .Select(x => (time: OrbitCrossing.TryFindEntry(orbit, x.body.Orbit, x.radius, time, horizon,
                     out double entryTime)
