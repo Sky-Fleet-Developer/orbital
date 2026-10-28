@@ -1,0 +1,6 @@
+{
+  "fuels": [
+    { "id": "standard", "name": "Standard propellant", "ispSeconds": 450 }
+  ],
+  "defaultFuel": "standard"
+}

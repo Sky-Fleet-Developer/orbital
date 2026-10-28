@@ -1,21 +1,27 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Scripting.APIUpdating;
 
-namespace Orbital.View.Map
+namespace Orbital.Core.Bodies
 {
-    /// <summary>View data of the bodies, one record per body name. Scene objects are matched by name; a slot suffix such as "[3]" is ignored.</summary>
-    [CreateAssetMenu(menuName = "Orbital/Body View Table")]
-    public class BodyViewTable : ScriptableObject, ISerializationCallbackReceiver
+    /// <summary>
+    /// Data of the bodies except their position (size, rotation, look...), one record per body name. Scene objects are matched by name;
+    /// a slot suffix such as "[3]" is ignored. The model facets (<see cref="PhysicalFacet"/>, <see cref="RotationFacet"/>) are read by Core, the server
+    /// world generator and the clients; the view facets live in the Orbital assembly.
+    /// </summary>
+    [CreateAssetMenu(menuName = "Orbital/Body Table")]
+    [MovedFrom(false, sourceNamespace: "Orbital.View.Map", sourceAssembly: "Orbital", sourceClassName: "BodyViewTable")]
+    public class BodyTable : ScriptableObject, IBodyDataSource, ISerializationCallbackReceiver
     {
-        public List<BodyViewRecord> bodies = new ();
+        public List<BodyRecord> bodies = new ();
 
-        private readonly Dictionary<string, BodyViewRecord> _byName = new ();
+        private readonly Dictionary<string, BodyRecord> _byName = new ();
 
         /// <summary>Raised when the table is edited, so open views can retune.</summary>
         public event Action Changed;
 
-        public bool TryGet(string objectName, out BodyViewRecord record)
+        public bool TryGet(string objectName, out BodyRecord record)
         {
             return _byName.TryGetValue(KeyOf(objectName), out record);
         }
@@ -30,7 +36,7 @@ namespace Orbital.View.Map
         private void RebuildIndex()
         {
             _byName.Clear();
-            foreach (BodyViewRecord record in bodies)
+            foreach (BodyRecord record in bodies)
             {
                 if (record == null) continue;
                 record.Rebuild();

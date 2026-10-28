@@ -780,4 +780,99 @@ namespace Orbital.Tests
             Assert.IsTrue(Same(crowd.Load(3), alone.Load(0)));
         }
     }
+    public class InertiaTests
+    {
+        [Test]
+        public void EffectiveInertia_FullTanks_IsTheConfiguredValue_EmptyTanks_SubtractTheFuel()
+        {
+            FlightConfig c = FlightConfig.Default();
+            Vec3 full = FlightKernel.EffectiveInertia(c, c.MainFuelCapacity, c.RcsPropellantCapacity);
+            Assert.AreEqual(c.Inertia.X, full.X, 1e-9);
+            Assert.AreEqual(c.Inertia.Y, full.Y, 1e-9);
+            Assert.AreEqual(c.Inertia.Z, full.Z, 1e-9);
+            Vec3 dry = FlightKernel.EffectiveInertia(c, 0, 0);
+            double fuel = c.MainFuelCapacity + c.RcsPropellantCapacity;
+            Assert.AreEqual(c.Inertia.X - fuel * c.FuelInertiaPerKg.X, dry.X, 1e-6);
+            Assert.AreEqual(c.Inertia.Y - fuel * c.FuelInertiaPerKg.Y, dry.Y, 1e-6);
+            Assert.Greater(dry.X, 0);
+            Assert.Greater(dry.Y, 0);
+        }
+
+        [Test]
+        public void EffectiveInertia_IsLinearInTheFuelMass_AndMonotonic()
+        {
+            FlightConfig c = FlightConfig.Default();
+            double prev = 0;
+            for (double f = 0; f <= c.MainFuelCapacity; f += 4000)
+            {
+                double x = FlightKernel.EffectiveInertia(c, f, c.RcsPropellantCapacity).X;
+                Assert.Greater(x, prev);
+                Assert.AreEqual(c.Inertia.X - (c.MainFuelCapacity - f) * c.FuelInertiaPerKg.X, x, 1e-6);
+                prev = x;
+            }
+        }
+
+        [Test]
+        public void EffectiveInertia_WithoutFuelCoefficient_DoesNotDependOnFuel_AndIsClamped()
+        {
+            FlightConfig c = FlightConfig.Default();
+            c.FuelInertiaPerKg = Vec3.Zero; // the field of an older config file
+            Assert.AreEqual(c.Inertia.X, FlightKernel.EffectiveInertia(c, 0, 0).X, 1e-12);
+            c.FuelInertiaPerKg = new Vec3(1e6, 1e6, 1e6); // nonsense: would go negative
+            Vec3 v = FlightKernel.EffectiveInertia(c, 0, 0);
+            Assert.AreEqual(0.01 * c.Inertia.X, v.X, 1e-9);
+            Assert.AreEqual(0.01 * c.Inertia.Y, v.Y, 1e-9);
+        }
+
+        [Test]
+        public void Kernel_LighterCraft_TurnsFasterUnderTheSameTorque()
+        {
+            FlightParams p = FlightFixture.DeepSpace();
+            ControlInput input = new ControlInput { Pitch = 1.0, RcsOn = true };
+            FlightState full = FlightKernel.Fresh(p.Craft);
+            FlightState empty = FlightKernel.Fresh(p.Craft);
+            empty.MainFuel = 0;
+            FlightKernel.Step(ref full, input, p, 0, 0.01, out _);
+            FlightKernel.Step(ref empty, input, p, 0, 0.01, out _);
+            Vec3 iFull = FlightKernel.EffectiveInertia(p.Craft, p.Craft.MainFuelCapacity, p.Craft.RcsPropellantCapacity);
+            Vec3 iEmpty = FlightKernel.EffectiveInertia(p.Craft, 0, p.Craft.RcsPropellantCapacity);
+            Assert.Greater(empty.Omega.X, full.Omega.X);
+            Assert.AreEqual(iFull.X / iEmpty.X, empty.Omega.X / full.Omega.X, 1e-6, "angular rate is inversely proportional to the inertia");
+        }
+
+        [Test]
+        public void Kernel_BurningFuel_KeepsTheAngularRate_WhileTheMomentumFallsWithTheInertia()
+        {
+            // The burned propellant carries its share of the rotation away (jet damping): with an aligned engine a spinning craft keeps
+            // its rate while the inertia, and with it I * w, falls in proportion.
+            FlightParams p = FlightFixture.DeepSpace();
+            FlightState s = FlightKernel.Fresh(p.Craft);
+            s.Omega = new Vec3(0.02, 0, 0);
+            s.Throttle = 1.0;
+            ControlInput input = new ControlInput { ThrottleFull = true };
+            double i0 = FlightKernel.EffectiveInertia(p.Craft, s.MainFuel, s.RcsFuel).X;
+            for (int i = 0; i < 400; i++) FlightKernel.Step(ref s, input, p, i * 0.1, 0.1, out _);
+            double i1 = FlightKernel.EffectiveInertia(p.Craft, s.MainFuel, s.RcsFuel).X;
+            Assert.Less(s.MainFuel, p.Craft.MainFuelCapacity - 1000);
+            Assert.Less(i1, i0);
+            Assert.AreEqual(0.02, s.Omega.X, 1e-9);
+        }
+
+        [Test]
+        public void EmptyTank_LocksThrottleAtZero_AndIgnoresTheLever()
+        {
+            FlightParams p = FlightFixture.DeepSpace();
+            FlightState s = FlightKernel.Fresh(p.Craft);
+            s.MainFuel = 50;
+            ControlInput full = new ControlInput { ThrottleFull = true };
+            for (int i = 0; i < 400 && s.MainFuel > 0; i++) FlightKernel.Step(ref s, full, p, i * 0.1, 0.1, out _);
+            Assert.AreEqual(0.0, s.MainFuel);
+            Assert.AreEqual(0.0, s.Throttle, "throttle drops to zero in the step that empties the tank");
+            for (int i = 0; i < 20; i++) FlightKernel.Step(ref s, full, p, 100 + i * 0.1, 0.1, out StepReport r);
+            Assert.AreEqual(0.0, s.Throttle, "the lever stays dead with no fuel");
+            ControlInput smooth = new ControlInput { ThrottleSmooth = 1.0 };
+            for (int i = 0; i < 100; i++) FlightKernel.Step(ref s, smooth, p, 110 + i * 0.1, 0.1, out _);
+            Assert.AreEqual(0.0, s.Throttle);
+        }
+    }
 }

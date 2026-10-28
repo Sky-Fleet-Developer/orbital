@@ -27,6 +27,30 @@ namespace Orbital.Core.TrajectorySystem
             return Math.Max(laplace, bodyRadius > 0.0 ? bodyRadius * minRadiusFactor : 0.0);
         }
 
+        /// <summary>
+        /// Two bodies of masses m1 and m2 around their common center of mass (the barycenter): the body 1 orbits it with the semi-major axis
+        /// a1 = d * m2 / (m1 + m2), the body 2 with a2 = d * m1 / (m1 + m2), where d is the semi-major axis of the relative orbit. So the ratio is
+        /// LINEAR in the masses, a2 / a1 = m1 / m2 (m1 * a1 = m2 * a2). Returns a2 for the given a1 (the earlier cube-root rule was wrong).
+        /// Engine-free (the server and the converter use the same rule).
+        /// </summary>
+        public static double GetBarycentricPartnerSemiMajorAxis(double semiMajorAxis1, double mass1, double mass2)
+        {
+            if (!(mass1 > 0.0) || !(mass2 > 0.0)) throw new ArgumentOutOfRangeException(nameof(mass1), "masses must be positive");
+            return semiMajorAxis1 * mass1 / mass2;
+        }
+
+        /// <summary>
+        /// Gravitational parameter to use for the orbit of body 1 around the barycenter of the pair, treating the barycenter as a fixed point:
+        /// nu1 = G * m2^3 / (m1 + m2)^2 = totalNu * (m2 / (m1 + m2))^3. With it a1 = d * m2 / M gives the mean motion sqrt(G * M / d^3), the same for
+        /// both bodies, i.e. the pair turns as one rigid line through the barycenter. <paramref name="totalNu"/> = G * (m1 + m2).
+        /// </summary>
+        public static double GetBarycentricOrbitNu(double totalNu, double mass1, double mass2)
+        {
+            if (!(mass1 > 0.0) || !(mass2 > 0.0)) throw new ArgumentOutOfRangeException(nameof(mass1), "masses must be positive");
+            double share = mass2 / (mass1 + mass2);
+            return totalNu * share * share * share;
+        }
+
         public static double RadiusAtTrueAnomaly(this StaticOrbit tr, double tA) =>
             tr.SemiLatusRectum * (1.0 / (1.0 + tr.Eccentricity * Math.Cos(tA)));
 

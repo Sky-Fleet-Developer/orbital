@@ -1,5 +1,7 @@
 using System.Collections.Generic;
+using System.Linq;
 using Orbital.Core;
+using Orbital.Core.Bodies;
 using Orbital.Core.Handles;
 using Orbital.Core.Simulation;
 using Orbital.Core.TrajectorySystem;
@@ -10,7 +12,7 @@ using Zenject;
 namespace Orbital.View.Map
 {
     [ExecuteAlways]
-    public class MapView : MonoBehaviour, IBindMe, IViewInitializer, ILateUpdateHandler
+    public class MapView : MonoBehaviour, IBindMe, IInstallMe, IViewInitializer, ILateUpdateHandler
     {
         [SerializeField] private ScriptableObjectContainer.Container viewSettingsContainer;
         [Inject] private World world;
@@ -29,6 +31,23 @@ namespace Orbital.View.Map
 
         // Refresh runs after the simulation handlers of the same frame.
         int IOrderHolder.Order => 100;
+
+        // The body table lives in the view settings; the world is loaded before the view, so the table is handed to it first.
+        void IInstallMe.InstallBindings(DiContainer container)
+        {
+            IBodyDataSource data = FindBodyTable();
+            if (data != null && container.TryResolve<IBodyDataSource>() == null)
+            {
+                container.Bind<IBodyDataSource>().FromInstance(data);
+            }
+        }
+
+        private BodyTable FindBodyTable()
+        {
+            if (viewSettingsContainer == null) return null;
+            CelestialViewSettings settings = viewSettingsContainer.GetAssetsAtType<CelestialViewSettings>().FirstOrDefault();
+            return settings != null ? settings.bodyTable : null;
+        }
 
         // The bootstrapper calls this once the world is loaded. Start covers a view that appears later.
         void IViewInitializer.InitializeView()
@@ -92,6 +111,8 @@ namespace Orbital.View.Map
             if (world == null) return;
             if (!world.IsLoaded && !Application.isPlaying)
             {
+                // Edit mode has no container: hand the body data to the world directly.
+                world.SetBodyData(FindBodyTable());
                 world.Load();
             }
             if (!world.IsLoaded) return;

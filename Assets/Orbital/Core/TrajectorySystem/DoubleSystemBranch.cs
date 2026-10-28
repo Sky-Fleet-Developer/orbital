@@ -41,7 +41,8 @@ namespace Orbital.Core.TrajectorySystem
                     bSettings.argumentOfPeriapsis = value.argumentOfPeriapsis;
                     bSettings.longitudeAscendingNode = value.longitudeAscendingNode + 180;
                     bSettings.inclination = value.inclination;
-                    bSettings.semiMajorAxis = value.aPericenterRadius * Mathf.Pow(value.aMass / value.bMass, 1.0f / 3.0f);
+                    // center of mass: m_A * a_A = m_B * a_B (linear in the masses; the cube root used before gave the right period only with the wrong separation)
+                    bSettings.semiMajorAxis = (float) TrajectoryUtility.GetBarycentricPartnerSemiMajorAxis(value.aPericenterRadius, value.aMass, value.bMass);
                     bSettings.timeShift = value.timeShift;
                     ChildB.Settings = bSettings;
                 }

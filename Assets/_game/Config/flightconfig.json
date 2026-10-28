@@ -1,0 +1,13 @@
+{
+  "dryMass": 5000,
+  "mainFuelCapacity": 40000,
+  "rcsPropellantCapacity": 200,
+  "inertia": { "x": 1700000, "y": 50000, "z": 1700000 },
+  "fuelInertiaPerKg": { "x": 18, "y": 0.5, "z": 18 },
+  "engine": { "maxThrust": 600000, "isp": 450, "throttleRate": 0.25 },
+  "rcs": { "maxTorque": { "x": 50000, "y": 12000, "z": 50000 }, "isp": 200, "arm": 2 },
+  "gyro": { "maxTorque": 8000, "momentumCapacity": 30000, "softZone": 0.1, "dumpStart": 0.8, "dumpStop": 0.2, "dumpTorqueFraction": 0.5 },
+  "sas": { "naturalFrequency": 0.8, "damping": 1.0, "integralTime": 3.0, "maxRate": 0.3, "captureRate": 0.002, "integralLimit": 0.9, "authorityMargin": 0.5 },
+  "thrustOffset": { "x": 0.05, "y": 0, "z": 0 },
+  "cgHeight": 8
+}

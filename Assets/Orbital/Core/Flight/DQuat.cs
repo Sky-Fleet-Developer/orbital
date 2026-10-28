@@ -56,6 +56,20 @@ namespace Orbital.Core.Flight
 
         public static DQuat FromAxisAngle(Vec3 axis, double angle) => FromRotationVector(Vec3.Normalize(axis) * angle);
 
+        /// <summary>
+        /// Rotation vector (axis * angle, radians, angle in [0, pi]) of the quaternion: the inverse of <see cref="FromRotationVector"/> for the
+        /// shortest rotation. Zero for the identity (no division by zero).
+        /// </summary>
+        public static Vec3 ToRotationVector(DQuat q)
+        {
+            q = Normalize(q);
+            if (q.W < 0) q = new DQuat(-q.W, -q.X, -q.Y, -q.Z);
+            double s = Math.Sqrt(q.X * q.X + q.Y * q.Y + q.Z * q.Z);
+            if (s < 1e-300) return Vec3.Zero;
+            double k = 2.0 * Math.Atan2(s, q.W) / s;
+            return new Vec3(q.X * k, q.Y * k, q.Z * k);
+        }
+
         /// <summary>Applies a body-frame rotation vector to the orientation: q * exp(rv).</summary>
         public static DQuat ApplyBodyRotation(DQuat q, Vec3 rv) => Normalize(Multiply(q, FromRotationVector(rv)));
 

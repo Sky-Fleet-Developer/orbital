@@ -5,7 +5,7 @@ using Zenject;
 
 namespace Orbital.Core
 {
-    public class HandleDiForChildren : MonoBehaviour, IInstaller
+    public class HandleDiForChildren : MonoBehaviour, IInstallMe
     {
         public bool createSubContainer;
         
@@ -17,7 +17,7 @@ namespace Orbital.Core
                 _localContainer = container.CreateSubContainer();
                 container = _localContainer;
             }
-            foreach (var inst in GetComponentsInChildren<IInstaller>(true))
+            foreach (var inst in GetComponentsInChildren<IInstallMe>(true))
             {
                 if(inst == this) continue;
                 inst.InstallBindings(container);

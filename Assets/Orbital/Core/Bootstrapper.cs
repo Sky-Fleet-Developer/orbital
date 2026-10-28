@@ -84,7 +84,7 @@ namespace Orbital.Core
                 {
                     bindMe.BindTo(container);
                 }
-                foreach (var installer in entry.GetComponents<IInstaller>())
+                foreach (var installer in entry.GetComponents<IInstallMe>())
                 {
                     installer.InstallBindings(container);
                 }
@@ -127,7 +127,7 @@ namespace Orbital.Core
         public static void InstallObject(GameObject obj)
         {
             var container = _diContainers[obj.scene];
-            foreach (var installer in obj.GetComponents<IInstaller>())
+            foreach (var installer in obj.GetComponents<IInstallMe>())
             {
                 installer.InstallBindings(container);
             }

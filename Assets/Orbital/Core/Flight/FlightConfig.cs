@@ -36,10 +36,12 @@ namespace Orbital.Core.Flight
         public double DryMass;            // kg
         public double MainFuelCapacity;   // kg
         public double RcsPropellantCapacity; // kg
-        public Vec3 Inertia;              // principal moments (Ixx, Iyy, Izz), kg*m^2
+        public Vec3 Inertia;              // principal moments (Ixx, Iyy, Izz) with full tanks (main and RCS), kg*m^2
+        public Vec3 FuelInertiaPerKg;     // kg*m^2 that one kg of propellant adds to each principal moment; 0 = inertia does not depend on fuel
         public EngineConfig Engine;
         public RcsConfig Rcs;
         public GyroConfig Gyro;
+        public SasConfig Sas;             // stability assist (stage 2b.1), see Sas.cs
         public Vec3 ThrustOffset;         // m, lateral offset of the thrust line from the center of mass (body frame)
         public double CgHeight;           // m, center of mass above the contact point when standing on legs
 
@@ -52,6 +54,7 @@ namespace Orbital.Core.Flight
                 MainFuelCapacity = 40000,
                 RcsPropellantCapacity = 200,
                 Inertia = new Vec3(1.7e6, 5e4, 1.7e6),
+                FuelInertiaPerKg = new Vec3(18, 0.5, 18), // tank as a rod about 15 m long: m*L^2/12 across, small about the axis
                 Engine = new EngineConfig { MaxThrust = 600000, Isp = 450, ThrottleRate = 0.25 },
                 Rcs = new RcsConfig { MaxTorque = new Vec3(5e4, 1.2e4, 5e4), Isp = 200, Arm = 2.0 },
                 Gyro = new GyroConfig
@@ -59,6 +62,7 @@ namespace Orbital.Core.Flight
                     MaxTorque = 8000, MomentumCapacity = 3e4, SoftZone = 0.1,
                     DumpStart = 0.8, DumpStop = 0.2, DumpTorqueFraction = 0.5,
                 },
+                Sas = SasConfig.Default(),
                 ThrustOffset = new Vec3(0.05, 0, 0),
                 CgHeight = 8.0,
             };

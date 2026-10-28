@@ -1,4 +1,5 @@
 using System;
+using Orbital.Core.Bodies;
 using UnityEngine;
 
 namespace Orbital.View.Map

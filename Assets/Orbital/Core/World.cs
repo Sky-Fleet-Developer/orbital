@@ -1,3 +1,4 @@
+using Orbital.Core.Bodies;
 using UnityEngine;
 using Zenject;
 
@@ -11,9 +12,17 @@ namespace Orbital.Core
     {
         [SerializeField] private TreeContainer tree;
         [Inject] private DiContainer _container;
+        // Radius, rotation and the other per-body data; optional: without it bodies have no data (radius 0).
+        [Inject(Optional = true)] private IBodyDataSource _bodyData;
 
         public WorldModel Model { get; private set; }
         public bool IsLoaded => Model != null;
+
+        /// <summary>Sets the source of the body data. Call before <see cref="Load"/> where there is no DI container (edit mode).</summary>
+        public void SetBodyData(IBodyDataSource data)
+        {
+            _bodyData = data;
+        }
 
         void ISceneReady.OnSceneReady()
         {
@@ -47,7 +56,7 @@ namespace Orbital.Core
             if (tree.Root == null) return;
 
             WorldModel model = new WorldModel(tree.Root, TimeProvider.WorldTime);
-            new WorldSceneBinder().Bind(transform, model);
+            new WorldSceneBinder().Bind(transform, model, _bodyData);
             Model = model;
             InjectHierarchy();
         }

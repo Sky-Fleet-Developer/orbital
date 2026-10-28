@@ -14,7 +14,7 @@ namespace Orbital.Core.TrajectorySystem
         public static double GetSphereOfInfluenceRadius(IStaticBody body, double minRadiusFactor = TrajectoryUtility.DefaultMinRadiusFactor)
         {
             if (body.Parent == null) return double.PositiveInfinity;
-            // body.Radius is a stub (1) until a real radius reaches Core; see Docs/GameplayPrototype.md, stage 1.3.
+            // body.Radius comes from the body table (PhysicalFacet) through World/WorldSceneBinder; 0 (no record, barycenter) means no minimum.
             return TrajectoryUtility.GetSphereOfInfluenceRadius(body.Orbit.SemiMajorAxis, body.GravParameter, body.Parent.GravParameter, body.Radius, minRadiusFactor);
         }
 
@@ -40,14 +40,18 @@ namespace Orbital.Core.TrajectorySystem
 
         public static void FillTrajectoriesRecursively(this IMassSystem massSystem, Dictionary<IMassSystem, StaticOrbit> container, double time)
         {
-            void SetupElement(IMassSystem child, IMassSystem other)
+            void SetupElement(IMassSystem child, IMassSystem other, bool barycentric = false)
             {
                 if (child == null) return;
                 if (other == null) return;
                 if (!container.TryGetValue(child, out StaticOrbit orbit))
                 {
                     orbit = new StaticOrbit();
-                    orbit.Nu = other.Mass * G;
+                    // members of a double system orbit its barycenter: nu = G * m_other^3 / (m_child + m_other)^2 (mean motion common to both);
+                    // an ordinary child orbits the whole mass of its parent
+                    orbit.Nu = barycentric
+                        ? TrajectoryUtility.GetBarycentricOrbitNu((child.Mass + other.Mass) * G, child.Mass, other.Mass)
+                        : other.Mass * G;
                     container.Add(child, orbit);
                 }
 
@@ -58,8 +62,8 @@ namespace Orbital.Core.TrajectorySystem
 
             if (massSystem is DoubleSystemBranch doubleSystemBranch)
             {
-                SetupElement(doubleSystemBranch.ChildA, doubleSystemBranch.ChildB);
-                SetupElement(doubleSystemBranch.ChildB, doubleSystemBranch.ChildA);
+                SetupElement(doubleSystemBranch.ChildA, doubleSystemBranch.ChildB, true);
+                SetupElement(doubleSystemBranch.ChildB, doubleSystemBranch.ChildA, true);
             }
             else
             {

@@ -4,7 +4,7 @@ using Zenject;
 
 namespace Orbital.Core
 {
-    public interface IInstaller
+    public interface IInstallMe
     {
         public void InstallBindings(DiContainer container);
     }

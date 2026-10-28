@@ -4,14 +4,16 @@ namespace Orbital.Core.Flight
     public struct KeyState
     {
         public bool W, S, A, D, Q, E, R;
-        public bool Shift, Ctrl, X, Z;
+        public bool Shift, Ctrl, X, Z, T;
     }
 
-    /// <summary>What has to be remembered between frames: the R key edge and the RCS switch.</summary>
+    /// <summary>What has to be remembered between frames: the R and T key edges, the RCS switch and the SAS switch.</summary>
     public struct InputLatch
     {
         public bool PreviousR;
         public bool RcsOn;
+        public bool PreviousT;
+        public bool SasOn;
     }
 
     /// <summary>Control state for one step. Axes are in [-1, 1] and mean right-handed rotation about the body axis.</summary>
@@ -24,15 +26,18 @@ namespace Orbital.Core.Flight
         public bool ThrottleFull;     // X
         public bool ThrottleZero;     // Z (wins over X)
         public bool RcsOn;            // toggled by an R press
+        public bool SasOn;            // stability assist, toggled by a T press
     }
 
     public static class InputMapper
     {
-        /// <summary>Maps keys to axes; R switches the RCS on a press (not while held). Opposite keys cancel.</summary>
+        /// <summary>Maps keys to axes; R switches the RCS and T the SAS on a press (not while held). Opposite keys cancel.</summary>
         public static ControlInput Map(in KeyState keys, ref InputLatch latch)
         {
             if (keys.R && !latch.PreviousR) latch.RcsOn = !latch.RcsOn;
             latch.PreviousR = keys.R;
+            if (keys.T && !latch.PreviousT) latch.SasOn = !latch.SasOn;
+            latch.PreviousT = keys.T;
             ControlInput c;
             c.Pitch = Axis(keys.W, keys.S);
             c.Roll = Axis(keys.D, keys.A);
@@ -41,6 +46,7 @@ namespace Orbital.Core.Flight
             c.ThrottleFull = keys.X;
             c.ThrottleZero = keys.Z;
             c.RcsOn = latch.RcsOn;
+            c.SasOn = latch.SasOn;
             return c;
         }
 

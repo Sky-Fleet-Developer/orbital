@@ -1,0 +1,6 @@
+{
+  "crafts": [
+    { "id": "standard", "name": "Standard craft", "dryMass": 5000, "maxFuel": 40000, "thrustN": 600000, "fuel": "standard" }
+  ],
+  "defaultCraft": "standard"
+}

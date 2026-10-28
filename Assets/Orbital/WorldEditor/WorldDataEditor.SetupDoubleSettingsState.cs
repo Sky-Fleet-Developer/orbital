@@ -27,7 +27,8 @@ namespace Orbital.WorldEditor
                 GUILayout.Label("Setup:");
                 EditorGUI.BeginChangeCheck();
 
-                double abK = Math.Pow(_trajectorySettingsDest.aMass / _trajectorySettingsDest.bMass, 1.0 / 3.0);
+                // center of mass: m_A * a_A = m_B * a_B, the ratio is linear in the masses
+                double abK = _trajectorySettingsDest.aMass / _trajectorySettingsDest.bMass;
                 double bPericenter = _trajectorySettingsDest.aPericenterRadius * abK;
                 double aMajor = StaticOrbit.GetSemiMajorAxis(_trajectorySettingsDest.eccentricity, _trajectorySettingsDest.aPericenterRadius);
                 double bMajor = StaticOrbit.GetSemiMajorAxis(_trajectorySettingsDest.eccentricity, bPericenter);

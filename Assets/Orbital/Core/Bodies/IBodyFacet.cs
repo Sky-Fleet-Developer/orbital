@@ -1,11 +1,11 @@
 using System;
 using System.Reflection;
 
-namespace Orbital.View.Map
+namespace Orbital.Core.Bodies
 {
     /// <summary>
-    /// A small piece of view data a body may or may not have (look, surface, atmosphere...).
-    /// Every implementation declares <c>public const int TypeId</c>, unique and below <see cref="BodyViewRecord.MaxFacets"/>,
+    /// A small piece of view data a body may or may not have (size, rotation, look, surface, atmosphere...).
+    /// Every implementation declares <c>public const int TypeId</c>, unique and below <see cref="BodyRecord.MaxFacets"/>,
     /// and returns it from <see cref="Id"/>.
     /// </summary>
     public interface IBodyFacet

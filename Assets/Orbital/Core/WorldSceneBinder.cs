@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Orbital.Core.Bodies;
 using Orbital.Core.TrajectorySystem;
 using Orbital.Core.Utilities;
 using UnityEngine;
@@ -10,7 +11,8 @@ namespace Orbital.Core
     {
         private const string RootMassName = "RootMass";
 
-        public void Bind(Transform tRoot, WorldModel model)
+        /// <summary><paramref name="bodyData"/> (optional) gives each body component its record by the name of the scene object.</summary>
+        public void Bind(Transform tRoot, WorldModel model, IBodyDataSource bodyData = null)
         {
             Transform root = tRoot.Find(RootMassName);
             if (!root)
@@ -23,6 +25,14 @@ namespace Orbital.Core
             MapRecursively(transforms, model.Root, root);
             model.BindBodies(mass =>
                 transforms.TryGetValue(mass, out Transform transform) && transform.TryGetComponent(out IStaticBodyAccessor body) ? body : null);
+            if (bodyData == null) return;
+            foreach (Transform transform in transforms.Values)
+            {
+                if (transform.TryGetComponent(out IStaticBodyAccessor body) && bodyData.TryGet(transform.name, out BodyRecord record))
+                {
+                    body.Record = record;
+                }
+            }
         }
 
         // The slot index counts empty slots too, so a transform keeps its name when a neighbour appears or goes away.

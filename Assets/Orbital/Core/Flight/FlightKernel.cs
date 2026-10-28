@@ -24,6 +24,11 @@ namespace Orbital.Core.Flight
         public int Dumping;        // 1 while the RCS unloads the gyro
         public double Latitude;    // rad, body-fixed; used when Landed
         public double Longitude;   // rad, body-fixed; used when Landed
+        // Stability assist (stage 2b.1). All zero = off; an all-zero state from an older save is valid (the target is set when the SAS is switched on).
+        public int SasOn;          // 1 while the SAS is on (copy of the T switch after the last step)
+        public int SasPhase;       // SasPhase: Hold / Manual / Settle
+        public DQuat SasTarget;    // target orientation, body to inertial
+        public Vec3 SasIntegral;   // N*m, body frame: torque that cancels the constant disturbance (not tied to the target)
     }
 
     /// <summary>Read-only parameters shared by a batch of crafts.</summary>
@@ -57,10 +62,25 @@ namespace Orbital.Core.Flight
     {
         public static double TotalMass(in FlightConfig c, in FlightState s) => c.DryMass + s.MainFuel + s.RcsFuel;
 
+        /// <summary>
+        /// Principal moments for the current propellant: <see cref="FlightConfig.Inertia"/> is the value with full tanks, each kg burned
+        /// takes <see cref="FlightConfig.FuelInertiaPerKg"/> away (never below 1 percent of the full value). The center of mass is assumed fixed.
+        /// </summary>
+        public static Vec3 EffectiveInertia(in FlightConfig c, double mainFuel, double rcsFuel)
+        {
+            double missing = (c.MainFuelCapacity - mainFuel) + (c.RcsPropellantCapacity - rcsFuel);
+            if (missing < 0) missing = 0;
+            return new Vec3(
+                Math.Max(c.Inertia.X - missing * c.FuelInertiaPerKg.X, 0.01 * c.Inertia.X),
+                Math.Max(c.Inertia.Y - missing * c.FuelInertiaPerKg.Y, 0.01 * c.Inertia.Y),
+                Math.Max(c.Inertia.Z - missing * c.FuelInertiaPerKg.Z, 0.01 * c.Inertia.Z));
+        }
+
         public static FlightState Fresh(in FlightConfig c)
         {
             FlightState s = default;
             s.Orientation = DQuat.Identity;
+            s.SasTarget = DQuat.Identity;
             s.MainFuel = c.MainFuelCapacity;
             s.RcsFuel = c.RcsPropellantCapacity;
             return s;
@@ -81,6 +101,7 @@ namespace Orbital.Core.Flight
 
             // throttle and the engine
             s.Throttle = EngineModel.UpdateThrottle(c.Engine, s.Throttle, input.ThrottleSmooth, input.ThrottleFull, input.ThrottleZero, dt);
+            if (s.MainFuel <= 0) s.Throttle = 0.0; // nothing to burn: the lever is dead, not just the thrust
             EngineModel.Burn(c.Engine, s.Throttle, s.MainFuel, c.DryMass + s.RcsFuel, dt, out double meanThrust, out double fuelUsed, out double dv);
             Vec3 thrustDir = DQuat.Rotate(s.Orientation, Vec3.UnitY);
 
@@ -96,26 +117,35 @@ namespace Orbital.Core.Flight
             }
             else normal = Surface.Normal(p.Surface, s.Position);
 
-            // attitude: gyro (always), RCS (when on), unloading, disturbances
+            // attitude: gyro (always), RCS (when on), unloading, SAS, disturbances
             Vec3 axes = InputMapper.AxesVector(input);
-            Vec3 hdot = GyroModel.PilotHdot(c.Gyro, s.GyroH, axes);
+            Vec3 inertia = EffectiveInertia(c, s.MainFuel, s.RcsFuel);
             Vec3 torque = Vec3.Zero;
             double rcsUsed = 0;
+            Vec3 dumpCommand = Vec3.Zero;
             if (input.RcsOn)
             {
-                RcsOutput pilot = RcsModel.Fire(c.Rcs, axes, s.RcsFuel, dt);
+                s.Dumping = GyroModel.UpdateDumping(c.Gyro, s.GyroH, s.Dumping != 0) ? 1 : 0;
+                if (s.Dumping != 0) dumpCommand = GyroModel.DumpCommand(c.Gyro, c.Rcs, s.GyroH);
+            }
+            else s.Dumping = 0;
+            // stability assist: commands added to the pilot's; the RCS share left free by the unloading is what it may use
+            Vec3 rcsCap = new Vec3(1.0 - Math.Abs(dumpCommand.X), 1.0 - Math.Abs(dumpCommand.Y), 1.0 - Math.Abs(dumpCommand.Z));
+            SasController.Step(ref s, input, c, inertia, input.RcsOn && s.RcsFuel > 0.0, rcsCap, dt, out SasOutput sas);
+            Vec3 hdot = GyroModel.PilotHdot(c.Gyro, s.GyroH, axes + sas.GyroCommand);
+            if (input.RcsOn)
+            {
+                RcsOutput pilot = RcsModel.Fire(c.Rcs, axes + sas.RcsCommand, s.RcsFuel, dt);
                 torque = torque + pilot.Torque;
                 rcsUsed += pilot.Propellant;
-                s.Dumping = GyroModel.UpdateDumping(c.Gyro, s.GyroH, s.Dumping != 0) ? 1 : 0;
                 if (s.Dumping != 0)
                 {
-                    RcsOutput dump = RcsModel.Fire(c.Rcs, GyroModel.DumpCommand(c.Gyro, c.Rcs, s.GyroH), s.RcsFuel - rcsUsed, dt);
+                    RcsOutput dump = RcsModel.Fire(c.Rcs, dumpCommand, s.RcsFuel - rcsUsed, dt);
                     torque = torque + dump.Torque;
                     hdot = hdot + dump.Torque; // the gyro takes the unloading torque into its store: the craft feels nothing
                     rcsUsed += dump.Propellant;
                 }
             }
-            else s.Dumping = 0;
             // thrust line not through the center of mass
             torque = torque + Vec3.Cross(c.ThrustOffset, new Vec3(0, meanThrust, 0));
             // standing on legs: gravity acts on the center of mass above the contact point (inverted pendulum)
@@ -128,7 +158,7 @@ namespace Orbital.Core.Flight
             AngularState a;
             a.Orientation = s.Orientation;
             a.Omega = s.Omega;
-            RigidBodyAngular.Step(ref a, c.Inertia, torque, s.GyroH, hdot, dt);
+            RigidBodyAngular.Step(ref a, inertia, torque, s.GyroH, hdot, dt);
             s.Orientation = a.Orientation;
             s.Omega = a.Omega;
             s.GyroH = GyroModel.ClampStore(c.Gyro, s.GyroH + hdot * dt);
@@ -185,6 +215,7 @@ namespace Orbital.Core.Flight
             rcsUsed *= fuelBurnedFraction;
             s.MainFuel -= fuelUsed;
             if (s.MainFuel < 0) s.MainFuel = 0;
+            if (s.MainFuel <= 0) s.Throttle = 0.0; // the tank ran dry inside this step
             s.RcsFuel -= rcsUsed;
             if (s.RcsFuel < 0) s.RcsFuel = 0;
             report.MainFuelUsed = fuelUsed;

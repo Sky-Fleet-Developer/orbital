@@ -30,6 +30,8 @@ namespace Orbital.Core.Flight
         public double Duration;
         public double Throttle;
         public Vec3 Direction;
+        /// <summary>1 when the stability assist was on at the start of the segment (the server stores it with the attitude).</summary>
+        public int Sas;
     }
 
     /// <summary>One sample of the flight for the recorder.</summary>
@@ -38,6 +40,7 @@ namespace Orbital.Core.Flight
         public double Time;
         public double Throttle;
         public Vec3 ThrustDirection;   // unit vector, body +Y in the inertial frame
+        public int Sas;                // 1 while the stability assist is on; a change closes the segment
         /// <summary>True while the craft stands on the ground and thrust does not exceed weight: nothing to record.</summary>
         public bool Resting;
     }
@@ -72,7 +75,7 @@ namespace Orbital.Core.Flight
                 if (thrusting)
                 {
                     r.Active = true;
-                    r.Open = new ThrustSegment { StartTime = sample.Time, Duration = 0, Throttle = sample.Throttle, Direction = sample.ThrustDirection };
+                    r.Open = new ThrustSegment { StartTime = sample.Time, Duration = 0, Throttle = sample.Throttle, Direction = sample.ThrustDirection, Sas = sample.Sas };
                     r.LastTime = sample.Time;
                 }
                 return;
@@ -85,12 +88,12 @@ namespace Orbital.Core.Flight
                 return;
             }
             bool evaluate = duration >= cfg.MinDuration;
-            if (duration >= cfg.MaxDuration ||
+            if (duration >= cfg.MaxDuration || (evaluate && sample.Sas != r.Open.Sas) ||
                 (evaluate && (Math.Abs(sample.Throttle - r.Open.Throttle) > cfg.ThrottleDelta ||
                               Vec3.Angle(sample.ThrustDirection, r.Open.Direction) > cfg.AngleRadians)))
             {
                 Close(ref r, duration, cfg);
-                r.Open = new ThrustSegment { StartTime = sample.Time, Duration = 0, Throttle = sample.Throttle, Direction = sample.ThrustDirection };
+                r.Open = new ThrustSegment { StartTime = sample.Time, Duration = 0, Throttle = sample.Throttle, Direction = sample.ThrustDirection, Sas = sample.Sas };
             }
             r.LastTime = sample.Time;
         }

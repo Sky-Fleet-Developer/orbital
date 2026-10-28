@@ -14,6 +14,8 @@ namespace Orbital.Core.Flight
         public Span<double> HX, HY, HZ;
         public Span<double> MainFuel, RcsFuel, Throttle, Lat, Lon;
         public Span<int> Mode, Dumping;
+        public Span<int> SasOn, SasPhase;
+        public Span<double> SasQW, SasQX, SasQY, SasQZ, SasIX, SasIY, SasIZ;
 
         public int Length => PosX.Length;
 
@@ -27,6 +29,9 @@ namespace Orbital.Core.Flight
             a.HX = new double[n]; a.HY = new double[n]; a.HZ = new double[n];
             a.MainFuel = new double[n]; a.RcsFuel = new double[n]; a.Throttle = new double[n]; a.Lat = new double[n]; a.Lon = new double[n];
             a.Mode = new int[n]; a.Dumping = new int[n];
+            a.SasOn = new int[n]; a.SasPhase = new int[n];
+            a.SasQW = new double[n]; a.SasQX = new double[n]; a.SasQY = new double[n]; a.SasQZ = new double[n];
+            a.SasIX = new double[n]; a.SasIY = new double[n]; a.SasIZ = new double[n];
             return a;
         }
 
@@ -45,6 +50,10 @@ namespace Orbital.Core.Flight
             s.Dumping = Dumping[i];
             s.Latitude = Lat[i];
             s.Longitude = Lon[i];
+            s.SasOn = SasOn[i];
+            s.SasPhase = SasPhase[i];
+            s.SasTarget = new DQuat(SasQW[i], SasQX[i], SasQY[i], SasQZ[i]);
+            s.SasIntegral = new Vec3(SasIX[i], SasIY[i], SasIZ[i]);
             return s;
         }
 
@@ -58,6 +67,9 @@ namespace Orbital.Core.Flight
             MainFuel[i] = s.MainFuel; RcsFuel[i] = s.RcsFuel; Throttle[i] = s.Throttle;
             Mode[i] = s.Mode; Dumping[i] = s.Dumping;
             Lat[i] = s.Latitude; Lon[i] = s.Longitude;
+            SasOn[i] = s.SasOn; SasPhase[i] = s.SasPhase;
+            SasQW[i] = s.SasTarget.W; SasQX[i] = s.SasTarget.X; SasQY[i] = s.SasTarget.Y; SasQZ[i] = s.SasTarget.Z;
+            SasIX[i] = s.SasIntegral.X; SasIY[i] = s.SasIntegral.Y; SasIZ[i] = s.SasIntegral.Z;
         }
     }
 

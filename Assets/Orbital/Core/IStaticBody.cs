@@ -16,9 +16,7 @@ namespace Orbital.Core
         public double GravParameter { get; }
         public bool IsSatellite { get; }
 
-        public double Radius
-        {
-            get => 1;
-        }
+        /// <summary>Mean radius in meters, 0 when unknown (no record in the body table): then no minimum sphere of influence is applied.</summary>
+        public double Radius { get; }
     }
 }

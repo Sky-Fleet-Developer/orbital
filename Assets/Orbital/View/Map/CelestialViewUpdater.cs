@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using Ara3D;
 using Orbital.Core;
+using Orbital.Core.Bodies;
 using Orbital.Core.TrajectorySystem;
 using Plugins.LocalPool;
 using UnityEngine;
@@ -66,20 +67,21 @@ namespace Orbital.View.Map
         {
             if (!_planetContainer.HasValue) return;
             ViewContainer planet = _planetContainer.Value;
-            BodyViewRecord record = null;
+            BodyRecord record = null;
             if (_settings.bodyTable && _body is Object named)
             {
                 _settings.bodyTable.TryGet(named.name, out record);
             }
+            PhysicalFacet physical = record?.GetFacet<PhysicalFacet>();
             AppearanceFacet appearance = record?.GetFacet<AppearanceFacet>();
             SurfaceFacet surface = record?.GetFacet<SurfaceFacet>();
             AtmosphereFacet atmosphere = record?.GetFacet<AtmosphereFacet>();
 
             float diameter = _settings.fallbackDiameter;
-            if (appearance != null && appearance.radiusMeters > 0)
+            if (physical != null && physical.radiusMeters > 0)
             {
-                diameter = (float) (appearance.radiusMeters * 2.0 * _scaleSettings.scale)
-                           * Mathf.Max(0f, _scaleSettings.bodySizeMultiplier) * appearance.sizeMultiplier;
+                diameter = (float) (physical.radiusMeters * 2.0 * _scaleSettings.scale)
+                           * Mathf.Max(0f, _scaleSettings.bodySizeMultiplier) * (appearance?.sizeMultiplier ?? 1f);
             }
             planet.Transform.localScale = Vector3.one * diameter;
 

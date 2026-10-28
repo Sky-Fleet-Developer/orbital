@@ -1,12 +1,14 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Scripting.APIUpdating;
 
-namespace Orbital.View.Map
+namespace Orbital.Core.Bodies
 {
-    /// <summary>One row of the <see cref="BodyViewTable"/>: a body name and the facets it has.</summary>
+    /// <summary>One row of the <see cref="BodyTable"/>: a body name and the facets it has.</summary>
     [Serializable]
-    public class BodyViewRecord : ISerializationCallbackReceiver
+    [MovedFrom(false, sourceNamespace: "Orbital.View.Map", sourceAssembly: "Orbital", sourceClassName: "BodyViewRecord")]
+    public class BodyRecord : ISerializationCallbackReceiver
     {
         public const int MaxFacets = 64;
 

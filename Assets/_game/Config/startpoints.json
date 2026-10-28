@@ -1,0 +1,6 @@
+{
+  "startPoints": [
+    { "id": "earth-equator", "name": "Earth, equator", "kind": "surface", "bodyId": "earth", "latitude": 0, "longitude": 0 }
+  ],
+  "defaultStartPoint": "earth-equator"
+}

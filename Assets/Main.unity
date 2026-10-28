@@ -172,7 +172,7 @@ MonoBehaviour:
     argumentOfPeriapsis: 0.32872635704754927
     eccentricity: 0.007400000002235174
     semiMajorAxis: 1882708992
-    epoch: 5000
+    epoch: 268.6798939034343
     mass: 1.0759379633684937e+23
 --- !u!1 &45384183
 GameObject:
@@ -233,7 +233,7 @@ MonoBehaviour:
     argumentOfPeriapsis: 5.915557223982868
     eccentricity: 0.05386178940534592
     semiMajorAxis: 1426666422272
-    epoch: 110098840
+    epoch: 110094108.67989391
     mass: 5.683400159468306e+26
 --- !u!1 &118533981
 GameObject:
@@ -286,7 +286,7 @@ MonoBehaviour:
     argumentOfPeriapsis: 5.585816868350271
     eccentricity: 0.004699999932199717
     semiMajorAxis: 238036992
-    epoch: 5000
+    epoch: 268.6798939034343
     mass: 1.0802200365596934e+20
 --- !u!1 &142111070
 GameObject:
@@ -339,7 +339,7 @@ MonoBehaviour:
     argumentOfPeriapsis: 0
     eccentricity: 0
     semiMajorAxis: 0
-    epoch: 5000
+    epoch: 268.6798939034343
     mass: 1.0241300268330216e+26
 --- !u!1 &194927709
 GameObject:
@@ -392,7 +392,7 @@ MonoBehaviour:
     argumentOfPeriapsis: 5.589166059737155
     eccentricity: 0.00009999999747378752
     semiMajorAxis: 294619008
-    epoch: 5000
+    epoch: 268.6798939034343
     mass: 6.174489976745409e+20
 --- !u!1 &346956380
 GameObject:
@@ -445,7 +445,7 @@ MonoBehaviour:
     argumentOfPeriapsis: 5.5924848910876115
     eccentricity: 0.0010000000474974513
     semiMajorAxis: 527108000
-    epoch: 5000
+    epoch: 268.6798939034343
     mass: 2.306517986207846e+21
 --- !u!1 &511864802
 GameObject:
@@ -498,7 +498,7 @@ MonoBehaviour:
     argumentOfPeriapsis: 0
     eccentricity: 0
     semiMajorAxis: 0
-    epoch: 5000
+    epoch: 268.6798939034343
     mass: 1.898129972643561e+27
 --- !u!1 &513982207
 GameObject:
@@ -551,7 +551,7 @@ MonoBehaviour:
     argumentOfPeriapsis: 0.08827871348529878
     eccentricity: 0.0010999999940395355
     semiMajorAxis: 436300000
-    epoch: 5000
+    epoch: 268.6798939034343
     mass: 3.400000138507727e+21
 --- !u!1 &532834307
 GameObject:
@@ -604,7 +604,7 @@ MonoBehaviour:
     argumentOfPeriapsis: 5.5924848910876115
     eccentricity: 0.02879999950528145
     semiMajorAxis: 1221869952
-    epoch: 5000
+    epoch: 268.6798939034343
     mass: 1.3451999885376539e+23
 --- !u!1 &550929248
 GameObject:
@@ -733,6 +733,77 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 110.12201, y: -30, z: 0}
+--- !u!1 &643326229
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 643326231}
+  - component: {fileID: 643326230}
+  m_Layer: 0
+  m_Name: CraftSpawner
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &643326230
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 643326229}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6ce94a704d4f45b1b341f4c20ceeba12, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Orbital::Orbital.Craft.CraftSpawner
+  spawnKind: 0
+  startPointId: 
+  bodyName: Earth
+  latitudeDegrees: 0
+  longitudeDegrees: 0
+  altitudeMeters: 0
+  orbitAltitudeMeters: 300000
+  inclinationDegrees: 0
+  phaseDegrees: 0
+  vehiclePrefab: {fileID: 0}
+  craftId: 
+  callsign: Pilot
+  maxLandingSpeed: 5
+  groundSupport: 1
+  flightConfigJson: {fileID: 0}
+  fuelsJson: {fileID: 0}
+  craftSpecJson: {fileID: 0}
+  startPointsJson: {fileID: 0}
+  view:
+    layer: 31
+    patchHalfSize: 4000
+    patchCells: 40
+    poleSpacing: 250
+    markersVisibleDistance: 20000
+    cameraDistance: 45
+    fieldOfView: 60
+  showHud: 1
+--- !u!4 &643326231
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 643326229}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -13695.201, y: 0, z: -4211.044}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &648716204
 GameObject:
   m_ObjectHideFlags: 0
@@ -784,7 +855,7 @@ MonoBehaviour:
     argumentOfPeriapsis: 5.552764908693516
     eccentricity: 0.05490000173449516
     semiMajorAxis: 384399008
-    epoch: -886216.625
+    epoch: -890947.9451060966
     mass: 7.342000047920192e+22
 --- !u!1 &661021826
 GameObject:
@@ -932,7 +1003,7 @@ MonoBehaviour:
     argumentOfPeriapsis: 0.32738199332927725
     eccentricity: 0.0013000000035390258
     semiMajorAxis: 1070412032
-    epoch: 5000
+    epoch: 268.6798939034343
     mass: 1.4819190050174717e+23
 --- !u!1 &741780202
 GameObject:
@@ -985,7 +1056,7 @@ MonoBehaviour:
     argumentOfPeriapsis: 5.5860272580763874
     eccentricity: 0.002199999988079071
     semiMajorAxis: 377396000
-    epoch: 5000
+    epoch: 268.6798939034343
     mass: 1.0954519845556464e+21
 --- !u!1 &778762601
 GameObject:
@@ -1037,8 +1108,8 @@ MonoBehaviour:
     longitudeAscendingNode: 3.96795023455266
     argumentOfPeriapsis: 3.4402648382616348
     eccentricity: 0
-    semiMajorAxis: 18855474
-    epoch: 5000
+    semiMajorAxis: 17469614
+    epoch: 268.6798939034343
     mass: 1.5860000296737691e+21
 --- !u!1 &800635037
 GameObject:
@@ -1093,7 +1164,7 @@ MonoBehaviour:
     argumentOfPeriapsis: 4.767899910146301
     eccentricity: 0.00859048031270504
     semiMajorAxis: 4498396282880
-    epoch: 1446675592
+    epoch: 1446670860.679894
     mass: 1.0241300268330216e+26
 --- !u!1 &800770458
 GameObject:
@@ -1148,7 +1219,7 @@ MonoBehaviour:
     argumentOfPeriapsis: 1.796601494564971
     eccentricity: 0.01671122945845127
     semiMajorAxis: 149598257152
-    epoch: 221794.515625
+    epoch: 217063.19551890343
     mass: 5.972170287351615e+24
 --- !u!1 &884196585
 GameObject:
@@ -1201,7 +1272,7 @@ MonoBehaviour:
     argumentOfPeriapsis: 0
     eccentricity: 0
     semiMajorAxis: 0
-    epoch: 5000
+    epoch: 268.6798939034343
     mass: 5.972170287351615e+24
 --- !u!1 &886564361
 GameObject:
@@ -1254,7 +1325,7 @@ MonoBehaviour:
     argumentOfPeriapsis: 0
     eccentricity: 0
     semiMajorAxis: 0
-    epoch: 5000
+    epoch: 268.6798939034343
     mass: 8.680999945262364e+25
 --- !u!1 &925991839
 GameObject:
@@ -1312,7 +1383,7 @@ MonoBehaviour:
     argumentOfPeriapsis: 4.786645368427151
     eccentricity: 0.048386238515377045
     semiMajorAxis: 778340794368
-    epoch: -20456102
+    epoch: -20460833.320106097
     mass: 1.898129972643561e+27
 --- !u!1 &1025617695
 GameObject:
@@ -1476,7 +1547,7 @@ MonoBehaviour:
     argumentOfPeriapsis: 0.9585806661871293
     eccentricity: 0.006776719819754362
     semiMajorAxis: 108209471488
-    epoch: -2711702.25
+    epoch: -2716433.5701060966
     mass: 4.867500277094821e+24
 --- !u!1 &1057612369
 GameObject:
@@ -1529,7 +1600,7 @@ MonoBehaviour:
     argumentOfPeriapsis: 0.08764773572165335
     eccentricity: 0.0013000000035390258
     semiMajorAxis: 129900000
-    epoch: 5000
+    epoch: 268.6798939034343
     mass: 6.5899999068894e+19
 --- !u!1 &1060172313
 GameObject:
@@ -1588,7 +1659,7 @@ MonoBehaviour:
     argumentOfPeriapsis: 1.6918760136489677
     eccentricity: 0.0472574383020401
     semiMajorAxis: 2870658203648
-    epoch: -1048433016
+    epoch: -1048437747.3201061
     mass: 8.680999945262364e+25
 --- !u!1 &1066268810
 GameObject:
@@ -1641,7 +1712,7 @@ MonoBehaviour:
     argumentOfPeriapsis: 0.08828699425181324
     eccentricity: 0.0012000000569969416
     semiMajorAxis: 190900000
-    epoch: 5000
+    epoch: 268.6798939034343
     mass: 1.2510000528667915e+21
 --- !u!1 &1121761123
 GameObject:
@@ -1693,8 +1764,8 @@ MonoBehaviour:
     longitudeAscendingNode: 3.96795023455266
     argumentOfPeriapsis: 0.2986722179613551
     eccentricity: 0
-    semiMajorAxis: 9344521
-    epoch: 5000
+    semiMajorAxis: 2126386
+    epoch: 268.6798939034343
     mass: 1.3030000215392948e+22
 --- !u!1 &1261627996
 GameObject:
@@ -1794,7 +1865,7 @@ MonoBehaviour:
     argumentOfPeriapsis: 5.00031291321308
     eccentricity: 0.09339410066604614
     semiMajorAxis: 227943825408
-    epoch: -3191973
+    epoch: -3196704.3201060966
     mass: 6.417099845686778e+23
 --- !u!1 &1338939817
 GameObject:
@@ -1847,7 +1918,7 @@ MonoBehaviour:
     argumentOfPeriapsis: 0.5083625646858465
     eccentricity: 0.2056359350681305
     semiMajorAxis: 57909227520
-    epoch: -3685281.5
+    epoch: -3690012.8201060966
     mass: 3.301099976049763e+23
 --- !u!1 &1436278516
 GameObject:
@@ -1900,7 +1971,7 @@ MonoBehaviour:
     argumentOfPeriapsis: 0.08826843534796676
     eccentricity: 0.0038999998942017555
     semiMajorAxis: 266000000
-    epoch: 5000
+    epoch: 268.6798939034343
     mass: 1.2750000167560256e+21
 --- !u!1 &1440924291
 GameObject:
@@ -1955,7 +2026,7 @@ MonoBehaviour:
     argumentOfPeriapsis: 1.985573413404541
     eccentricity: 0.24882729351520538
     semiMajorAxis: 5906440388608
-    epoch: -323161336
+    epoch: -323166067.3201061
     mass: 1.4616000245066717e+22
 --- !u!1 &1501010484
 GameObject:
@@ -2052,7 +2123,7 @@ MonoBehaviour:
     argumentOfPeriapsis: 0.29472071940443645
     eccentricity: 0.009399999864399433
     semiMajorAxis: 671033984
-    epoch: 5000
+    epoch: 268.6798939034343
     mass: 4.7998441590591135e+22
 --- !u!1 &1649004833
 GameObject:
@@ -2105,7 +2176,7 @@ MonoBehaviour:
     argumentOfPeriapsis: 5.617203287061291
     eccentricity: 0.019600000232458115
     semiMajorAxis: 185539008
-    epoch: 5000
+    epoch: 268.6798939034343
     mass: 3.749299906148722e+19
 --- !u!1 &1701873717
 GameObject:
@@ -2158,7 +2229,7 @@ MonoBehaviour:
     argumentOfPeriapsis: 0
     eccentricity: 0
     semiMajorAxis: 0
-    epoch: 5000
+    epoch: 268.6798939034343
     mass: 1.9884700512060854e+30
 --- !u!1 &1812824371
 GameObject:
@@ -2211,7 +2282,7 @@ MonoBehaviour:
     argumentOfPeriapsis: 0.088280785757522
     eccentricity: 0.00139999995008111
     semiMajorAxis: 583500032
-    epoch: 5000
+    epoch: 268.6798939034343
     mass: 3.075999922315625e+21
 --- !u!1 &1823688464
 GameObject:
@@ -2436,7 +2507,7 @@ MonoBehaviour:
     argumentOfPeriapsis: 5.715347164817327
     eccentricity: 0.028599999845027924
     semiMajorAxis: 3560819968
-    epoch: 5000
+    epoch: 268.6798939034343
     mass: 1.805634954001094e+21
 --- !u!1 &1885170156
 GameObject:
@@ -2489,7 +2560,7 @@ MonoBehaviour:
     argumentOfPeriapsis: 0
     eccentricity: 0
     semiMajorAxis: 0
-    epoch: 5000
+    epoch: 268.6798939034343
     mass: 6.417099845686778e+23
 --- !u!1 &1906339762
 GameObject:
@@ -2542,7 +2613,7 @@ MonoBehaviour:
     argumentOfPeriapsis: 4.477693648263712
     eccentricity: 0.000015999999959603883
     semiMajorAxis: 354759008
-    epoch: 5000
+    epoch: 268.6798939034343
     mass: 2.13899995525835e+22
 --- !u!1 &1997755373
 GameObject:
@@ -2595,7 +2666,7 @@ MonoBehaviour:
     argumentOfPeriapsis: 5.608548546150752
     eccentricity: 0.00033000000985339284
     semiMajorAxis: 23463200
-    epoch: 5000
+    epoch: 268.6798939034343
     mass: 1476199989641216
 --- !u!1 &2013410473
 GameObject:
@@ -2692,7 +2763,7 @@ MonoBehaviour:
     argumentOfPeriapsis: 0
     eccentricity: 0
     semiMajorAxis: 0
-    epoch: 5000
+    epoch: 268.6798939034343
     mass: 5.683400159468306e+26
 --- !u!1 &2078162262
 GameObject:
@@ -2745,7 +2816,7 @@ MonoBehaviour:
     argumentOfPeriapsis: 0.3502468624737752
     eccentricity: 0.004100000020116568
     semiMajorAxis: 421700000
-    epoch: 5000
+    epoch: 268.6798939034343
     mass: 8.931937799928153e+22
 --- !u!1 &2100159700
 GameObject:
@@ -2798,7 +2869,7 @@ MonoBehaviour:
     argumentOfPeriapsis: 5.593741903122129
     eccentricity: 0.01510000042617321
     semiMajorAxis: 9376000
-    epoch: 5000
+    epoch: 268.6798939034343
     mass: 10658999653367808
 --- !u!1 &3361730889727701039
 GameObject:
@@ -2909,8 +2980,8 @@ MonoBehaviour:
       Core","settings":{"mass":1.02413E+26,"eccentricity":0.0,"semiMajorAxis":0.0,"inclination":0.0,"argumentOfPeriapsis":0.0,"longitudeAscendingNode":0.0,"timeShift":0.0}},"Children":[{"$type":"Orbital.Core.TrajectorySystem.CelestialBody,
       Core","settings":{"mass":2.139E+22,"eccentricity":1.6E-05,"semiMajorAxis":3.54759E+08,"inclination":168.4323,"argumentOfPeriapsis":256.552948,"longitudeAscendingNode":283.584229,"timeShift":0.0}}]},{"$type":"Orbital.Core.TrajectorySystem.DoubleSystemBranch,
       Core","settings":{"mass":1.4616E+22,"eccentricity":0.2488273,"semiMajorAxis":5.90644039E+12,"inclination":17.1400127,"argumentOfPeriapsis":113.764977,"longitudeAscendingNode":110.30394,"timeShift":-323166336.0},"localTrajectorySettings":{"aMass":0.0,"bMass":0.0,"eccentricity":0.0,"aPericenterRadius":0.0,"argumentOfPeriapsis":0.0,"longitudeAscendingNode":0.0,"inclination":0.0,"timeShift":0.0},"ChildA":{"$type":"Orbital.Core.TrajectorySystem.CelestialBody,
-      Core","settings":{"mass":1.303E+22,"eccentricity":0.0,"semiMajorAxis":9344521.0,"inclination":112.813568,"argumentOfPeriapsis":17.1126575,"longitudeAscendingNode":227.3468,"timeShift":0.0}},"ChildB":{"$type":"Orbital.Core.TrajectorySystem.CelestialBody,
-      Core","settings":{"mass":1.586E+21,"eccentricity":0.0,"semiMajorAxis":18855474.0,"inclination":112.813568,"argumentOfPeriapsis":197.112656,"longitudeAscendingNode":227.3468,"timeShift":0.0}}}]}}'
+      Core","settings":{"mass":1.303E+22,"eccentricity":0.0,"semiMajorAxis":2126386.0,"inclination":112.813568,"argumentOfPeriapsis":17.1126575,"longitudeAscendingNode":227.3468,"timeShift":0.0}},"ChildB":{"$type":"Orbital.Core.TrajectorySystem.CelestialBody,
+      Core","settings":{"mass":1.586E+21,"eccentricity":0.0,"semiMajorAxis":17469614.0,"inclination":112.813568,"argumentOfPeriapsis":197.112656,"longitudeAscendingNode":227.3468,"timeShift":0.0}}}]}}'
 --- !u!1 &6275810592425833999
 GameObject:
   m_ObjectHideFlags: 0
@@ -2994,3 +3065,4 @@ SceneRoots:
   - {fileID: 724350577}
   - {fileID: 1261627998}
   - {fileID: 1501010486}
+  - {fileID: 643326231}

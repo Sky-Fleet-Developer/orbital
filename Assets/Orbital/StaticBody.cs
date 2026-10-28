@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Ara3D;
 using Orbital.Core;
+using Orbital.Core.Bodies;
 using Orbital.Core.TrajectorySystem;
 using Sirenix.OdinInspector;
 using UnityEngine;
@@ -18,12 +19,19 @@ namespace Orbital
         [ShowInInspector] private IStaticBody _parent;
         [ShowInInspector] private IStaticBody[] _children;
         private bool _isSatellite;
+        private BodyRecord _record; // set by WorldSceneBinder from the body table, not serialized (the scene stays untouched)
         IMassSystem IStaticBody.MassSystem => _massSystem;
 
         IStaticBody IStaticBody.Parent => _parent;
         IEnumerable<IStaticBody> IStaticBody.Children => _children;
         bool IStaticBody.IsSatellite => _isSatellite;
         IStaticBody IStaticBodyAccessor.Self => this;
+        BodyRecord IStaticBodyAccessor.Record
+        {
+            get => _record;
+            set => _record = value;
+        }
+        double IStaticBody.Radius => _record?.GetFacet<PhysicalFacet>()?.radiusMeters ?? 0.0;
         double IStaticBody.GravParameter => settings.mass * MassUtility.G;
         IMassSystem IStaticBodyAccessor.MassSystem
         {
