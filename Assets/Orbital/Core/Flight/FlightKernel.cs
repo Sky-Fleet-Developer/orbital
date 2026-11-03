@@ -22,8 +22,8 @@ namespace Orbital.Core.Flight
         public double Throttle;    // 0..1
         public int Mode;           // FlightMode
         public int Dumping;        // 1 while the RCS unloads the gyro
-        public double Latitude;    // rad, body-fixed; used when Landed
-        public double Longitude;   // rad, body-fixed; used when Landed
+        public double Latitude;    // rad, body-fixed; used when Landed or Crashed (the impact point)
+        public double Longitude;   // rad, body-fixed; used when Landed or Crashed
         // Stability assist (stage 2b.1). All zero = off; an all-zero state from an older save is valid (the target is set when the SAS is switched on).
         public int SasOn;          // 1 while the SAS is on (copy of the T switch after the last step)
         public int SasPhase;       // SasPhase: Hold / Manual / Settle
@@ -93,6 +93,10 @@ namespace Orbital.Core.Flight
             report.TouchdownTime = double.NaN;
             if (s.Mode == FlightMode.Crashed)
             {
+                // a wreck stays where it hit (stage 2c.8): a point of the rotating ground, its attitude turning with the body
+                Surface.Pin(p.Surface, ref s, time, time + dt);
+                s.Omega = Vec3.Zero;
+                s.Throttle = 0.0;
                 report.ModeAfter = s.Mode;
                 return;
             }
@@ -200,8 +204,9 @@ namespace Orbital.Core.Flight
                     else
                     {
                         s.Mode = FlightMode.Crashed;
+                        Surface.ToBodyCoordinates(p.Surface, np, time + hi, out s.Latitude, out s.Longitude);
                         s.Position = np;
-                        s.Velocity = nv;
+                        s.Velocity = nv; // the impact velocity for this step; from the next step on the wreck moves with the ground
                     }
                 }
                 else

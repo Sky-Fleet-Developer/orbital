@@ -66,6 +66,12 @@ namespace Orbital.Core.Net
 
     public enum CraftModeDto { Flying, Landed, Crashed }
 
+    /// <summary>
+    /// Frame of a craft state (stage 2c.8, server CraftFrame). Surface: a point of the rotating ground at Latitude/Longitude (landed,
+    /// crashed), carried to another time as that ground point; Inertial: position and velocity are carried by the flight kernel.
+    /// </summary>
+    public enum CraftFrameDto { Inertial, Surface }
+
     // ------------------------------------------------------------------ shared parts
 
     /// <summary>Stability assist state (server SasRecord). Null in a message = off.</summary>
@@ -140,6 +146,8 @@ namespace Orbital.Core.Net
         public string Callsign;
         public double Time;
         public CraftModeDto Mode;
+        /// <summary>Null from a server before 2c.8: then the mode decides (<see cref="StateMapper.IsSurface"/>).</summary>
+        public CraftFrameDto? Frame;
         public string ParentId;
         public double[] Position;
         public double[] Velocity;
@@ -163,6 +171,24 @@ namespace Orbital.Core.Net
         public OrbitElementsDto Orbit;
         public double? CrashedAt;
         public double? DestroyAt;
+        /// <summary>The thrust tail (stage 2c.8): only in proximity_update, for a craft whose burn goes on past its last accepted segment.</summary>
+        public ThrustTailDto Thrust;
+        /// <summary>Client side only: the state came in a push of the near group (proximity_update), the detailed channel.</summary>
+        [JsonIgnore] public bool Detailed;
+    }
+
+    /// <summary>
+    /// Server ThrustTail (stage 2c.8): the last accepted segment of the craft ended at <see cref="Time"/> with the engine on at
+    /// <see cref="Throttle"/> along <see cref="Direction"/>; position, velocity and fuel are its state then.
+    /// </summary>
+    public class ThrustTailDto
+    {
+        public double Time;
+        public double Throttle;
+        public double[] Direction;
+        public double[] Position;
+        public double[] Velocity;
+        public double Fuel;
     }
 
     /// <summary>Degrees.</summary>
@@ -221,6 +247,8 @@ namespace Orbital.Core.Net
         public double[] EndOrientation;
         public double[] EndOmega;
         public double[] EndGyroH;
+        /// <summary>Throttle right after the end (stage 2c.8): above 0 the burn goes on in the next segment; a hint for the others' ghosts.</summary>
+        public double? EndThrottle;
         /// <summary>RCS propellant (kg) since the last attitude record the server accepted, up to the end of the segment.</summary>
         public double RcsFuelUsed;
         public SasDto Sas;

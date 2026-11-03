@@ -19,8 +19,13 @@ namespace Orbital.Craft
         public float poleSpacing = 250f;
         [Tooltip("The pad and the poles are drawn while the craft is closer than this to the pad.")]
         public float markersVisibleDistance = 20000f;
-        [Tooltip("Distance of the camera from the craft.")]
+        [Tooltip("Distance of the camera from the craft (the start value; the mouse wheel changes it).")]
         public float cameraDistance = 45f;
+        [Tooltip("Mouse wheel zoom limits, meters.")]
+        public float cameraMinDistance = 8f;
+        public float cameraMaxDistance = 5000f;
+        [Tooltip("Orbit camera: degrees per pixel of mouse drag.")]
+        public float cameraDragSpeed = 0.25f;
         public float fieldOfView = 60f;
     }
 
@@ -57,6 +62,13 @@ namespace Orbital.Craft
         private readonly Vector2[] _poleOffsets;
         private bool _flightView = true;
         private bool _horizonCamera;
+        // orbit camera (V or a mouse drag): up is the local vertical (gravity), yaw from local east toward north, pitch above the horizon
+        private float _yaw;
+        private float _pitch = 3f;
+        private float _distance;
+        private Vec3 _up = Vec3.UnitY;
+        private Vec3 _east = Vec3.UnitX;
+        private double _altitude;
         private bool _patchActive = true;
         private bool _markersActive = true;
 
@@ -174,6 +186,7 @@ namespace Orbital.Craft
                 _camera.backgroundColor = new Color(0.02f, 0.03f, 0.08f);
             }
             _camera.depth = _mapCamera != null ? _mapCamera.depth + 1f : 0f;
+            _distance = Mathf.Clamp(settings.cameraDistance, settings.cameraMinDistance, settings.cameraMaxDistance);
 
             foreach (Transform child in _root.GetComponentsInChildren<Transform>(true))
             {
@@ -195,11 +208,52 @@ namespace Orbital.Craft
             if (_mapCamera != null) _mapCamera.enabled = !_flightView;
         }
 
-        /// <summary>Camera behind the craft and turning with it, or on the horizon and always level.</summary>
+        /// <summary>
+        /// Camera behind the craft and turning with it, or the orbit camera: around the craft, always level (up = the local vertical, away from
+        /// the planet's center), turned by the mouse.
+        /// </summary>
         public void SetHorizonCamera(bool horizon)
         {
+            if (horizon && !_horizonCamera) CaptureOrbitFromCamera();
             _horizonCamera = horizon;
             _camera.transform.SetParent(horizon ? _root.transform : _craft, false);
+        }
+
+        /// <summary>
+        /// Mouse control of the camera for this frame: <paramref name="drag"/> in pixels turns the orbit camera (a drag from the camera behind
+        /// switches to the orbit camera where the camera is now), <paramref name="zoomNotches"/> of the wheel change the distance in both modes.
+        /// </summary>
+        public void ControlCamera(Vector2 drag, float zoomNotches)
+        {
+            if (zoomNotches != 0f)
+            {
+                _distance = Mathf.Clamp(_distance * Mathf.Pow(0.87f, zoomNotches), _settings.cameraMinDistance, _settings.cameraMaxDistance);
+            }
+            if (drag == Vector2.zero || !_flightView) return;
+            if (!_horizonCamera) SetHorizonCamera(true);
+            _yaw = Mathf.Repeat(_yaw + drag.x * _settings.cameraDragSpeed + 180f, 360f) - 180f;
+            _pitch = Mathf.Clamp(_pitch - drag.y * _settings.cameraDragSpeed, MinPitch(), 85f);
+        }
+
+        // Lowest pitch that keeps the camera a meter above the ground (the target is the center of mass).
+        private float MinPitch()
+        {
+            double clearance = _altitude + _cgHeight - 1.0;
+            double sin = -clearance / Math.Max(1.0, _distance);
+            return sin <= -1.0 ? -85f : Mathf.Max(-85f, (float) (Math.Asin(sin) * 180.0 / Math.PI));
+        }
+
+        // The orbit camera starts where the camera is now (from behind the craft), so switching does not jump.
+        private void CaptureOrbitFromCamera()
+        {
+            Vector3 target = ToVector(_up) * _cgHeight;
+            Vector3 offset = _root.transform.InverseTransformPoint(_camera.transform.position) - target;
+            if (offset.sqrMagnitude < 1e-6f) return;
+            Vector3 up = ToVector(_up), east = ToVector(_east), north = Vector3.Cross(up, east);
+            Vector3 look = -offset.normalized;
+            _pitch = Mathf.Clamp(Mathf.Asin(Mathf.Clamp(-Vector3.Dot(look, up), -1f, 1f)) * Mathf.Rad2Deg, -85f, 85f);
+            Vector3 flat = look - up * Vector3.Dot(look, up);
+            if (flat.sqrMagnitude > 1e-6f) _yaw = Mathf.Atan2(Vector3.Dot(flat, north), Vector3.Dot(flat, east)) * Mathf.Rad2Deg;
         }
 
         /// <summary>Puts everything where it is at the given state and game time. Call after the simulation step, once per frame.</summary>
@@ -211,6 +265,9 @@ namespace Orbital.Craft
             Vec3 up = r > 0 ? pos / r : Vec3.UnitY;
             Vec3 east = East(up);
             Vec3 north = Vec3.Cross(up, east);
+            _up = up;
+            _east = east;
+            _altitude = r - _surface.Radius;
 
             _craft.localPosition = Vector3.zero;
             _craft.localRotation = ToQuaternion(state.Orientation);
@@ -227,7 +284,7 @@ namespace Orbital.Craft
             if (patchNeeded) UpdatePatch(pos, up, east, north);
 
             PresentMarkers(pos, time);
-            PresentCamera(up, east);
+            PresentCamera(up, east, north);
         }
 
         private void PresentFlame(in FlightState state)
@@ -291,17 +348,21 @@ namespace Orbital.Craft
             }
         }
 
-        private void PresentCamera(Vec3 up, Vec3 east)
+        private void PresentCamera(Vec3 up, Vec3 east, Vec3 north)
         {
             Transform camera = _camera.transform;
-            float distance = _settings.cameraDistance;
+            float distance = _distance;
             if (_horizonCamera)
             {
+                _pitch = Mathf.Max(_pitch, MinPitch()); // the craft came down: lift the camera out of the ground
                 Vector3 upF = ToVector(up);
                 Vector3 target = upF * _cgHeight;
-                Vector3 position = target - ToVector(east) * distance + upF * (_cgHeight * 0.4f + 2f);
+                float yaw = _yaw * Mathf.Deg2Rad, pitch = _pitch * Mathf.Deg2Rad;
+                Vector3 flat = ToVector(east) * Mathf.Cos(yaw) + ToVector(north) * Mathf.Sin(yaw);
+                Vector3 look = flat * Mathf.Cos(pitch) - upF * Mathf.Sin(pitch);
+                Vector3 position = target - look * distance;
                 camera.localPosition = position;
-                camera.localRotation = Quaternion.LookRotation(target - position, upF);
+                camera.localRotation = Quaternion.LookRotation(look, upF);
             }
             else
             {

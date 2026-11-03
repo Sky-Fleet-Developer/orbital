@@ -78,6 +78,11 @@ namespace Orbital.Core.Flight
         /// <summary>Attitude at <see cref="StartTime"/> and at <see cref="EndTime"/> (zero when the caller gave none).</summary>
         public AttitudeSample Start;
         public AttitudeSample End;
+        /// <summary>
+        /// Throttle right after <see cref="EndTime"/> (stage 2c.8): the next segment's when the burn goes on (a split by throttle, turn,
+        /// SAS or length, a flush), 0 when the engine stopped. Others extrapolate the burn of a craft with it until its next segment.
+        /// </summary>
+        public double EndThrottle;
     }
 
     /// <summary>One sample of the flight for the recorder, taken after a kernel step that ended at <see cref="Time"/>.</summary>
@@ -160,7 +165,7 @@ namespace Orbital.Core.Flight
             if (!thrusting)
             {
                 // the step that ended now did not thrust: the burn ended at the previous sample
-                CloseAt(ref r, r.PrevTime, r.PrevAttitude);
+                CloseAt(ref r, r.PrevTime, r.PrevAttitude, 0.0);
                 r.Active = false;
                 Remember(ref r, sample, attitude);
                 return;
@@ -168,7 +173,7 @@ namespace Orbital.Core.Flight
             if (r.PrevTime - r.Open.StartTime >= cfg.MinDuration && Math.Abs(sample.Throttle - r.Open.Throttle) > cfg.ThrottleDelta)
             {
                 // the new throttle burned in the step that started at the previous sample
-                CloseAt(ref r, r.PrevTime, r.PrevAttitude);
+                CloseAt(ref r, r.PrevTime, r.PrevAttitude, sample.Throttle);
                 OpenAt(ref r, r.PrevTime, sample.Throttle, r.PrevDirection, r.PrevSas, r.PrevAttitude);
                 if (dt > 0) Accumulate(ref r, sample.Throttle, r.PrevDirection, dt);
                 Remember(ref r, sample, attitude);
@@ -181,7 +186,7 @@ namespace Orbital.Core.Flight
                 (evaluate && Vec3.Angle(sample.ThrustDirection, r.Open.Direction) > cfg.AngleRadians))
             {
                 // the turn (or the SAS switch) acts from the next step on
-                CloseAt(ref r, sample.Time, attitude);
+                CloseAt(ref r, sample.Time, attitude, sample.Throttle);
                 OpenAt(ref r, sample.Time, sample.Throttle, sample.ThrustDirection, sample.Sas, attitude);
             }
             Remember(ref r, sample, attitude);
@@ -194,7 +199,7 @@ namespace Orbital.Core.Flight
         public static void Flush(ref RecorderState r)
         {
             if (!r.Active || !r.HasPrev) return;
-            CloseAt(ref r, r.PrevTime, r.PrevAttitude);
+            CloseAt(ref r, r.PrevTime, r.PrevAttitude, r.PrevThrottle);
             OpenAt(ref r, r.PrevTime, r.PrevThrottle, r.PrevDirection, r.PrevSas, r.PrevAttitude);
         }
 
@@ -237,7 +242,7 @@ namespace Orbital.Core.Flight
             r.LastTime = sample.Time;
         }
 
-        private static void CloseAt(ref RecorderState r, double end, in AttitudeSample endAttitude)
+        private static void CloseAt(ref RecorderState r, double end, in AttitudeSample endAttitude, double endThrottle)
         {
             double duration = end - r.Open.StartTime;
             if (duration < 0.1) // too short to matter for the server step
@@ -249,6 +254,7 @@ namespace Orbital.Core.Flight
             seg.Duration = duration;
             seg.EndTime = end;
             seg.End = endAttitude;
+            seg.EndThrottle = endThrottle;
             seg.Throttle = r.ImpulseThrottle / duration;
             double len = Vec3.Length(r.ImpulseDirection);
             if (len > 0) seg.Direction = r.ImpulseDirection / len;

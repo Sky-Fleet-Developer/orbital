@@ -66,6 +66,21 @@ namespace Orbital.Core.Flight
             return (s.EquatorX * Math.Cos(a) + s.EquatorY * Math.Sin(a)) * (s.Radius * c) + s.Axis * (s.Radius * Math.Sin(lat));
         }
 
+        /// <summary>How the body turns from <paramref name="from"/> to <paramref name="to"/> (inertial frame): what a ground-fixed attitude goes through.</summary>
+        public static DQuat Rotation(in SurfaceData s, double from, double to) =>
+            s.Omega == 0.0 ? DQuat.Identity : DQuat.FromAxisAngle(s.Axis, s.Omega * (to - from));
+
+        /// <summary>
+        /// A craft standing on the ground (landed or crashed, stage 2c.8) carried from <paramref name="from"/> to <paramref name="to"/>:
+        /// position and velocity of its ground point, attitude turned with the body, body rates and the gyro kept. Works backwards too.
+        /// </summary>
+        public static void Pin(in SurfaceData s, ref FlightState f, double from, double to)
+        {
+            f.Position = Point(s, f.Latitude, f.Longitude, to);
+            f.Velocity = GroundVelocity(s, f.Position);
+            if (to != from) f.Orientation = DQuat.Normalize(DQuat.Multiply(Rotation(s, from, to), f.Orientation));
+        }
+
         /// <summary>Body-fixed latitude and longitude of the ground point below an inertial position.</summary>
         public static void ToBodyCoordinates(in SurfaceData s, Vec3 pos, double time, out double lat, out double lon)
         {

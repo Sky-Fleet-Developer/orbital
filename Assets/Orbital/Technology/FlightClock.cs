@@ -13,5 +13,7 @@ namespace Orbital.Technology
         /// <summary>Hold a landed craft upright (<see cref="LandedSupport"/>); on by default, see the stage 2b notes.</summary>
         public bool GroundSupport = true;
         public RecorderConfig Recorder = RecorderConfig.Default();
+        /// <summary>Stage 3.2: the world's bodies for the sphere of influence rule (<see cref="Systems.SoiSystem"/>); null = one body.</summary>
+        public BodyFrameTable Frames;
     }
 }

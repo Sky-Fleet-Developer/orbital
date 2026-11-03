@@ -43,7 +43,7 @@ namespace Orbital.Craft
                 double distance = sameBody ? Vec3.Length(g.ShownPosition - ownShownPosition) : double.PositiveInfinity;
                 _list.Append(g.Callsign ?? g.CraftId).Append("  ");
                 _list.Append(sameBody ? (distance >= 10000 ? (distance / 1000).ToString("F1", c) + " km" : distance.ToString("F0", c) + " m") : "@ " + kv.Value.ParentId);
-                _list.Append(g.State.Mode == FlightMode.Crashed ? "  crashed" : g.State.Mode == FlightMode.Landed ? "  landed" : "").Append('\n');
+                _list.Append(g.ServerMode == FlightMode.Crashed ? "  crashed" : g.ServerMode == FlightMode.Landed ? "  landed" : "").Append('\n');
                 bool show = sameBody && distance < VisibleDistance;
                 Transform view = ViewOf(kv.Key, show);
                 if (view == null) continue;

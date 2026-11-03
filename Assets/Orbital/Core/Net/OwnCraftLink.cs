@@ -16,6 +16,29 @@ namespace Orbital.Core.Net
 
         public FlightState State;
         public FlightParams Params;
+
+        /// <summary>
+        /// Stage 3.2: the world's bodies. With a table the craft changes its body by the sphere of influence rule after each step (gravity and
+        /// ground from the table), the history keeps the body of each entry and a server state around another body is compared in the
+        /// client's frame. Null = one body (<see cref="Params"/> as the caller set them), as before stage 3.
+        /// </summary>
+        public BodyFrameTable Frames
+        {
+            get => _frames;
+            set
+            {
+                _frames = value;
+                History.Frames = value;
+            }
+        }
+        private BodyFrameTable _frames;
+
+        /// <summary>Index of the body the craft is around in <see cref="Frames"/> (-1 without a table).</summary>
+        public int Parent { get; private set; } = -1;
+        /// <summary>Id of that body (null without a table).</summary>
+        public string ParentId => _frames != null && Parent >= 0 ? _frames.IdOf(Parent) : null;
+        /// <summary>Sphere of influence changes made by the rule on the client (not by corrections).</summary>
+        public int ParentChanges { get; private set; }
         public double Time { get; private set; } = double.NaN;
         /// <summary>Cumulative RCS propellant burned by the client (the uplink's baseline counter).</summary>
         public double RcsUsedTotal { get; private set; }
@@ -47,10 +70,11 @@ namespace Orbital.Core.Net
         {
             if (s == null) return;
             double throttle = HasCraft ? State.Throttle : 0.0;
-            State = Reconciler.ApplyHard(s, Params, Math.Max(nowTime, s.Time), HardStep, throttle);
+            State = Reconciler.ApplyHard(s, ref Params, _frames, out int parent, Math.Max(nowTime, s.Time), HardStep, throttle);
+            Parent = parent;
             Time = Math.Max(nowTime, s.Time);
             History.Clear();
-            History.Push(Time, State);
+            History.Push(Time, State, Parent);
             ThrustSegmentRecorder.Clear(ref _rec);
             // the recorder needs the sample before the first step: a burn from this very moment starts here
             ThrustSegmentRecorder.Update(ref _rec, SampleOf(State, Time), AttitudeSample.Of(State, Time, RcsUsedTotal), RecorderCfg);
@@ -65,13 +89,19 @@ namespace Orbital.Core.Net
         {
             FlightKernel.Step(ref State, input, Params, Time, dt, out StepReport rep);
             Time += dt;
+            int parent = Parent;
+            bool newBody = SoiRule.Step(_frames, ref parent, ref State, ref Params, Time);
+            Parent = parent;
+            if (newBody) ParentChanges++;
             RcsUsedTotal += rep.RcsFuelUsed;
-            History.Push(Time, State);
+            History.Push(Time, State, Parent);
             View.Decay(dt, ReconcileCfg.ViewTau);
 
             RecorderSample sample = SampleOf(State, Time);
             AttitudeSample att = AttitudeSample.Of(State, Time, RcsUsedTotal);
             ThrustSegmentRecorder.Update(ref _rec, sample, att, RecorderCfg);
+            // a segment does not cross a sphere of influence border on the client: the burn goes on in a new one from this very sample
+            if (newBody) ThrustSegmentRecorder.Flush(ref _rec);
             while (ThrustSegmentRecorder.TryDequeue(ref _rec, Time, RecorderCfg, out ThrustSegment seg))
             {
                 _session.Uplink.EnqueueSegment(seg);
@@ -134,7 +164,7 @@ namespace Orbital.Core.Net
         public ReconcileAction OnServerState(CraftStateDto s, string parentId)
         {
             if (!HasCraft || s == null) return ReconcileAction.Ignore;
-            ReconcileResult r = Reconciler.Compare(s, History, parentId, PendingThrustStart, ReconcileCfg);
+            ReconcileResult r = Reconciler.Compare(s, History, parentId, PendingThrustStart, ReconcileCfg, _frames);
             LastReconcile = r;
             switch (r.Action)
             {

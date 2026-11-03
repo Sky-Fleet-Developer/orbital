@@ -1,5 +1,6 @@
 using Orbital.Core.Flight;
 using Orbital.Core.Handles;
+using Orbital.Core.Net;
 using Sirenix.OdinInspector;
 using UnityEngine;
 using Zenject;
@@ -23,6 +24,7 @@ namespace Orbital.Core
         private void Inject(DiContainer container)
         {
             EnsureClock();
+            ExternalTime = false;
             GameClock.SetScale(ref _clock, 1.0); // every scene starts in real time
             HandlerCollection.GetOrCreateCollection<IFixedUpdateHandler>(container).AddItem(this);
         }
@@ -82,11 +84,35 @@ namespace Orbital.Core
         /// <summary>The cap cut the last tick: the real scale is lower than the set one.</summary>
         public static bool TimeScaleLimited => _hasClock && _clock.LastTickLimited;
 
-        /// <summary>Test tool: sets the time scale (clamped to [MinTimeScale, MaxTimeScale]). Offline only; see the class notes.</summary>
+        /// <summary>Test tool: sets the time scale (clamped to [MinTimeScale, MaxTimeScale]). Offline only: ignored while <see cref="ExternalTime"/>.</summary>
         public static void SetTimeScale(double scale)
         {
             EnsureClock();
+            if (ExternalTime) return;
             GameClock.SetScale(ref _clock, scale);
+        }
+
+        /// <summary>
+        /// Online (stage 2c.6): the game time follows the server. The scale is then set only by <see cref="Discipline"/> (the server scale
+        /// with a small rate correction); the local slider is off.
+        /// </summary>
+        public static bool ExternalTime { get; private set; }
+
+        public static void SetExternalTime(bool on)
+        {
+            EnsureClock();
+            ExternalTime = on;
+            if (!on) GameClock.SetScale(ref _clock, 1.0);
+        }
+
+        /// <summary>
+        /// Online: pulls the clock toward the server time <paramref name="targetTime"/> (server scale <paramref name="serverScale"/>) by the
+        /// accumulator rate, or jumps by whole steps when far off (<see cref="ClockDiscipline"/>); the step length never changes.
+        /// </summary>
+        public static DisciplineResult Discipline(double targetTime, double serverScale, in DisciplineConfig cfg)
+        {
+            EnsureClock();
+            return ClockDiscipline.Apply(ref _clock, targetTime, serverScale, cfg);
         }
 
         /// <summary>Test tool: the most steps one fixed tick may make (at least 1).</summary>

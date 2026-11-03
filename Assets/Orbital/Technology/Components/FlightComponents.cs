@@ -54,6 +54,14 @@ namespace Orbital.Technology.Components
         public ThrustSegment LastSent;
     }
 
+    /// <summary>Stage 3.2: the body the craft is around (index in <see cref="FlightClock.Frames"/>, -1 = one body) and its changes.</summary>
+    public struct SoiComponent
+    {
+        public int Parent;
+        public bool ChangedThisStep;
+        public int Changes;
+    }
+
     /// <summary>Marks the craft the local player flies.</summary>
     public struct PlayerControlled
     {

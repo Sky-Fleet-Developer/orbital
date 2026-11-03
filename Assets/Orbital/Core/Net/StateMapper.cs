@@ -38,6 +38,10 @@ namespace Orbital.Core.Net
             }
         }
 
+        /// <summary>The state is a point of the rotating ground (stage 2c.8): the server says so, or (older server) it is landed or crashed.</summary>
+        public static bool IsSurface(CraftStateDto s) =>
+            s.Frame.HasValue ? s.Frame.Value == CraftFrameDto.Surface : s.Mode != CraftModeDto.Flying;
+
         /// <summary>The whole flight state as the server sees it. The throttle is 0 (the server state has none), as is the RCS unloading flag.</summary>
         public static FlightState ToFlightState(CraftStateDto s)
         {
@@ -92,10 +96,10 @@ namespace Orbital.Core.Net
         /// <summary>A flight state as a server state (tests, ghosts): only the fields <see cref="ToFlightState"/> reads.</summary>
         public static CraftStateDto FromFlightState(in FlightState f, double time, string craftId)
         {
-            bool landed = f.Mode == FlightMode.Landed;
+            bool landed = f.Mode != FlightMode.Flying;
             return new CraftStateDto
             {
-                CraftId = craftId, Time = time, Mode = ModeOf(f.Mode),
+                CraftId = craftId, Time = time, Mode = ModeOf(f.Mode), Frame = landed ? CraftFrameDto.Surface : CraftFrameDto.Inertial,
                 Position = Arr(f.Position), Velocity = Arr(f.Velocity),
                 Fuel = f.MainFuel, RcsFuel = f.RcsFuel,
                 Orientation = Arr(f.Orientation), AngularVelocity = Arr(f.Omega), GyroH = Arr(f.GyroH),
@@ -123,6 +127,7 @@ namespace Orbital.Core.Net
                 EndOrientation = Arr(DQuat.Normalize(seg.End.Orientation)), EndOmega = Arr(seg.End.Omega), EndGyroH = Arr(seg.End.GyroH),
                 RcsFuelUsed = Math.Max(0.0, rcsFuelUsed),
                 Sas = SasOf(seg.Start), EndSas = SasOf(seg.End),
+                EndThrottle = Math.Min(1.0, Math.Max(0.0, seg.EndThrottle)),
                 Seq = seq, CraftId = craftId,
             };
         }

@@ -1,5 +1,6 @@
 using System;
 using Orbital.Core.Flight;
+using UnityEngine;
 using UnityEngine.InputSystem;
 
 namespace Orbital.Craft
@@ -56,6 +57,32 @@ namespace Orbital.Craft
 
         /// <summary>Navigation ball: velocity relative to the surface / orbital velocity (B). A view setting, not part of the simulation input.</summary>
         public bool ToggleNavModePressed => _toggleNavMode.WasPressedThisFrame();
+
+        /// <summary>
+        /// Mouse drag of the camera this frame in pixels (right or middle button held), zero otherwise. A view control, like V, not part of the
+        /// simulation input.
+        /// </summary>
+        public Vector2 CameraDrag
+        {
+            get
+            {
+                Mouse mouse = Mouse.current;
+                if (mouse == null || !(mouse.rightButton.isPressed || mouse.middleButton.isPressed)) return Vector2.zero;
+                return mouse.delta.ReadValue();
+            }
+        }
+
+        /// <summary>Mouse wheel this frame in notches (positive = away from the user = zoom in).</summary>
+        public float CameraZoom
+        {
+            get
+            {
+                Mouse mouse = Mouse.current;
+                if (mouse == null) return 0f;
+                float y = mouse.scroll.ReadValue().y;
+                return Mathf.Abs(y) >= 60f ? y / 120f : Mathf.Sign(y) * Mathf.Min(Mathf.Abs(y), 1f); // 120 per notch on Windows, 1 on some platforms
+            }
+        }
 
         /// <summary>Call every frame: remembers keys that were down since the last step.</summary>
         public void Poll()

@@ -122,6 +122,13 @@ namespace Orbital.Core.Net
             _queue.Add(new Item { IsSegment = true, Segment = seg, EndRcsTotal = seg.End.RcsUsedTotal, StartTime = seg.StartTime });
         }
 
+        /// <summary>The queued thrust segments in order (for checks and tests; nothing is removed).</summary>
+        public void CopySegments(List<ThrustSegment> into)
+        {
+            foreach (Item it in _queue)
+                if (it.IsSegment) into.Add(it.Segment);
+        }
+
         public void EnqueueAttitude(in AttitudeSample a)
         {
             _queue.Add(new Item { IsSegment = false, Attitude = a, EndRcsTotal = a.RcsUsedTotal, StartTime = a.Time });

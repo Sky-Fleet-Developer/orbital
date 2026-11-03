@@ -11,7 +11,8 @@ namespace Orbital.Technology.Systems
     public class ThrustRecorderSystem : IEcsRunSystem
     {
         private FlightClock _clock;
-        private EcsFilter<FlightStateComponent, ThrustRecorderComponent> _filter;
+        // every craft has the SOI component (stage 3.2): the recorder closes a segment on a change of the body
+        private EcsFilter<FlightStateComponent, ThrustRecorderComponent, SoiComponent> _filter;
 
         public void Run()
         {
@@ -27,6 +28,8 @@ namespace Orbital.Technology.Systems
                 sample.Sas = state.State.SasOn;
                 sample.Resting = state.State.Mode != FlightMode.Flying;
                 ThrustSegmentRecorder.Update(ref recorder.State, sample, _clock.Recorder);
+                // stage 3.2: a segment ends at a sphere of influence change, the burn goes on in the next one
+                if (_filter.Get3(i).ChangedThisStep) ThrustSegmentRecorder.Flush(ref recorder.State);
                 while (ThrustSegmentRecorder.TryDequeue(ref recorder.State, now, _clock.Recorder, out ThrustSegment segment))
                 {
                     recorder.SentCount++;

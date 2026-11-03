@@ -174,6 +174,7 @@ namespace Orbital.Craft
             _input.Poll();
             if (_input.ToggleViewPressed) _presenter.SetFlightView(!_presenter.FlightViewActive);
             if (_input.ToggleCameraPressed) _presenter.SetHorizonCamera(!_presenter.HorizonCamera);
+            _presenter.ControlCamera(_input.CameraDrag, _input.CameraZoom);
             if (_input.ToggleHelpPressed) _hud.ShowHelp = !_hud.ShowHelp;
             if (_input.ToggleNavModePressed) _navOrbit = !_navOrbit;
             if (_input.RespawnPressed)
@@ -488,7 +489,12 @@ namespace Orbital.Craft
         private void OnlineSpawn()
         {
             NetSession s = _net.Session;
-            if (s.State == SessionState.NoCraft || _net.Destroyed != null) s.Spawn(string.IsNullOrEmpty(startPointId) ? null : startPointId);
+            if (s.State == SessionState.NoCraft || _net.Destroyed != null || _net.CrashConfirmed)
+            {
+                // a crash the server has confirmed: the spawn abandons the wreck at once (no wait for craft_destroyed, stage 2c.8)
+                if (_net.CrashConfirmed) Debug.Log("CraftSpawner: new craft now, the server has the old one crashed (wreck kept)", this);
+                s.Spawn(string.IsNullOrEmpty(startPointId) ? null : startPointId);
+            }
             else if (_net.Link.HasCraft && _net.Link.State.Mode == FlightMode.Crashed) Debug.Log("CraftSpawner: the crash is not confirmed by the server yet", this);
         }
 
@@ -549,7 +555,8 @@ namespace Orbital.Craft
             "B            nav ball: surface / orbit velocity\n" +
             "Enter        new craft at the start\n" +
             "C            flight view / map view\n" +
-            "V            camera behind / on horizon\n" +
+            "V            camera behind / orbit (level)\n" +
+            "RMB drag     orbit the camera, wheel zoom\n" +
             "F1           hide this help\n" +
             "The gyro is always on; RCS needs R.\n" +
             "SAS holds the attitude; with RCS off it uses\n" +
@@ -620,10 +627,15 @@ namespace Orbital.Craft
             double serverTime = s.ServerTime(Time.realtimeSinceStartupAsDouble);
             _hud.Others = _ghosts != null ? _ghosts.ListText : string.Empty;
             _hud.NetLine = _net.StatusLine() + "   server t " + (double.IsNaN(serverTime) ? "-" : serverTime.ToString("F1", c));
+            if (s.AdminRefusal != null)
+                _hud.NetLine += s.AdminRefusal == "admin_disabled"
+                    ? "   admin off: serverconfig.json admin.enabled = true, restart"
+                    : "   admin: refused (" + s.AdminRefusal + ")";
             if (_net.Destroyed != null) _hud.Banner = "DESTROYED (" + _net.Destroyed.Reason + ") - press Enter for a new craft";
             else if (s.State == SessionState.NoCraft) _hud.Banner = "No craft - press Enter to spawn";
             else if (s.State == SessionState.Refused) _hud.Banner = "Server refused: " + s.LastError;
             else if (s.State != SessionState.Ready) _hud.Banner = "Connecting... (" + s.State + ")";
+            else if (_net.CrashConfirmed) _hud.Banner = "CRASHED (confirmed by the server) - press Enter for a new craft now";
             else if (state.Mode == FlightMode.Crashed) _hud.Banner = "CRASHED - awaiting server";
             else if (!s.HasControl) _hud.Banner = "Another session has the control";
             // the scale slider only for an admin session: it asks the server, the server pushes the new scale to everyone

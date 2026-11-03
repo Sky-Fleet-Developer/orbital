@@ -80,6 +80,8 @@ namespace Orbital.Core.Net
         public string LastError { get; private set; }
         public string CraftId { get; private set; }
         public bool IsAdmin { get; private set; }
+        /// <summary>Why the last admin_auth was refused (e.g. admin_disabled, not_loopback), null after a success or before any attempt.</summary>
+        public string AdminRefusal { get; private set; }
         public bool HasControl { get; private set; }
         public double TimeScale { get; private set; } = 1.0;
         public string BootId { get; private set; }
@@ -313,6 +315,7 @@ namespace Orbital.Core.Net
                 {
                     AdminAuthResultMessage r = e.As<AdminAuthResultMessage>();
                     IsAdmin = r.Ok;
+                    AdminRefusal = r.Ok ? null : (r.Reason ?? "refused");
                     Emit("admin_auth: " + (r.Ok ? "ok" : r.Reason));
                     AdminAuthResult?.Invoke(r);
                     break;
@@ -335,7 +338,13 @@ namespace Orbital.Core.Net
                 case "proximity_update":
                 {
                     StatesMessage m = e.As<StatesMessage>();
-                    if (m.States != null) foreach (CraftStateDto s in m.States) Deliver(s);
+                    if (m.States != null)
+                        foreach (CraftStateDto s in m.States)
+                        {
+                            if (s == null) continue;
+                            s.Detailed = true; // the near group channel: may carry the thrust tail
+                            Deliver(s);
+                        }
                     break;
                 }
                 case MessageTypes.ManeuverResult:

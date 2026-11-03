@@ -38,6 +38,7 @@ namespace Orbital.Technology
                 .Add(new FlightInputSystem())
                 .Add(new FlightStepSystem())
                 .Add(new LandedSupportSystem())
+                .Add(new SoiSystem())
                 .Add(new ThrustRecorderSystem())
                 .Inject(Clock);
             _systems.Init();
@@ -47,7 +48,7 @@ namespace Orbital.Technology
         }
 
         /// <summary>Creates the player craft (replacing the previous one) in the given state and returns nothing: read it through <see cref="State"/>.</summary>
-        public void CreatePlayerCraft(in FlightState state, in FlightParams flightParams, string callsign)
+        public void CreatePlayerCraft(in FlightState state, in FlightParams flightParams, string callsign, int parent = -1)
         {
             DestroyPlayer();
             _player = _world.NewEntity();
@@ -58,6 +59,7 @@ namespace Orbital.Technology
             _player.Get<ControlInputComponent>();
             _player.Get<StepReportComponent>();
             _player.Get<ThrustRecorderComponent>();
+            _player.Get<SoiComponent>().Parent = parent;
             _player.Get<PlayerControlled>().Callsign = callsign;
             _hasPlayer = true;
         }
@@ -85,6 +87,9 @@ namespace Orbital.Technology
         public FlightState State => HasPlayer ? _player.Get<FlightStateComponent>().State : default;
 
         public FlightParams Params => HasPlayer ? _player.Get<FlightParamsComponent>().Params : default;
+
+        /// <summary>Stage 3.2: index of the body the craft is around in <see cref="FlightClock.Frames"/> (-1 = one body).</summary>
+        public int Parent => HasPlayer ? _player.Get<SoiComponent>().Parent : -1;
 
         public ControlInput Control => HasPlayer ? _player.Get<ControlInputComponent>().Input : default;
 

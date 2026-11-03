@@ -66,6 +66,7 @@ namespace Orbital.Craft
             {
                 if (r == null || !r.Ok || r.State == null) return;
                 Destroyed = null;
+                _ownCraftId = r.State.CraftId;
                 OwnParent = r.State.ParentId;
                 Link.Params = _paramsOf(r.Snapshot);
                 Link.TakeServerState(r.State, r.State.Time, "spawn");
@@ -73,6 +74,7 @@ namespace Orbital.Craft
             Session.LoggedIn += h =>
             {
                 if (h.State == null) return;
+                _ownCraftId = h.State.CraftId;
                 OwnParent = h.State.ParentId;
                 Link.Params = _paramsOf(h.Snapshot);
                 // after a reconnect the past is the server's: hard correction to its state carried to the client time
@@ -86,6 +88,7 @@ namespace Orbital.Craft
             };
             Session.OwnState += s =>
             {
+                LastOwnServerState = s;
                 if (s.ParentId != null) OwnParent = s.ParentId;
                 if (_hardNext)
                 {
@@ -109,7 +112,11 @@ namespace Orbital.Craft
                 Rejections++;
                 LastRejection = reason;
             };
-            Session.CraftDestroyed += m => Destroyed = m;
+            // only the own craft: after a spawn that abandoned a wreck (stage 2c.8) its craft_destroyed may come after the new craft
+            Session.CraftDestroyed += m =>
+            {
+                if (m != null && m.CraftId != null && m.CraftId == _ownCraftId) Destroyed = m;
+            };
             Session.OtherState += OnOther;
             Session.WreckSeen += w =>
             {
@@ -121,6 +128,19 @@ namespace Orbital.Craft
         }
 
         private bool _hardNext;
+        private string _ownCraftId;
+
+        /// <summary>The last state of the own craft the server sent (null before any, cleared on a new craft).</summary>
+        public CraftStateDto LastOwnServerState { get; private set; }
+
+        /// <summary>
+        /// Both sides have the own craft crashed (stage 2c.8): the client's own state is crashed, and the server's last state is crashed with
+        /// the crash time. Only then may a spawn go before craft_destroyed: the server abandons the wreck at once (stage 2c.3b). While the
+        /// client still flies, a crashed server state is a ballistic guess that a thrust segment not yet accepted cancels (the retro window):
+        /// no banner, and Enter must not abandon a flying craft.
+        /// </summary>
+        public bool CrashConfirmed =>
+            Destroyed == null && Link.HasCraft && Reconciler.CrashConfirmed(Link.State.Mode, LastOwnServerState, Session.CraftId);
 
         /// <summary>The craft fell too far behind the world time (a clock jump, a long frame): take the next server state as is.</summary>
         public void RequestHardSync()
