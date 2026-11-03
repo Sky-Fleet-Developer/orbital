@@ -614,7 +614,8 @@ namespace Orbital.Tests
             Run(ref r, 4.05, 6, 0.7, turned);
             Assert.AreEqual(1, r.Count, "two degrees closes the segment");
             ThrustSegmentRecorder.TryDequeue(ref r, 10, C, out ThrustSegment seg);
-            Assert.Less(Vec3.Angle(seg.Direction, Up), 1e-12);
+            // stage 2c.4: the direction is the impulse-weighted mean: about 2 s along Up and 2 s along the half-degree wobble
+            Assert.AreEqual(0.25 * Math.PI / 180, Vec3.Angle(seg.Direction, Up), 0.03 * Math.PI / 180);
         }
 
         [Test]
@@ -649,7 +650,10 @@ namespace Orbital.Tests
             // lift-off: the segment starts when thrust exceeds weight
             for (double t = 20.05; t <= 25; t += 0.05) ThrustSegmentRecorder.Update(ref r, S(t, 0.9, Up, resting: false), C);
             Assert.IsTrue(r.Active);
-            Assert.AreEqual(20.05, r.Open.StartTime, 1e-9);
+            // stage 2c.4: the first thrusting sample (20.05) carries the throttle of the step that ended there, so the burn starts at
+            // the previous sample (the last resting one, about 20.0)
+            Assert.AreEqual(20.0, r.Open.StartTime, 0.06);
+            Assert.Less(r.Open.StartTime, 20.05 - 1e-9);
         }
 
         [Test]
@@ -672,8 +676,9 @@ namespace Orbital.Tests
         public void VeryShortTail_IsCountedNotSent()
         {
             RecorderState r = default;
-            ThrustSegmentRecorder.Update(ref r, S(0, 0.9, Up), C);
-            ThrustSegmentRecorder.Update(ref r, S(0.05, 0.0, Up), C);
+            ThrustSegmentRecorder.Update(ref r, S(0, 0.0, Up), C);
+            ThrustSegmentRecorder.Update(ref r, S(0.05, 0.9, Up), C); // one step of thrust (stage 2c.4: the sample closes the step)
+            ThrustSegmentRecorder.Update(ref r, S(0.1, 0.0, Up), C);
             Assert.AreEqual(0, r.Count);
             Assert.AreEqual(0.9 * 0.05, r.DroppedImpulse, 1e-12);
         }

@@ -40,7 +40,7 @@ namespace Orbital.Craft
         private readonly double _padLatitude;
         private readonly double _padLongitude;
         private readonly float _cgHeight;
-        private readonly GreyboxMaterials _materials = new GreyboxMaterials();
+        private readonly GreyboxMaterials _materials;
         private readonly GameObject _root;
         private readonly Transform _craft;
         private readonly Transform _flame;
@@ -61,13 +61,20 @@ namespace Orbital.Craft
         private bool _markersActive = true;
 
         public bool FlightViewActive => _flightView;
+        /// <summary>Root of the flight view (other crafts are added under it, stage 2c.7).</summary>
+        public Transform Root => _root.transform;
+        public GreyboxMaterials Materials => _materials;
+        public float CgHeight => _cgHeight;
+        public int Layer => _settings.layer;
         public bool HorizonCamera => _horizonCamera;
 
         /// <param name="vehiclePrefab">Craft look; null builds the greybox from primitives.</param>
+        /// <param name="materialTemplate">Template of the greybox materials; null = the default material of a primitive (Editor only, magenta in a player).</param>
         /// <param name="padLatitude">Where the pad is, radians in the rotating body frame.</param>
-        public CraftPresenter(CraftViewSettings settings, GameObject vehiclePrefab, in SurfaceData surface, float cgHeight, double padLatitude, double padLongitude)
+        public CraftPresenter(CraftViewSettings settings, GameObject vehiclePrefab, Material materialTemplate, in SurfaceData surface, float cgHeight, double padLatitude, double padLongitude)
         {
             _settings = settings;
+            _materials = new GreyboxMaterials(materialTemplate);
             _surface = surface;
             _cgHeight = cgHeight;
             _padLatitude = padLatitude;
@@ -311,9 +318,9 @@ namespace Orbital.Craft
             return Vec3.Normalize(east);
         }
 
-        private static Vector3 ToVector(Vec3 v) => new Vector3((float) v.X, (float) v.Y, (float) v.Z);
+        internal static Vector3 ToVector(Vec3 v) => new Vector3((float) v.X, (float) v.Y, (float) v.Z);
 
-        private static Quaternion ToQuaternion(DQuat q) => new Quaternion((float) q.X, (float) q.Y, (float) q.Z, (float) q.W);
+        internal static Quaternion ToQuaternion(DQuat q) => new Quaternion((float) q.X, (float) q.Y, (float) q.Z, (float) q.W);
 
         private static void RemoveCollider(GameObject go)
         {

@@ -20,7 +20,13 @@ namespace Orbital.Tests
         public bool Naive;          // comparison controller: integral reset every step, target captured at the instant of release
         public double MaxErrorDeg;  // largest error angle seen by Run
 
-        public SasRig(double rcsTank = 3000.0, double thrustOffsetX = 0.05)
+        /// <summary>
+        /// The hard case: the 5 cm thrust offset of stage 2b.1 (30 kN*m at full thrust, more than the gyro torque). The default craft has 5 mm since
+        /// stage 2b.2 (Stage2b2Tests covers it); the controller tests keep the strong disturbance on purpose, so the rig uses it unless told otherwise.
+        /// </summary>
+        public const double StrongOffset = 0.05;
+
+        public SasRig(double rcsTank = 3000.0, double thrustOffsetX = StrongOffset)
         {
             P = FlightFixture.DeepSpace();
             P.Craft.RcsPropellantCapacity = rcsTank;
@@ -153,7 +159,7 @@ namespace Orbital.Tests
 
     public class SasControllerTests
     {
-        // (a) the disturbance of the default craft (5 cm thrust offset, about 30 kN*m at full thrust), RCS on: the SAS holds the attitude
+        // (a) the strong disturbance (5 cm thrust offset, the default craft of stage 2b.1, about 30 kN*m at full thrust), RCS on: the SAS holds the attitude
         [Test]
         public void HoldsTheAttitudeWithTheThrustOffsetAndTheRcs_LongRun()
         {
@@ -171,7 +177,7 @@ namespace Orbital.Tests
                               $"integral {rig.S.SasIntegral.Z:F0} N*m, RCS fuel left {rig.S.RcsFuel:F0} kg, |H| {Vec3.Length(rig.S.GyroH):F0}");
             Assert.Less(worstAfterWarmUp, 0.1, "error below 0.1 degrees from 40 s to 160 s");
             Assert.Less(worstEarly, 5.0, "the build-up of the integral does not tip the craft");
-            double thrustTorque = 0.05 * rig.P.Craft.Engine.MaxThrust;
+            double thrustTorque = SasRig.StrongOffset * rig.P.Craft.Engine.MaxThrust;
             Assert.AreEqual(-thrustTorque, rig.S.SasIntegral.Z, 0.05 * thrustTorque, "the integral is the estimate of the disturbing torque");
             Assert.AreEqual(0.0, rig.S.SasIntegral.X, 100.0);
             Assert.Greater(rig.S.RcsFuel, 0.0, "the test tank is big enough");
@@ -192,11 +198,11 @@ namespace Orbital.Tests
         [Test]
         public void DefaultsOffBeforeTheKeyAndTheCraftTipsOver()
         {
-            SasRig rig = new SasRig();
+            SasRig rig = new SasRig(); // the strong 5 cm offset; the default 5 mm one is in Stage2b2Tests
             rig.Run(30, t => SasRig.Keys(ControlKey.X, ControlKey.R));
             Assert.AreEqual(0, rig.S.SasOn);
             double tilt = Vec3.Angle(DQuat.Rotate(rig.S.Orientation, Vec3.UnitY), Vec3.UnitY) * 180 / Math.PI;
-            Assert.Greater(tilt, 30.0, "without SAS the offset tips the craft (the reason for this stage)");
+            Assert.Greater(tilt, 30.0, "without SAS the offset tips the craft (the reason for stage 2b.1)");
         }
 
         // (b) the key requirement: short pulses do not make the held attitude sag again and again
@@ -235,8 +241,8 @@ namespace Orbital.Tests
             Assert.Less(total, 1.5, "the sag does not accumulate over 12 pulses");
             Assert.Less(sags[sags.Count - 1], sags[0] + 0.05, "later pulses are not worse than the first");
             Assert.Less(rig.ErrorDeg, 0.1, "the final error is small");
-            Assert.Greater(rig.S.SasIntegral.Z, -1.1 * 0.05 * 600000, "the integral stayed in its limits");
-            Assert.AreEqual(-0.05 * 600000, rig.S.SasIntegral.Z, 0.06 * 0.05 * 600000, "pulses and captures did not reset the integral");
+            Assert.Greater(rig.S.SasIntegral.Z, -1.1 * SasRig.StrongOffset * 600000, "the integral stayed in its limits");
+            Assert.AreEqual(-SasRig.StrongOffset * 600000, rig.S.SasIntegral.Z, 0.06 * SasRig.StrongOffset * 600000, "pulses and captures did not reset the integral");
         }
 
         [Test]
@@ -624,7 +630,10 @@ namespace Orbital.Tests
 
 namespace Orbital.Tests
 {
-    /// <summary>The real flight: lift-off from the pad with the default craft (5 cm offset, 200 kg of RCS propellant), as the client flies it.</summary>
+    /// <summary>
+    /// The real flight: lift-off from the pad with the craft of stage 2b.1 (5 cm offset, 200 kg of RCS propellant), as the client flies it.
+    /// The offset is set explicitly: the default is 5 mm since stage 2b.2 (Stage2b2Tests flies the default craft through the whole burn).
+    /// </summary>
     public class SasLiftOffTests
     {
         private static double Tilt(in FlightState s, in FlightParams p) => FlightTelemetry.Compute(s, p).TiltDegrees;
@@ -633,6 +642,7 @@ namespace Orbital.Tests
         public void LiftOffWithSasAndRcs_HoldsTheRocketUntilTheRcsPropellantRunsOut()
         {
             FlightParams p = FlightFixture.Params();
+            p.Craft.ThrustOffset = new Vec3(SasRig.StrongOffset, 0, 0);
             FlightState s = SpawnBuilder.OnSurface(p.Craft, p.Surface, 0.0, 0.0, 0.0, 0.0);
             InputLatch latch = default;
             double t = 0, tiltAt15 = 0, worstTo15 = 0, tiltAt60 = 0, emptyAt = double.NaN;

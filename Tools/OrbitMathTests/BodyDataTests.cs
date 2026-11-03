@@ -46,7 +46,8 @@ namespace Orbital.Tests
         }
 
         private static string AssetPath => FindUp("Assets", "_game", "ViewSettings", "BodiesTable.asset");
-        private static string WorldPath => FindUp("orbital-server", "OrbitServer", "world.json");
+        // stage 2c.W: the world is the shared config Assets/_game/Config/world.json (it was orbital-server/OrbitServer/world.json)
+        private static string WorldPath => FindUp("Assets", "_game", "Config", "world.json");
 
         private static double D(string s) => double.Parse(s, CultureInfo.InvariantCulture);
 
@@ -150,7 +151,7 @@ namespace Orbital.Tests
         public void Asset_NumbersEqualWorldJson_ForAll31Bodies()
         {
             string assetPath = AssetPath, worldPath = WorldPath;
-            if (assetPath == null || worldPath == null) Assert.Ignore("asset or server world.json not found (sibling repository orbital-server)");
+            if (assetPath == null || worldPath == null) Assert.Ignore("asset or Assets/_game/Config/world.json not found");
             var asset = ReadAsset(assetPath);
             using JsonDocument doc = JsonDocument.Parse(File.ReadAllText(worldPath));
             int checkedBodies = 0;
@@ -182,7 +183,7 @@ namespace Orbital.Tests
         public void RealRadii_MinimumSphereChangesOnlyBodiesWhoseLaplaceSphereIsSmall()
         {
             string assetPath = AssetPath, worldPath = WorldPath;
-            if (assetPath == null || worldPath == null) Assert.Ignore("asset or server world.json not found");
+            if (assetPath == null || worldPath == null) Assert.Ignore("asset or Assets/_game/Config/world.json not found");
             var asset = ReadAsset(assetPath);
             using JsonDocument doc = JsonDocument.Parse(File.ReadAllText(worldPath));
             var bodies = doc.RootElement.GetProperty("bodies").EnumerateArray().ToDictionary(b => b.GetProperty("id").GetString());

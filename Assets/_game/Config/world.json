@@ -1,0 +1,767 @@
+{
+  "note": "Shared world of the client and the server (Assets/_game/Config/world.json, stage 2c.W), the source of truth for both. Imported by orbital-server/Tools/convert_scene_world.py from Assets/Main.unity (worlds/main-scene-tree.json + main-scene-names.json), worlds/body-supplement.json and Assets/_game/ViewSettings/BodiesTable.asset (radius, rotation). Angles in degrees, meters, nu = mass * G in m^3/s^2, epoch = game time of mean anomaly meanAnomalyDeg (the client supports 0 only). Orbit numbers are float32 values (the client tree stores floats). Reference plane XZ, Y up (StaticOrbit conventions).",
+  "epochZero": 0.0,
+  "bodies": [
+    {
+      "id": "sun",
+      "name": "Sun",
+      "nu": 1.3271645662764774e+20,
+      "radius": 695700000.0,
+      "rotation": {
+        "periodSeconds": 2192832.0,
+        "obliquityDeg": 7.25,
+        "axisAzimuthDeg": 0.0,
+        "initialAngleDeg": 0.0,
+        "tidallyLocked": false
+      },
+      "sceneMass": 1.9884700512060854e+30
+    },
+    {
+      "id": "mercury",
+      "name": "Mercury",
+      "parent": "sun",
+      "nu": 22032531570148.934,
+      "radius": 2439700.0,
+      "rotation": {
+        "periodSeconds": 5067014.4,
+        "obliquityDeg": 0.034,
+        "axisAzimuthDeg": 0.0,
+        "initialAngleDeg": 0.0,
+        "tidallyLocked": false
+      },
+      "orbit": {
+        "inclinationDeg": 7.004979133605957,
+        "eccentricity": 0.2056359350681305,
+        "semiMajorAxis": 57909227520.0,
+        "lanDeg": 48.33076477050781,
+        "aopDeg": 29.127029418945312,
+        "meanAnomalyDeg": 0.0,
+        "epoch": -3690281.5
+      },
+      "sceneMass": 3.301099976049763e+23
+    },
+    {
+      "id": "venus",
+      "name": "Venus",
+      "parent": "sun",
+      "nu": 324871570994139.6,
+      "radius": 6051800.0,
+      "rotation": {
+        "periodSeconds": 20996798.4,
+        "obliquityDeg": 177.36,
+        "axisAzimuthDeg": 0.0,
+        "initialAngleDeg": 0.0,
+        "tidallyLocked": false
+      },
+      "orbit": {
+        "inclinationDeg": 3.3946759700775146,
+        "eccentricity": 0.006776719819754362,
+        "semiMajorAxis": 108209471488.0,
+        "lanDeg": 76.67984008789062,
+        "aopDeg": 54.92262649536133,
+        "meanAnomalyDeg": 0.0,
+        "epoch": -2716702.25
+      },
+      "sceneMass": 4.867500277094821e+24
+    },
+    {
+      "id": "earth",
+      "name": "Earth",
+      "parent": "sun",
+      "nu": 398600561488708.8,
+      "radius": 6371000.0,
+      "rotation": {
+        "periodSeconds": 86164.0905,
+        "obliquityDeg": 23.4393,
+        "axisAzimuthDeg": 0.0,
+        "initialAngleDeg": 0.0,
+        "tidallyLocked": false
+      },
+      "orbit": {
+        "inclinationDeg": 0.0,
+        "eccentricity": 0.01671122945845127,
+        "semiMajorAxis": 149598257152.0,
+        "lanDeg": 0.0,
+        "aopDeg": 102.93768310546875,
+        "meanAnomalyDeg": 0.0,
+        "epoch": 216794.515625
+      },
+      "sceneMass": 5.972170287351615e+24
+    },
+    {
+      "id": "moon",
+      "name": "Moon",
+      "parent": "earth",
+      "nu": 4900271091983.373,
+      "radius": 1737400.0,
+      "rotation": {
+        "periodSeconds": 0.0,
+        "obliquityDeg": 6.68,
+        "axisAzimuthDeg": 0.0,
+        "initialAngleDeg": 0.0,
+        "tidallyLocked": true
+      },
+      "orbit": {
+        "inclinationDeg": 5.144999980926514,
+        "eccentricity": 0.05490000173449516,
+        "semiMajorAxis": 384399008.0,
+        "lanDeg": 125.08000183105469,
+        "aopDeg": 318.1499938964844,
+        "meanAnomalyDeg": 0.0,
+        "epoch": -891216.625
+      },
+      "sceneMass": 7.342000047920192e+22
+    },
+    {
+      "id": "mars",
+      "name": "Mars",
+      "parent": "sun",
+      "nu": 42829649500067.26,
+      "radius": 3389500.0,
+      "rotation": {
+        "periodSeconds": 88642.6848,
+        "obliquityDeg": 25.19,
+        "axisAzimuthDeg": 0.0,
+        "initialAngleDeg": 0.0,
+        "tidallyLocked": false
+      },
+      "orbit": {
+        "inclinationDeg": 1.849691390991211,
+        "eccentricity": 0.09339410066604614,
+        "semiMajorAxis": 227943825408.0,
+        "lanDeg": 49.559539794921875,
+        "aopDeg": 286.496826171875,
+        "meanAnomalyDeg": 0.0,
+        "epoch": -3196973.0
+      },
+      "sceneMass": 6.417099845686778e+23
+    },
+    {
+      "id": "phobos",
+      "name": "Phobos",
+      "parent": "mars",
+      "nu": 711413.6138647276,
+      "radius": 11267.0,
+      "rotation": {
+        "periodSeconds": 0.0,
+        "obliquityDeg": 0.0,
+        "axisAzimuthDeg": 0.0,
+        "initialAngleDeg": 0.0,
+        "tidallyLocked": true
+      },
+      "orbit": {
+        "inclinationDeg": 27.5399227142334,
+        "eccentricity": 0.01510000042617321,
+        "semiMajorAxis": 9376000.0,
+        "lanDeg": 81.38299560546875,
+        "aopDeg": 320.497802734375,
+        "meanAnomalyDeg": 0.0,
+        "epoch": 0.0
+      },
+      "sceneMass": 1.0658999653367808e+16
+    },
+    {
+      "id": "deimos",
+      "name": "Deimos",
+      "parent": "mars",
+      "nu": 98526.01590862367,
+      "radius": 6200.0,
+      "rotation": {
+        "periodSeconds": 0.0,
+        "obliquityDeg": 0.0,
+        "axisAzimuthDeg": 0.0,
+        "initialAngleDeg": 0.0,
+        "tidallyLocked": true
+      },
+      "orbit": {
+        "inclinationDeg": 28.091106414794922,
+        "eccentricity": 0.00033000000985339284,
+        "semiMajorAxis": 23463200.0,
+        "lanDeg": 80.42383575439453,
+        "aopDeg": 321.3461608886719,
+        "meanAnomalyDeg": 0.0,
+        "epoch": 0.0
+      },
+      "sceneMass": 1476199989641216.0
+    },
+    {
+      "id": "jupiter",
+      "name": "Jupiter",
+      "parent": "sun",
+      "nu": 1.2668688876414918e+17,
+      "radius": 69911000.0,
+      "rotation": {
+        "periodSeconds": 35729.7,
+        "obliquityDeg": 3.13,
+        "axisAzimuthDeg": 0.0,
+        "initialAngleDeg": 0.0,
+        "tidallyLocked": false
+      },
+      "orbit": {
+        "inclinationDeg": 1.3043969869613647,
+        "eccentricity": 0.048386238515377045,
+        "semiMajorAxis": 778340794368.0,
+        "lanDeg": 100.47390747070312,
+        "aopDeg": 274.25457763671875,
+        "meanAnomalyDeg": 0.0,
+        "epoch": -20461102.0
+      },
+      "sceneMass": 1.898129972643561e+27
+    },
+    {
+      "id": "io",
+      "name": "Io",
+      "parent": "jupiter",
+      "nu": 5961443245806.047,
+      "radius": 1821600.0,
+      "rotation": {
+        "periodSeconds": 0.0,
+        "obliquityDeg": 0.0,
+        "axisAzimuthDeg": 0.0,
+        "initialAngleDeg": 0.0,
+        "tidallyLocked": true
+      },
+      "orbit": {
+        "inclinationDeg": 2.2491157054901123,
+        "eccentricity": 0.004100000020116568,
+        "semiMajorAxis": 421700000.0,
+        "lanDeg": 338.1665344238281,
+        "aopDeg": 20.06766700744629,
+        "meanAnomalyDeg": 0.0,
+        "epoch": 0.0
+      },
+      "sceneMass": 8.931937799928153e+22
+    },
+    {
+      "id": "europa",
+      "name": "Europa",
+      "parent": "jupiter",
+      "nu": 3203559987080.8237,
+      "radius": 1560800.0,
+      "rotation": {
+        "periodSeconds": 0.0,
+        "obliquityDeg": 0.0,
+        "axisAzimuthDeg": 0.0,
+        "initialAngleDeg": 0.0,
+        "tidallyLocked": true
+      },
+      "orbit": {
+        "inclinationDeg": 2.65710711479187,
+        "eccentricity": 0.009399999864399433,
+        "semiMajorAxis": 671033984.0,
+        "lanDeg": 341.3508605957031,
+        "aopDeg": 16.886253356933594,
+        "meanAnomalyDeg": 0.0,
+        "epoch": 0.0
+      },
+      "sceneMass": 4.7998441590591135e+22
+    },
+    {
+      "id": "ganymede",
+      "name": "Ganymede",
+      "parent": "jupiter",
+      "nu": 9890772015188.111,
+      "radius": 2634100.0,
+      "rotation": {
+        "periodSeconds": 0.0,
+        "obliquityDeg": 0.0,
+        "axisAzimuthDeg": 0.0,
+        "initialAngleDeg": 0.0,
+        "tidallyLocked": true
+      },
+      "orbit": {
+        "inclinationDeg": 2.400029420852661,
+        "eccentricity": 0.0013000000035390258,
+        "semiMajorAxis": 1070412032.0,
+        "lanDeg": 339.4776611328125,
+        "aopDeg": 18.757606506347656,
+        "meanAnomalyDeg": 0.0,
+        "epoch": 0.0
+      },
+      "sceneMass": 1.4819190050174717e+23
+    },
+    {
+      "id": "callisto",
+      "name": "Callisto",
+      "parent": "jupiter",
+      "nu": 7181132748910.337,
+      "radius": 2410300.0,
+      "rotation": {
+        "periodSeconds": 0.0,
+        "obliquityDeg": 0.0,
+        "axisAzimuthDeg": 0.0,
+        "initialAngleDeg": 0.0,
+        "tidallyLocked": true
+      },
+      "orbit": {
+        "inclinationDeg": 2.3905627727508545,
+        "eccentricity": 0.007400000002235174,
+        "semiMajorAxis": 1882708992.0,
+        "lanDeg": 339.40057373046875,
+        "aopDeg": 18.834632873535156,
+        "meanAnomalyDeg": 0.0,
+        "epoch": 0.0
+      },
+      "sceneMass": 1.0759379633684937e+23
+    },
+    {
+      "id": "saturn",
+      "name": "Saturn",
+      "parent": "sun",
+      "nu": 3.793271768433931e+16,
+      "radius": 58232000.0,
+      "rotation": {
+        "periodSeconds": 38361.0,
+        "obliquityDeg": 26.73,
+        "axisAzimuthDeg": 0.0,
+        "initialAngleDeg": 0.0,
+        "tidallyLocked": false
+      },
+      "orbit": {
+        "inclinationDeg": 2.485991954803467,
+        "eccentricity": 0.05386178940534592,
+        "semiMajorAxis": 1426666422272.0,
+        "lanDeg": 113.66242218017578,
+        "aopDeg": 338.93646240234375,
+        "meanAnomalyDeg": 0.0,
+        "epoch": 110093840.0
+      },
+      "sceneMass": 5.683400159468306e+26
+    },
+    {
+      "id": "mimas",
+      "name": "Mimas",
+      "parent": "saturn",
+      "nu": 2502395236.3608413,
+      "radius": 198200.0,
+      "rotation": {
+        "periodSeconds": 0.0,
+        "obliquityDeg": 0.0,
+        "axisAzimuthDeg": 0.0,
+        "initialAngleDeg": 0.0,
+        "tidallyLocked": true
+      },
+      "orbit": {
+        "inclinationDeg": 29.2691593170166,
+        "eccentricity": 0.019600000232458115,
+        "semiMajorAxis": 185539008.0,
+        "lanDeg": 167.46884155273438,
+        "aopDeg": 321.842041015625,
+        "meanAnomalyDeg": 0.0,
+        "epoch": 0.0
+      },
+      "sceneMass": 3.749299906148722e+19
+    },
+    {
+      "id": "enceladus",
+      "name": "Enceladus",
+      "parent": "saturn",
+      "nu": 7209712590.010361,
+      "radius": 252100.0,
+      "rotation": {
+        "periodSeconds": 0.0,
+        "obliquityDeg": 0.0,
+        "axisAzimuthDeg": 0.0,
+        "initialAngleDeg": 0.0,
+        "tidallyLocked": true
+      },
+      "orbit": {
+        "inclinationDeg": 28.0576114654541,
+        "eccentricity": 0.004699999932199717,
+        "semiMajorAxis": 238036992.0,
+        "lanDeg": 169.5181427001953,
+        "aopDeg": 320.0437316894531,
+        "meanAnomalyDeg": 0.0,
+        "epoch": 0.0
+      },
+      "sceneMass": 1.0802200365596934e+20
+    },
+    {
+      "id": "tethys",
+      "name": "Tethys",
+      "parent": "saturn",
+      "nu": 41210398451.79188,
+      "radius": 531100.0,
+      "rotation": {
+        "periodSeconds": 0.0,
+        "obliquityDeg": 0.0,
+        "axisAzimuthDeg": 0.0,
+        "initialAngleDeg": 0.0,
+        "tidallyLocked": true
+      },
+      "orbit": {
+        "inclinationDeg": 28.180429458618164,
+        "eccentricity": 9.999999747378752e-05,
+        "semiMajorAxis": 294619008.0,
+        "lanDeg": 169.30055236816406,
+        "aopDeg": 320.2356262207031,
+        "meanAnomalyDeg": 0.0,
+        "epoch": 0.0
+      },
+      "sceneMass": 6.174489976745409e+20
+    },
+    {
+      "id": "dione",
+      "name": "Dione",
+      "parent": "saturn",
+      "nu": 73113751805.1975,
+      "radius": 561500.0,
+      "rotation": {
+        "periodSeconds": 0.0,
+        "obliquityDeg": 0.0,
+        "axisAzimuthDeg": 0.0,
+        "initialAngleDeg": 0.0,
+        "tidallyLocked": true
+      },
+      "orbit": {
+        "inclinationDeg": 28.065277099609375,
+        "eccentricity": 0.002199999988079071,
+        "semiMajorAxis": 377396000.0,
+        "lanDeg": 169.50448608398438,
+        "aopDeg": 320.0557861328125,
+        "meanAnomalyDeg": 0.0,
+        "epoch": 0.0
+      },
+      "sceneMass": 1.0954519845556464e+21
+    },
+    {
+      "id": "rhea",
+      "name": "Rhea",
+      "parent": "saturn",
+      "nu": 153943929953.47025,
+      "radius": 763800.0,
+      "rotation": {
+        "periodSeconds": 0.0,
+        "obliquityDeg": 0.0,
+        "axisAzimuthDeg": 0.0,
+        "initialAngleDeg": 0.0,
+        "tidallyLocked": true
+      },
+      "orbit": {
+        "inclinationDeg": 28.3035888671875,
+        "eccentricity": 0.0010000000474974513,
+        "semiMajorAxis": 527108000.0,
+        "lanDeg": 169.084716796875,
+        "aopDeg": 320.42578125,
+        "meanAnomalyDeg": 0.0,
+        "epoch": 0.0
+      },
+      "sceneMass": 2.306517986207846e+21
+    },
+    {
+      "id": "titan",
+      "name": "Titan",
+      "parent": "saturn",
+      "nu": 8978268283496.863,
+      "radius": 2574700.0,
+      "rotation": {
+        "periodSeconds": 0.0,
+        "obliquityDeg": 0.0,
+        "axisAzimuthDeg": 0.0,
+        "initialAngleDeg": 0.0,
+        "tidallyLocked": true
+      },
+      "orbit": {
+        "inclinationDeg": 28.3035888671875,
+        "eccentricity": 0.02879999950528145,
+        "semiMajorAxis": 1221869952.0,
+        "lanDeg": 169.084716796875,
+        "aopDeg": 320.42578125,
+        "meanAnomalyDeg": 0.0,
+        "epoch": 0.0
+      },
+      "sceneMass": 1.3451999885376539e+23
+    },
+    {
+      "id": "iapetus",
+      "name": "Iapetus",
+      "parent": "saturn",
+      "nu": 120513493734.895,
+      "radius": 734600.0,
+      "rotation": {
+        "periodSeconds": 0.0,
+        "obliquityDeg": 0.0,
+        "axisAzimuthDeg": 0.0,
+        "initialAngleDeg": 0.0,
+        "tidallyLocked": true
+      },
+      "orbit": {
+        "inclinationDeg": 34.17056655883789,
+        "eccentricity": 0.028599999845027924,
+        "semiMajorAxis": 3560819968.0,
+        "lanDeg": 160.8662109375,
+        "aopDeg": 327.46527099609375,
+        "meanAnomalyDeg": 0.0,
+        "epoch": 0.0
+      },
+      "sceneMass": 1.805634954001094e+21
+    },
+    {
+      "id": "uranus",
+      "name": "Uranus",
+      "parent": "sun",
+      "nu": 5793959793466459.0,
+      "radius": 25362000.0,
+      "rotation": {
+        "periodSeconds": 62064.0,
+        "obliquityDeg": 97.77,
+        "axisAzimuthDeg": 0.0,
+        "initialAngleDeg": 0.0,
+        "tidallyLocked": false
+      },
+      "orbit": {
+        "inclinationDeg": 0.7726378440856934,
+        "eccentricity": 0.0472574383020401,
+        "semiMajorAxis": 2870658203648.0,
+        "lanDeg": 74.01692199707031,
+        "aopDeg": 96.9373550415039,
+        "meanAnomalyDeg": 0.0,
+        "epoch": -1048438016.0
+      },
+      "sceneMass": 8.680999945262364e+25
+    },
+    {
+      "id": "miranda",
+      "name": "Miranda",
+      "parent": "uranus",
+      "nu": 4398363637.855192,
+      "radius": 235800.0,
+      "rotation": {
+        "periodSeconds": 0.0,
+        "obliquityDeg": 0.0,
+        "axisAzimuthDeg": 0.0,
+        "initialAngleDeg": 0.0,
+        "tidallyLocked": true
+      },
+      "orbit": {
+        "inclinationDeg": 86.60649871826172,
+        "eccentricity": 0.0013000000035390258,
+        "semiMajorAxis": 129900000.0,
+        "lanDeg": 348.0291748046875,
+        "aopDeg": 5.02184534072876,
+        "meanAnomalyDeg": 0.0,
+        "epoch": 0.0
+      },
+      "sceneMass": 6.5899999068894e+19
+    },
+    {
+      "id": "ariel",
+      "name": "Ariel",
+      "parent": "uranus",
+      "nu": 83495496528.48825,
+      "radius": 578900.0,
+      "rotation": {
+        "periodSeconds": 0.0,
+        "obliquityDeg": 0.0,
+        "axisAzimuthDeg": 0.0,
+        "initialAngleDeg": 0.0,
+        "tidallyLocked": true
+      },
+      "orbit": {
+        "inclinationDeg": 82.32311248779297,
+        "eccentricity": 0.0012000000569969416,
+        "semiMajorAxis": 190900000.0,
+        "lanDeg": 347.64971923828125,
+        "aopDeg": 5.058472156524658,
+        "meanAnomalyDeg": 0.0,
+        "epoch": 0.0
+      },
+      "sceneMass": 1.2510000528667915e+21
+    },
+    {
+      "id": "umbriel",
+      "name": "Umbriel",
+      "parent": "uranus",
+      "nu": 85097326118.34741,
+      "radius": 584700.0,
+      "rotation": {
+        "periodSeconds": 0.0,
+        "obliquityDeg": 0.0,
+        "axisAzimuthDeg": 0.0,
+        "initialAngleDeg": 0.0,
+        "tidallyLocked": true
+      },
+      "orbit": {
+        "inclinationDeg": 82.41275787353516,
+        "eccentricity": 0.0038999998942017555,
+        "semiMajorAxis": 266000000.0,
+        "lanDeg": 347.65771484375,
+        "aopDeg": 5.057408809661865,
+        "meanAnomalyDeg": 0.0,
+        "epoch": 0.0
+      },
+      "sceneMass": 1.2750000167560256e+21
+    },
+    {
+      "id": "titania",
+      "name": "Titania",
+      "parent": "uranus",
+      "nu": 226926209244.4212,
+      "radius": 788400.0,
+      "rotation": {
+        "periodSeconds": 0.0,
+        "obliquityDeg": 0.0,
+        "axisAzimuthDeg": 0.0,
+        "initialAngleDeg": 0.0,
+        "tidallyLocked": true
+      },
+      "orbit": {
+        "inclinationDeg": 82.36295318603516,
+        "eccentricity": 0.0010999999940395355,
+        "semiMajorAxis": 436300000.0,
+        "lanDeg": 347.65325927734375,
+        "aopDeg": 5.057997703552246,
+        "meanAnomalyDeg": 0.0,
+        "epoch": 0.0
+      },
+      "sceneMass": 3.400000138507727e+21
+    },
+    {
+      "id": "oberon",
+      "name": "Oberon",
+      "parent": "uranus",
+      "nu": 205301462815.11176,
+      "radius": 761400.0,
+      "rotation": {
+        "periodSeconds": 0.0,
+        "obliquityDeg": 0.0,
+        "axisAzimuthDeg": 0.0,
+        "initialAngleDeg": 0.0,
+        "tidallyLocked": true
+      },
+      "orbit": {
+        "inclinationDeg": 82.35299682617188,
+        "eccentricity": 0.00139999995008111,
+        "semiMajorAxis": 583500032.0,
+        "lanDeg": 347.6523742675781,
+        "aopDeg": 5.058116436004639,
+        "meanAnomalyDeg": 0.0,
+        "epoch": 0.0
+      },
+      "sceneMass": 3.075999922315625e+21
+    },
+    {
+      "id": "neptune",
+      "name": "Neptune",
+      "parent": "sun",
+      "nu": 6835351038091636.0,
+      "radius": 24622000.0,
+      "rotation": {
+        "periodSeconds": 57996.0,
+        "obliquityDeg": 28.32,
+        "axisAzimuthDeg": 0.0,
+        "initialAngleDeg": 0.0,
+        "tidallyLocked": false
+      },
+      "orbit": {
+        "inclinationDeg": 1.7700434923171997,
+        "eccentricity": 0.00859048031270504,
+        "semiMajorAxis": 4498396282880.0,
+        "lanDeg": 131.7842254638672,
+        "aopDeg": 273.1805419921875,
+        "meanAnomalyDeg": 0.0,
+        "epoch": 1446670592.0
+      },
+      "sceneMass": 1.0241300268330216e+26
+    },
+    {
+      "id": "triton",
+      "name": "Triton",
+      "parent": "neptune",
+      "nu": 1427632740138.0806,
+      "radius": 1353400.0,
+      "rotation": {
+        "periodSeconds": 0.0,
+        "obliquityDeg": 0.0,
+        "axisAzimuthDeg": 0.0,
+        "initialAngleDeg": 0.0,
+        "tidallyLocked": true
+      },
+      "orbit": {
+        "inclinationDeg": 168.4322967529297,
+        "eccentricity": 1.5999999959603883e-05,
+        "semiMajorAxis": 354759008.0,
+        "lanDeg": 283.584228515625,
+        "aopDeg": 256.5529479980469,
+        "meanAnomalyDeg": 0.0,
+        "epoch": 0.0
+      },
+      "sceneMass": 2.13899995525835e+22
+    },
+    {
+      "id": "pluto-charon",
+      "name": "Pluto-Charon",
+      "parent": "sun",
+      "nu": 975515704356.4878,
+      "virtual": true,
+      "radius": 0,
+      "orbit": {
+        "inclinationDeg": 17.140012741088867,
+        "eccentricity": 0.24882729351520538,
+        "semiMajorAxis": 5906440388608.0,
+        "lanDeg": 110.30393981933594,
+        "aopDeg": 113.76497650146484,
+        "meanAnomalyDeg": 0.0,
+        "epoch": -323166336.0
+      },
+      "sceneMass": 1.4616000245066717e+22,
+      "system": {
+        "kind": "barycentric",
+        "members": [
+          "pluto",
+          "charon"
+        ]
+      }
+    },
+    {
+      "id": "pluto",
+      "name": "Pluto",
+      "parent": "pluto-charon",
+      "nu": 869661304375.9714,
+      "radius": 1188300.0,
+      "rotation": {
+        "periodSeconds": 551856.7,
+        "obliquityDeg": 0.0,
+        "axisAzimuthDeg": 0.0,
+        "initialAngleDeg": 0.0,
+        "tidallyLocked": true
+      },
+      "orbit": {
+        "inclinationDeg": 112.81356811523438,
+        "eccentricity": 0.0,
+        "semiMajorAxis": 2126386.0,
+        "lanDeg": 227.3468017578125,
+        "aopDeg": 17.11265754699707,
+        "meanAnomalyDeg": 0.0,
+        "epoch": 0.0,
+        "orbitNu": 1246402219.6097908
+      },
+      "sceneMass": 1.3030000215392948e+22
+    },
+    {
+      "id": "charon",
+      "name": "Charon",
+      "parent": "pluto-charon",
+      "nu": 105854399980.51636,
+      "radius": 606000.0,
+      "rotation": {
+        "periodSeconds": 0.0,
+        "obliquityDeg": 0.0,
+        "axisAzimuthDeg": 0.0,
+        "initialAngleDeg": 0.0,
+        "tidallyLocked": true
+      },
+      "orbit": {
+        "inclinationDeg": 112.81356811523438,
+        "eccentricity": 0.0,
+        "semiMajorAxis": 17469614.0,
+        "lanDeg": 227.3468017578125,
+        "aopDeg": 197.11265563964844,
+        "meanAnomalyDeg": 0.0,
+        "epoch": 0.0,
+        "orbitNu": 691165272699.2832
+      },
+      "sceneMass": 1.5860000296737691e+21
+    }
+  ]
+}

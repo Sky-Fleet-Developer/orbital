@@ -16,9 +16,9 @@ namespace Orbital.Core.Bodies
         public double axialTiltDegrees;
         [Tooltip("Direction of the tilt around the orbit normal, degrees from the periapsis direction.")]
         public double axisAzimuthDegrees;
-        [Tooltip("Rotation angle at world time 0, degrees. Ignored for tidally locked bodies.")]
+        [Tooltip("Rotation angle at the world zero epoch (world file epochZero), degrees. Ignored for tidally locked bodies.")]
         public double initialAngleDegrees;
-        [Tooltip("Rotation rate equals the mean motion of the orbit around the parent; the prime meridian faces the parent at time 0.")]
+        [Tooltip("Rotation rate equals the mean motion of the orbit around the parent; the prime meridian faces the parent at the world zero epoch.")]
         public bool tidallyLocked;
     }
 }

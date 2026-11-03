@@ -25,14 +25,15 @@ namespace Orbital.Core.Flight
         public Vec3 EquatorX;
         public Vec3 EquatorY;
         public double Omega;   // rad/s about Axis
-        public double Phase0;  // rotation angle at time 0
+        public double Phase0;  // rotation angle at time EpochZero
+        public double EpochZero; // world zero epoch (world file epochZero, stage 2c.W2), as the server Body.RotationAngle
     }
 
     /// <summary>Contact queries. Every function takes the SurfaceData by reference and has no side effects.</summary>
     public static class Surface
     {
-        /// <summary>Rotation angle of the planet at time t, radians (reduced modulo 2 pi like the server).</summary>
-        public static double Angle(in SurfaceData s, double time) => s.Phase0 + (s.Omega * time) % (2.0 * Math.PI);
+        /// <summary>Rotation angle of the planet at time t, radians: Phase0 + (Omega * (t - EpochZero)) mod 2 pi, the formula of the server.</summary>
+        public static double Angle(in SurfaceData s, double time) => s.Phase0 + (s.Omega * (time - s.EpochZero)) % (2.0 * Math.PI);
 
         /// <summary>Height above the ground of the point (inertial frame).</summary>
         public static double Altitude(in SurfaceData s, Vec3 pos)

@@ -63,7 +63,7 @@ namespace Orbital.Core.Flight
                     DumpStart = 0.8, DumpStop = 0.2, DumpTorqueFraction = 0.5,
                 },
                 Sas = SasConfig.Default(),
-                ThrustOffset = new Vec3(0.05, 0, 0),
+                ThrustOffset = new Vec3(0.005, 0, 0), // 5 mm (stage 2b.2, user decision): 3 kN*m at full thrust, the default RCS tank holds it for about 4 min
                 CgHeight = 8.0,
             };
         }

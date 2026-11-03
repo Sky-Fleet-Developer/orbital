@@ -72,15 +72,16 @@ namespace Orbital.View.Map
             {
                 _settings.bodyTable.TryGet(named.name, out record);
             }
-            PhysicalFacet physical = record?.GetFacet<PhysicalFacet>();
+            // the radius is model data: the body's own (world file, stage 2c.W2), not the table row
+            double radius = _body.Radius;
             AppearanceFacet appearance = record?.GetFacet<AppearanceFacet>();
             SurfaceFacet surface = record?.GetFacet<SurfaceFacet>();
             AtmosphereFacet atmosphere = record?.GetFacet<AtmosphereFacet>();
 
             float diameter = _settings.fallbackDiameter;
-            if (physical != null && physical.radiusMeters > 0)
+            if (radius > 0)
             {
-                diameter = (float) (physical.radiusMeters * 2.0 * _scaleSettings.scale)
+                diameter = (float) (radius * 2.0 * _scaleSettings.scale)
                            * Mathf.Max(0f, _scaleSettings.bodySizeMultiplier) * (appearance?.sizeMultiplier ?? 1f);
             }
             planet.Transform.localScale = Vector3.one * diameter;

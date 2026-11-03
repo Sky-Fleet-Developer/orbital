@@ -201,7 +201,7 @@ namespace Orbital.Tests
 
         private static OrbitFrame Frame(Vec3 forward, Vec3 normal, Vec3 right, double meanMotion = 0, Vec3 pos0 = default) => new OrbitFrame
         {
-            HasParent = true, Forward = forward, Normal = normal, Right = right, MeanMotion = meanMotion, PositionAtTimeZero = pos0,
+            HasParent = true, Forward = forward, Normal = normal, Right = right, MeanMotion = meanMotion, PositionAtEpochZero = pos0,
         };
 
         [Test]

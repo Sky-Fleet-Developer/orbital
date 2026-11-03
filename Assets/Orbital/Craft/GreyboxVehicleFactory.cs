@@ -130,6 +130,12 @@ namespace Orbital.Craft
         private readonly Dictionary<string, Material> _materials = new Dictionary<string, Material>();
         private Material _template;
 
+        /// <param name="template">Material to copy and tint; null = the default material of a primitive (right in the Editor, the built-in Standard shader in a URP player).</param>
+        public GreyboxMaterials(Material template = null)
+        {
+            _template = template;
+        }
+
         public Material Get(string key)
         {
             if (_materials.TryGetValue(key, out Material material)) return material;

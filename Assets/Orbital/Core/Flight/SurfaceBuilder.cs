@@ -20,7 +20,7 @@ namespace Orbital.Core.Flight
         public Vec3 Forward;
         public Vec3 Right;
         public double MeanMotion;         // rad/s
-        public Vec3 PositionAtTimeZero;   // relative to the parent
+        public Vec3 PositionAtEpochZero;  // relative to the parent, at the world zero epoch
     }
 
     /// <summary>
@@ -29,9 +29,11 @@ namespace Orbital.Core.Flight
     /// </summary>
     public static class SurfaceBuilder
     {
-        public static SurfaceData Build(double radius, in RotationParams rotation, in OrbitFrame orbit)
+        /// <param name="epochZero">World zero epoch: <see cref="SurfaceData.Phase0"/> is the angle at this time (the tidal lock phase too).</param>
+        public static SurfaceData Build(double radius, in RotationParams rotation, in OrbitFrame orbit, double epochZero = 0.0)
         {
             SurfaceData s = default;
+            s.EpochZero = epochZero;
             s.Kind = SurfaceKind.Sphere;
             s.Radius = radius;
             if (rotation.PeriodSeconds == 0 && !rotation.TidallyLocked)
@@ -64,7 +66,7 @@ namespace Orbital.Core.Flight
             s.Phase0 = rotation.InitialAngleDegrees * Math.PI / 180.0;
             if (locked)
             {
-                Vec3 toParent = -orbit.PositionAtTimeZero;
+                Vec3 toParent = -orbit.PositionAtEpochZero;
                 s.Phase0 = Math.Atan2(Vec3.Dot(toParent, s.EquatorY), Vec3.Dot(toParent, s.EquatorX));
             }
             return s;
