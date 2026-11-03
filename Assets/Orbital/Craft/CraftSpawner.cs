@@ -10,6 +10,7 @@ using Orbital.Core.Flight;
 using Orbital.Core.Handles;
 using Orbital.Core.Net;
 using Orbital.Core.TrajectorySystem;
+using Orbital.Core.Worlds;
 using Orbital.Technology;
 using Orbital.Technology.Components;
 using UnityEngine;
@@ -114,6 +115,11 @@ namespace Orbital.Craft
         private double _spawnLatitude;
         private double _spawnLongitude;
         private double _spawnAltitude;
+        // stage 3.4: the world's body table (null for the scene world) and the body the craft starts on
+        private BodyFrameTable _frames;
+        private int _spawnParent = -1;
+        private string _spawnBodyId;
+        private int _presentedBody = -1; // the body the presenter is configured for
         private CraftSimulation _simulation;
         private CraftPresenter _presenter;
         private CraftInput _input;
@@ -148,11 +154,14 @@ namespace Orbital.Craft
             }
             view.layer = Mathf.Clamp(view.layer, 0, 31);
             LoadConfig();
+            ReadAutomationEnv();
             if (!Setup()) return;
             _input = new CraftInput();
             if (EffectiveNetMode() == CraftNetMode.Online) StartOnline();
             else Respawn();
-            _presenter = new CraftPresenter(view, vehiclePrefab, greyboxMaterialTemplate, _surface, (float) _flight.CgHeight, PadLatitude(), PadLongitude());
+            _presenter = new CraftPresenter(view, vehiclePrefab, greyboxMaterialTemplate, _surface, (float) _flight.CgHeight, PadLatitude(), PadLongitude(),
+                _frames, _spawnParent);
+            _presentedBody = _spawnParent;
             _presenter.SetFlightView(true);
             if (Online) _ghosts = new GhostPresenter(_presenter);
             GameObject hudObject = new GameObject("[CraftHud]");
@@ -202,10 +211,14 @@ namespace Orbital.Craft
             _simulation.Clock.Dt = TimeProvider.StepSeconds;
             while (_nextStep < target)
             {
+                double stepTime = TimeProvider.TimeOfStep(_nextStep);
+                if (_autoBurn > 0) ApplyAutoBurnToKeys(ref keys, stepTime);
+                int parentBefore = _simulation.Parent;
                 _simulation.SetKeys(keys);
-                _simulation.Clock.Time = TimeProvider.TimeOfStep(_nextStep);
+                _simulation.Clock.Time = stepTime;
                 _simulation.Step();
                 _nextStep++;
+                LogSoiChange(parentBefore, _simulation.Parent, TimeProvider.TimeOfStep(_nextStep));
             }
             _simulation.Clock.Time = TimeProvider.TimeOfStep(_nextStep);
         }
@@ -220,15 +233,24 @@ namespace Orbital.Craft
                 {
                     FlightState shown = state;
                     shown.Position = state.Position + _net.Link.View.Offset; // a soft correction is caught up by the view, not by a jump
+                    PresentBody(_net.Link.Parent);
                     _presenter.Present(shown, CraftTime);
                     _net.AdvanceOthers(CraftTime);
-                    _ghosts?.Present(shown.Position, _net.OwnParent, _net.Others);
-                    _ghosts?.PresentWrecks(shown.Position, _net.OwnParent, _net.Wrecks, _surface, CraftTime);
+                    _ghosts?.Present(shown.Position, _net.Link.Parent, _net.Link.ParentId, _net.Others, _frames, CraftTime);
+                    _ghosts?.PresentWrecks(shown.Position, _net.Link.ParentId, _net.Wrecks, _net.Link.Params.Surface, CraftTime);
                 }
                 else state = default;
             }
-            else _presenter.Present(state, CraftTime);
-            if (showHud && (!Online || _net.Link.HasCraft)) _navBall.Update(state, _surface, _navOrbit);
+            else
+            {
+                PresentBody(_simulation.Parent);
+                _presenter.Present(state, CraftTime);
+            }
+            if (showHud && (!Online || _net.Link.HasCraft))
+            {
+                SurfaceData surface = Online ? _net.Link.Params.Surface : _simulation.Params.Surface;
+                _navBall.Update(state, surface, _navOrbit);
+            }
             MeasureRate();
             if (showHud && Time.unscaledTime >= _nextHudTime)
             {
@@ -300,7 +322,8 @@ namespace Orbital.Craft
             string bodyKey = bodyName;
             double latitude = latitudeDegrees, longitude = longitudeDegrees, altitude = altitudeMeters;
             bool orbit = spawnKind == CraftSpawnKind.CircularOrbit;
-            if (spawnKind == CraftSpawnKind.StartPoint)
+            bool bodyOverride = !string.IsNullOrWhiteSpace(_spawnBodyOverride); // ORBITAL_SPAWN_BODY, offline only (ReadAutomationEnv)
+            if (spawnKind == CraftSpawnKind.StartPoint && !bodyOverride)
             {
                 StartPointDef point = _config.FindStartPoint(startPointId);
                 if (point == null)
@@ -318,29 +341,69 @@ namespace Orbital.Craft
                 longitude = point.Longitude;
                 altitude = 0;
             }
+            else if (bodyOverride)
+            {
+                bodyKey = _spawnBodyOverride; // a point of the chosen body's ground (the surface kind), coordinates from the inspector fields
+                orbit = false;
+            }
 
-            StaticBody found = FindBody(bodyKey);
-            if (found == null)
-            {
-                Debug.LogError($"CraftSpawner: no body '{bodyKey}' among the bodies of the world", this);
-                return false;
-            }
-            IStaticBody body = found;
-            if (body.Radius <= 0)
-            {
-                Debug.LogError($"CraftSpawner: body '{found.name}' has no radius (no radius in the world file, or no PhysicalFacet in the body table for the source Scene), it has no surface", this);
-                return false;
-            }
-            _bodyTitle = BodyTable.KeyOf(found.name);
-            _surface = SurfaceBuilder.Build(body.Radius, ReadRotation(found), ReadOrbitFrame(body, _world.EpochZero), _world.EpochZero);
             _flight = _config.ResolveFlight(craftId);
-            _flightParams = new FlightParams
+            _frames = _world.Frames;
+            if (_frames != null)
             {
-                Craft = _flight,
-                Surface = _surface,
-                Nu = body.GravParameter,
-                MaxLandingSpeed = maxLandingSpeed,
-            };
+                // stage 3.4: the body comes from the world's table (the same numbers the server reads from world.json), not from the scene
+                string id = WorldFileLoader.IdOf(bodyKey);
+                int index = _frames.IndexOf(id);
+                if (index < 0)
+                {
+                    Debug.LogError($"CraftSpawner: no body '{bodyKey}' (id '{id}') in the body table of the world", this);
+                    return false;
+                }
+                ref readonly BodyFrame b = ref _frames[index];
+                if (b.Virtual || b.Radius <= 0)
+                {
+                    Debug.LogError($"CraftSpawner: body '{bodyKey}' has no surface (it is virtual or has no radius)", this);
+                    return false;
+                }
+                _spawnParent = index;
+                _spawnBodyId = id;
+                _bodyTitle = BodyNameOf(id);
+                _surface = b.Surface;
+                _flightParams = new FlightParams
+                {
+                    Craft = _flight,
+                    Surface = _surface,
+                    Nu = b.Nu,
+                    MaxLandingSpeed = maxLandingSpeed,
+                };
+            }
+            else
+            {
+                // the scene world (no shared file): the old path through the scene's StaticBody
+                StaticBody found = FindBody(bodyKey);
+                if (found == null)
+                {
+                    Debug.LogError($"CraftSpawner: no body '{bodyKey}' among the bodies of the world", this);
+                    return false;
+                }
+                IStaticBody body = found;
+                if (body.Radius <= 0)
+                {
+                    Debug.LogError($"CraftSpawner: body '{found.name}' has no radius (no radius in the world file, or no PhysicalFacet in the body table for the source Scene), it has no surface", this);
+                    return false;
+                }
+                _spawnParent = -1;
+                _spawnBodyId = null;
+                _bodyTitle = BodyTable.KeyOf(found.name);
+                _surface = SurfaceBuilder.Build(body.Radius, ReadRotation(found), ReadOrbitFrame(body, _world.EpochZero), _world.EpochZero);
+                _flightParams = new FlightParams
+                {
+                    Craft = _flight,
+                    Surface = _surface,
+                    Nu = body.GravParameter,
+                    MaxLandingSpeed = maxLandingSpeed,
+                };
+            }
             _isOrbit = orbit;
             _spawnLatitude = latitude * DegToRad;
             _spawnLongitude = longitude * DegToRad;
@@ -349,8 +412,29 @@ namespace Orbital.Craft
             TimeProvider.SetMaxStepsPerTick(maxStepsPerTick);
             _nextStep = TimeProvider.StepCount;
             _simulation = new CraftSimulation(TimeProvider.TimeOfStep(_nextStep), TimeProvider.StepSeconds, groundSupport, RecorderConfig.Default());
+            _simulation.Clock.Frames = _frames; // stage 3.4: the sphere of influence rule of the offline flight
             return true;
         }
+
+        private string BodyNameOf(string id)
+        {
+            WorldFileDef definition = _world.Definition;
+            if (definition?.Bodies != null)
+            {
+                foreach (WorldBodyDef body in definition.Bodies)
+                {
+                    if (body != null && body.Id == id && !string.IsNullOrEmpty(body.Name)) return body.Name;
+                }
+            }
+            return id;
+        }
+
+        private string TitleOf(int parent)
+        {
+            return _frames != null && parent >= 0 ? BodyNameOf(_frames.IdOf(parent)) : _bodyTitle;
+        }
+
+        private int CurrentParent => Online ? _net.Link.Parent : _simulation.Parent;
 
         // The same body can appear twice in the scene tree: as the central mass of a branch and as the branch itself (which has the orbit around
         // the parent). The branch is the body of the world, so a satellite with a parent wins; the root (no parent) comes second.
@@ -426,7 +510,7 @@ namespace Orbital.Craft
             double time = CraftTime;
             _simulation.Clock.Time = time;
             FlightState state = MakeInitialState(time);
-            _simulation.CreatePlayerCraft(state, _flightParams, callsign);
+            _simulation.CreatePlayerCraft(state, _flightParams, callsign, _spawnParent);
             if (_isOrbit && _presenter == null)
             {
                 // the pad stays on the ground below the first position
@@ -449,10 +533,13 @@ namespace Orbital.Craft
         public const string EnvAutoSpawn = "ORBITAL_AUTOSPAWN";
         /// <summary>Environment variable: seconds of full thrust with SAS right after the spawn, then the engine is cut (automated player runs).</summary>
         public const string EnvAutoBurn = "ORBITAL_AUTOBURN";
+        /// <summary>Environment variable (stage 3.4): offline spawn on this body (e.g. Phobos), forced to the Surface kind with the inspector coordinates.</summary>
+        public const string EnvSpawnBody = "ORBITAL_SPAWN_BODY";
         private bool _autoSpawn;
         private bool _autoSpawnSent;
         private double _autoBurn;
         private double _autoBurnStart = double.NaN;
+        private string _spawnBodyOverride;
 
         private CraftNetMode EffectiveNetMode()
         {
@@ -462,25 +549,38 @@ namespace Orbital.Craft
             return netMode;
         }
 
+        /// <summary>Automated player runs without touching the scene (ORBITAL_AUTOSPAWN, ORBITAL_AUTOBURN, ORBITAL_SPAWN_BODY).</summary>
+        private void ReadAutomationEnv()
+        {
+            _autoSpawn = Environment.GetEnvironmentVariable(EnvAutoSpawn) == "1";
+            double.TryParse(Environment.GetEnvironmentVariable(EnvAutoBurn), NumberStyles.Float, CultureInfo.InvariantCulture, out _autoBurn);
+            string spawnBody = Environment.GetEnvironmentVariable(EnvSpawnBody);
+            if (!string.IsNullOrWhiteSpace(spawnBody) && EffectiveNetMode() != CraftNetMode.Online)
+            {
+                _spawnBodyOverride = spawnBody.Trim();
+                Debug.Log($"CraftSpawner: ORBITAL_SPAWN_BODY: offline spawn on '{_spawnBodyOverride}'", this);
+            }
+        }
+
         private void StartOnline()
         {
             ClientSettings settings = ClientSettingsStore.Load();
             if (string.IsNullOrWhiteSpace(Environment.GetEnvironmentVariable(ClientSettings.EnvUrl)) && !string.IsNullOrWhiteSpace(serverUrl))
                 settings.ServerUrl = serverUrl.Trim();
-            _net = new CraftNetLink(settings, callsign, OnlineParams);
+            _net = new CraftNetLink(settings, callsign, OnlineParams, _frames);
             _net.Link.HardStep = TimeProvider.StepSeconds;
             Application.runInBackground = true; // the server time goes on while the window is not focused
             TimeProvider.SetExternalTime(true);
-            _autoSpawn = Environment.GetEnvironmentVariable(EnvAutoSpawn) == "1";
-            double.TryParse(Environment.GetEnvironmentVariable(EnvAutoBurn), NumberStyles.Float, CultureInfo.InvariantCulture, out _autoBurn);
             _net.Connect();
             Debug.Log($"CraftSpawner: online, server {settings.ServerUrl}, callsign {_net.Session.Callsign}", this);
         }
 
-        /// <summary>Flight parameters of a server craft: the body of the start point (as offline) with the craft config from the server snapshot.</summary>
+        /// <summary>Flight parameters of a server craft: the body by the server's ParentId from the world's table (stage 3.4), the craft config from
+        /// the server snapshot; an unknown id falls back to the body of the start point as before.</summary>
         private FlightParams OnlineParams(CraftSnapshotDto snapshot)
         {
             FlightParams p = _flightParams;
+            if (_frames != null) _frames.ApplyTo(snapshot.ParentId, ref p);
             p.Craft = StateMapper.FlightConfigOf(snapshot, _flight);
             return p;
         }
@@ -499,12 +599,44 @@ namespace Orbital.Craft
         }
 
         // test hook (ORBITAL_AUTOBURN): full thrust with SAS for the given seconds after the first step, then the engine cut, SAS stays on
-        private void AutoBurn(ref ControlInput c, double time)
+        private bool AutoBurnActive(double time)
         {
             if (double.IsNaN(_autoBurnStart)) _autoBurnStart = time;
+            return time - _autoBurnStart < _autoBurn;
+        }
+
+        private void AutoBurn(ref ControlInput c, double time)
+        {
             c.SasOn = true;
-            if (time - _autoBurnStart < _autoBurn) c.ThrottleFull = true;
+            if (AutoBurnActive(time)) c.ThrottleFull = true;
             else c.ThrottleZero = true;
+        }
+
+        // the same hook offline: X = full throttle, T = the SAS switch (its front edge turns the SAS on at the first step), Z = cut
+        private void ApplyAutoBurnToKeys(ref KeyState keys, double time)
+        {
+            keys.T = true;
+            if (AutoBurnActive(time)) keys.X = true;
+            else keys.Z = true;
+        }
+
+        /// <summary>One log line on every sphere of influence change of the own craft (stage 3.4, the smoke scenario greps for it).</summary>
+        private void LogSoiChange(int before, int after, double time)
+        {
+            if (_frames == null || before == after) return;
+            string from = before >= 0 ? _frames.IdOf(before) : "-";
+            string to = after >= 0 ? _frames.IdOf(after) : "-";
+            Debug.Log($"SOI: {from} -> {to} at t={time.ToString("F2", CultureInfo.InvariantCulture)}", this);
+            _bodyTitle = TitleOf(after);
+        }
+
+        /// <summary>Reconfigures the presenter when the craft moved to another body (stage 3.4): the markers only on the start body.</summary>
+        private void PresentBody(int parent)
+        {
+            if (_frames == null || parent < 0 || parent == _presentedBody) return;
+            _presenter.SetBody(parent, _frames.IdOf(parent) == _spawnBodyId);
+            _presentedBody = parent;
+            _bodyTitle = TitleOf(parent);
         }
 
         private void OnlineFixedUpdate()
@@ -535,8 +667,10 @@ namespace Orbital.Craft
             {
                 _lastControl = InputMapper.Map(keys, ref _latch);
                 if (_autoBurn > 0) AutoBurn(ref _lastControl, link.Time);
+                int parentBefore = link.Parent;
                 link.Step(_lastControl, dt, real);
-                if (groundSupport) LandedSupport.HoldUpright(ref link.State, _surface);
+                LogSoiChange(parentBefore, link.Parent, link.Time);
+                if (groundSupport) LandedSupport.HoldUpright(ref link.State, link.Params.Surface);
             }
             _net.Update(real); // send what the steps recorded
         }
@@ -564,16 +698,23 @@ namespace Orbital.Craft
 
         private void UpdateHud(in FlightState state)
         {
-            FlightTelemetry t = FlightTelemetry.Compute(state, _flightParams);
+            FlightParams parameters = Online ? _net.Link.Params : _simulation.Params; // the current body, not the start one (stage 3.4)
+            FlightTelemetry t = FlightTelemetry.Compute(state, parameters);
             ControlInput control = Online ? _lastControl : _simulation.Control;
             StepReportComponent report = Online ? default : _simulation.Report;
             ThrustRecorderComponent recorder = _simulation.Recorder;
             CultureInfo c = CultureInfo.InvariantCulture;
             StringBuilder sb = _text;
             sb.Clear();
-            sb.Append(callsign).Append(" @ ").Append(_bodyTitle).Append("    t = ").Append(CraftTime.ToString("F0", c)).Append(" s\n");
+            sb.Append(callsign).Append(" @ ").Append(_bodyTitle);
+            if (_frames != null && CurrentParent >= 0)
+            {
+                double soi = _frames[CurrentParent].SoiRadius;
+                sb.Append("    SOI ").Append(double.IsInfinity(soi) ? "-" : Distance(soi, c));
+            }
+            sb.Append("    t = ").Append(CraftTime.ToString("F0", c)).Append(" s\n");
             sb.Append("Mode: ").Append(ModeName(state.Mode));
-            if (state.Mode == FlightMode.Crashed && !Online) sb.Append("  (impact ").Append(report.LastImpactSpeed.ToString("F1", c)).Append(" m/s, limit ").Append(_flightParams.MaxLandingSpeed.ToString("F1", c)).Append(")");
+            if (state.Mode == FlightMode.Crashed && !Online) sb.Append("  (impact ").Append(report.LastImpactSpeed.ToString("F1", c)).Append(" m/s, limit ").Append(parameters.MaxLandingSpeed.ToString("F1", c)).Append(")");
             sb.Append('\n');
             sb.Append("Altitude: ").Append(Distance(t.Altitude, c)).Append("    Vertical: ").Append(t.VerticalSpeed.ToString("F1", c)).Append(" m/s\n");
             sb.Append("Ground speed: ").Append(t.GroundSpeed.ToString("F1", c)).Append(" m/s  (horizontal ").Append(t.HorizontalSpeed.ToString("F1", c)).Append(")\n");

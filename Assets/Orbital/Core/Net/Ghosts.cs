@@ -226,4 +226,21 @@ namespace Orbital.Core.Net
             else Propagation.Advance(ref State, p, from, to, step);
         }
     }
+
+    /// <summary>Engine-free helpers of the ghost view (stage 3.4).</summary>
+    public static class GhostView
+    {
+        /// <summary>
+        /// Distance between two craft points that may live in different body frames. With a table and both parents known: the distance of the
+        /// global positions at time t. Otherwise, when parentA == parentB (both -1 included): the plain distance |posA - posB|; +infinity
+        /// when the frames differ and cannot be compared.
+        /// </summary>
+        public static double GlobalDistance(BodyFrameTable frames, int parentA, in Vec3 posA, int parentB, in Vec3 posB, double time)
+        {
+            if (frames == null || parentA < 0 || parentB < 0) return parentA == parentB ? Vec3.Length(posA - posB) : double.PositiveInfinity;
+            Vec3 globalA = frames.GlobalPosition(parentA, time, posA);
+            Vec3 globalB = frames.GlobalPosition(parentB, time, posB);
+            return Vec3.Length(globalA - globalB);
+        }
+    }
 }

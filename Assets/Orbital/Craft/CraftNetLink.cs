@@ -16,6 +16,7 @@ namespace Orbital.Craft
     {
         private readonly ClientSettings _settings;
         private readonly Func<CraftSnapshotDto, FlightParams> _paramsOf;
+        private readonly BodyFrameTable _frames;
 
         public readonly NetSession Session;
         public readonly OwnCraftLink Link;
@@ -44,17 +45,19 @@ namespace Orbital.Craft
         /// <summary>Body of the own craft by the last server word (spawn, hello, state).</summary>
         public string OwnParent { get; private set; }
 
-        public CraftNetLink(ClientSettings settings, string callsignFallback, Func<CraftSnapshotDto, FlightParams> paramsOf)
+        /// <param name="frames">The world's body table (stage 3.4): the own craft and every ghost follow their body by the sphere of influence rule; null = one body.</param>
+        public CraftNetLink(ClientSettings settings, string callsignFallback, Func<CraftSnapshotDto, FlightParams> paramsOf, BodyFrameTable frames = null)
         {
             _settings = settings;
             _paramsOf = paramsOf;
+            _frames = frames;
             string callsign = string.IsNullOrWhiteSpace(settings.Callsign) ? callsignFallback : settings.Callsign;
             Session = new NetSession(settings.ServerUrl, callsign)
             {
                 Token = settings.TokenFor(settings.ServerUrl, callsign),
                 AdminSecret = settings.ReadAdminSecret(),
             };
-            Link = new OwnCraftLink(Session);
+            Link = new OwnCraftLink(Session) {Frames = frames};
             Session.Log += line => Debug.Log("[net] " + line);
             Session.TokenChanged += token =>
             {
@@ -168,7 +171,7 @@ namespace Orbital.Craft
             if (s?.CraftId == null) return;
             if (!_others.TryGetValue(s.CraftId, out Other o))
             {
-                o = new Other { Ghost = new Ghost(s.CraftId) };
+                o = new Other {Ghost = new Ghost(s.CraftId) {Frames = _frames}};
                 _others[s.CraftId] = o;
             }
             o.ParentId = s.ParentId;

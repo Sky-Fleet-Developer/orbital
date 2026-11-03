@@ -157,6 +157,14 @@ namespace Orbital.Core.Flight
             }
         }
 
+        /// <summary>Global position of a point given in the frame of body <paramref name="i"/> (stage 3.4): the body's global state plus the local
+        /// offset. All body frames share the world's inertial axes, only the origins differ.</summary>
+        public Vec3 GlobalPosition(int i, double t, in Vec3 localPosition)
+        {
+            GlobalState(i, t, out Vec3 body, out _);
+            return body + localPosition;
+        }
+
         /// <summary>Converts a state from the frame of body <paramref name="from"/> into the frame of body <paramref name="to"/> at time t.</summary>
         public void Convert(int from, int to, double t, ref Vec3 pos, ref Vec3 vel)
         {
@@ -204,6 +212,16 @@ namespace Orbital.Core.Flight
         {
             p.Nu = _bodies[i].Nu;
             p.Surface = _bodies[i].Surface;
+        }
+
+        /// <summary>Applies the gravity and ground of the body with this id (stage 3.4): the same as by index. Returns false and leaves
+        /// <paramref name="p"/> unchanged when the id is unknown.</summary>
+        public bool ApplyTo(string id, ref FlightParams p)
+        {
+            int i = IndexOf(id);
+            if (i < 0) return false;
+            ApplyTo(i, ref p);
+            return true;
         }
 
         public int Depth(int i)

@@ -39,9 +39,10 @@ namespace Orbital.Craft
     public sealed class CraftPresenter : IDisposable
     {
         private const float PlanetShrink = 0.999f; // the sphere is low-polygon: keep it under the exact ground patch
+        private const float BasisSmoothingSeconds = 1.0f; // after a body change the V camera's vertical turns over about this much real time
 
         private readonly CraftViewSettings _settings;
-        private readonly SurfaceData _surface;
+        private SurfaceData _surface;
         private readonly double _padLatitude;
         private readonly double _padLongitude;
         private readonly float _cgHeight;
@@ -50,6 +51,8 @@ namespace Orbital.Craft
         private readonly Transform _craft;
         private readonly Transform _flame;
         private readonly Transform _planet;
+        private readonly BodyFrameTable _frames;
+        private readonly Transform[] _spheres;   // one sphere slot per non-virtual body of the table (stage 3.4), indexed by the body index
         private readonly Camera _camera;
         private readonly Camera _mapCamera;
         private readonly GameObject _patchObject;
@@ -66,8 +69,13 @@ namespace Orbital.Craft
         private float _yaw;
         private float _pitch = 3f;
         private float _distance;
+        private int _parent = -1;           // index of the current body in _frames (-1 without a table)
+        private bool _showStartMarkers = true;
+        private float _far;
         private Vec3 _up = Vec3.UnitY;
         private Vec3 _east = Vec3.UnitX;
+        private Quaternion _basis;          // the smoothed horizon basis (stage 3.4): slerped towards the exact vertical of the current body
+        private bool _basisSet;
         private double _altitude;
         private bool _patchActive = true;
         private bool _markersActive = true;
@@ -83,11 +91,17 @@ namespace Orbital.Craft
         /// <param name="vehiclePrefab">Craft look; null builds the greybox from primitives.</param>
         /// <param name="materialTemplate">Template of the greybox materials; null = the default material of a primitive (Editor only, magenta in a player).</param>
         /// <param name="padLatitude">Where the pad is, radians in the rotating body frame.</param>
-        public CraftPresenter(CraftViewSettings settings, GameObject vehiclePrefab, Material materialTemplate, in SurfaceData surface, float cgHeight, double padLatitude, double padLongitude)
+        /// <param name="frames">The world's body table (stage 3.4): a pre-created sphere per non-virtual body; null = one sphere (the scene world).</param>
+        /// <param name="initialParent">Index of the craft's body in the table.</param>
+        public CraftPresenter(CraftViewSettings settings, GameObject vehiclePrefab, Material materialTemplate, in SurfaceData surface,
+            float cgHeight, double padLatitude, double padLongitude, BodyFrameTable frames = null, int initialParent = -1)
         {
             _settings = settings;
             _materials = new GreyboxMaterials(materialTemplate);
-            _surface = surface;
+            _frames = frames;
+            _parent = frames != null ? initialParent : -1;
+            _surface = frames != null && initialParent >= 0 ? frames[initialParent].Surface : surface;
+            _far = FarOf(_surface.Radius);
             _cgHeight = cgHeight;
             _padLatitude = padLatitude;
             _padLongitude = padLongitude;
@@ -99,13 +113,35 @@ namespace Orbital.Craft
             _craft.SetParent(_root.transform, false);
             _flame = _craft.Find(GreyboxVehicleFactory.FlameName);
 
-            GameObject planet = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-            planet.name = "Planet";
-            RemoveCollider(planet);
-            planet.GetComponent<Renderer>().sharedMaterial = _materials.Get("planet");
-            planet.transform.SetParent(_root.transform, false);
-            planet.transform.localScale = Vector3.one * (float) (2.0 * surface.Radius * PlanetShrink);
-            _planet = planet.transform;
+            if (frames != null)
+            {
+                // stage 3.4: every non-virtual body of the world is one greybox sphere; the current parent is one of them, the others appear
+                // when the near point of their surface is within the camera's far plane (their global positions come from the table)
+                _spheres = new Transform[frames.Count];
+                for (int i = 0; i < frames.Count; i++)
+                {
+                    ref readonly BodyFrame body = ref frames[i];
+                    if (body.Virtual || body.Radius <= 0) continue;
+                    GameObject sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                    sphere.name = "Planet " + frames.IdOf(i);
+                    RemoveCollider(sphere);
+                    sphere.GetComponent<Renderer>().sharedMaterial = _materials.Get("planet");
+                    sphere.transform.SetParent(_root.transform, false);
+                    sphere.transform.localScale = Vector3.one * (float) (2.0 * body.Radius * PlanetShrink);
+                    sphere.SetActive(false);
+                    _spheres[i] = sphere.transform;
+                }
+            }
+            else
+            {
+                GameObject planet = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                planet.name = "Planet";
+                RemoveCollider(planet);
+                planet.GetComponent<Renderer>().sharedMaterial = _materials.Get("planet");
+                planet.transform.SetParent(_root.transform, false);
+                planet.transform.localScale = Vector3.one * (float) (2.0 * surface.Radius * PlanetShrink);
+                _planet = planet.transform;
+            }
 
             int cells = Mathf.Max(2, settings.patchCells);
             int stride = cells + 1;
@@ -173,7 +209,7 @@ namespace Orbital.Craft
             cameraObject.transform.SetParent(_craft, false);
             _camera = cameraObject.AddComponent<Camera>();
             _camera.nearClipPlane = 0.3f;
-            _camera.farClipPlane = Mathf.Max(20000f, (float) (surface.Radius * 3.0));
+            _camera.farClipPlane = _far;
             _camera.fieldOfView = settings.fieldOfView;
             _camera.cullingMask = 1 << settings.layer;
             if (RenderSettings.skybox != null)
@@ -262,29 +298,98 @@ namespace Orbital.Craft
             if (!_flightView) return;
             Vec3 pos = state.Position;
             double r = Vec3.Length(pos);
-            Vec3 up = r > 0 ? pos / r : Vec3.UnitY;
-            Vec3 east = East(up);
+            Vec3 targetUp = r > 0 ? pos / r : Vec3.UnitY;
+            Vec3 targetEast = East(targetUp);
+            UpdateBasis(targetUp, targetEast);
+            Vec3 up = _up;
+            Vec3 east = _east;
             Vec3 north = Vec3.Cross(up, east);
-            _up = up;
-            _east = east;
             _altitude = r - _surface.Radius;
 
             _craft.localPosition = Vector3.zero;
             _craft.localRotation = ToQuaternion(state.Orientation);
             PresentFlame(state);
-            _planet.localPosition = ToVector(pos * -1.0);
 
-            double altitude = r - _surface.Radius;
-            bool patchNeeded = altitude < _settings.patchHalfSize * 3.0;
+            if (_frames != null)
+            {
+                // stage 3.4: the current body's sphere sits exactly at -pos; every other non-virtual body is placed by the difference of the
+                // global positions (floating origin, double precision) and shown while the near point of its surface is within the far plane
+                Vec3 globalPos = _frames.GlobalPosition(_parent, time, pos);
+                float far = _far;
+                for (int i = 0; i < _spheres.Length; i++)
+                {
+                    Transform sphere = _spheres[i];
+                    if (sphere == null) continue;
+                    if (i == _parent)
+                    {
+                        if (!sphere.gameObject.activeSelf) sphere.gameObject.SetActive(true);
+                        sphere.localPosition = ToVector(pos * -1.0);
+                        continue;
+                    }
+                    _frames.GlobalState(i, time, out Vec3 globalBody, out _);
+                    bool show = Vec3.Length(globalBody - globalPos) - _frames[i].Radius < far;
+                    if (sphere.gameObject.activeSelf != show) sphere.gameObject.SetActive(show);
+                    if (show) sphere.localPosition = ToVector(globalBody - globalPos);
+                }
+            }
+            else
+            {
+                _planet.localPosition = ToVector(pos * -1.0);
+            }
+
+            bool patchNeeded = _altitude < _settings.patchHalfSize * 3.0;
             if (patchNeeded != _patchActive)
             {
                 _patchActive = patchNeeded;
                 _patchObject.SetActive(patchNeeded);
             }
-            if (patchNeeded) UpdatePatch(pos, up, east, north);
+            // the patch follows the exact vertical of the body (not the smoothed camera basis)
+            if (patchNeeded) UpdatePatch(pos, targetUp, targetEast, Vec3.Cross(targetUp, targetEast));
 
             PresentMarkers(pos, time);
             PresentCamera(up, east, north);
+        }
+
+        /// <summary>
+        /// The craft moved to another body (stage 3.4): the ground, the sphere radius and the camera far plane take the new body's numbers; the
+        /// start pad and the poles are shown only while the craft is around the body it started on. The view objects and the camera are kept:
+        /// the floating origin stays on the craft, so the picture does not jump.
+        /// </summary>
+        public void SetBody(int parent, bool showStartMarkers)
+        {
+            if (_frames == null || parent < 0 || parent >= _frames.Count) return;
+            _parent = parent;
+            _showStartMarkers = showStartMarkers;
+            _surface = _frames[parent].Surface;
+            _far = FarOf(_surface.Radius);
+            _camera.farClipPlane = _far;
+        }
+
+        private static float FarOf(double radius) => Mathf.Max(20000f, (float) (radius * 3.0));
+
+        // The horizon camera's basis (up = local vertical, east) follows the current body. On a body change the vertical jumps by an arbitrary
+        // angle: the basis is slerped over about BasisSmoothingSeconds of real time, so the V camera turns smoothly; the patch and the markers
+        // keep using the exact vertical. Yaw and pitch of the camera stay where the player put them relative to the basis.
+        private void UpdateBasis(Vec3 targetUp, Vec3 targetEast)
+        {
+            Vector3 up = ToVector(targetUp);
+            Vector3 east = ToVector(targetEast);
+            Vector3 north = Vector3.Cross(up, east);
+            Quaternion target = Quaternion.LookRotation(north, up);
+            if (!_basisSet)
+            {
+                _basis = target;
+                _basisSet = true;
+            }
+            else
+            {
+                float alpha = 1f - Mathf.Exp(-Time.unscaledDeltaTime / BasisSmoothingSeconds);
+                _basis = Quaternion.Slerp(_basis, target, alpha);
+            }
+            Vector3 smoothUp = _basis * Vector3.up;
+            Vector3 smoothEast = _basis * Vector3.left; // LookRotation(north, up) maps right onto -east
+            _up = new Vec3(smoothUp.x, smoothUp.y, smoothUp.z);
+            _east = new Vec3(smoothEast.x, smoothEast.y, smoothEast.z);
         }
 
         private void PresentFlame(in FlightState state)
@@ -326,25 +431,32 @@ namespace Orbital.Craft
 
         private void PresentMarkers(Vec3 pos, double time)
         {
-            Vec3 padPoint = Surface.Point(_surface, _padLatitude, _padLongitude, time);
-            bool near = Vec3.Length(padPoint - pos) < _settings.markersVisibleDistance;
+            // stage 3.4: the pad and the poles belong to the body the craft started on; on any other body they are hidden
+            bool near = _showStartMarkers;
+            if (near)
+            {
+                Vec3 padPoint = Surface.Point(_surface, _padLatitude, _padLongitude, time);
+                near = Vec3.Length(padPoint - pos) < _settings.markersVisibleDistance;
+                if (near)
+                {
+                    Vec3 padUp = Vec3.Normalize(padPoint);
+                    Vec3 padEast = East(padUp);
+                    Vec3 padNorth = Vec3.Cross(padUp, padEast);
+                    _pad.localPosition = ToVector(padPoint + padUp * 0.03 - pos);
+                    _pad.localRotation = Quaternion.FromToRotation(Vector3.up, ToVector(padUp));
+                    for (int k = 0; k < _poles.Length; k++)
+                    {
+                        Vec3 normal = Vec3.Normalize(padUp * _surface.Radius + padEast * _poleOffsets[k].x + padNorth * _poleOffsets[k].y);
+                        Vec3 foot = normal * _surface.Radius;
+                        _poles[k].localPosition = ToVector(foot + normal * 7.0 - pos);
+                        _poles[k].localRotation = Quaternion.FromToRotation(Vector3.up, ToVector(normal));
+                    }
+                }
+            }
             if (near != _markersActive)
             {
                 _markersActive = near;
                 _markers.SetActive(near);
-            }
-            if (!near) return;
-            Vec3 padUp = Vec3.Normalize(padPoint);
-            Vec3 padEast = East(padUp);
-            Vec3 padNorth = Vec3.Cross(padUp, padEast);
-            _pad.localPosition = ToVector(padPoint + padUp * 0.03 - pos);
-            _pad.localRotation = Quaternion.FromToRotation(Vector3.up, ToVector(padUp));
-            for (int k = 0; k < _poles.Length; k++)
-            {
-                Vec3 normal = Vec3.Normalize(padUp * _surface.Radius + padEast * _poleOffsets[k].x + padNorth * _poleOffsets[k].y);
-                Vec3 foot = normal * _surface.Radius;
-                _poles[k].localPosition = ToVector(foot + normal * 7.0 - pos);
-                _poles[k].localRotation = Quaternion.FromToRotation(Vector3.up, ToVector(normal));
             }
         }
 

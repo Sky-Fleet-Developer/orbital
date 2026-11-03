@@ -1,4 +1,5 @@
 using Orbital.Core.Bodies;
+using Orbital.Core.Flight;
 using Orbital.Core.TrajectorySystem;
 using Orbital.Core.Worlds;
 using UnityEngine;
@@ -41,6 +42,13 @@ namespace Orbital.Core
         /// <summary>World zero epoch (stage 2c.W2): orbit epochs and planet rotation count from it, as on the server (world file epochZero, hello_ok.worldEpochZero).
         /// For the scene tree: the time the world was loaded at (the old rule).</summary>
         public double EpochZero { get; private set; }
+
+        /// <summary>The bodies of the shared world as one flat table for the sphere of influence rule (stage 3.1, built here once in stage 3.4);
+        /// null for the scene tree. The flight, the ghosts and the view take the current body from it.</summary>
+        public BodyFrameTable Frames { get; private set; }
+
+        /// <summary>The parsed shared world file (stage 3.4: the names of the bodies for the HUD); null for the scene tree.</summary>
+        public WorldFileDef Definition { get; private set; }
 
         /// <summary>Sets the source of the body data. Call before <see cref="Load"/> where there is no DI container (edit mode).</summary>
         public void SetBodyData(IBodyDataSource data)
@@ -98,6 +106,8 @@ namespace Orbital.Core
                 (int errors, int warnings) = new WorldSceneBinder().BindByName(transform, model, file.BodyOf, _bodyData, this);
                 LoadedFrom = WorldSource.SharedFile;
                 WorldHash = file.Hash;
+                Definition = file.Definition;
+                Frames = BuildFrames(file.Definition);
                 Debug.Log($"World: {file.Definition.Bodies.Count} bodies from the shared world file (sha256 {file.Hash}, epochZero {file.EpochZero}); " +
                           $"scene binding: {errors} errors, {warnings + file.Warnings.Count} warnings", this);
             }
@@ -110,6 +120,20 @@ namespace Orbital.Core
             EpochZero = epochZero;
             Model = model;
             InjectHierarchy();
+        }
+
+        /// <summary>The table of the shared world's bodies, or null (with an error in the log): the flight and the view work around one body.</summary>
+        private BodyFrameTable BuildFrames(WorldFileDef def)
+        {
+            try
+            {
+                return WorldFrames.Build(def);
+            }
+            catch (WorldFileException e)
+            {
+                Debug.LogError($"World: cannot build the table of bodies: {e.Message}; one-body flight mode", this);
+                return null;
+            }
         }
 
         /// <summary>The shared world file, or null (with an error in the log) when it is missing or broken: the scene tree is used then.</summary>

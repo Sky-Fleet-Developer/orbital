@@ -10,8 +10,9 @@ namespace Orbital.Craft
 {
     /// <summary>
     /// Other players' crafts in the flight view (stage 2c.7): a greybox like the own craft, placed in the floating-origin view by the
-    /// difference of double positions; only crafts around the same body and closer than <see cref="VisibleDistance"/> are drawn, the rest
-    /// are listed (<see cref="ListText"/>) with callsign and distance.
+    /// difference of double positions; crafts closer than <see cref="VisibleDistance"/> are drawn, the rest are listed (<see cref="ListText"/>)
+    /// with callsign and distance. Since stage 3.4 the distance is global (<see cref="GhostView.GlobalDistance"/>), so neighbours around another
+    /// body near a sphere of influence border are drawn too; a ghost around another body is converted into the own craft's frame before drawing.
     /// </summary>
     public sealed class GhostPresenter : System.IDisposable
     {
@@ -31,7 +32,11 @@ namespace Orbital.Craft
         /// <summary>One line per other craft: callsign, distance or body, mode.</summary>
         public string ListText => _list.ToString();
 
-        public void Present(Vec3 ownShownPosition, string ownParent, IReadOnlyDictionary<string, CraftNetLink.Other> others)
+        /// <param name="ownParent">Index of the own craft's body in the table (-1 without one).</param>
+        /// <param name="ownParentId">Id of the own craft's body (the list keeps its old rule).</param>
+        /// <param name="frames">The world's body table (stage 3.4); null = the old same-body rule.</param>
+        public void Present(Vec3 ownShownPosition, int ownParent, string ownParentId, IReadOnlyDictionary<string, CraftNetLink.Other> others,
+            BodyFrameTable frames, double time)
         {
             _list.Clear();
             CultureInfo c = CultureInfo.InvariantCulture;
@@ -39,17 +44,26 @@ namespace Orbital.Craft
             {
                 Ghost g = kv.Value.Ghost;
                 if (!g.HasState) continue;
-                bool sameBody = ownParent == null || kv.Value.ParentId == ownParent;
-                double distance = sameBody ? Vec3.Length(g.ShownPosition - ownShownPosition) : double.PositiveInfinity;
+                bool sameBody = ownParentId == null || kv.Value.ParentId == ownParentId;
+                double distance;
+                if (frames != null && ownParent >= 0 && g.Parent >= 0)
+                    distance = GhostView.GlobalDistance(frames, ownParent, ownShownPosition, g.Parent, g.ShownPosition, time);
+                else distance = sameBody ? Vec3.Length(g.ShownPosition - ownShownPosition) : double.PositiveInfinity;
                 _list.Append(g.Callsign ?? g.CraftId).Append("  ");
                 _list.Append(sameBody ? (distance >= 10000 ? (distance / 1000).ToString("F1", c) + " km" : distance.ToString("F0", c) + " m") : "@ " + kv.Value.ParentId);
                 _list.Append(g.ServerMode == FlightMode.Crashed ? "  crashed" : g.ServerMode == FlightMode.Landed ? "  landed" : "").Append('\n');
-                bool show = sameBody && distance < VisibleDistance;
+                bool show = distance < VisibleDistance;
                 Transform view = ViewOf(kv.Key, show);
                 if (view == null) continue;
                 if (view.gameObject.activeSelf != show) view.gameObject.SetActive(show);
                 if (!show) continue;
-                view.localPosition = CraftPresenter.ToVector(g.ShownPosition - ownShownPosition);
+                Vec3 at = g.ShownPosition;
+                if (frames != null && g.Parent >= 0 && ownParent >= 0 && g.Parent != ownParent)
+                {
+                    Vec3 dummyVelocity = Vec3.Zero; // the frames differ by an offset only
+                    frames.Convert(g.Parent, ownParent, time, ref at, ref dummyVelocity);
+                }
+                view.localPosition = CraftPresenter.ToVector(at - ownShownPosition);
                 view.localRotation = CraftPresenter.ToQuaternion(g.State.Orientation);
             }
             _gone.Clear();
