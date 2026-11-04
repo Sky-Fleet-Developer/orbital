@@ -31,7 +31,9 @@ namespace Orbital.Automation
             ("fuelsJson", GameConfigLoader.FuelsFile),
             ("craftSpecJson", GameConfigLoader.CraftSpecFile),
             ("startPointsJson", GameConfigLoader.StartPointsFile),
-            ("greyboxMaterialTemplate", "a URP material, e.g. Assets/_game/Prefabs/Craft/Materials/Greybox_hull.mat"),
+            ("networkSettings", "Assets/_game/Settings/NetworkSettings.asset"),
+            ("craftSettings", "Assets/_game/Settings/CraftSettings.asset"),
+            ("viewSettings", "the container Assets/_game/ViewSettings/ViewSettingsContainer.asset"),
         };
 
         public static void BuildWindows()
@@ -94,9 +96,31 @@ namespace Orbital.Automation
                         Debug.LogError($"[BuildScript] {path}: {spawner.name}.{field} is empty (expected: {expected}), the player would miss it (assign it in the Inspector; do not save Main.unity from batch mode: loading the world rewrites orbit epochs in the scene)");
                         ok = false;
                     }
+                    if (so.FindProperty("craftSettings")?.objectReferenceValue is CraftSettings craft && craft.greyboxMaterialTemplate == null)
+                    {
+                        Debug.LogError($"[BuildScript] {path}: {spawner.name}.craftSettings has no greyboxMaterialTemplate, the player would draw magenta (expected a URP material, e.g. Assets/_game/Prefabs/Craft/Materials/Greybox_hull.mat)");
+                        ok = false;
+                    }
+                    ok &= ValidateViewSettings(path, spawner, so.FindProperty("viewSettings")?.objectReferenceValue as ScriptableObjectContainer.Container);
                 }
             }
 
+            return ok;
+        }
+
+        // Every section of the flight view settings must be in the container once (a missing one would silently run on the default values).
+        private static bool ValidateViewSettings(string path, CraftSpawner spawner, ScriptableObjectContainer.Container container)
+        {
+            if (container == null) return true; // reported as an empty field above
+            bool ok = true;
+            ScriptableObject[] assets = container.GetAssetsAtType<ScriptableObject>().ToArray();
+            foreach (System.Reflection.PropertyInfo section in typeof(Orbital.View.Flight.FlightViewSettings).GetProperties())
+            {
+                int count = assets.Count(asset => asset != null && asset.GetType() == section.PropertyType);
+                if (count == 1) continue;
+                Debug.LogError($"[BuildScript] {path}: {spawner.name}.viewSettings has {count} of {section.PropertyType.Name}, expected 1 (menu Orbital/Add Missing Flight View Settings)");
+                ok = false;
+            }
             return ok;
         }
 

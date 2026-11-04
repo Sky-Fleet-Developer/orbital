@@ -1,6 +1,7 @@
 {
   "fuels": [
-    { "id": "standard", "name": "Standard propellant", "ispSeconds": 450 }
+    { "id": "standard", "name": "Standard propellant", "ispSeconds": 450 },
+    { "id": "test-unlimited", "name": "Test propellant, 100 times the impulse (temporary, for flight tests)", "ispSeconds": 45000 }
   ],
   "defaultFuel": "standard"
 }

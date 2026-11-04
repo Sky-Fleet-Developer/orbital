@@ -215,5 +215,27 @@ namespace Orbital.Core.Flight
             }
             return n;
         }
+
+        /// <summary>
+        /// The painter's order of filled entries (stage 3.6): writes into <paramref name="order"/>[0..n) the positions of the entries from the farthest
+        /// real distance to the nearest (ties keep the entry order, so the result is deterministic). All impostors sit at one scaled distance, so their
+        /// depth says nothing about who covers whom; the real distance does. No allocations. <c>order.Length</c> must be at least <c>entries.Length</c>.
+        /// </summary>
+        public static void FarToNearOrder(ReadOnlySpan<BodyViewEntry> entries, Span<int> order)
+        {
+            if (order.Length < entries.Length)
+                throw new ArgumentException($"order must have at least {entries.Length} entries, got {order.Length}", nameof(order));
+            for (int i = 0; i < entries.Length; i++)
+            {
+                double distance = entries[i].Projection.Distance;
+                int j = i;
+                while (j > 0 && entries[order[j - 1]].Projection.Distance < distance)
+                {
+                    order[j] = order[j - 1];
+                    j--;
+                }
+                order[j] = i;
+            }
+        }
     }
 }

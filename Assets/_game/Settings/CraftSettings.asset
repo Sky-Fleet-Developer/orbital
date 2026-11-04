@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f05908426aab73c4fb0bb5d3492c2b9b, type: 3}
+  m_Name: CraftSettings
+  m_EditorClassIdentifier:
+  craftId: 
+  vehiclePrefab: {fileID: 0}
+  greyboxMaterialTemplate: {fileID: 2100000, guid: 04a29a3d954e3e34390cbc561ed99d22, type: 2}
+  groundSupport: 1

@@ -1,5 +1,21 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-8537323836658598401
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 94707533962cdaf4ab7332456ec259c9, type: 3}
+  m_Name: FlightLightingSettings
+  m_EditorClassIdentifier: Orbital::Orbital.View.Flight.FlightLightingSettings
+  sunColor: {r: 1, g: 1, b: 1, a: 1}
+  sunIntensity: 1.1
+  dayBrightness: 1
+  nightBrightness: 0.015
 --- !u!114 &-5338861467072744683
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -37,6 +53,27 @@ MonoBehaviour:
   selfMaterial: {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
   selfMesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
   orbitMaxVerticesCount: 250
+--- !u!114 &-2684115895525857204
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3a1f6b6b2c0d2eb479b72554f48d8d5c, type: 3}
+  m_Name: SkySettings
+  m_EditorClassIdentifier: Orbital::Orbital.View.Flight.SkySettings
+  layer: 30
+  background: {r: 0.004, g: 0.005, b: 0.01, a: 1}
+  scaledDistance: 100000
+  minDiskPixels: 3
+  pointPixels: 4
+  fluxFloor: 0.00000000000000001
+  fluxCeiling: 46200
+  minPointBrightness: 0.05
+  maxPointBrightness: 1
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -52,3 +89,76 @@ MonoBehaviour:
   nestedAssets:
   - {fileID: -5338861467072744683}
   - {fileID: -4000122974023388819}
+  - {fileID: 2995851440943310157}
+  - {fileID: -2684115895525857204}
+  - {fileID: -8537323836658598401}
+  - {fileID: 7567675491783257843}
+  - {fileID: 4778048072334842508}
+--- !u!114 &2995851440943310157
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4ee1c45a0b674764e9a8fed0dfae4350, type: 3}
+  m_Name: FlightCameraSettings
+  m_EditorClassIdentifier: Orbital::Orbital.View.Flight.FlightCameraSettings
+  layer: 31
+  fieldOfView: 60
+  nearClip: 0.3
+  minFar: 200000
+  distance: 45
+  minDistance: 8
+  maxDistance: 5000
+  dragSpeed: 0.25
+--- !u!114 &4778048072334842508
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 523b5bfd97794117a73e07ad8e618a7b, type: 3}
+  m_Name: MapViewSettings
+  m_EditorClassIdentifier: Orbital::Orbital.View.Flight.MapViewSettings
+  layer: 29
+  fieldOfView: 45
+  background: {r: 0.015, g: 0.02, b: 0.035, a: 1}
+  dragSpeed: 0.25
+  zoomPerNotch: 0.85
+  orbitWidth: 1.5
+  trajectoryWidth: 2.5
+  orbitOpacity: 0.55
+  minOrbitPixels: 14
+  trajectoryColors:
+  - {r: 0.25, g: 1, b: 0.55, a: 1}
+  - {r: 1, g: 0.72, b: 0.2, a: 1}
+  - {r: 1, g: 0.4, b: 0.75, a: 1}
+  - {r: 0.5, g: 0.75, b: 1, a: 1}
+  craftColor: {r: 0.25, g: 1, b: 0.55, a: 1}
+  otherCraftColor: {r: 0.45, g: 0.8, b: 1, a: 1}
+  eventColor: {r: 1, g: 0.95, b: 0.6, a: 1}
+  impactColor: {r: 1, g: 0.3, b: 0.2, a: 1}
+  minBodyPixels: 3
+  hoverPixels: 10
+--- !u!114 &7567675491783257843
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b893a5dc82e80d848b5c9c30c8d1b17a, type: 3}
+  m_Name: LocationViewSettings
+  m_EditorClassIdentifier: Orbital::Orbital.View.Flight.LocationViewSettings
+  patchHalfSize: 4000
+  patchCells: 40
+  poleSpacing: 250
+  markersVisibleDistance: 20000

@@ -1,6 +1,7 @@
 {
   "crafts": [
-    { "id": "standard", "name": "Standard craft", "dryMass": 5000, "maxFuel": 40000, "thrustN": 600000, "fuel": "standard" }
+    { "id": "standard", "name": "Standard craft", "dryMass": 5000, "maxFuel": 40000, "thrustN": 600000, "fuel": "test-unlimited" },
+    { "id": "test-long-range", "name": "Test craft, long range", "dryMass": 5000, "maxFuel": 100000, "thrustN": 2000000, "fuel": "test-unlimited" }
   ],
   "defaultCraft": "standard"
 }

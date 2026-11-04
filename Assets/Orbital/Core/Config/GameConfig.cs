@@ -35,7 +35,14 @@ namespace Orbital.Core.Config
         public string BodyId;
         public double Latitude;
         public double Longitude;
+        /// <summary>Kind "space": a circular orbit of the body, <see cref="SpawnBuilder.CircularOrbit"/>; meters above the surface, degrees.</summary>
+        public double AltitudeMeters;
+        public double InclinationDeg;
+        public double PhaseDeg;
+        /// <summary>Craft model for this point (a test craft); null = the default model.</summary>
+        public string CraftId;
 
+        public bool IsSpace => string.Equals(Kind, "space", StringComparison.OrdinalIgnoreCase);
         public bool IsSurface => string.Equals(Kind, "surface", StringComparison.OrdinalIgnoreCase);
     }
 
@@ -68,6 +75,10 @@ namespace Orbital.Core.Config
         public FuelCatalogFile Fuels = new FuelCatalogFile();
         public CraftCatalogFile Crafts = new CraftCatalogFile();
         public StartPointCatalogFile StartPoints = new StartPointCatalogFile();
+        /// <summary>Touchdown at or below this speed relative to the ground is a landing, m/s (top level of flightconfig.json, the server reads the same).</summary>
+        public double MaxLandingSpeed = DefaultMaxLandingSpeed;
+
+        public const double DefaultMaxLandingSpeed = 5.0;
 
         public FuelDef FindFuel(string id) => Find(Fuels.Fuels, x => x.Id, id, Fuels.DefaultFuel);
 
@@ -119,7 +130,12 @@ namespace Orbital.Core.Config
         public static GameConfig FromJson(string flightJson, string fuelsJson, string craftSpecJson, string startPointsJson)
         {
             GameConfig config = new GameConfig();
-            if (!string.IsNullOrWhiteSpace(flightJson)) config.Flight = ParseFlight(flightJson);
+            if (!string.IsNullOrWhiteSpace(flightJson))
+            {
+                config.Flight = ParseFlight(flightJson);
+                JToken landing = JObject.Parse(flightJson).GetValue("maxLandingSpeed", StringComparison.OrdinalIgnoreCase);
+                if (landing != null) config.MaxLandingSpeed = landing.Value<double>();
+            }
             if (!string.IsNullOrWhiteSpace(fuelsJson)) config.Fuels = JsonConvert.DeserializeObject<FuelCatalogFile>(fuelsJson) ?? config.Fuels;
             if (!string.IsNullOrWhiteSpace(craftSpecJson)) config.Crafts = JsonConvert.DeserializeObject<CraftCatalogFile>(craftSpecJson) ?? config.Crafts;
             if (!string.IsNullOrWhiteSpace(startPointsJson))

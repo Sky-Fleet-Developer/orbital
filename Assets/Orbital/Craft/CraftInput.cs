@@ -19,6 +19,8 @@ namespace Orbital.Craft
         private readonly InputAction _toggleCamera;
         private readonly InputAction _toggleHelp;
         private readonly InputAction _toggleNavMode;
+        private readonly InputAction _toggleMap;
+        private readonly InputAction _focusCraft;
         private KeyState _accumulated;
 
         public CraftInput()
@@ -34,6 +36,8 @@ namespace Orbital.Craft
             _toggleCamera = Make("ToggleCamera", "<Keyboard>/v");
             _toggleHelp = Make("ToggleHelp", "<Keyboard>/f1");
             _toggleNavMode = Make("ToggleNavBallMode", "<Keyboard>/b");
+            _toggleMap = Make("ToggleMap", "<Keyboard>/m");
+            _focusCraft = Make("MapFocusCraft", "<Keyboard>/f");
         }
 
         private static InputAction Make(string name, string path)
@@ -46,8 +50,17 @@ namespace Orbital.Craft
         /// <summary>Back to a fresh start (Enter).</summary>
         public bool RespawnPressed => _respawn.WasPressedThisFrame();
 
-        /// <summary>Flight view / map view (C).</summary>
-        public bool ToggleViewPressed => _toggleView.WasPressedThisFrame();
+        /// <summary>Flight view / map view (M or C).</summary>
+        public bool ToggleViewPressed => _toggleView.WasPressedThisFrame() || _toggleMap.WasPressedThisFrame();
+
+        /// <summary>The map looks at the own craft again (F).</summary>
+        public bool FocusCraftPressed => _focusCraft.WasPressedThisFrame();
+
+        /// <summary>The left mouse button went down this frame (the map: follow what is under the cursor).</summary>
+        public bool ClickPressed => Mouse.current != null && Mouse.current.leftButton.wasPressedThisFrame;
+
+        /// <summary>The cursor, pixels, y up.</summary>
+        public Vector2 MousePosition => Mouse.current != null ? Mouse.current.position.ReadValue() : new Vector2(-10000f, -10000f);
 
         /// <summary>Camera behind the craft / camera on the horizon (V).</summary>
         public bool ToggleCameraPressed => _toggleCamera.WasPressedThisFrame();
@@ -115,7 +128,7 @@ namespace Orbital.Craft
                 action.Disable();
                 action.Dispose();
             }
-            foreach (InputAction action in new[] {_respawn, _toggleView, _toggleCamera, _toggleHelp, _toggleNavMode})
+            foreach (InputAction action in new[] {_respawn, _toggleView, _toggleCamera, _toggleHelp, _toggleNavMode, _toggleMap, _focusCraft})
             {
                 action.Disable();
                 action.Dispose();

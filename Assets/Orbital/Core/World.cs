@@ -51,6 +51,9 @@ namespace Orbital.Core
         public WorldFileDef Definition { get; private set; }
 
         /// <summary>Sets the source of the body data. Call before <see cref="Load"/> where there is no DI container (edit mode).</summary>
+        /// <summary>The body table given to the world (view facets of the flight view's sky); null when the scene has none.</summary>
+        public IBodyDataSource BodyData => _bodyData;
+
         public void SetBodyData(IBodyDataSource data)
         {
             _bodyData = data;

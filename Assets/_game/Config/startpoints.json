@@ -1,6 +1,10 @@
 {
   "startPoints": [
-    { "id": "earth-equator", "name": "Earth, equator", "kind": "surface", "bodyId": "earth", "latitude": 0, "longitude": 0 }
+    { "id": "earth-equator", "name": "Earth, equator", "kind": "surface", "bodyId": "earth", "latitude": 0, "longitude": 0 },
+    { "id": "earth-orbit", "name": "Earth, low orbit (test)", "kind": "space", "bodyId": "earth", "altitudeMeters": 400000, "inclinationDeg": 0, "phaseDeg": 0, "craftId": "test-long-range" },
+    { "id": "moon-equator", "name": "Moon, equator (test)", "kind": "surface", "bodyId": "moon", "latitude": 0, "longitude": 0 },
+    { "id": "phobos-base", "name": "Phobos (test)", "kind": "surface", "bodyId": "phobos", "latitude": 0, "longitude": 0 },
+    { "id": "deimos-base", "name": "Deimos (test)", "kind": "surface", "bodyId": "deimos", "latitude": 0, "longitude": 0 }
   ],
   "defaultStartPoint": "earth-equator"
 }

@@ -208,6 +208,7 @@ MonoBehaviour:
         tint: {r: 1, g: 0.85, b: 0.5, a: 1}
         brightness: 1
         emission: 2
+        albedo: 0.0
     - rid: 1062
       type: {class: PhysicalFacet, ns: Orbital.Core.Bodies, asm: Core}
       data:
@@ -227,6 +228,7 @@ MonoBehaviour:
         tint: {r: 0.6, g: 0.58, b: 0.55, a: 1}
         brightness: 1
         emission: 0
+        albedo: 0.14
     - rid: 1064
       type: {class: PhysicalFacet, ns: Orbital.Core.Bodies, asm: Core}
       data:
@@ -253,6 +255,7 @@ MonoBehaviour:
         tint: {r: 0.9, g: 0.8, b: 0.55, a: 1}
         brightness: 1
         emission: 0
+        albedo: 0.69
     - rid: 1066
       type: {class: PhysicalFacet, ns: Orbital.Core.Bodies, asm: Core}
       data:
@@ -286,6 +289,7 @@ MonoBehaviour:
         tint: {r: 0.35, g: 0.55, b: 0.85, a: 1}
         brightness: 1
         emission: 0
+        albedo: 0.43
     - rid: 1068
       type: {class: PhysicalFacet, ns: Orbital.Core.Bodies, asm: Core}
       data:
@@ -319,6 +323,7 @@ MonoBehaviour:
         tint: {r: 0.7, g: 0.7, b: 0.7, a: 1}
         brightness: 1
         emission: 0
+        albedo: 0.12
     - rid: 1070
       type: {class: PhysicalFacet, ns: Orbital.Core.Bodies, asm: Core}
       data:
@@ -345,6 +350,7 @@ MonoBehaviour:
         tint: {r: 0.8, g: 0.45, b: 0.3, a: 1}
         brightness: 1
         emission: 0
+        albedo: 0.17
     - rid: 1072
       type: {class: PhysicalFacet, ns: Orbital.Core.Bodies, asm: Core}
       data:
@@ -378,6 +384,7 @@ MonoBehaviour:
         tint: {r: 0.5, g: 0.47, b: 0.45, a: 1}
         brightness: 1
         emission: 0
+        albedo: 0.07
     - rid: 1074
       type: {class: PhysicalFacet, ns: Orbital.Core.Bodies, asm: Core}
       data:
@@ -404,6 +411,7 @@ MonoBehaviour:
         tint: {r: 0.55, g: 0.5, b: 0.47, a: 1}
         brightness: 1
         emission: 0
+        albedo: 0.07
     - rid: 1076
       type: {class: PhysicalFacet, ns: Orbital.Core.Bodies, asm: Core}
       data:
@@ -430,6 +438,7 @@ MonoBehaviour:
         tint: {r: 0.85, g: 0.7, b: 0.55, a: 1}
         brightness: 1
         emission: 0
+        albedo: 0.54
     - rid: 1078
       type: {class: PhysicalFacet, ns: Orbital.Core.Bodies, asm: Core}
       data:
@@ -449,6 +458,7 @@ MonoBehaviour:
         tint: {r: 0.9, g: 0.8, b: 0.4, a: 1}
         brightness: 1
         emission: 0
+        albedo: 0.63
     - rid: 1080
       type: {class: PhysicalFacet, ns: Orbital.Core.Bodies, asm: Core}
       data:
@@ -475,6 +485,7 @@ MonoBehaviour:
         tint: {r: 0.85, g: 0.8, b: 0.7, a: 1}
         brightness: 1
         emission: 0
+        albedo: 0.67
     - rid: 1082
       type: {class: PhysicalFacet, ns: Orbital.Core.Bodies, asm: Core}
       data:
@@ -501,6 +512,7 @@ MonoBehaviour:
         tint: {r: 0.6, g: 0.55, b: 0.5, a: 1}
         brightness: 1
         emission: 0
+        albedo: 0.43
     - rid: 1084
       type: {class: PhysicalFacet, ns: Orbital.Core.Bodies, asm: Core}
       data:
@@ -527,6 +539,7 @@ MonoBehaviour:
         tint: {r: 0.4, g: 0.37, b: 0.33, a: 1}
         brightness: 1
         emission: 0
+        albedo: 0.2
     - rid: 1086
       type: {class: PhysicalFacet, ns: Orbital.Core.Bodies, asm: Core}
       data:
@@ -553,6 +566,7 @@ MonoBehaviour:
         tint: {r: 0.9, g: 0.8, b: 0.6, a: 1}
         brightness: 1
         emission: 0
+        albedo: 0.5
     - rid: 1088
       type: {class: PhysicalFacet, ns: Orbital.Core.Bodies, asm: Core}
       data:
@@ -572,6 +586,7 @@ MonoBehaviour:
         tint: {r: 0.75, g: 0.75, b: 0.75, a: 1}
         brightness: 1
         emission: 0
+        albedo: 0.96
     - rid: 1090
       type: {class: PhysicalFacet, ns: Orbital.Core.Bodies, asm: Core}
       data:
@@ -598,6 +613,7 @@ MonoBehaviour:
         tint: {r: 0.95, g: 0.95, b: 0.95, a: 1}
         brightness: 1
         emission: 0
+        albedo: 1.0
     - rid: 1092
       type: {class: PhysicalFacet, ns: Orbital.Core.Bodies, asm: Core}
       data:
@@ -624,6 +640,7 @@ MonoBehaviour:
         tint: {r: 0.85, g: 0.85, b: 0.85, a: 1}
         brightness: 1
         emission: 0
+        albedo: 1.0
     - rid: 1094
       type: {class: PhysicalFacet, ns: Orbital.Core.Bodies, asm: Core}
       data:
@@ -650,6 +667,7 @@ MonoBehaviour:
         tint: {r: 0.8, g: 0.8, b: 0.8, a: 1}
         brightness: 1
         emission: 0
+        albedo: 1.0
     - rid: 1096
       type: {class: PhysicalFacet, ns: Orbital.Core.Bodies, asm: Core}
       data:
@@ -676,6 +694,7 @@ MonoBehaviour:
         tint: {r: 0.8, g: 0.8, b: 0.78, a: 1}
         brightness: 1
         emission: 0
+        albedo: 0.95
     - rid: 1098
       type: {class: PhysicalFacet, ns: Orbital.Core.Bodies, asm: Core}
       data:
@@ -702,6 +721,7 @@ MonoBehaviour:
         tint: {r: 0.85, g: 0.65, b: 0.3, a: 1}
         brightness: 1
         emission: 0
+        albedo: 0.22
     - rid: 1100
       type: {class: PhysicalFacet, ns: Orbital.Core.Bodies, asm: Core}
       data:
@@ -735,6 +755,7 @@ MonoBehaviour:
         tint: {r: 0.55, g: 0.5, b: 0.45, a: 1}
         brightness: 1
         emission: 0
+        albedo: 0.25
     - rid: 1102
       type: {class: PhysicalFacet, ns: Orbital.Core.Bodies, asm: Core}
       data:
@@ -761,6 +782,7 @@ MonoBehaviour:
         tint: {r: 0.6, g: 0.85, b: 0.9, a: 1}
         brightness: 1
         emission: 0
+        albedo: 0.49
     - rid: 1104
       type: {class: PhysicalFacet, ns: Orbital.Core.Bodies, asm: Core}
       data:
@@ -780,6 +802,7 @@ MonoBehaviour:
         tint: {r: 0.7, g: 0.7, b: 0.72, a: 1}
         brightness: 1
         emission: 0
+        albedo: 0.32
     - rid: 1106
       type: {class: PhysicalFacet, ns: Orbital.Core.Bodies, asm: Core}
       data:
@@ -806,6 +829,7 @@ MonoBehaviour:
         tint: {r: 0.7, g: 0.7, b: 0.7, a: 1}
         brightness: 1
         emission: 0
+        albedo: 0.53
     - rid: 1108
       type: {class: PhysicalFacet, ns: Orbital.Core.Bodies, asm: Core}
       data:
@@ -832,6 +856,7 @@ MonoBehaviour:
         tint: {r: 0.45, g: 0.45, b: 0.45, a: 1}
         brightness: 1
         emission: 0
+        albedo: 0.26
     - rid: 1110
       type: {class: PhysicalFacet, ns: Orbital.Core.Bodies, asm: Core}
       data:
@@ -858,6 +883,7 @@ MonoBehaviour:
         tint: {r: 0.6, g: 0.58, b: 0.56, a: 1}
         brightness: 1
         emission: 0
+        albedo: 0.35
     - rid: 1112
       type: {class: PhysicalFacet, ns: Orbital.Core.Bodies, asm: Core}
       data:
@@ -884,6 +910,7 @@ MonoBehaviour:
         tint: {r: 0.55, g: 0.52, b: 0.5, a: 1}
         brightness: 1
         emission: 0
+        albedo: 0.31
     - rid: 1114
       type: {class: PhysicalFacet, ns: Orbital.Core.Bodies, asm: Core}
       data:
@@ -910,6 +937,7 @@ MonoBehaviour:
         tint: {r: 0.3, g: 0.45, b: 0.9, a: 1}
         brightness: 1
         emission: 0
+        albedo: 0.44
     - rid: 1116
       type: {class: PhysicalFacet, ns: Orbital.Core.Bodies, asm: Core}
       data:
@@ -929,6 +957,7 @@ MonoBehaviour:
         tint: {r: 0.8, g: 0.78, b: 0.78, a: 1}
         brightness: 1
         emission: 0
+        albedo: 0.76
     - rid: 1118
       type: {class: PhysicalFacet, ns: Orbital.Core.Bodies, asm: Core}
       data:
@@ -955,6 +984,7 @@ MonoBehaviour:
         tint: {r: 0.75, g: 0.65, b: 0.55, a: 1}
         brightness: 1
         emission: 0
+        albedo: 0.52
     - rid: 1120
       type: {class: PhysicalFacet, ns: Orbital.Core.Bodies, asm: Core}
       data:
@@ -981,6 +1011,7 @@ MonoBehaviour:
         tint: {r: 0.6, g: 0.58, b: 0.57, a: 1}
         brightness: 1
         emission: 0
+        albedo: 0.41
     - rid: 1122
       type: {class: PhysicalFacet, ns: Orbital.Core.Bodies, asm: Core}
       data:

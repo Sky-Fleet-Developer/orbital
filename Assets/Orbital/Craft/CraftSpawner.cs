@@ -13,6 +13,7 @@ using Orbital.Core.TrajectorySystem;
 using Orbital.Core.Worlds;
 using Orbital.Technology;
 using Orbital.Technology.Components;
+using Orbital.View.Flight;
 using UnityEngine;
 using Zenject;
 
@@ -35,23 +36,10 @@ namespace Orbital.Craft
     /// Input System (<see cref="CraftInput"/>) and shows a greybox HUD (<see cref="CraftHud"/>). Everything is created from code; the scene is not touched.
     /// Limits of stage 2b: one body (no change of the sphere of influence), no network, the craft is not drawn on the map.
     /// </summary>
-    public enum CraftNetMode
-    {
-        /// <summary>Local flight test as in stage 2b: the craft lives on the client only.</summary>
-        Offline,
-        /// <summary>Stage 2c.6: the craft lives on the server; Enter asks it for a spawn, the time follows the server.</summary>
-        Online,
-    }
-
     public class CraftSpawner : MonoBehaviour, IViewInitializer, IUpdateHandler, IFixedUpdateHandler, ILateUpdateHandler
     {
         private const string EditorConfigFolder = "Assets/_game/Config/";
         private const double DegToRad = Math.PI / 180.0;
-
-        [Header("Network (stage 2c.6)")]
-        [SerializeField] private CraftNetMode netMode = CraftNetMode.Offline;
-        [Tooltip("Server address for Online; the environment variable ORBITAL_SERVER_URL wins. Callsign and tokens: persistentDataPath/orbital-client.json.")]
-        [SerializeField] private string serverUrl = ClientSettings.DefaultUrl;
 
         [Header("Where")]
         [SerializeField] private CraftSpawnKind spawnKind = CraftSpawnKind.StartPoint;
@@ -71,27 +59,19 @@ namespace Orbital.Craft
         [Tooltip("Angle from the ascending node along the orbit.")]
         [SerializeField] private double phaseDegrees;
 
-        [Header("Craft")]
-        [Tooltip("Optional look of the craft (the prefab from the menu Orbital/Build Greybox Vehicle); empty = the same greybox is built from primitives.")]
-        [SerializeField] private GameObject vehiclePrefab;
-        [Tooltip("Template of the runtime greybox materials (a URP Lit material, e.g. Assets/_game/Prefabs/Craft/Materials/Greybox_hull.mat); empty = the default material of a primitive, which works in the Editor only: a player build gets the built-in Standard shader and draws magenta.")]
-        [SerializeField] private Material greyboxMaterialTemplate;
-        [Tooltip("Craft model id in craftspec.json; empty = the default model.")]
-        [SerializeField] private string craftId = "";
-        [SerializeField] private string callsign = "Pilot";
-        [Tooltip("Same as the server maxLandingSpeed: touchdown relative to the ground faster than this destroys the craft.")]
-        [SerializeField] private double maxLandingSpeed = 5.0;
-        [Tooltip("Hold a landed craft upright until the kernel has a tip-over model (see the stage 2b notes). Switch off to see the inverted pendulum.")]
-        [SerializeField] private bool groundSupport = true;
-
         [Header("Shared configs (empty = read Assets/_game/Config in the Editor)")]
         [SerializeField] private TextAsset flightConfigJson;
         [SerializeField] private TextAsset fuelsJson;
         [SerializeField] private TextAsset craftSpecJson;
         [SerializeField] private TextAsset startPointsJson;
 
-        [Header("View")]
-        [SerializeField] private CraftViewSettings view = new CraftViewSettings();
+        [Header("Settings")]
+        [Tooltip("Online or offline, server, callsign (Assets/_game/Settings/NetworkSettings.asset).")]
+        [SerializeField] private NetworkSettings networkSettings;
+        [Tooltip("Craft model and look (Assets/_game/Settings/CraftSettings.asset).")]
+        [SerializeField] private CraftSettings craftSettings;
+        [Tooltip("The container with the flight view settings: camera, sky, lighting, ground (Assets/_game/ViewSettings/ViewSettingsContainer.asset, its nested assets).")]
+        [SerializeField] private ScriptableObjectContainer.Container viewSettings;
         [SerializeField] private bool showHud = true;
 
         [Header("Test tools (offline only)")]
@@ -135,6 +115,13 @@ namespace Orbital.Craft
         // online (stage 2c.6)
         private CraftNetLink _net;
         private GhostPresenter _ghosts;
+        // stage 4: the map and the forecast of the own craft
+        private FlightMapView _map;
+        private TrajectoryForecaster _forecast;
+        private float _nextForecast;
+        private bool _forecastReported;
+        private float _nextAdvice;
+        private LandingAdvice _advice;
         private InputLatch _latch;
         private ControlInput _lastControl;
         private DisciplineConfig _discipline = DisciplineConfig.Default();
@@ -152,16 +139,33 @@ namespace Orbital.Craft
                 Debug.LogError("CraftSpawner: the world is not loaded, nothing to spawn onto", this);
                 return;
             }
-            view.layer = Mathf.Clamp(view.layer, 0, 31);
+            if (networkSettings == null)
+            {
+                Debug.LogWarning("CraftSpawner: no NetworkSettings, using the default values", this);
+                networkSettings = ScriptableObject.CreateInstance<NetworkSettings>();
+            }
+            if (craftSettings == null)
+            {
+                Debug.LogWarning("CraftSpawner: no CraftSettings, using the default values", this);
+                craftSettings = ScriptableObject.CreateInstance<CraftSettings>();
+            }
             LoadConfig();
             ReadAutomationEnv();
             if (!Setup()) return;
             _input = new CraftInput();
             if (EffectiveNetMode() == CraftNetMode.Online) StartOnline();
             else Respawn();
-            _presenter = new CraftPresenter(view, vehiclePrefab, greyboxMaterialTemplate, _surface, (float) _flight.CgHeight, PadLatitude(), PadLongitude(),
-                _frames, _spawnParent);
+            _presenter = new CraftPresenter(new FlightViewSettings(viewSettings), craftSettings.vehiclePrefab, craftSettings.greyboxMaterialTemplate, _surface, (float) _flight.CgHeight, MakePads(),
+                _frames, _spawnParent, _frames != null ? BodyLook.Read(_frames, _world.BodyData, BodyNameOf) : null);
             _presentedBody = _spawnParent;
+            ApplyDebugView();
+            if (_frames != null)
+            {
+                FlightViewSettings view = new FlightViewSettings(viewSettings);
+                _forecast = new TrajectoryForecaster(_frames);
+                _map = new FlightMapView(_frames, BodyLook.Read(_frames, _world.BodyData, BodyNameOf), BodyNameOf, view.Map, transform, _presenter.CameraDepth);
+                _presenter.OwnMap = true;
+            }
             _presenter.SetFlightView(true);
             if (Online) _ghosts = new GhostPresenter(_presenter);
             GameObject hudObject = new GameObject("[CraftHud]");
@@ -172,6 +176,7 @@ namespace Orbital.Craft
             _hud.ShowTimeScale = !Online && timeScaleSlider && Debug.isDebugBuild; // the Editor counts as a debug build
             _navBall = new NavBallView();
             _hud.NavBall = _navBall;
+            ApplyDebugMap();
             HandlesRegister.RegisterHandlers(this, _container);
             _registered = true;
             _ready = true;
@@ -181,9 +186,10 @@ namespace Orbital.Craft
         {
             if (!_ready) return;
             _input.Poll();
-            if (_input.ToggleViewPressed) _presenter.SetFlightView(!_presenter.FlightViewActive);
+            if (_input.ToggleViewPressed) SetMapOpen(_presenter.FlightViewActive);
             if (_input.ToggleCameraPressed) _presenter.SetHorizonCamera(!_presenter.HorizonCamera);
-            _presenter.ControlCamera(_input.CameraDrag, _input.CameraZoom);
+            if (_map != null && _map.Active) _map.Control(_input.CameraDrag, _input.CameraZoom, _input.ClickPressed && !HudPanels.Covers(_input.MousePosition), _input.FocusCraftPressed);
+            else _presenter.ControlCamera(_input.CameraDrag, _input.CameraZoom);
             if (_input.ToggleHelpPressed) _hud.ShowHelp = !_hud.ShowHelp;
             if (_input.ToggleNavModePressed) _navOrbit = !_navOrbit;
             if (_input.RespawnPressed)
@@ -213,6 +219,7 @@ namespace Orbital.Craft
             {
                 double stepTime = TimeProvider.TimeOfStep(_nextStep);
                 if (_autoBurn > 0) ApplyAutoBurnToKeys(ref keys, stepTime);
+                if (_hasAutoKeys) keys = ControlKeys.Or(keys, _autoKeys);
                 int parentBefore = _simulation.Parent;
                 _simulation.SetKeys(keys);
                 _simulation.Clock.Time = stepTime;
@@ -251,6 +258,7 @@ namespace Orbital.Craft
                 SurfaceData surface = Online ? _net.Link.Params.Surface : _simulation.Params.Surface;
                 _navBall.Update(state, surface, _navOrbit);
             }
+            PresentMap(state);
             MeasureRate();
             if (showHud && Time.unscaledTime >= _nextHudTime)
             {
@@ -276,6 +284,7 @@ namespace Orbital.Craft
             _ready = false;
             _ghosts?.Dispose();
             _ghosts = null;
+            _map?.Dispose();
             if (_net != null)
             {
                 _net.Dispose();
@@ -323,28 +332,42 @@ namespace Orbital.Craft
             double latitude = latitudeDegrees, longitude = longitudeDegrees, altitude = altitudeMeters;
             bool orbit = spawnKind == CraftSpawnKind.CircularOrbit;
             bool bodyOverride = !string.IsNullOrWhiteSpace(_spawnBodyOverride); // ORBITAL_SPAWN_BODY, offline only (ReadAutomationEnv)
-            if (spawnKind == CraftSpawnKind.StartPoint && !bodyOverride)
+            string craftId = craftSettings.craftId;
+            _orbitAltitude = orbitAltitudeMeters;
+            _orbitInclination = inclinationDegrees * DegToRad;
+            _orbitPhase = phaseDegrees * DegToRad;
+            if ((spawnKind == CraftSpawnKind.StartPoint || _startPointOverride != null) && !bodyOverride)
             {
-                StartPointDef point = _config.FindStartPoint(startPointId);
+                StartPointDef point = _config.FindStartPoint(StartPointId);
                 if (point == null)
                 {
-                    Debug.LogError($"CraftSpawner: no start point '{startPointId}' (and no default one) in startpoints.json", this);
+                    Debug.LogError($"CraftSpawner: no start point '{StartPointId}' (and no default one) in startpoints.json", this);
                     return false;
                 }
-                if (!point.IsSurface)
+                if (!point.IsSurface && !point.IsSpace)
                 {
-                    Debug.LogError($"CraftSpawner: start point '{point.Id}' is of kind '{point.Kind}', only surface points are supported", this);
+                    Debug.LogError($"CraftSpawner: start point '{point.Id}' is of the unknown kind '{point.Kind}'", this);
                     return false;
                 }
                 bodyKey = point.BodyId;
                 latitude = point.Latitude;
                 longitude = point.Longitude;
                 altitude = 0;
+                orbit = point.IsSpace;
+                if (orbit)
+                {
+                    _orbitAltitude = point.AltitudeMeters;
+                    _orbitInclination = point.InclinationDeg * DegToRad;
+                    _orbitPhase = point.PhaseDeg * DegToRad;
+                }
+                if (!string.IsNullOrEmpty(point.CraftId)) craftId = point.CraftId;
             }
             else if (bodyOverride)
             {
                 bodyKey = _spawnBodyOverride; // a point of the chosen body's ground (the surface kind), coordinates from the inspector fields
-                orbit = false;
+                orbit = _spawnOrbitAltitude > 0; // ORBITAL_SPAWN_ALT: a circular orbit around it instead
+                if (orbit) _orbitAltitude = _spawnOrbitAltitude;
+                else if (_spawnHeight > 0) altitude = _spawnHeight;
             }
 
             _flight = _config.ResolveFlight(craftId);
@@ -374,7 +397,7 @@ namespace Orbital.Craft
                     Craft = _flight,
                     Surface = _surface,
                     Nu = b.Nu,
-                    MaxLandingSpeed = maxLandingSpeed,
+                    MaxLandingSpeed = _config.MaxLandingSpeed,
                 };
             }
             else
@@ -401,7 +424,7 @@ namespace Orbital.Craft
                     Craft = _flight,
                     Surface = _surface,
                     Nu = body.GravParameter,
-                    MaxLandingSpeed = maxLandingSpeed,
+                    MaxLandingSpeed = _config.MaxLandingSpeed,
                 };
             }
             _isOrbit = orbit;
@@ -411,7 +434,7 @@ namespace Orbital.Craft
 
             TimeProvider.SetMaxStepsPerTick(maxStepsPerTick);
             _nextStep = TimeProvider.StepCount;
-            _simulation = new CraftSimulation(TimeProvider.TimeOfStep(_nextStep), TimeProvider.StepSeconds, groundSupport, RecorderConfig.Default());
+            _simulation = new CraftSimulation(TimeProvider.TimeOfStep(_nextStep), TimeProvider.StepSeconds, craftSettings.groundSupport, RecorderConfig.Default());
             _simulation.Clock.Frames = _frames; // stage 3.4: the sphere of influence rule of the offline flight
             return true;
         }
@@ -499,7 +522,7 @@ namespace Orbital.Craft
         {
             if (_isOrbit)
             {
-                return SpawnBuilder.CircularOrbit(_flight, _surface, _flightParams.Nu, orbitAltitudeMeters, inclinationDegrees * DegToRad, phaseDegrees * DegToRad);
+                return SpawnBuilder.CircularOrbit(_flight, _surface, _flightParams.Nu, _orbitAltitude, _orbitInclination, _orbitPhase);
             }
             return SpawnBuilder.OnSurface(_flight, _surface, _spawnLatitude, _spawnLongitude, _spawnAltitude, time);
         }
@@ -510,17 +533,26 @@ namespace Orbital.Craft
             double time = CraftTime;
             _simulation.Clock.Time = time;
             FlightState state = MakeInitialState(time);
-            _simulation.CreatePlayerCraft(state, _flightParams, callsign, _spawnParent);
-            if (_isOrbit && _presenter == null)
-            {
-                // the pad stays on the ground below the first position
-                Surface.ToBodyCoordinates(_surface, state.Position, time, out _spawnLatitude, out _spawnLongitude);
-            }
+            _simulation.CreatePlayerCraft(state, _flightParams, networkSettings.callsign, _spawnParent);
         }
 
-        private double PadLatitude() => _spawnLatitude;
+        // The pads the view can show: every surface start point of the world's bodies, and the spawn place itself when it is on the ground.
+        private StartPad[] MakePads()
+        {
+            System.Collections.Generic.List<StartPad> pads = new System.Collections.Generic.List<StartPad>();
+            if (!_isOrbit) pads.Add(new StartPad {Body = _spawnParent, Latitude = _spawnLatitude, Longitude = _spawnLongitude});
+            if (_frames != null && _config.StartPoints?.StartPoints != null)
+            {
+                foreach (StartPointDef point in _config.StartPoints.StartPoints)
+                {
+                    int body = _frames.IndexOf(point.BodyId);
+                    if (point.IsSurface && body >= 0) pads.Add(new StartPad {Body = body, Latitude = point.Latitude * DegToRad, Longitude = point.Longitude * DegToRad});
+                }
+            }
+            return pads.ToArray();
+        }
 
-        private double PadLongitude() => _spawnLongitude;
+        private string StartPointId => _startPointOverride ?? startPointId;
 
         /// <summary>Game time of the craft: the start of its next step (equal to the world time once the craft has caught up in the fixed tick).</summary>
         private double CraftTime => Online ? (_net.Link.HasCraft ? _net.Link.Time : TimeProvider.WorldTime) : TimeProvider.TimeOfStep(_nextStep);
@@ -540,13 +572,69 @@ namespace Orbital.Craft
         private double _autoBurn;
         private double _autoBurnStart = double.NaN;
         private string _spawnBodyOverride;
+        /// <summary>Environment variable (stage 3.6): with ORBITAL_SPAWN_BODY, a circular orbit at this altitude, meters, instead of the surface.</summary>
+        public const string EnvSpawnAlt = "ORBITAL_SPAWN_ALT";
+        /// <summary>Environment variable (stage 3.6): the camera looks at this body (table id, e.g. mars), for screenshots of the sky.</summary>
+        public const string EnvViewBody = "ORBITAL_VIEW_BODY";
+        /// <summary>Environment variable (stage 3.6): vertical field of view of the camera, degrees (a narrow one checks the point/disk rule).</summary>
+        public const string EnvViewFov = "ORBITAL_VIEW_FOV";
+        /// <summary>Environment variable (stage 3.7): start point id instead of the inspector's, also with another spawn kind.</summary>
+        public const string EnvStartPoint = "ORBITAL_START_POINT";
+        private string _startPointOverride;
+        /// <summary>Environment variable (stage 4): 1 = the map is open from the start (screenshots).</summary>
+        public const string EnvMap = "ORBITAL_MAP";
+        /// <summary>Environment variable (stage 4): the map looks at this body (table id) instead of the craft.</summary>
+        public const string EnvMapFocus = "ORBITAL_MAP_FOCUS";
+        /// <summary>Environment variable (stage 4): the map's view distance, meters.</summary>
+        public const string EnvMapDistance = "ORBITAL_MAP_DISTANCE";
+        /// <summary>Environment variable (stage 4): the map's cursor is here, "x,y" in pixels from the bottom left (the information window on a screenshot).</summary>
+        public const string EnvMapMouse = "ORBITAL_MAP_MOUSE";
+        /// <summary>Environment variable (stage 4.1): with ORBITAL_SPAWN_BODY, the height above the ground, meters: the craft falls from there.</summary>
+        public const string EnvSpawnHeight = "ORBITAL_SPAWN_HEIGHT";
+        /// <summary>Environment variable (controls check): these keys are held all the time, letters of ControlKey separated by commas, e.g. "R,E" (offline).</summary>
+        public const string EnvAutoKeys = "ORBITAL_AUTOKEYS";
+        /// <summary>Environment variable (controls check): 1 = the level orbit camera from the start, it shows the craft turning.</summary>
+        public const string EnvViewHorizon = "ORBITAL_VIEW_HORIZON";
+        /// <summary>Environment variable (panels check): these panels start folded, for this run only: net, flight, nav, others, descent, help, time, map.</summary>
+        public const string EnvHudCollapse = "ORBITAL_HUD_COLLAPSE";
+        private KeyState _autoKeys;
+        private bool _hasAutoKeys;
+        private Vector2? _mouseOverride;
+        private double _spawnHeight;
+        private readonly StringBuilder _descentText = new StringBuilder(256);
+        private double _spawnOrbitAltitude;
+        private double _orbitAltitude;
+        private double _orbitInclination;
+        private double _orbitPhase;
+
+        private void ApplyDebugMap()
+        {
+            if (_map == null || Environment.GetEnvironmentVariable(EnvMap) != "1") return;
+            CultureInfo c = CultureInfo.InvariantCulture;
+            SetMapOpen(true);
+            string focus = Environment.GetEnvironmentVariable(EnvMapFocus);
+            int body = !string.IsNullOrWhiteSpace(focus) ? _frames.IndexOf(focus.Trim()) : -1;
+            if (body >= 0) _map.FocusBody(body);
+            if (double.TryParse(Environment.GetEnvironmentVariable(EnvMapDistance), NumberStyles.Float, c, out double distance) && distance > 0) _map.SetDistance(distance);
+            string[] mouse = (Environment.GetEnvironmentVariable(EnvMapMouse) ?? string.Empty).Split(',');
+            if (mouse.Length == 2 && float.TryParse(mouse[0], NumberStyles.Float, c, out float x) && float.TryParse(mouse[1], NumberStyles.Float, c, out float y)) _mouseOverride = new Vector2(x, y);
+        }
+
+        private void ApplyDebugView()
+        {
+            string body = Environment.GetEnvironmentVariable(EnvViewBody);
+            float.TryParse(Environment.GetEnvironmentVariable(EnvViewFov), NumberStyles.Float, CultureInfo.InvariantCulture, out float fov);
+            int index = _frames != null && !string.IsNullOrWhiteSpace(body) ? _frames.IndexOf(body.Trim()) : -1;
+            if (index >= 0 || fov > 0f) _presenter.SetDebugAim(index, fov);
+            if (Environment.GetEnvironmentVariable(EnvViewHorizon) == "1") _presenter.SetHorizonCamera(true);
+        }
 
         private CraftNetMode EffectiveNetMode()
         {
             string v = Environment.GetEnvironmentVariable(EnvNetMode);
             if (string.Equals(v, "online", StringComparison.OrdinalIgnoreCase)) return CraftNetMode.Online;
             if (string.Equals(v, "offline", StringComparison.OrdinalIgnoreCase)) return CraftNetMode.Offline;
-            return netMode;
+            return networkSettings.mode;
         }
 
         /// <summary>Automated player runs without touching the scene (ORBITAL_AUTOSPAWN, ORBITAL_AUTOBURN, ORBITAL_SPAWN_BODY).</summary>
@@ -554,6 +642,20 @@ namespace Orbital.Craft
         {
             _autoSpawn = Environment.GetEnvironmentVariable(EnvAutoSpawn) == "1";
             double.TryParse(Environment.GetEnvironmentVariable(EnvAutoBurn), NumberStyles.Float, CultureInfo.InvariantCulture, out _autoBurn);
+            double.TryParse(Environment.GetEnvironmentVariable(EnvSpawnAlt), NumberStyles.Float, CultureInfo.InvariantCulture, out _spawnOrbitAltitude);
+            double.TryParse(Environment.GetEnvironmentVariable(EnvSpawnHeight), NumberStyles.Float, CultureInfo.InvariantCulture, out _spawnHeight);
+            foreach (string name in (Environment.GetEnvironmentVariable(EnvHudCollapse) ?? string.Empty).Split(','))
+            {
+                if (!string.IsNullOrWhiteSpace(name)) HudPanels.SetCollapsed(name.Trim(), true, false);
+            }
+            foreach (string name in (Environment.GetEnvironmentVariable(EnvAutoKeys) ?? string.Empty).Split(','))
+            {
+                if (!Enum.TryParse(name.Trim(), out ControlKey key)) continue;
+                ControlKeys.Set(ref _autoKeys, key, true);
+                _hasAutoKeys = true;
+            }
+            string startPoint = Environment.GetEnvironmentVariable(EnvStartPoint);
+            if (!string.IsNullOrWhiteSpace(startPoint)) _startPointOverride = startPoint.Trim();
             string spawnBody = Environment.GetEnvironmentVariable(EnvSpawnBody);
             if (!string.IsNullOrWhiteSpace(spawnBody) && EffectiveNetMode() != CraftNetMode.Online)
             {
@@ -565,9 +667,9 @@ namespace Orbital.Craft
         private void StartOnline()
         {
             ClientSettings settings = ClientSettingsStore.Load();
-            if (string.IsNullOrWhiteSpace(Environment.GetEnvironmentVariable(ClientSettings.EnvUrl)) && !string.IsNullOrWhiteSpace(serverUrl))
-                settings.ServerUrl = serverUrl.Trim();
-            _net = new CraftNetLink(settings, callsign, OnlineParams, _frames);
+            if (string.IsNullOrWhiteSpace(Environment.GetEnvironmentVariable(ClientSettings.EnvUrl)) && !string.IsNullOrWhiteSpace(networkSettings.serverUrl))
+                settings.ServerUrl = networkSettings.serverUrl.Trim();
+            _net = new CraftNetLink(settings, networkSettings.callsign, OnlineParams, _frames);
             _net.Link.HardStep = TimeProvider.StepSeconds;
             Application.runInBackground = true; // the server time goes on while the window is not focused
             TimeProvider.SetExternalTime(true);
@@ -593,7 +695,7 @@ namespace Orbital.Craft
             {
                 // a crash the server has confirmed: the spawn abandons the wreck at once (no wait for craft_destroyed, stage 2c.8)
                 if (_net.CrashConfirmed) Debug.Log("CraftSpawner: new craft now, the server has the old one crashed (wreck kept)", this);
-                s.Spawn(string.IsNullOrEmpty(startPointId) ? null : startPointId);
+                s.Spawn(string.IsNullOrEmpty(StartPointId) ? null : StartPointId);
             }
             else if (_net.Link.HasCraft && _net.Link.State.Mode == FlightMode.Crashed) Debug.Log("CraftSpawner: the crash is not confirmed by the server yet", this);
         }
@@ -620,6 +722,112 @@ namespace Orbital.Craft
             else keys.Z = true;
         }
 
+        private void SetMapOpen(bool open)
+        {
+            _presenter.SetFlightView(!open);
+            _map?.SetActive(open);
+            _nextForecast = 0f;
+        }
+
+        // Stage 4: the forecast runs on a worker, often while the map is open and rarely for the HUD line alone. The map gets what is ready.
+        private void PresentMap(in FlightState state)
+        {
+            if (_forecast == null) return;
+            _forecast.Poll();
+            if (_forecast.LastError != null && !_forecastReported)
+            {
+                _forecastReported = true;
+                Debug.LogError("CraftSpawner: the trajectory forecast failed: " + _forecast.LastError, this);
+            }
+            bool exists = !Online || _net.Link.HasCraft;
+            int parent = CurrentParent;
+            if (!exists || state.Mode != FlightMode.Flying || parent < 0) _forecast.Clear();
+            else if (Time.unscaledTime >= _nextForecast)
+            {
+                bool open = _map != null && _map.Active;
+                if (_forecast.Request(parent, state.Position, state.Velocity, CraftTime, open ? _map.FrameBodyFor(parent) : parent))
+                    _nextForecast = Time.unscaledTime + (open ? 0.1f : 0.5f);
+            }
+            if (_map == null || !_map.Active) return;
+            FlightParams parameters = Online ? _net.Link.Params : _simulation.Params;
+            MapCraft craft = new MapCraft
+            {
+                Exists = exists && parent >= 0,
+                Callsign = Online ? _net.Session.Callsign : networkSettings.callsign,
+                Parent = parent,
+                Position = state.Position,
+                Velocity = state.Velocity,
+                Mode = state.Mode,
+                Altitude = Surface.Altitude(parameters.Surface, state.Position),
+            };
+            Vector2 mouse = _mouseOverride ?? _input.MousePosition;
+            if (HudPanels.Covers(mouse)) mouse = new Vector2(-10000f, -10000f); // nothing of the map under a panel
+            _map.Present(CraftTime, craft, _forecast.Latest, Online ? _net.Others : null, mouse);
+        }
+
+        // What ends the current conic, from the forecast. The search is off the main thread now, the countdown is every refresh of the HUD.
+        private void AppendSoiHint(StringBuilder sb, in FlightState state, CultureInfo c)
+        {
+            if (_forecast == null || state.Mode != FlightMode.Flying) return;
+            TrajectoryPlot plot = _forecast.Latest;
+            if (plot.Count == 0 || plot.Parent != CurrentParent) return;
+            ref readonly TrajectorySegment first = ref plot.Segments[0];
+            if (first.NextBody < 0) return;
+            double left = first.End - CraftTime;
+            if (left < 0.0) return;
+            sb.Append("Next SOI: ").Append(TitleOf(first.NextBody)).Append(" in ").Append(FlightMapView.Duration(left)).Append(" (coasting)\n");
+        }
+
+        // The descent instrument (stage 4.1). A few times a second: a tiny fraction of a frame, see Stage4Tests.
+        private void UpdateDescent(in FlightState state, in FlightParams parameters, CultureInfo c)
+        {
+            if (Time.unscaledTime >= _nextAdvice)
+            {
+                _nextAdvice = Time.unscaledTime + 0.2f;
+                double exit = _frames != null && CurrentParent >= 0 ? _frames[CurrentParent].SoiRadius : double.PositiveInfinity;
+                _advice = LandingAdvisor.Compute(state, parameters, exit);
+            }
+            if (!_advice.Falling)
+            {
+                _hud.Descent = string.Empty;
+                return;
+            }
+            LandingAdvice a = _advice;
+            string call;
+            Color color;
+            if (!a.CanStop && a.OutOfFuel)
+            {
+                call = "NOT ENOUGH FUEL";
+                color = new Color(1f, 0.25f, 0.2f);
+            }
+            else if (!a.CanStop)
+            {
+                call = "TOO LATE";
+                color = new Color(1f, 0.25f, 0.2f);
+            }
+            else if (a.BurnIn <= 0.0)
+            {
+                call = "BURN NOW";
+                color = new Color(1f, 0.55f, 0.1f);
+            }
+            else
+            {
+                call = "BURN IN " + FlightMapView.Duration(a.BurnIn);
+                color = a.BurnIn < 10.0 ? new Color(1f, 0.85f, 0.2f) : new Color(0.4f, 1f, 0.6f);
+            }
+            _hud.DescentCall = call;
+            _hud.DescentColor = color;
+            StringBuilder sb = _descentText;
+            sb.Clear();
+            sb.Append("Impact in ").Append(FlightMapView.Duration(a.TimeToImpact)).Append(" at ").Append(FlightMapView.Speed(a.ImpactSpeed)).Append('\n');
+            sb.Append("Burn lasts ").Append(FlightMapView.Duration(a.BurnTime)).Append(", fuel ").Append(a.FuelNeeded.ToString("F0", c)).Append(" kg\n");
+            if (a.CanStop) sb.Append("Full burn now stops at ").Append(FlightMapView.Length(a.StopHeightNow)).Append('\n');
+            else sb.Append("Full burn now: ground at ").Append(FlightMapView.Speed(a.SpeedAtGroundNow)).Append('\n');
+            sb.Append("Nose off retrograde: ").Append(a.RetrogradeError.ToString("F0", c)).Append(" deg\n");
+            sb.Append("Landing limit ").Append(FlightMapView.Speed(parameters.MaxLandingSpeed)).Append(", plan stops at ").Append(LandingAdvisor.TargetHeight.ToString("F0", c)).Append(" m");
+            _hud.Descent = sb.ToString();
+        }
+
         /// <summary>One log line on every sphere of influence change of the own craft (stage 3.4, the smoke scenario greps for it).</summary>
         private void LogSoiChange(int before, int after, double time)
         {
@@ -634,7 +842,7 @@ namespace Orbital.Craft
         private void PresentBody(int parent)
         {
             if (_frames == null || parent < 0 || parent == _presentedBody) return;
-            _presenter.SetBody(parent, _frames.IdOf(parent) == _spawnBodyId);
+            _presenter.SetBody(parent);
             _presentedBody = parent;
             _bodyTitle = TitleOf(parent);
         }
@@ -670,7 +878,7 @@ namespace Orbital.Craft
                 int parentBefore = link.Parent;
                 link.Step(_lastControl, dt, real);
                 LogSoiChange(parentBefore, link.Parent, link.Time);
-                if (groundSupport) LandedSupport.HoldUpright(ref link.State, link.Params.Surface);
+                if (craftSettings.groundSupport) LandedSupport.HoldUpright(ref link.State, link.Params.Surface);
             }
             _net.Update(real); // send what the steps recorded
         }
@@ -688,10 +896,11 @@ namespace Orbital.Craft
             "T            SAS (hold attitude) on / off\n" +
             "B            nav ball: surface / orbit velocity\n" +
             "Enter        new craft at the start\n" +
-            "C            flight view / map view\n" +
+            "M or C       flight view / map view\n" +
+            "F            map: follow the craft\n" +
             "V            camera behind / orbit (level)\n" +
             "RMB drag     orbit the camera, wheel zoom\n" +
-            "F1           hide this help\n" +
+            "F1           fold this help; + / - fold the panels\n" +
             "The gyro is always on; RCS needs R.\n" +
             "SAS holds the attitude; with RCS off it uses\n" +
             "the gyro only and gives up when it saturates.";
@@ -706,13 +915,14 @@ namespace Orbital.Craft
             CultureInfo c = CultureInfo.InvariantCulture;
             StringBuilder sb = _text;
             sb.Clear();
-            sb.Append(callsign).Append(" @ ").Append(_bodyTitle);
+            sb.Append(Online ? _net.Session.Callsign : networkSettings.callsign).Append(" @ ").Append(_bodyTitle);
             if (_frames != null && CurrentParent >= 0)
             {
                 double soi = _frames[CurrentParent].SoiRadius;
                 sb.Append("    SOI ").Append(double.IsInfinity(soi) ? "-" : Distance(soi, c));
             }
             sb.Append("    t = ").Append(CraftTime.ToString("F0", c)).Append(" s\n");
+            AppendSoiHint(sb, state, c);
             sb.Append("Mode: ").Append(ModeName(state.Mode));
             if (state.Mode == FlightMode.Crashed && !Online) sb.Append("  (impact ").Append(report.LastImpactSpeed.ToString("F1", c)).Append(" m/s, limit ").Append(parameters.MaxLandingSpeed.ToString("F1", c)).Append(")");
             sb.Append('\n');
@@ -752,6 +962,7 @@ namespace Orbital.Craft
                 .Append(", ").Append(recorder.State.Active ? "burning" : "idle").Append(")");
 
             _hud.Telemetry = sb.ToString();
+            UpdateDescent(state, parameters, c);
             _hud.Throttle = (float) state.Throttle;
             _hud.MainFuel = (float) t.MainFuelFraction;
             _hud.RcsFuel = (float) t.RcsFuelFraction;

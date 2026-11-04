@@ -18,5 +18,7 @@ namespace Orbital.View.Map
         public float brightness = 1f;
         [Tooltip("HDR emission intensity of the tint. 0 = lit by the scene only; use for stars.")]
         public float emission;
+        [Tooltip("Geometric albedo: how bright the body is as a point at full phase (flight view sky, telescope).")]
+        public float albedo = 0.3f;
     }
 }

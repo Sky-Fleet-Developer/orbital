@@ -31,7 +31,7 @@ namespace Orbital.Craft
             // center of mass band, orientation strips
             Part(t, "CenterOfMass", PrimitiveType.Cylinder, new Vector3(0, cgHeight, 0), new Vector3(3.1f, 0.15f, 3.1f), Quaternion.identity, materials("cg"));
             Part(t, "MarkerX", PrimitiveType.Cube, new Vector3(1.55f, 7.3f, 0), new Vector3(0.15f, 4f, 0.4f), Quaternion.identity, materials("marker_x"));
-            Part(t, "MarkerZ", PrimitiveType.Cube, new Vector3(0, 7.3f, 1.55f), new Vector3(0.4f, 4f, 0.15f), Quaternion.identity, materials("marker_z"));
+            Part(t, "MarkerZ", PrimitiveType.Cube, new Vector3(0, 7.3f, -1.55f), new Vector3(0.4f, 4f, 0.15f), Quaternion.identity, materials("marker_z"));
 
             // RCS blocks on the four sides near the nose
             for (int i = 0; i < 4; i++)

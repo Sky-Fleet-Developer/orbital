@@ -113,7 +113,11 @@ namespace Orbital.Tests
             GameConfig config = GameConfigLoader.FromDirectory(ConfigDir());
             // compare every number through the same serializer, so a field added to FlightConfig is covered automatically
             string expected = JObject.FromObject(FlightConfig.Default()).ToString();
-            string actual = JObject.FromObject(config.Flight).ToString();
+            FlightConfig shipped = config.Flight;
+            // TEMPORARY boost for flight tests (stage 4.1): the fuel and the RCS of the shipped files have 100 times the impulse. Back to 450 and 200 when it is removed.
+            Assert.AreEqual(20000.0, shipped.Rcs.Isp);
+            shipped.Rcs.Isp = FlightConfig.Default().Rcs.Isp;
+            string actual = JObject.FromObject(shipped).ToString();
             Assert.AreEqual(expected, actual);
         }
 
@@ -191,7 +195,8 @@ namespace Orbital.Tests
             Assert.AreEqual(d.DryMass, f.DryMass);
             Assert.AreEqual(d.MainFuelCapacity, f.MainFuelCapacity);
             Assert.AreEqual(d.Engine.MaxThrust, f.Engine.MaxThrust);
-            Assert.AreEqual(d.Engine.Isp, f.Engine.Isp);
+            // TEMPORARY boost for flight tests (stage 4.1): the fuel and the RCS of the shipped files have 100 times the impulse. Back to 450 and 200 when it is removed.
+            Assert.AreEqual(45000.0, f.Engine.Isp);
         }
     }
 
